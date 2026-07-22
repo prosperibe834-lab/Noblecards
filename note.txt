@@ -1,0 +1,236 @@
+class AppAnimation {
+  AppAnimation._();
+
+  static const fast = Duration(milliseconds: 150);
+
+  static const normal = Duration(milliseconds: 300);
+
+  static const slow = Duration(milliseconds: 500);
+} import 'package:flutter/material.dart';
+
+class AppColors {
+  AppColors._();
+
+  // Brand
+  static const Color primary = Color(0xFF10B981);
+  static const Color primaryDark = Color(0xFF059669);
+
+  static const Color secondary = Color(0xFF2563EB);
+
+  static const Color accent = Color(0xFFF59E0B);
+
+  // Status
+  static const Color success = Color(0xFF22C55E);
+  static const Color error = Color(0xFFEF4444);
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color info = Color(0xFF3B82F6);
+
+  // Light Theme
+  static const Color lightBackground = Color(0xFFF8FAFC);
+  static const Color lightCard = Colors.white;
+  static const Color lightBorder = Color(0xFFE2E8F0);
+
+  static const Color lightText = Color(0xFF0F172A);
+  static const Color lightSubText = Color(0xFF64748B);
+
+  static const Color lightInput = Colors.white;
+
+  // Dark Theme
+  static const Color darkBackground = Color(0xFF0F172A);
+  static const Color darkCard = Color(0xFF1E293B);
+
+  static const Color darkBorder = Color(0xFF334155);
+
+  static const Color darkText = Color(0xFFF8FAFC);
+  static const Color darkSubText = Color(0xFFCBD5E1);
+
+  static const Color darkInput = Color(0xFF273449);
+} class AppRadius {
+  AppRadius._();
+
+  static const double xs = 8;
+
+  static const double sm = 12;
+
+  static const double md = 16;
+
+  static const double lg = 20;
+
+  static const double xl = 28;
+
+  static const double full = 999;
+} import 'package:flutter/material.dart';
+
+class AppShadow {
+  AppShadow._();
+
+  static List<BoxShadow> light = [
+    BoxShadow(
+      color: Colors.black.withOpacity(.06),
+      blurRadius: 25,
+      offset: const Offset(0, 10),
+    )
+  ];
+
+  static List<BoxShadow> dark = [
+    BoxShadow(
+      color: Colors.black.withOpacity(.35),
+      blurRadius: 30,
+      offset: const Offset(0, 10),
+    )
+  ];
+} class AppSpacing {
+  AppSpacing._();
+
+  static const double xs = 4;
+
+  static const double sm = 8;
+
+  static const double md = 16;
+
+  static const double lg = 24;
+
+  static const double xl = 32;
+
+  static const double xxl = 48;
+
+  static const double huge = 64;
+} import 'package:flutter/material.dart';
+import 'app_colors.dart';
+
+class AppTextTheme {
+  AppTextTheme._();
+
+  static const TextTheme light = TextTheme(
+    headlineLarge: TextStyle(
+      fontFamily: "Poppins",
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+      color: AppColors.lightText,
+    ),
+    titleLarge: TextStyle(
+      fontFamily: "Poppins",
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: AppColors.lightText,
+    ),
+    bodyLarge: TextStyle(
+      fontFamily: "Inter",
+      fontSize: 16,
+      color: AppColors.lightText,
+    ),
+    bodyMedium: TextStyle(
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: AppColors.lightSubText,
+    ),
+  );
+
+  static const TextTheme dark = TextTheme(
+    headlineLarge: TextStyle(
+      fontFamily: "Poppins",
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+      color: AppColors.darkText,
+    ),
+    titleLarge: TextStyle(
+      fontFamily: "Poppins",
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: AppColors.darkText,
+    ),
+    bodyLarge: TextStyle(
+      fontFamily: "Inter",
+      fontSize: 16,
+      color: AppColors.darkText,
+    ),
+    bodyMedium: TextStyle(
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: AppColors.darkSubText,
+    ),
+  );
+} import 'package:flutter/material.dart';
+
+import 'app_colors.dart';
+import 'app_text_theme.dart';
+
+class AppTheme {
+  AppTheme._();
+
+  static ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+
+    brightness: Brightness.light,
+
+    scaffoldBackgroundColor: AppColors.lightBackground,
+
+    primaryColor: AppColors.primary,
+
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      error: AppColors.error,
+    ),
+
+    cardColor: AppColors.lightCard,
+
+    dividerColor: AppColors.lightBorder,
+
+    textTheme: AppTextTheme.light,
+
+    fontFamily: "Inter",
+  );
+
+  static ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+
+    brightness: Brightness.dark,
+
+    scaffoldBackgroundColor: AppColors.darkBackground,
+
+    primaryColor: AppColors.primary,
+
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primary,
+      secondary: AppColors.secondary,
+      error: AppColors.error,
+    ),
+
+    cardColor: AppColors.darkCard,
+
+    dividerColor: AppColors.darkBorder,
+
+    textTheme: AppTextTheme.dark,
+
+    fontFamily: "Inter",
+  );
+} import 'package:flutter/material.dart';
+
+class ThemeProvider extends ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  ThemeMode get themeMode => _themeMode;
+
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+
+  void toggleTheme(bool isDark) {
+    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+}
+
+
+
+
+
+git add .
+git commit -m "i built NobleCards onboarding screens"
+git push origin main
+
+
+
+
+
+
+Ctrl + Shift + P
