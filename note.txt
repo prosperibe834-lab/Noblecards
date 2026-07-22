@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i built NobleCards onboarding screens"
+git commit -m "i puted signup page"
 git push origin main
 
 

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_provider.dart';
 import 'screens/onboarding/onboarding_screen.dart';
+import 'screens/signup_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,11 @@ class NobleCardsApp extends StatelessWidget {
 
       // Initial screen route
       home: const OnboardingScreen(),
+
+      routes: {
+  '/signup': (context) => const SignupScreen(),
+  // '/login': (context) => const LoginScreen(),
+},
     );
   }
 }

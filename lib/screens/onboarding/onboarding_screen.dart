@@ -361,7 +361,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               width: double.infinity,
                               height: 52,
                               child: ElevatedButton(
-                                onPressed: _finishOnboarding,
+                              onPressed: () {
+  Navigator.pushNamed(context, '/signup');
+},
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   elevation: 0,
@@ -386,7 +388,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               width: double.infinity,
                               height: 52,
                               child: OutlinedButton(
-                                onPressed: _finishOnboarding,
+                               // NEW CODE:
+onPressed: () {
+  Navigator.pushNamed(context, '/login');
+},
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide(color: borderColor),
                                   shape: RoundedRectangleBorder(
@@ -440,3 +445,4 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 }
+
