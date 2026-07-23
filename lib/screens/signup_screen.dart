@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:country_picker/country_picker.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -112,7 +113,9 @@ class _SignupScreenState extends State<SignupScreen>
     if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please agree to the Terms of Service & Privacy Policy"),
+          content: Text(
+            "Please agree to the Terms of Service & Privacy Policy",
+          ),
           backgroundColor: AppColors.error,
         ),
       );
@@ -121,7 +124,7 @@ class _SignupScreenState extends State<SignupScreen>
 
     if (_formKey.currentState!.validate() && _passwordStrength >= 0.8) {
       setState(() => _isLoading = true);
-      
+
       // Simulate API call delay
       await Future.delayed(const Duration(seconds: 2));
 
@@ -146,23 +149,31 @@ class _SignupScreenState extends State<SignupScreen>
 
   // Searchable Country Picker Modal
   void _showCountryPickerModal(bool isDark) {
-    showModalBottomSheet(
+    showCountryPicker(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+      showPhoneCode: true,
+      favorite: const ['NG', 'US', 'GB', 'CA'],
+      countryListTheme: CountryListThemeData(
+        backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        bottomSheetHeight: 520,
+        inputDecoration: InputDecoration(
+          hintText: 'Search country',
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+        ),
       ),
-      builder: (context) {
-        return _CountryPickerBottomSheet(
-          isDark: isDark,
-          onSelect: (country) {
-            setState(() {
-              _selectedCountry = country;
-            });
-            Navigator.pop(context);
-          },
-        );
+      onSelect: (Country country) {
+        setState(() {
+          _selectedCountry = {
+            'name': country.name,
+            'code': country.countryCode,
+            'dialCode': '+${country.phoneCode}',
+            'flag': country.flagEmoji,
+          };
+        });
       },
     );
   }
@@ -172,7 +183,9 @@ class _SignupScreenState extends State<SignupScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -226,7 +239,9 @@ class _SignupScreenState extends State<SignupScreen>
                     fontFamily: "Inter",
                     fontSize: 14,
                     height: 1.4,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
@@ -270,7 +285,9 @@ class _SignupScreenState extends State<SignupScreen>
                     if (value == null || value.trim().isEmpty) {
                       return "Invalid email address";
                     }
-                    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                    final emailRegex = RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    );
                     if (!emailRegex.hasMatch(value.trim())) {
                       return "Invalid email address";
                     }
@@ -292,10 +309,14 @@ class _SignupScreenState extends State<SignupScreen>
                       vertical: 14,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkInput : AppColors.lightInput,
+                      color: isDark
+                          ? AppColors.darkInput
+                          : AppColors.lightInput,
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       border: Border.all(
-                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : AppColors.lightBorder,
                       ),
                     ),
                     child: Row(
@@ -311,13 +332,17 @@ class _SignupScreenState extends State<SignupScreen>
                             style: TextStyle(
                               fontFamily: "Inter",
                               fontSize: 15,
-                              color: isDark ? AppColors.darkText : AppColors.lightText,
+                              color: isDark
+                                  ? AppColors.darkText
+                                  : AppColors.lightText,
                             ),
                           ),
                         ),
                         Icon(
                           Boxicons.bx_chevron_down,
-                          color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                          color: isDark
+                              ? AppColors.darkSubText
+                              : AppColors.lightSubText,
                         ),
                       ],
                     ),
@@ -347,14 +372,20 @@ class _SignupScreenState extends State<SignupScreen>
                           : AppColors.lightSubText.withOpacity(0.5),
                     ),
                     filled: true,
-                    fillColor: isDark ? AppColors.darkInput : AppColors.lightInput,
+                    fillColor: isDark
+                        ? AppColors.darkInput
+                        : AppColors.lightInput,
                     prefixIcon: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                      ),
                       margin: const EdgeInsets.only(right: AppSpacing.sm),
                       decoration: BoxDecoration(
                         border: Border(
                           right: BorderSide(
-                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : AppColors.lightBorder,
                           ),
                         ),
                       ),
@@ -372,7 +403,9 @@ class _SignupScreenState extends State<SignupScreen>
                               fontFamily: "Inter",
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
-                              color: isDark ? AppColors.darkText : AppColors.lightText,
+                              color: isDark
+                                  ? AppColors.darkText
+                                  : AppColors.lightText,
                             ),
                           ),
                         ],
@@ -385,18 +418,25 @@ class _SignupScreenState extends State<SignupScreen>
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       borderSide: BorderSide(
-                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : AppColors.lightBorder,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       borderSide: BorderSide(
-                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : AppColors.lightBorder,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 1.5,
+                      ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
@@ -419,7 +459,9 @@ class _SignupScreenState extends State<SignupScreen>
                 const SizedBox(height: AppSpacing.xs),
                 DropdownButtonFormField<String>(
                   value: _selectedGender,
-                  dropdownColor: isDark ? AppColors.darkCard : AppColors.lightCard,
+                  dropdownColor: isDark
+                      ? AppColors.darkCard
+                      : AppColors.lightCard,
                   style: TextStyle(
                     fontFamily: "Inter",
                     fontSize: 15,
@@ -428,11 +470,15 @@ class _SignupScreenState extends State<SignupScreen>
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       Boxicons.bx_user_circle,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                       size: 20,
                     ),
                     filled: true,
-                    fillColor: isDark ? AppColors.darkInput : AppColors.lightInput,
+                    fillColor: isDark
+                        ? AppColors.darkInput
+                        : AppColors.lightInput,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.md,
                       vertical: 16,
@@ -440,25 +486,34 @@ class _SignupScreenState extends State<SignupScreen>
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       borderSide: BorderSide(
-                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : AppColors.lightBorder,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
                       borderSide: BorderSide(
-                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : AppColors.lightBorder,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadius.md),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                   items: ['Male', 'Female', 'Prefer not to say']
-                      .map((gender) => DropdownMenuItem(
-                            value: gender,
-                            child: Text(gender),
-                          ))
+                      .map(
+                        (gender) => DropdownMenuItem(
+                          value: gender,
+                          child: Text(gender),
+                        ),
+                      )
                       .toList(),
                   onChanged: (val) {
                     if (val != null) setState(() => _selectedGender = val);
@@ -481,14 +536,16 @@ class _SignupScreenState extends State<SignupScreen>
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword ? Boxicons.bx_hide : Boxicons.bx_show,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                     onPressed: () {
                       setState(() => _obscurePassword = !_obscurePassword);
                     },
                   ),
                 ),
-                
+
                 // Password Strength Indicator Bar
                 if (_passwordController.text.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -500,7 +557,9 @@ class _SignupScreenState extends State<SignupScreen>
                           height: 4,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(AppRadius.full),
-                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : AppColors.lightBorder,
                           ),
                           child: FractionallySizedBox(
                             alignment: Alignment.centerLeft,
@@ -508,7 +567,9 @@ class _SignupScreenState extends State<SignupScreen>
                             child: AnimatedContainer(
                               duration: AppAnimation.fast,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(AppRadius.full),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.full,
+                                ),
                                 color: _strengthColor,
                               ),
                             ),
@@ -529,11 +590,27 @@ class _SignupScreenState extends State<SignupScreen>
                   const SizedBox(height: AppSpacing.sm),
 
                   // Requirements Checklist
-                  _buildRequirementItem("Minimum 8 characters", _hasMinLength, isDark),
-                  _buildRequirementItem("One uppercase letter", _hasUppercase, isDark),
-                  _buildRequirementItem("One lowercase letter", _hasLowercase, isDark),
+                  _buildRequirementItem(
+                    "Minimum 8 characters",
+                    _hasMinLength,
+                    isDark,
+                  ),
+                  _buildRequirementItem(
+                    "One uppercase letter",
+                    _hasUppercase,
+                    isDark,
+                  ),
+                  _buildRequirementItem(
+                    "One lowercase letter",
+                    _hasLowercase,
+                    isDark,
+                  ),
                   _buildRequirementItem("One number", _hasNumber, isDark),
-                  _buildRequirementItem("One special character", _hasSpecialChar, isDark),
+                  _buildRequirementItem(
+                    "One special character",
+                    _hasSpecialChar,
+                    isDark,
+                  ),
                 ],
                 const SizedBox(height: AppSpacing.md),
 
@@ -551,11 +628,18 @@ class _SignupScreenState extends State<SignupScreen>
                   obscureText: _obscureConfirmPassword,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureConfirmPassword ? Boxicons.bx_hide : Boxicons.bx_show,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      _obscureConfirmPassword
+                          ? Boxicons.bx_hide
+                          : Boxicons.bx_show,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                     onPressed: () {
-                      setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                      setState(
+                        () =>
+                            _obscureConfirmPassword = !_obscureConfirmPassword,
+                      );
                     },
                   ),
                   validator: (value) {
@@ -613,7 +697,9 @@ class _SignupScreenState extends State<SignupScreen>
                             style: TextStyle(
                               fontFamily: "Inter",
                               fontSize: 13,
-                              color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                              color: isDark
+                                  ? AppColors.darkSubText
+                                  : AppColors.lightSubText,
                             ),
                           ),
                           GestureDetector(
@@ -635,7 +721,9 @@ class _SignupScreenState extends State<SignupScreen>
                             style: TextStyle(
                               fontFamily: "Inter",
                               fontSize: 13,
-                              color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                              color: isDark
+                                  ? AppColors.darkSubText
+                                  : AppColors.lightSubText,
                             ),
                           ),
                           GestureDetector(
@@ -707,7 +795,9 @@ class _SignupScreenState extends State<SignupScreen>
                       style: TextStyle(
                         fontFamily: "Inter",
                         fontSize: 14,
-                        color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                        color: isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText,
                       ),
                     ),
                     GestureDetector(
@@ -824,7 +914,9 @@ class _SignupScreenState extends State<SignupScreen>
           Icon(
             isSatisfied ? Boxicons.bx_check_circle : Boxicons.bx_circle,
             size: 16,
-            color: isSatisfied ? AppColors.success : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
+            color: isSatisfied
+                ? AppColors.success
+                : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
@@ -835,141 +927,6 @@ class _SignupScreenState extends State<SignupScreen>
               color: isSatisfied
                   ? (isDark ? AppColors.darkText : AppColors.lightText)
                   : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ==================================================
-// SEARCHABLE COUNTRY PICKER BOTTOM SHEET
-// ==================================================
-class _CountryPickerBottomSheet extends StatefulWidget {
-  final bool isDark;
-  final Function(Map<String, String>) onSelect;
-
-  const _CountryPickerBottomSheet({
-    required this.isDark,
-    required this.onSelect,
-  });
-
-  @override
-  State<_CountryPickerBottomSheet> createState() =>
-      __CountryPickerBottomSheetState();
-}
-
-class __CountryPickerBottomSheetState
-    extends State<_CountryPickerBottomSheet> {
-  final List<Map<String, String>> _countries = const [
-    {'name': 'Nigeria', 'code': 'NG', 'dialCode': '+234', 'flag': '🇳🇬'},
-    {'name': 'United States', 'code': 'US', 'dialCode': '+1', 'flag': '🇺🇸'},
-    {'name': 'United Kingdom', 'code': 'GB', 'dialCode': '+44', 'flag': '🇬🇧'},
-    {'name': 'Canada', 'code': 'CA', 'dialCode': '+1', 'flag': '🇨🇦'},
-    {'name': 'Ghana', 'code': 'GH', 'dialCode': '+233', 'flag': '🇬🇭'},
-    {'name': 'South Africa', 'code': 'ZA', 'dialCode': '+27', 'flag': '🇿🇦'},
-    {'name': 'Kenya', 'code': 'KE', 'dialCode': '+254', 'flag': '🇰🇪'},
-    {'name': 'Germany', 'code': 'DE', 'dialCode': '+49', 'flag': '🇩🇪'},
-    {'name': 'France', 'code': 'FR', 'dialCode': '+33', 'flag': '🇫🇷'},
-    {'name': 'United Arab Emirates', 'code': 'AE', 'dialCode': '+971', 'flag': '🇦🇪'},
-  ];
-
-  late List<Map<String, String>> _filteredCountries;
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredCountries = _countries;
-  }
-
-  void _filterCountries(String query) {
-    setState(() {
-      _filteredCountries = _countries
-          .where((c) =>
-              c['name']!.toLowerCase().contains(query.toLowerCase()) ||
-              c['dialCode']!.contains(query))
-          .toList();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: widget.isDark ? AppColors.darkBorder : AppColors.lightBorder,
-              borderRadius: BorderRadius.circular(AppRadius.full),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            "Select Country",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: widget.isDark ? AppColors.darkText : AppColors.lightText,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          TextField(
-            controller: _searchController,
-            onChanged: _filterCountries,
-            style: TextStyle(
-              color: widget.isDark ? AppColors.darkText : AppColors.lightText,
-            ),
-            decoration: InputDecoration(
-              hintText: "Search country or dial code...",
-              prefixIcon: const Icon(Boxicons.bx_search),
-              filled: true,
-              fillColor: widget.isDark ? AppColors.darkInput : AppColors.lightInput,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppRadius.md),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Expanded(
-            child: ListView.separated(
-              itemCount: _filteredCountries.length,
-              separatorBuilder: (context, index) => Divider(
-                color: widget.isDark ? AppColors.darkBorder : AppColors.lightBorder,
-                height: 1,
-              ),
-              itemBuilder: (context, index) {
-                final country = _filteredCountries[index];
-                return ListTile(
-                  leading: Text(
-                    country['flag']!,
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                  title: Text(
-                    country['name']!,
-                    style: TextStyle(
-                      fontFamily: "Inter",
-                      color: widget.isDark ? AppColors.darkText : AppColors.lightText,
-                    ),
-                  ),
-                  trailing: Text(
-                    country['dialCode']!,
-                    style: const TextStyle(
-                      fontFamily: "Inter",
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  onTap: () => widget.onSelect(country),
-                );
-              },
             ),
           ),
         ],

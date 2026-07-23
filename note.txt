@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i puted signup page"
+git commit -m "i did full authentication page"
 git push origin main
 
 
@@ -234,3 +234,19 @@ git push origin main
 
 
 Ctrl + Shift + P
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

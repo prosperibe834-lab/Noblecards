@@ -5,6 +5,10 @@ import 'theme/app_theme.dart';
 import 'theme/theme_provider.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/setup_pin_screen.dart';
+import 'screens/biometric_setup_screen.dart';
+import 'screens/forgot_password_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +50,18 @@ class NobleCardsApp extends StatelessWidget {
 
       routes: {
   '/signup': (context) => const SignupScreen(),
-  // '/login': (context) => const LoginScreen(),
+
+
+        '/login': (context) => const LoginScreen(),
+        '/setup-pin': (context) => const SetupPinScreen(),
+        '/biometric-setup': (context) => const BiometricSetupScreen(),
+
+'/forgot-password': (context) => const ForgotPasswordScreen(),
+
+        '/register': (context) => Scaffold(
+              appBar: AppBar(title: const Text('Create Account')),
+              body: const Center(child: Text('Registration Flow')),
+            ),
 },
     );
   }
