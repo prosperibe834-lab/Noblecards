@@ -418,7 +418,7 @@ class _LoginScreenState extends State<LoginScreen>
                         style: textTheme.bodyMedium,
                       ),
                       GestureDetector(
-                        onTap: () => Navigator.pushNamed(context, '/signup'),
+                        onTap: () => Navigator.pushNamed(context, '/home'),
                         child: const Text(
                           'Create Account',
                           style: TextStyle(
@@ -661,6 +661,4 @@ class _TransactionPinDialogState extends State<TransactionPinDialog> {
     );
   }
 }
-
-
 
