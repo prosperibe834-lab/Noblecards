@@ -322,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _isBalanceHidden ? "₦*******" : "₦250,000.00",
+                  _isBalanceHidden ? '\$*******' : '\$251,000.00',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 30,
@@ -356,14 +356,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.white.withOpacity(0.15),
                 ),
                 const SizedBox(height: 14),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildSubBalanceItem("Available Balance", "₦200,000.00"),
-                    _buildSubBalanceItem("Pending Balance", "₦25,000.00"),
-                    _buildSubBalanceItem("Reward Points", "2,450"),
-                  ],
-                ),
+                if (!_isBalanceHidden)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildSubBalanceItem("Available Balance", '\$200,000.00'),
+                      _buildSubBalanceItem("Pending Balance", '\$25,000.00'),
+                      _buildSubBalanceItem("Reward Points", "2,450"),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -492,32 +493,32 @@ class _HomeScreenState extends State<HomeScreen> {
     final cards = [
       {
         'name': 'Amazon',
-        'buy': '₦460.00',
-        'sell': '₦440.00',
+        'buy': '\$460.00',
+        'sell': '\$440.00',
         'color': const Color(0xFF141414),
         'icon': Boxicons.bxl_amazon,
         'flag': '🇺🇸',
       },
       {
         'name': 'Apple',
-        'buy': '₦700.00',
-        'sell': '₦680.00',
+        'buy': '\$700.00',
+        'sell': '\$680.00',
         'color': const Color(0xFF5B32EA),
         'icon': Boxicons.bxl_apple,
         'flag': '🇺🇸',
       },
       {
         'name': 'Steam',
-        'buy': '₦420.00',
-        'sell': '₦400.00',
+        'buy': '\$420.00',
+        'sell': '\$400.00',
         'color': const Color(0xFF17202A),
         'icon': Boxicons.bxl_steam,
         'flag': '🇺🇸',
       },
       {
         'name': 'Google Play',
-        'buy': '₦350.00',
-        'sell': '₦330.00',
+        'buy': '\$350.00',
+        'sell': '\$330.00',
         'color': isDark ? Colors.white : const Color(0xFFFFFFFF),
         'icon': Boxicons.bxl_play_store,
         'flag': '🇺🇸',
@@ -694,25 +695,25 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'tag': 'Highest Paying',
         'icon': Boxicons.bxl_amazon,
-        'price': '₦480.00',
+        'price': '\$480.00',
         'change': '↑ 8.2%',
       },
       {
         'tag': 'Trending',
         'icon': Boxicons.bxl_steam,
-        'price': '₦430.00',
+        'price': '\$430.00',
         'change': '↑ 6.5%',
       },
       {
         'tag': 'Most Traded',
         'icon': Boxicons.bxl_apple,
-        'price': '₦690.00',
+        'price': '\$690.00',
         'change': '↑ 5.1%',
       },
       {
         'tag': 'Best Selling',
         'icon': Boxicons.bxl_play_store,
-        'price': '₦340.00',
+        'price': '\$340.00',
         'change': '↑ 4.3%',
       },
     ];

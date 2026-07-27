@@ -10,7 +10,7 @@ import 'screens/setup_pin_screen.dart';
 import 'screens/biometric_setup_screen.dart';
 import 'screens/forgot_password_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
-import 'screens/main_navigation_screen.dart';
+import 'widgets/main_navigation_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

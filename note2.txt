@@ -1,0 +1,856 @@
+# NobleCards Wallet Module UI/UX Design Instructions
+
+This Wallet module is for the NobleCards Flutter application.
+
+I want you to build it to the quality of the world's best fintech apps such as Revolut, Wise, Monzo, Cash App, Chime, Binance, Coinbase, Bybit, PalmPay and Opay.
+
+The design should feel premium, clean, modern, smooth, minimal and luxurious.
+
+DO NOT use Bottom Navigation because I already have one.
+
+DO NOT use Emoji icons.
+
+Use ONLY Boxicons throughout the entire Wallet module.
+
+Everything must support both Light Mode and Dark Mode using the existing Theme files I already have.
+
+Use the spacing, border radius, typography, colors, shadows, animations and theme constants from my existing theme files instead of hardcoding values.
+
+For gradients, if you believe a subtle gradient will improve the UI while keeping it premium, feel free to use it.
+
+Use reusable widgets whenever possible.
+
+Every page must have beautiful page transitions.
+
+Use Hero animations where appropriate.
+
+Use smooth fade animations, slide animations and scale animations.
+
+Every button should have ripple animation.
+
+Cards should have subtle elevation.
+
+Lists should animate while loading.
+
+Use shimmer loading placeholders.
+
+Every screen should be responsive.
+
+Every code you send me MUST tell me:
+
+• Which file to create
+• Which folder to create it inside
+• Where to paste the code
+• If an existing file should be modified
+
+Never leave me guessing.
+
+========================================
+
+PROJECT STRUCTURE
+
+lib/
+
+screens/
+
+wallet_screen.dart
+
+deposit_screen.dart
+
+deposit_summary_screen.dart
+
+deposit_payment_screen.dart
+
+deposit_success_screen.dart
+
+withdraw_screen.dart
+
+withdraw_summary_screen.dart
+
+withdraw_bank_screen.dart
+
+withdraw_success_screen.dart
+
+currency_picker_screen.dart
+
+transaction_history_screen.dart
+
+transaction_details_screen.dart
+
+report_transaction_screen.dart
+
+analytics_screen.dart
+
+favorite_currencies_screen.dart
+
+widgets/
+
+wallet_balance_card.dart
+
+wallet_action_button.dart
+
+wallet_stat_card.dart
+
+wallet_transaction_tile.dart
+
+wallet_filter_chip.dart
+
+wallet_search_bar.dart
+
+currency_tile.dart
+
+favorite_currency_tile.dart
+
+pin_input_widget.dart
+
+biometric_auth_widget.dart
+
+exchange_rate_card.dart
+
+summary_card.dart
+
+transaction_receipt_card.dart
+
+empty_state_widget.dart
+
+loading_shimmer.dart
+
+network_error_widget.dart
+
+network_banner.dart
+
+custom_loader.dart
+
+custom_dialog.dart
+
+custom_button.dart
+
+custom_app_bar.dart
+
+custom_back_button.dart
+
+section_header.dart
+
+animated_card.dart
+
+animated_counter.dart
+
+success_animation.dart
+
+search_textfield.dart
+
+filter_bottom_sheet.dart
+
+========================================
+
+PRELOADER
+
+Create a premium splash loader.
+
+Use my logo.
+
+Logo location:
+
+assets/logos/LightmodeLogo.png
+
+assets/logos/DarkmodeLogo.png
+
+Use the correct logo depending on the current theme.
+
+The loader should feel like a premium fintech app.
+
+Ideas:
+
+Fade animation
+
+Scale animation
+
+Glow animation
+
+Soft gradient background
+
+Smooth transition into Wallet screen
+
+Create it as:
+
+widgets/custom_loader.dart
+
+========================================
+
+NO INTERNET SCREEN
+
+Create a reusable widget.
+
+widgets/network_error_widget.dart
+
+It should automatically display whenever internet connection is lost.
+
+Design:
+
+Nice illustration
+
+Title
+
+No Internet Connection
+
+Description
+
+Please check your internet connection and try again.
+
+Buttons
+
+Retry
+
+Refresh
+
+Retry should attempt loading again.
+
+Refresh should reload the screen.
+
+Animate the appearance.
+
+========================================
+
+LOADING STATES
+
+Create reusable shimmer loading widgets.
+
+Every page should have loading placeholders.
+
+Never show blank white screens.
+
+========================================
+
+BACK BUTTON
+
+Every page except Wallet Home should have
+
+Custom AppBar
+
+Back Arrow
+
+Use Boxicons back icon
+
+Tapping it returns to previous screen.
+
+Create reusable
+
+widgets/custom_back_button.dart
+
+========================================
+
+WALLET HOME
+
+File:
+
+wallet_screen.dart
+
+This is the first Wallet page.
+
+Design it like a premium fintech wallet.
+
+Sections
+
+1.
+
+Header
+
+Wallet
+
+Notification icon
+
+Transaction history shortcut
+
+2.
+
+Wallet Balance Card
+
+Large premium balance card.
+
+Default wallet currency is USD.
+
+Example
+
+Available Balance
+
+$2,350.00
+
+Button to hide/show balance.
+
+Animated counting when balance changes.
+
+3.
+
+Quick Actions
+
+Deposit
+
+Withdraw
+
+Transactions
+
+Analytics
+
+Each one opens its own screen.
+
+4.
+
+Exchange Rate Card
+
+Display
+
+1 USD = ₦xxxx.xx
+
+Live Rate
+
+Last Updated
+
+Refresh Rate button
+
+Animated refresh
+
+5.
+
+Favorite Currencies
+
+Horizontal list
+
+Starred currencies
+
+Search shortcut
+
+Manage button
+
+Opens
+
+favorite_currencies_screen.dart
+
+6.
+
+Recent Transactions
+
+Latest five
+
+See All button
+
+Opens
+
+transaction_history_screen.dart
+
+Transaction Tile
+
+Card Name
+
+Type
+
+Amount
+
+Status
+
+Date
+
+Arrow
+
+Click opens
+
+transaction_details_screen.dart
+
+========================================
+
+DEPOSIT FLOW
+
+deposit_screen.dart
+
+User selects currency.
+
+Search currencies.
+
+Favorite currencies appear first.
+
+Recently used currencies appear.
+
+Currency tile should allow
+
+Favorite
+
+Remove Favorite
+
+Search
+
+Popular currencies section.
+
+After selecting currency
+
+User enters amount.
+
+App calculates exchange automatically.
+
+Example
+
+Deposit
+
+$400
+
+Current Rate
+
+1 USD = ₦1620
+
+You Pay
+
+₦648000
+
+Rate locked for 15 minutes.
+
+Countdown timer.
+
+Continue button.
+
+========================================
+
+PIN VERIFICATION
+
+Create reusable widget.
+
+widgets/pin_input_widget.dart
+
+Four digit PIN
+
+Animated circles
+
+Error animation
+
+Forgot PIN
+
+If supported
+
+Face ID
+
+Fingerprint
+
+Use reusable
+
+widgets/biometric_auth_widget.dart
+
+========================================
+
+PAYMENT SCREEN
+
+deposit_payment_screen.dart
+
+Generate Flutterwave Virtual Account.
+
+Beautiful card.
+
+Show
+
+Bank Name
+
+Account Name
+
+Account Number
+
+Reference
+
+Copy button
+
+Share button
+
+15 minute countdown
+
+Animated progress
+
+Waiting for payment indicator
+
+Verification animation
+
+Expired state
+
+Generate New Account button
+
+========================================
+
+SUCCESS SCREEN
+
+deposit_success_screen.dart
+
+Premium success animation.
+
+Wallet credited.
+
+View Receipt
+
+Done
+
+========================================
+
+WITHDRAW FLOW
+
+withdraw_screen.dart
+
+Select currency.
+
+Search currency.
+
+Favorite currency.
+
+Enter amount.
+
+Show live conversion.
+
+Example
+
+Withdraw
+
+$400
+
+You'll receive
+
+₦648000
+
+Continue.
+
+PIN.
+
+Face ID.
+
+Fingerprint.
+
+========================================
+
+BANK SCREEN
+
+withdraw_bank_screen.dart
+
+Saved Banks
+
+Recent Banks
+
+Add New Bank
+
+Search Bank
+
+Favorite Bank
+
+Verify account name automatically.
+
+========================================
+
+WITHDRAW SUCCESS
+
+withdraw_success_screen.dart
+
+Premium animation.
+
+View receipt.
+
+Done.
+
+========================================
+
+TRANSACTIONS
+
+transaction_history_screen.dart
+
+Premium fintech list.
+
+Search bar at top.
+
+Filter button.
+
+Three filter groups.
+
+Category Filter
+
+All
+
+Deposit
+
+Withdrawal
+
+Gift Card Purchase
+
+Gift Card Sale
+
+Refund
+
+Bonus
+
+Rewards
+
+Adjustment
+
+Transfer
+
+Status Filter
+
+All
+
+Successful
+
+Pending
+
+Processing
+
+Failed
+
+Cancelled
+
+Reversed
+
+Time Filter
+
+Today
+
+Yesterday
+
+Last 7 Days
+
+Last 30 Days
+
+This Month
+
+Last Month
+
+This Year
+
+Custom Date
+
+Search should search
+
+Reference
+
+Card Name
+
+Transaction ID
+
+Amount
+
+========================================
+
+TRANSACTION DETAILS
+
+transaction_details_screen.dart
+
+Premium receipt.
+
+Include
+
+NobleCards Logo
+
+Receipt Number
+
+Reference Number
+
+Transaction ID
+
+Transaction Type
+
+Status
+
+User Name
+
+Wallet ID
+
+Currency Sent
+
+Currency Received
+
+Exchange Rate
+
+Amount Sent
+
+Amount Received
+
+Fees
+
+Previous Wallet Balance
+
+Current Wallet Balance
+
+Payment Method
+
+Bank Name
+
+Account Number
+
+Card Name
+
+Date
+
+Time
+
+Country
+
+Support Information
+
+Buttons
+
+Share Receipt
+
+Download Receipt
+
+Report Transaction
+
+========================================
+
+REPORT TRANSACTION
+
+report_transaction_screen.dart
+
+Reason dropdown
+
+Options
+
+Money Debited But Wallet Not Credited
+
+Withdrawal Not Received
+
+Wrong Amount
+
+Pending Too Long
+
+Duplicate Transaction
+
+Incorrect Exchange Rate
+
+Other
+
+Description field
+
+Upload Screenshot
+
+Submit Report
+
+Success Dialog
+
+========================================
+
+ANALYTICS
+
+analytics_screen.dart
+
+Premium charts.
+
+Income
+
+Expenses
+
+Deposits
+
+Withdrawals
+
+Gift Card Purchases
+
+Gift Card Sales
+
+Monthly
+
+Yearly
+
+Custom Range
+
+Animated charts.
+
+Beautiful statistic cards.
+
+========================================
+
+FAVORITE CURRENCIES
+
+favorite_currencies_screen.dart
+
+Search
+
+Favorites
+
+Recently Used
+
+All Currencies
+
+Tap star to favorite.
+
+========================================
+
+SEARCH
+
+Every searchable screen should include
+
+Animated search field
+
+Clear button
+
+Live filtering
+
+========================================
+
+EMPTY STATES
+
+Create reusable widget.
+
+No Transactions
+
+No Favorites
+
+No Search Result
+
+No Internet
+
+========================================
+
+ANIMATIONS
+
+Everything should feel premium.
+
+Page transitions
+
+Hero
+
+Fade
+
+Slide
+
+Scale
+
+Animated counters
+
+Loading animations
+
+Success animations
+
+========================================
+
+IMAGES
+
+Use beautiful fintech illustrations.
+
+Use high quality SVGs or Lottie animations where appropriate.
+
+Do not use low quality images.
+
+========================================
+
+CODE QUALITY
+
+Use clean architecture.
+
+Reusable widgets.
+
+Well commented code.
+
+Proper folder structure.
+
+Avoid duplicated code.
+
+Split large widgets into reusable components.
+
+Always tell me:
+
+1. File name.
+2. Folder.
+3. Whether it is a new file or existing file.
+4. Where I should paste the code.
+
+Build this Wallet module to production quality as if it will be released on the App Store and Google Play tomorrow.
+
+
+those analytics should also have a charts ohhh, and also put icons where u think icon should be and also make it to look like top fintech look like very beautiful and any other thing u think thats sopose to be there i did not add put it as well add them and anything u think i should run on terminal tell me 
