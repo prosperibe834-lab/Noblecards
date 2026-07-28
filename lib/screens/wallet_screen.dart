@@ -51,11 +51,14 @@ class WalletScreen extends StatelessWidget {
           ),
         ],
       ),
+
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // --- 1. Balance Card ---
             WalletBalanceCard(
               balance: 2350.00,
               onDeposit: () {
@@ -71,57 +74,91 @@ class WalletScreen extends StatelessWidget {
                 );
               },
             ),
+
             const SizedBox(height: AppSpacing.lg),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                WalletActionButton(
-                  icon: Boxicons.bx_plus,
-                  label: 'Deposit',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const DepositScreen()),
-                    );
-                  },
+
+            // --- 2. Quick Actions Container ---
+            Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: AppSpacing.sm,
+                horizontal: AppSpacing.xs,
+              ),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05),
                 ),
-                WalletActionButton(
-                  icon: Boxicons.bx_minus,
-                  label: 'Withdraw',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const WithdrawScreen()),
-                    );
-                  },
-                ),
-                WalletActionButton(
-                  icon: Boxicons.bx_receipt,
-                  label: 'History',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const TransactionHistoryScreen()),
-                    );
-                  },
-                ),
-                WalletActionButton(
-                  icon: Boxicons.bx_pie_chart_alt_2,
-                  label: 'Analytics',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AnalyticsScreen()),
-                    );
-                  },
-                ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  WalletActionButton(
+                    icon: Boxicons.bx_plus,
+                    label: 'Deposit',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const DepositScreen()),
+                      );
+                    },
+                  ),
+                  WalletActionButton(
+                    icon: Boxicons.bx_minus,
+                    label: 'Withdraw',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const WithdrawScreen()),
+                      );
+                    },
+                  ),
+                  WalletActionButton(
+                    icon: Boxicons.bx_receipt,
+                    label: 'History',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TransactionHistoryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  WalletActionButton(
+                    icon: Boxicons.bx_pie_chart_alt_2,
+                    label: 'Analytics',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AnalyticsScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
+
             const SizedBox(height: AppSpacing.lg),
+
+            // --- 3. Exchange Rate Card ---
             _buildExchangeRateCard(context, isDark),
+
             const SizedBox(height: AppSpacing.lg),
+
+            // --- 4. Recent Transactions Header ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   'Recent Transactions',
@@ -132,43 +169,107 @@ class WalletScreen extends StatelessWidget {
                     color: isDark ? AppColors.darkText : AppColors.lightText,
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
+                InkWell(
+                  onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const TransactionHistoryScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const TransactionHistoryScreen(),
+                      ),
                     );
                   },
-                  child: const Text('See All'),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'See All',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        Icon(
+                          Boxicons.bx_chevron_right,
+                          size: 18,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.xs),
-            WalletTransactionTile(
-              title: 'USD Wallet Deposit',
-              date: 'Today, 2:30 PM',
-              amount: 400.00,
-              isDeposit: true,
-              status: 'Successful',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TransactionDetailsScreen()),
-                );
-              },
-            ),
-            WalletTransactionTile(
-              title: 'Bank Withdrawal',
-              date: 'Yesterday, 10:15 AM',
-              amount: 150.00,
-              isDeposit: false,
-              status: 'Successful',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TransactionDetailsScreen()),
-                );
-              },
+
+            const SizedBox(height: AppSpacing.sm),
+
+            // --- 5. Grouped Transactions Surface ---
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: Column(
+                children: [
+                  WalletTransactionTile(
+                    title: 'USD Wallet Deposit',
+                    date: 'Today, 2:30 PM',
+                    amount: 400.00,
+                    isDeposit: true,
+                    status: 'Successful',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TransactionDetailsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  Divider(
+                    height: 1,
+                    thickness: 0.8,
+                    indent: 16,
+                    endIndent: 16,
+                    color: isDark ? Colors.white10 : Colors.black12,
+                  ),
+                  WalletTransactionTile(
+                    title: 'Bank Withdrawal',
+                    date: 'Yesterday, 10:15 AM',
+                    amount: 150.00,
+                    isDeposit: false,
+                    status: 'Successful',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TransactionDetailsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

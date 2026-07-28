@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i did wallet page"
+git commit -m "i did something in wallet screen"
 git push origin main
 
 

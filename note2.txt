@@ -1,636 +1,142 @@
-# REBUILD THE ANALYTICS SCREEN (CURRENT DESIGN IS TOO EMPTY)
-
-The current Analytics screen is too basic and looks like a school project. I don't want a simple pie chart sitting alone on the page.
-
-I want the Analytics page to look like a premium fintech app such as Revolut, Wise, Binance, Coinbase, Bybit, Monzo, Cash App or Chime.
-
-The Analytics page should tell the complete financial story of the user's NobleCards account.
-
-The page should feel alive with animations, beautiful cards, charts, gradients, statistics, insights, and useful information.
-
-DO NOT redesign it with only charts.
-
-It should have lots of useful contents.
-
-Use the theme colors I already provided.
-
-Do NOT hardcode colors.
-
-Use AppColors, AppSpacing, AppTheme and all my theme constants.
-
-If another complementary gradient or shade matches my theme, feel free to add it.
-
-Support both Light Mode and Dark Mode.
-
-Use smooth animations throughout.
-
-Use Boxicons for icons.
-
-Use reusable widgets.
-
-------------------------------------------------------------
-
-FILE
-
-screens/analytics_screen.dart
-
-------------------------------------------------------------
-
-PAGE STRUCTURE
-
-Custom AppBar
-
-Back Button
-
-Analytics
-
-Notification icon
-
-Export button (Future)
-
-------------------------------------------------------------
-
-1. WALLET SUMMARY CARD
-
-Large premium card
-
-Should display
-
-Current Wallet Balance
-
-Today's Profit
-
-This Month
-
-Total Deposits
-
-Total Withdrawals
-
-Total Gift Cards Bought
-
-Total Gift Cards Sold
-
-Total Successful Transactions
-
-Total Pending Transactions
-
-Total Failed Transactions
-
-Animated numbers
-
-Beautiful gradient background
-
-------------------------------------------------------------
-
-2. DATE FILTER
-
-Horizontal chips
-
-Today
-
-7 Days
-
-30 Days
-
-90 Days
-
-6 Months
-
-1 Year
-
-Custom Range
-
-Selecting any chip should animate and update every chart.
-
-------------------------------------------------------------
-
-3. ANALYTICS OVERVIEW
-
-Premium statistic cards
-
-Income
-
-Expenses
-
-Money In
-
-Money Out
-
-Net Profit
-
-Trading Volume
-
-Average Trade
-
-Biggest Trade
-
-Fastest Transaction
-
-Success Rate %
-
-Favorite Card Brand
-
-Favorite Country
-
-Favorite Currency
-
-Average Daily Trades
-
-Average Weekly Trades
-
-Average Monthly Trades
-
-Each card should have
-
-Icon
-
-Value
-
-Percentage increase or decrease
-
-Mini trend graph
-
-Beautiful colors
-
-------------------------------------------------------------
-
-4. INCOME VS EXPENSES
-
-Beautiful smooth line chart
-
-Not boring.
-
-Should have
-
-Deposit
-
-Withdrawal
-
-Gift Card Purchase
-
-Gift Card Sale
-
-Monthly comparison
-
-Weekly comparison
-
-Daily comparison
-
-Animated loading
-
-Touch tooltip
-
-------------------------------------------------------------
-
-5. CASH FLOW
-
-Beautiful bar chart
-
-Money In
-
-Money Out
-
-Net Cash Flow
-
-Green for incoming
-
-Red for outgoing
-
-------------------------------------------------------------
-
-6. GIFT CARD PERFORMANCE
-
-Horizontal cards
-
-Most Bought Cards
-
-Most Sold Cards
-
-Highest Profit Cards
-
-Lowest Profit Cards
-
-Trending Cards
-
-Recently Traded Cards
-
-Each card should show
-
-Gift Card Logo
-
-Card Name
-
-Number of trades
-
-Total amount
-
-Profit generated
-
-Average rate
-
-------------------------------------------------------------
-
-7. CARD CATEGORY ANALYTICS
-
-Beautiful donut chart
-
-Gaming
-
-Shopping
-
-Streaming
-
-Entertainment
-
-Travel
-
-Food
-
-Technology
-
-Finance
-
-Lifestyle
-
-Show percentages
-
-------------------------------------------------------------
-
-8. COUNTRY ANALYTICS
-
-Beautiful world section
-
-Top Trading Countries
-
-USA
-
-UK
-
-Canada
-
-Europe
-
-Australia
-
-Nigeria
-
-Show
-
-Flag
-
-Trade Volume
-
-Profit
-
-Transactions
-
-------------------------------------------------------------
-
-9. CURRENCY ANALYTICS
-
-Most used currencies
-
-USD
-
-NGN
-
-GBP
-
-EUR
-
-CAD
-
-AUD
-
-Show
-
-Transactions
-
-Volume
-
-Profit
-
-Favorite currency badge
-
-------------------------------------------------------------
-
-10. TRANSACTION STATUS
-
-Beautiful progress bars
-
-Successful
-
-Pending
-
-Failed
-
-Cancelled
-
-Refunded
-
-Processing
-
-Show percentages
-
-------------------------------------------------------------
-
-11. MONTHLY PERFORMANCE
-
-Scrollable cards
-
-January
-
-February
-
-March
-
-...
-
-December
-
-Each month shows
-
-Deposit
-
-Withdrawal
-
-Profit
-
-Loss
-
-Cards Bought
-
-Cards Sold
-
-Growth %
-
-------------------------------------------------------------
-
-12. WEEKLY ACTIVITY
-
-Monday
-
-Tuesday
-
-Wednesday
-
-Thursday
-
-Friday
-
-Saturday
-
-Sunday
-
-Animated bar chart
-
-------------------------------------------------------------
-
-13. DAILY ACTIVITY
-
-Morning
-
-Afternoon
-
-Evening
-
-Night
-
-Show when user trades the most.
-
-------------------------------------------------------------
-
-14. TRADING INSIGHTS
-
-Generate smart insights
-
-Examples
-
-"You traded 18% more than last month."
-
-"You sold more Amazon cards this month."
-
-"Apple Gift Cards generated your highest profit."
-
-"You traded mostly in USD."
-
-"You made 85 successful transactions."
-
-"Your average transaction is \$250."
-
-"You usually trade between 6PM and 9PM."
-
-"Your withdrawal success rate is 98%."
-
-Use beautiful insight cards.
-
-------------------------------------------------------------
-
-15. ACHIEVEMENTS
-
-Trading Milestones
-
-First Trade
-
-100 Trades
-
-500 Trades
-
-1000 Trades
-
-Highest Monthly Volume
-
-Highest Profit
-
-Loyal Trader
-
-Verified Trader
-
-Premium Trader
-
-Locked achievements
-
-Unlocked achievements
-
-------------------------------------------------------------
-
-16. QUICK ACTIONS
-
-Buttons
-
-Deposit
-
-Withdraw
-
-Trade Gift Cards
-
-View Transactions
-
-Share Analytics
-
-------------------------------------------------------------
-
-17. RECENT PERFORMANCE
-
-Last 10 transactions
-
-Show
-
-Card
-
-Amount
-
-Status
-
-Profit
-
-Date
-
-Arrow
-
-Click opens transaction details.
-
-------------------------------------------------------------
-
-18. FINANCIAL HEALTH SCORE
-
-Generate a score
-
-Example
-
-92 / 100
-
-Excellent
-
-Circular progress indicator
-
-Explain why
-
-------------------------------------------------------------
-
-19. GOALS
-
-Monthly Trading Goal
-
-Deposit Goal
-
-Withdrawal Goal
-
-Profit Goal
-
-Animated progress bars
-
-------------------------------------------------------------
-
-20. EXPORT
-
-Buttons
-
-Export PDF
-
-Export CSV
-
-Share Analytics
-
-Future implementation only.
-
-------------------------------------------------------------
-
-ANIMATIONS
-
-Every section should animate while scrolling.
-
-Cards should fade in.
-
-Charts should animate.
-
-Numbers should count from zero.
-
-Progress bars should animate.
-
-Page transitions should be premium.
-
-------------------------------------------------------------
-
-
-------------------------------------------------------------
-
-LOADING STATE
-
-Create beautiful shimmer placeholders.
-
-------------------------------------------------------------
-
-COLORS
-
-Use my AppColors.
-
-Do not hardcode colors.
-
-Complement my palette with premium gradients where appropriate.
-
-Green for profits.
-
-Red for losses.
-
-Blue/Purple for analytics.
-
-Orange for warnings.
-
-Use subtle glassmorphism where appropriate.
-
-------------------------------------------------------------
-
-ICONS
-
-Use ONLY Boxicons.
-
-------------------------------------------------------------
-
-CODE STRUCTURE
-
-Split everything into reusable widgets.
-
-Example
-
-analytics_summary_card.dart
-
-analytics_stat_card.dart
-
-analytics_chart_card.dart
-
-analytics_insight_card.dart
-
-analytics_goal_card.dart
-
-analytics_achievement_card.dart
-
-analytics_transaction_tile.dart
-
-analytics_progress_card.dart
-
-analytics_filter_chip.dart
-
-analytics_line_chart.dart
-
-analytics_bar_chart.dart
-
-analytics_pie_chart.dart
-
-analytics_donut_chart.dart
-
-analytics_empty_state.dart
-
-analytics_loading.dart
-
-------------------------------------------------------------
-
-IMPORTANT
-
-Do NOT build a boring analytics page.
-
-I want users to spend time exploring their statistics.
-
-The page should look like a premium banking app combined with a professional investment dashboard.
-
-Every section should feel polished, luxurious, informative, interactive, and worthy of a production fintech application.
+import 'package:flutter/material.dart';
+import 'package:boxicons/boxicons.dart';
+import '../theme/app_theme.dart';
+import '../theme/app_radius.dart';
+import 'animated_counter.dart';
+
+import '../theme/app_colors.dart';
+
+import '../theme/app_spacing.dart';
+
+class WalletBalanceCard extends StatefulWidget {
+  final double balance;
+  final VoidCallback onDeposit;
+  final VoidCallback onWithdraw;
+
+  const WalletBalanceCard({
+    super.key,
+    required this.balance,
+    required this.onDeposit,
+    required this.onWithdraw,
+  });
+
+  @override
+  State<WalletBalanceCard> createState() => _WalletBalanceCardState();
+}
+
+class _WalletBalanceCardState extends State<WalletBalanceCard> {
+  bool _hideBalance = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            AppColors.primaryDark,
+            AppColors.primary,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Available Balance',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white70,
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  _hideBalance ? Boxicons.bx_hide : Boxicons.bx_show,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _hideBalance = !_hideBalance;
+                  });
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          _hideBalance
+              ? const Text(
+                  '••••••••',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                )
+              : AnimatedCounter(
+                  value: widget.balance,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: widget.onDeposit,
+                  icon: const Icon(Boxicons.bx_plus_circle, size: 18),
+                  label: const Text('Deposit'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: AppColors.primaryDark,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: widget.onWithdraw,
+                  icon: const Icon(Boxicons.bx_down_arrow_circle, size: 18),
+                  label: const Text('Withdraw'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
