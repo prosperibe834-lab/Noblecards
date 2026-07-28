@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import '../theme/app_theme.dart';
 import '../theme/app_radius.dart';
 import '../widgets/wallet_balance_card.dart';
 import '../widgets/wallet_action_button.dart';
@@ -11,7 +10,6 @@ import 'transaction_history_screen.dart';
 import 'transaction_details_screen.dart';
 import 'analytics_screen.dart';
 import 'favorite_currencies_screen.dart';
-
 import '../theme/app_colors.dart';
 
 import '../theme/app_spacing.dart';

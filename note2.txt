@@ -1,567 +1,166 @@
-# NobleCards Wallet Module UI/UX Design Instructions
+# REBUILD THE ANALYTICS SCREEN (CURRENT DESIGN IS TOO EMPTY)
 
-This Wallet module is for the NobleCards Flutter application.
+The current Analytics screen is too basic and looks like a school project. I don't want a simple pie chart sitting alone on the page.
 
-I want you to build it to the quality of the world's best fintech apps such as Revolut, Wise, Monzo, Cash App, Chime, Binance, Coinbase, Bybit, PalmPay and Opay.
+I want the Analytics page to look like a premium fintech app such as Revolut, Wise, Binance, Coinbase, Bybit, Monzo, Cash App or Chime.
 
-The design should feel premium, clean, modern, smooth, minimal and luxurious.
+The Analytics page should tell the complete financial story of the user's NobleCards account.
 
-DO NOT use Bottom Navigation because I already have one.
+The page should feel alive with animations, beautiful cards, charts, gradients, statistics, insights, and useful information.
 
-DO NOT use Emoji icons.
+DO NOT redesign it with only charts.
 
-Use ONLY Boxicons throughout the entire Wallet module.
+It should have lots of useful contents.
 
-Everything must support both Light Mode and Dark Mode using the existing Theme files I already have.
+Use the theme colors I already provided.
 
-Use the spacing, border radius, typography, colors, shadows, animations and theme constants from my existing theme files instead of hardcoding values.
+Do NOT hardcode colors.
 
-For gradients, if you believe a subtle gradient will improve the UI while keeping it premium, feel free to use it.
+Use AppColors, AppSpacing, AppTheme and all my theme constants.
 
-Use reusable widgets whenever possible.
+If another complementary gradient or shade matches my theme, feel free to add it.
 
-Every page must have beautiful page transitions.
+Support both Light Mode and Dark Mode.
 
-Use Hero animations where appropriate.
+Use smooth animations throughout.
 
-Use smooth fade animations, slide animations and scale animations.
+Use Boxicons for icons.
 
-Every button should have ripple animation.
+Use reusable widgets.
 
-Cards should have subtle elevation.
+------------------------------------------------------------
 
-Lists should animate while loading.
+FILE
 
-Use shimmer loading placeholders.
+screens/analytics_screen.dart
 
-Every screen should be responsive.
+------------------------------------------------------------
 
-Every code you send me MUST tell me:
-
-• Which file to create
-• Which folder to create it inside
-• Where to paste the code
-• If an existing file should be modified
-
-Never leave me guessing.
-
-========================================
-
-PROJECT STRUCTURE
-
-lib/
-
-screens/
-
-wallet_screen.dart
-
-deposit_screen.dart
-
-deposit_summary_screen.dart
-
-deposit_payment_screen.dart
-
-deposit_success_screen.dart
-
-withdraw_screen.dart
-
-withdraw_summary_screen.dart
-
-withdraw_bank_screen.dart
-
-withdraw_success_screen.dart
-
-currency_picker_screen.dart
-
-transaction_history_screen.dart
-
-transaction_details_screen.dart
-
-report_transaction_screen.dart
-
-analytics_screen.dart
-
-favorite_currencies_screen.dart
-
-widgets/
-
-wallet_balance_card.dart
-
-wallet_action_button.dart
-
-wallet_stat_card.dart
-
-wallet_transaction_tile.dart
-
-wallet_filter_chip.dart
-
-wallet_search_bar.dart
-
-currency_tile.dart
-
-favorite_currency_tile.dart
-
-pin_input_widget.dart
-
-biometric_auth_widget.dart
-
-exchange_rate_card.dart
-
-summary_card.dart
-
-transaction_receipt_card.dart
-
-empty_state_widget.dart
-
-loading_shimmer.dart
-
-network_error_widget.dart
-
-network_banner.dart
-
-custom_loader.dart
-
-custom_dialog.dart
-
-custom_button.dart
-
-custom_app_bar.dart
-
-custom_back_button.dart
-
-section_header.dart
-
-animated_card.dart
-
-animated_counter.dart
-
-success_animation.dart
-
-search_textfield.dart
-
-filter_bottom_sheet.dart
-
-========================================
-
-PRELOADER
-
-Create a premium splash loader.
-
-Use my logo.
-
-Logo location:
-
-assets/logos/LightmodeLogo.png
-
-assets/logos/DarkmodeLogo.png
-
-Use the correct logo depending on the current theme.
-
-The loader should feel like a premium fintech app.
-
-Ideas:
-
-Fade animation
-
-Scale animation
-
-Glow animation
-
-Soft gradient background
-
-Smooth transition into Wallet screen
-
-Create it as:
-
-widgets/custom_loader.dart
-
-========================================
-
-NO INTERNET SCREEN
-
-Create a reusable widget.
-
-widgets/network_error_widget.dart
-
-It should automatically display whenever internet connection is lost.
-
-Design:
-
-Nice illustration
-
-Title
-
-No Internet Connection
-
-Description
-
-Please check your internet connection and try again.
-
-Buttons
-
-Retry
-
-Refresh
-
-Retry should attempt loading again.
-
-Refresh should reload the screen.
-
-Animate the appearance.
-
-========================================
-
-LOADING STATES
-
-Create reusable shimmer loading widgets.
-
-Every page should have loading placeholders.
-
-Never show blank white screens.
-
-========================================
-
-BACK BUTTON
-
-Every page except Wallet Home should have
+PAGE STRUCTURE
 
 Custom AppBar
 
-Back Arrow
-
-Use Boxicons back icon
-
-Tapping it returns to previous screen.
-
-Create reusable
-
-widgets/custom_back_button.dart
-
-========================================
-
-WALLET HOME
-
-File:
-
-wallet_screen.dart
-
-This is the first Wallet page.
-
-Design it like a premium fintech wallet.
-
-Sections
-
-1.
-
-Header
-
-Wallet
-
-Notification icon
-
-Transaction history shortcut
-
-2.
-
-Wallet Balance Card
-
-Large premium balance card.
-
-Default wallet currency is USD.
-
-Example
-
-Available Balance
-
-$2,350.00
-
-Button to hide/show balance.
-
-Animated counting when balance changes.
-
-3.
-
-Quick Actions
-
-Deposit
-
-Withdraw
-
-Transactions
+Back Button
 
 Analytics
 
-Each one opens its own screen.
+Notification icon
 
-4.
+Export button (Future)
 
-Exchange Rate Card
+------------------------------------------------------------
 
-Display
+1. WALLET SUMMARY CARD
 
-1 USD = ₦xxxx.xx
+Large premium card
 
-Live Rate
+Should display
 
-Last Updated
+Current Wallet Balance
 
-Refresh Rate button
+Today's Profit
 
-Animated refresh
+This Month
 
-5.
+Total Deposits
 
-Favorite Currencies
+Total Withdrawals
 
-Horizontal list
+Total Gift Cards Bought
 
-Starred currencies
+Total Gift Cards Sold
 
-Search shortcut
+Total Successful Transactions
 
-Manage button
+Total Pending Transactions
 
-Opens
+Total Failed Transactions
 
-favorite_currencies_screen.dart
+Animated numbers
 
-6.
+Beautiful gradient background
 
-Recent Transactions
+------------------------------------------------------------
 
-Latest five
+2. DATE FILTER
 
-See All button
+Horizontal chips
 
-Opens
+Today
 
-transaction_history_screen.dart
+7 Days
 
-Transaction Tile
+30 Days
 
-Card Name
+90 Days
 
-Type
+6 Months
 
-Amount
+1 Year
 
-Status
+Custom Range
 
-Date
+Selecting any chip should animate and update every chart.
 
-Arrow
+------------------------------------------------------------
 
-Click opens
+3. ANALYTICS OVERVIEW
 
-transaction_details_screen.dart
+Premium statistic cards
 
-========================================
+Income
 
-DEPOSIT FLOW
+Expenses
 
-deposit_screen.dart
+Money In
 
-User selects currency.
+Money Out
 
-Search currencies.
+Net Profit
 
-Favorite currencies appear first.
+Trading Volume
 
-Recently used currencies appear.
+Average Trade
 
-Currency tile should allow
+Biggest Trade
 
-Favorite
+Fastest Transaction
 
-Remove Favorite
+Success Rate %
 
-Search
+Favorite Card Brand
 
-Popular currencies section.
+Favorite Country
 
-After selecting currency
+Favorite Currency
 
-User enters amount.
+Average Daily Trades
 
-App calculates exchange automatically.
+Average Weekly Trades
 
-Example
+Average Monthly Trades
 
-Deposit
+Each card should have
 
-$400
+Icon
 
-Current Rate
+Value
 
-1 USD = ₦1620
+Percentage increase or decrease
 
-You Pay
+Mini trend graph
 
-₦648000
+Beautiful colors
 
-Rate locked for 15 minutes.
+------------------------------------------------------------
 
-Countdown timer.
+4. INCOME VS EXPENSES
 
-Continue button.
+Beautiful smooth line chart
 
-========================================
+Not boring.
 
-PIN VERIFICATION
-
-Create reusable widget.
-
-widgets/pin_input_widget.dart
-
-Four digit PIN
-
-Animated circles
-
-Error animation
-
-Forgot PIN
-
-If supported
-
-Face ID
-
-Fingerprint
-
-Use reusable
-
-widgets/biometric_auth_widget.dart
-
-========================================
-
-PAYMENT SCREEN
-
-deposit_payment_screen.dart
-
-Generate Flutterwave Virtual Account.
-
-Beautiful card.
-
-Show
-
-Bank Name
-
-Account Name
-
-Account Number
-
-Reference
-
-Copy button
-
-Share button
-
-15 minute countdown
-
-Animated progress
-
-Waiting for payment indicator
-
-Verification animation
-
-Expired state
-
-Generate New Account button
-
-========================================
-
-SUCCESS SCREEN
-
-deposit_success_screen.dart
-
-Premium success animation.
-
-Wallet credited.
-
-View Receipt
-
-Done
-
-========================================
-
-WITHDRAW FLOW
-
-withdraw_screen.dart
-
-Select currency.
-
-Search currency.
-
-Favorite currency.
-
-Enter amount.
-
-Show live conversion.
-
-Example
-
-Withdraw
-
-$400
-
-You'll receive
-
-₦648000
-
-Continue.
-
-PIN.
-
-Face ID.
-
-Fingerprint.
-
-========================================
-
-BANK SCREEN
-
-withdraw_bank_screen.dart
-
-Saved Banks
-
-Recent Banks
-
-Add New Bank
-
-Search Bank
-
-Favorite Bank
-
-Verify account name automatically.
-
-========================================
-
-WITHDRAW SUCCESS
-
-withdraw_success_screen.dart
-
-Premium animation.
-
-View receipt.
-
-Done.
-
-========================================
-
-TRANSACTIONS
-
-transaction_history_screen.dart
-
-Premium fintech list.
-
-Search bar at top.
-
-Filter button.
-
-Three filter groups.
-
-Category Filter
-
-All
+Should have
 
 Deposit
 
@@ -571,286 +170,467 @@ Gift Card Purchase
 
 Gift Card Sale
 
-Refund
+Monthly comparison
 
-Bonus
+Weekly comparison
 
-Rewards
+Daily comparison
 
-Adjustment
+Animated loading
 
-Transfer
+Touch tooltip
 
-Status Filter
+------------------------------------------------------------
 
-All
+5. CASH FLOW
+
+Beautiful bar chart
+
+Money In
+
+Money Out
+
+Net Cash Flow
+
+Green for incoming
+
+Red for outgoing
+
+------------------------------------------------------------
+
+6. GIFT CARD PERFORMANCE
+
+Horizontal cards
+
+Most Bought Cards
+
+Most Sold Cards
+
+Highest Profit Cards
+
+Lowest Profit Cards
+
+Trending Cards
+
+Recently Traded Cards
+
+Each card should show
+
+Gift Card Logo
+
+Card Name
+
+Number of trades
+
+Total amount
+
+Profit generated
+
+Average rate
+
+------------------------------------------------------------
+
+7. CARD CATEGORY ANALYTICS
+
+Beautiful donut chart
+
+Gaming
+
+Shopping
+
+Streaming
+
+Entertainment
+
+Travel
+
+Food
+
+Technology
+
+Finance
+
+Lifestyle
+
+Show percentages
+
+------------------------------------------------------------
+
+8. COUNTRY ANALYTICS
+
+Beautiful world section
+
+Top Trading Countries
+
+USA
+
+UK
+
+Canada
+
+Europe
+
+Australia
+
+Nigeria
+
+Show
+
+Flag
+
+Trade Volume
+
+Profit
+
+Transactions
+
+------------------------------------------------------------
+
+9. CURRENCY ANALYTICS
+
+Most used currencies
+
+USD
+
+NGN
+
+GBP
+
+EUR
+
+CAD
+
+AUD
+
+Show
+
+Transactions
+
+Volume
+
+Profit
+
+Favorite currency badge
+
+------------------------------------------------------------
+
+10. TRANSACTION STATUS
+
+Beautiful progress bars
 
 Successful
 
 Pending
 
-Processing
-
 Failed
 
 Cancelled
 
-Reversed
+Refunded
 
-Time Filter
+Processing
 
-Today
+Show percentages
 
-Yesterday
+------------------------------------------------------------
 
-Last 7 Days
+11. MONTHLY PERFORMANCE
 
-Last 30 Days
+Scrollable cards
 
-This Month
+January
 
-Last Month
+February
 
-This Year
+March
 
-Custom Date
+...
 
-Search should search
+December
 
-Reference
+Each month shows
 
-Card Name
+Deposit
 
-Transaction ID
+Withdrawal
 
-Amount
+Profit
 
-========================================
+Loss
 
-TRANSACTION DETAILS
+Cards Bought
 
-transaction_details_screen.dart
+Cards Sold
 
-Premium receipt.
+Growth %
 
-Include
+------------------------------------------------------------
 
-NobleCards Logo
+12. WEEKLY ACTIVITY
 
-Receipt Number
+Monday
 
-Reference Number
+Tuesday
 
-Transaction ID
+Wednesday
 
-Transaction Type
+Thursday
 
-Status
+Friday
 
-User Name
+Saturday
 
-Wallet ID
+Sunday
 
-Currency Sent
+Animated bar chart
 
-Currency Received
+------------------------------------------------------------
 
-Exchange Rate
+13. DAILY ACTIVITY
 
-Amount Sent
+Morning
 
-Amount Received
+Afternoon
 
-Fees
+Evening
 
-Previous Wallet Balance
+Night
 
-Current Wallet Balance
+Show when user trades the most.
 
-Payment Method
+------------------------------------------------------------
 
-Bank Name
+14. TRADING INSIGHTS
 
-Account Number
+Generate smart insights
 
-Card Name
+Examples
 
-Date
+"You traded 18% more than last month."
 
-Time
+"You sold more Amazon cards this month."
 
-Country
+"Apple Gift Cards generated your highest profit."
 
-Support Information
+"You traded mostly in USD."
+
+"You made 85 successful transactions."
+
+"Your average transaction is \$250."
+
+"You usually trade between 6PM and 9PM."
+
+"Your withdrawal success rate is 98%."
+
+Use beautiful insight cards.
+
+------------------------------------------------------------
+
+15. ACHIEVEMENTS
+
+Trading Milestones
+
+First Trade
+
+100 Trades
+
+500 Trades
+
+1000 Trades
+
+Highest Monthly Volume
+
+Highest Profit
+
+Loyal Trader
+
+Verified Trader
+
+Premium Trader
+
+Locked achievements
+
+Unlocked achievements
+
+------------------------------------------------------------
+
+16. QUICK ACTIONS
 
 Buttons
 
-Share Receipt
+Deposit
 
-Download Receipt
+Withdraw
 
-Report Transaction
+Trade Gift Cards
 
-========================================
+View Transactions
 
-REPORT TRANSACTION
+Share Analytics
 
-report_transaction_screen.dart
+------------------------------------------------------------
 
-Reason dropdown
+17. RECENT PERFORMANCE
 
-Options
+Last 10 transactions
 
-Money Debited But Wallet Not Credited
+Show
 
-Withdrawal Not Received
+Card
 
-Wrong Amount
+Amount
 
-Pending Too Long
+Status
 
-Duplicate Transaction
+Profit
 
-Incorrect Exchange Rate
+Date
 
-Other
+Arrow
 
-Description field
+Click opens transaction details.
 
-Upload Screenshot
+------------------------------------------------------------
 
-Submit Report
+18. FINANCIAL HEALTH SCORE
 
-Success Dialog
+Generate a score
 
-========================================
+Example
 
-ANALYTICS
+92 / 100
 
-analytics_screen.dart
+Excellent
 
-Premium charts.
+Circular progress indicator
 
-Income
+Explain why
 
-Expenses
+------------------------------------------------------------
 
-Deposits
+19. GOALS
 
-Withdrawals
+Monthly Trading Goal
 
-Gift Card Purchases
+Deposit Goal
 
-Gift Card Sales
+Withdrawal Goal
 
-Monthly
+Profit Goal
 
-Yearly
+Animated progress bars
 
-Custom Range
+------------------------------------------------------------
 
-Animated charts.
+20. EXPORT
 
-Beautiful statistic cards.
+Buttons
 
-========================================
+Export PDF
 
-FAVORITE CURRENCIES
+Export CSV
 
-favorite_currencies_screen.dart
+Share Analytics
 
-Search
+Future implementation only.
 
-Favorites
-
-Recently Used
-
-All Currencies
-
-Tap star to favorite.
-
-========================================
-
-SEARCH
-
-Every searchable screen should include
-
-Animated search field
-
-Clear button
-
-Live filtering
-
-========================================
-
-EMPTY STATES
-
-Create reusable widget.
-
-No Transactions
-
-No Favorites
-
-No Search Result
-
-No Internet
-
-========================================
+------------------------------------------------------------
 
 ANIMATIONS
 
-Everything should feel premium.
+Every section should animate while scrolling.
 
-Page transitions
+Cards should fade in.
 
-Hero
+Charts should animate.
 
-Fade
+Numbers should count from zero.
 
-Slide
+Progress bars should animate.
 
-Scale
+Page transitions should be premium.
 
-Animated counters
-
-Loading animations
-
-Success animations
-
-========================================
-
-IMAGES
-
-Use beautiful fintech illustrations.
-
-Use high quality SVGs or Lottie animations where appropriate.
-
-Do not use low quality images.
-
-========================================
-
-CODE QUALITY
-
-Use clean architecture.
-
-Reusable widgets.
-
-Well commented code.
-
-Proper folder structure.
-
-Avoid duplicated code.
-
-Split large widgets into reusable components.
-
-Always tell me:
-
-1. File name.
-2. Folder.
-3. Whether it is a new file or existing file.
-4. Where I should paste the code.
-
-Build this Wallet module to production quality as if it will be released on the App Store and Google Play tomorrow.
+------------------------------------------------------------
 
 
-those analytics should also have a charts ohhh, and also put icons where u think icon should be and also make it to look like top fintech look like very beautiful and any other thing u think thats sopose to be there i did not add put it as well add them and anything u think i should run on terminal tell me 
+------------------------------------------------------------
+
+LOADING STATE
+
+Create beautiful shimmer placeholders.
+
+------------------------------------------------------------
+
+COLORS
+
+Use my AppColors.
+
+Do not hardcode colors.
+
+Complement my palette with premium gradients where appropriate.
+
+Green for profits.
+
+Red for losses.
+
+Blue/Purple for analytics.
+
+Orange for warnings.
+
+Use subtle glassmorphism where appropriate.
+
+------------------------------------------------------------
+
+ICONS
+
+Use ONLY Boxicons.
+
+------------------------------------------------------------
+
+CODE STRUCTURE
+
+Split everything into reusable widgets.
+
+Example
+
+analytics_summary_card.dart
+
+analytics_stat_card.dart
+
+analytics_chart_card.dart
+
+analytics_insight_card.dart
+
+analytics_goal_card.dart
+
+analytics_achievement_card.dart
+
+analytics_transaction_tile.dart
+
+analytics_progress_card.dart
+
+analytics_filter_chip.dart
+
+analytics_line_chart.dart
+
+analytics_bar_chart.dart
+
+analytics_pie_chart.dart
+
+analytics_donut_chart.dart
+
+analytics_empty_state.dart
+
+analytics_loading.dart
+
+------------------------------------------------------------
+
+IMPORTANT
+
+Do NOT build a boring analytics page.
+
+I want users to spend time exploring their statistics.
+
+The page should look like a premium banking app combined with a professional investment dashboard.
+
+Every section should feel polished, luxurious, informative, interactive, and worthy of a production fintech application.
