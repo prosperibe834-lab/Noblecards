@@ -53,7 +53,10 @@ class PaymentMethodScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Payment Method", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Payment Method",
+          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -90,7 +93,9 @@ class PaymentMethodScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor.withOpacity(0.12),
+                              color: Theme.of(
+                                context,
+                              ).primaryColor.withOpacity(0.12),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -116,7 +121,10 @@ class PaymentMethodScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 6),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: Colors.green.withOpacity(0.15),
                                         borderRadius: BorderRadius.circular(6),
@@ -130,7 +138,7 @@ class PaymentMethodScreen extends StatelessWidget {
                                           color: Colors.green,
                                         ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
@@ -139,7 +147,9 @@ class PaymentMethodScreen extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontSize: 11,
-                                    color: isDark ? Colors.white60 : Colors.black54,
+                                    color: isDark
+                                        ? Colors.white60
+                                        : Colors.black54,
                                   ),
                                 ),
                               ],

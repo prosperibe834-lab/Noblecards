@@ -9,9 +9,26 @@ class AnalyticsInsightSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final insights = [
-      {'title': 'Trading Momentum', 'body': 'You traded 18% more than last month. Keep up the high activity!', 'icon': Boxicons.bx_rocket, 'color': AppColors.primary},
-      {'title': 'Top Profit Driver', 'body': 'Apple Gift Cards generated your highest profit margin (+14.2%).', 'icon': Boxicons.bx_trophy, 'color': AppColors.success},
-      {'title': 'Peak Hours', 'body': 'You trade mostly between 6:00 PM and 9:00 PM (WAT).', 'icon': Boxicons.bx_time_five, 'color': AppColors.info},
+      {
+        'title': 'Trading Momentum',
+        'body':
+            'You traded 18% more than last month. Keep up the high activity!',
+        'icon': Boxicons.bx_rocket,
+        'color': AppColors.primary,
+      },
+      {
+        'title': 'Top Profit Driver',
+        'body':
+            'Apple Gift Cards generated your highest profit margin (+14.2%).',
+        'icon': Boxicons.bx_trophy,
+        'color': AppColors.success,
+      },
+      {
+        'title': 'Peak Hours',
+        'body': 'You trade mostly between 6:00 PM and 9:00 PM (WAT).',
+        'icon': Boxicons.bx_time_five,
+        'color': AppColors.info,
+      },
     ];
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -36,7 +53,11 @@ class AnalyticsInsightSection extends StatelessWidget {
                   color: (insight['color'] as Color).withOpacity(0.12),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(insight['icon'] as IconData, color: insight['color'] as Color, size: 20),
+                child: Icon(
+                  insight['icon'] as IconData,
+                  color: insight['color'] as Color,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AppSpacing.m),
               Expanded(
@@ -45,7 +66,10 @@ class AnalyticsInsightSection extends StatelessWidget {
                   children: [
                     Text(
                       insight['title'].toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -54,7 +78,7 @@ class AnalyticsInsightSection extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         );

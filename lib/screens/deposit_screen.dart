@@ -6,6 +6,8 @@ import '../widgets/deposit_step_indicator.dart';
 import 'currency_selector_screen.dart';
 import 'deposit_payment_screen.dart';
 
+// Import your app routes file if applicable
+// import '../routes/app_routes.dart';
 class DepositScreen extends StatefulWidget {
   const DepositScreen({super.key});
 
@@ -18,7 +20,9 @@ class _DepositScreenState extends State<DepositScreen> {
   String _selectedCurrencyCode = "NGN";
   String _selectedFlag = "🇳🇬";
   double _exchangeRate = 1640.00; // 1 USD = 1640 NGN
-  final TextEditingController _amountController = TextEditingController(text: "656000");
+  final TextEditingController _amountController = TextEditingController(
+    text: "656000",
+  );
 
   final List<Map<String, String>> _favorites = [
     {"code": "NGN", "flag": "🇳🇬"},
@@ -28,7 +32,8 @@ class _DepositScreenState extends State<DepositScreen> {
   ];
 
   double get _enteredAmount => double.tryParse(_amountController.text) ?? 0.0;
-  double get _calculatedUsd => _enteredAmount > 0 ? _enteredAmount / _exchangeRate : 0.0;
+  double get _calculatedUsd =>
+      _enteredAmount > 0 ? _enteredAmount / _exchangeRate : 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,10 @@ class _DepositScreenState extends State<DepositScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Deposit Funds", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Deposit Funds",
+          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
           icon: const Icon(Boxicons.bx_arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -75,7 +83,7 @@ class _DepositScreenState extends State<DepositScreen> {
                     color: primaryColor.withOpacity(0.3),
                     blurRadius: 16,
                     offset: const Offset(0, 8),
-                  )
+                  ),
                 ],
               ),
               child: Column(
@@ -86,16 +94,24 @@ class _DepositScreenState extends State<DepositScreen> {
                     children: [
                       const Text(
                         "USD Wallet Balance",
-                        style: TextStyle(fontFamily: 'Poppins', color: Colors.white70, fontSize: 13),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Colors.white70,
+                          fontSize: 13,
+                        ),
                       ),
                       IconButton(
                         icon: Icon(
-                          _isBalanceVisible ? Boxicons.bx_show : Boxicons.bx_hide,
+                          _isBalanceVisible
+                              ? Boxicons.bx_show
+                              : Boxicons.bx_hide,
                           color: Colors.white,
                           size: 20,
                         ),
-                        onPressed: () => setState(() => _isBalanceVisible = !_isBalanceVisible),
-                      )
+                        onPressed: () => setState(
+                          () => _isBalanceVisible = !_isBalanceVisible,
+                        ),
+                      ),
                     ],
                   ),
                   Text(
@@ -117,15 +133,39 @@ class _DepositScreenState extends State<DepositScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Select Currency",
-                  style: TextStyle(fontFamily: 'Poppins', fontSize: 15, fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    const Text(
+                      "Select Currency",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      icon: const Icon(
+                        Boxicons.bx_cog,
+                        size: 18,
+                        color: Colors.grey,
+                      ),
+                      tooltip: "Manage Favourites",
+                      onPressed: () {
+                        // Make sure AppRoutes is imported or replace with route string
+                        Navigator.pushNamed(context, '/favourite-currencies');
+                      },
+                    ),
+                  ],
                 ),
                 TextButton.icon(
                   onPressed: () async {
                     final res = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const CurrencySelectorScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const CurrencySelectorScreen(),
+                      ),
                     );
                     if (res != null) {
                       setState(() {
@@ -135,7 +175,10 @@ class _DepositScreenState extends State<DepositScreen> {
                     }
                   },
                   icon: const Icon(Boxicons.bx_search, size: 16),
-                  label: const Text("All Currencies", style: TextStyle(fontFamily: 'Poppins', fontSize: 13)),
+                  label: const Text(
+                    "All Currencies",
+                    style: TextStyle(fontFamily: 'Poppins', fontSize: 13),
+                  ),
                 ),
               ],
             ),
@@ -200,7 +243,7 @@ class _DepositScreenState extends State<DepositScreen> {
                       ),
                     ],
                   ),
-                  const Divider(height: 24),
+                  const Divider(height: 20),
 
                   // Conversion Details
                   Row(
@@ -208,20 +251,53 @@ class _DepositScreenState extends State<DepositScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Boxicons.bx_transfer_alt, size: 16, color: Colors.blue),
+                          const Icon(
+                            Boxicons.bx_transfer_alt,
+                            size: 16,
+                            color: Colors.blue,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             "1 USD = $_selectedCurrencyCode ${_exchangeRate.toStringAsFixed(0)}",
-                            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: Colors.blue),
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 12,
+                              color: Colors.blue,
+                            ),
                           ),
                         ],
                       ),
                       Text(
                         "You Get: \$${_calculatedUsd.toStringAsFixed(2)} USD",
-                        style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.bold),
-                      )
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
-                  )
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Quick Access to Live Exchange Rates
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/exchange-rate');
+                      },
+                      icon: const Icon(Boxicons.bx_line_chart, size: 16),
+                      label: const Text(
+                        'View Live Exchange Rates',
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 12),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -234,17 +310,26 @@ class _DepositScreenState extends State<DepositScreen> {
               children: [50, 100, 200, 500, 1000].map((usd) {
                 final localAmt = (usd * _exchangeRate).toInt();
                 return InkWell(
-                  onTap: () => setState(() => _amountController.text = localAmt.toString()),
+                  onTap: () => setState(
+                    () => _amountController.text = localAmt.toString(),
+                  ),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white10 : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       "\$$usd",
-                      style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, fontSize: 12),
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 );
@@ -260,7 +345,9 @@ class _DepositScreenState extends State<DepositScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   elevation: 4,
                 ),
                 onPressed: _enteredAmount <= 0

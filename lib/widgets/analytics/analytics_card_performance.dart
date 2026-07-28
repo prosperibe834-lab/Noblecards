@@ -11,10 +11,38 @@ class AnalyticsCardPerformanceSection extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final cards = [
-      {'name': 'Apple Gift Card', 'tag': 'Most Sold', 'trades': 142, 'amount': '\$38,400', 'profit': '+\$4,200', 'icon': Boxicons.bxl_apple},
-      {'name': 'Amazon US', 'tag': 'Highest Profit', 'trades': 98, 'amount': '\$29,100', 'profit': '+\$3,850', 'icon': Boxicons.bxl_amazon},
-      {'name': 'Steam Card', 'tag': 'Trending', 'trades': 84, 'amount': '\$18,900', 'profit': '+\$2,100', 'icon': Boxicons.bx_game},
-      {'name': 'Google Play', 'tag': 'Most Bought', 'trades': 62, 'amount': '\$12,500', 'profit': '+\$1,400', 'icon': Boxicons.bxl_play_store},
+      {
+        'name': 'Apple Gift Card',
+        'tag': 'Most Sold',
+        'trades': 142,
+        'amount': '\$38,400',
+        'profit': '+\$4,200',
+        'icon': Boxicons.bxl_apple,
+      },
+      {
+        'name': 'Amazon US',
+        'tag': 'Highest Profit',
+        'trades': 98,
+        'amount': '\$29,100',
+        'profit': '+\$3,850',
+        'icon': Boxicons.bxl_amazon,
+      },
+      {
+        'name': 'Steam Card',
+        'tag': 'Trending',
+        'trades': 84,
+        'amount': '\$18,900',
+        'profit': '+\$2,100',
+        'icon': Boxicons.bx_game,
+      },
+      {
+        'name': 'Google Play',
+        'tag': 'Most Bought',
+        'trades': 62,
+        'amount': '\$12,500',
+        'profit': '+\$1,400',
+        'icon': Boxicons.bxl_play_store,
+      },
     ];
 
     return Column(
@@ -26,7 +54,9 @@ class AnalyticsCardPerformanceSection extends StatelessWidget {
             color: isDark ? AppColors.darkCard : AppColors.lightCard,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+              color: isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.black.withOpacity(0.05),
             ),
           ),
           child: Row(
@@ -37,7 +67,11 @@ class AnalyticsCardPerformanceSection extends StatelessWidget {
                   color: AppColors.primary.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(item['icon'] as IconData, color: AppColors.primary, size: 22),
+                child: Icon(
+                  item['icon'] as IconData,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: AppSpacing.m),
               Expanded(
@@ -48,20 +82,30 @@ class AnalyticsCardPerformanceSection extends StatelessWidget {
                       children: [
                         Text(
                           item['name'].toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.accentViolet.withOpacity(0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             item['tag'].toString(),
-                            style: const TextStyle(fontSize: 9, color: AppColors.accentViolet, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 9,
+                              color: AppColors.accentViolet,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                     const SizedBox(height: 2),
@@ -79,7 +123,7 @@ class AnalyticsCardPerformanceSection extends StatelessWidget {
                   color: AppColors.success,
                   fontSize: 14,
                 ),
-              )
+              ),
             ],
           ),
         );

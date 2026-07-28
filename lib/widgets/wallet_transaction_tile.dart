@@ -43,7 +43,8 @@ class WalletTransactionTile extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(AppSpacing.sm),
           decoration: BoxDecoration(
-            color: (isDeposit ? AppColors.success : AppColors.error).withOpacity(0.1),
+            color: (isDeposit ? AppColors.success : AppColors.error)
+                .withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -76,7 +77,9 @@ class WalletTransactionTile extends StatelessWidget {
                 fontFamily: 'Poppins',
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: isDeposit ? AppColors.success : (isDark ? AppColors.darkText : AppColors.lightText),
+                color: isDeposit
+                    ? AppColors.success
+                    : (isDark ? AppColors.darkText : AppColors.lightText),
               ),
             ),
             Text(

@@ -39,7 +39,9 @@ class AnalyticsHealthScoreCard extends StatelessWidget {
                   value: score / 100,
                   strokeWidth: 8,
                   backgroundColor: Colors.grey.withOpacity(0.2),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.success),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.success,
+                  ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -54,9 +56,9 @@ class AnalyticsHealthScoreCard extends StatelessWidget {
                     const Text(
                       '/100',
                       style: TextStyle(fontSize: 9, color: Colors.grey),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -89,12 +91,19 @@ class AnalyticsHealthScoreCard extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 2.0),
                       child: Row(
                         children: [
-                          const Icon(Boxicons.bx_check, color: AppColors.success, size: 12),
+                          const Icon(
+                            Boxicons.bx_check,
+                            color: AppColors.success,
+                            size: 12,
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               item,
-                              style: const TextStyle(fontSize: 10, color: Colors.grey),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -102,10 +111,10 @@ class AnalyticsHealthScoreCard extends StatelessWidget {
                       ),
                     );
                   }).toList(),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

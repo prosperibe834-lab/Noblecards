@@ -30,7 +30,10 @@ class AnalyticsQuickActions extends StatelessWidget {
           child: Icon(icon, color: AppColors.primary, size: 22),
         ),
         const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }

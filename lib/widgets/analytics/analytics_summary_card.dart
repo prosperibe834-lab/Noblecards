@@ -46,9 +46,10 @@ class _AnalyticsSummaryCardState extends State<AnalyticsSummaryCard>
       duration: const Duration(milliseconds: 1400),
     );
 
-    _animBalance = Tween<double>(begin: 0, end: widget.balance).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutQuint),
-    );
+    _animBalance = Tween<double>(
+      begin: 0,
+      end: widget.balance,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutQuint));
 
     _controller.forward();
   }
@@ -98,14 +99,21 @@ class _AnalyticsSummaryCardState extends State<AnalyticsSummaryCard>
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Row(
                   children: [
-                    Icon(Boxicons.bx_shield_quarter, color: Colors.white, size: 14),
+                    Icon(
+                      Boxicons.bx_shield_quarter,
+                      color: Colors.white,
+                      size: 14,
+                    ),
                     SizedBox(width: 4),
                     Text(
                       'Live Account',
@@ -117,7 +125,7 @@ class _AnalyticsSummaryCardState extends State<AnalyticsSummaryCard>
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -143,10 +151,26 @@ class _AnalyticsSummaryCardState extends State<AnalyticsSummaryCard>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildMetricTile("Today's Profit", '+\$${widget.profitToday.toStringAsFixed(2)}', AppColors.successLight),
-              _buildMetricTile('This Month', '+\$${widget.profitMonth.toStringAsFixed(2)}', AppColors.successLight),
-              _buildMetricTile('Deposits', '\$${(widget.deposits / 1000).toStringAsFixed(0)}k', Colors.white),
-              _buildMetricTile('Withdrawals', '\$${(widget.withdrawals / 1000).toStringAsFixed(0)}k', Colors.white70),
+              _buildMetricTile(
+                "Today's Profit",
+                '+\$${widget.profitToday.toStringAsFixed(2)}',
+                AppColors.successLight,
+              ),
+              _buildMetricTile(
+                'This Month',
+                '+\$${widget.profitMonth.toStringAsFixed(2)}',
+                AppColors.successLight,
+              ),
+              _buildMetricTile(
+                'Deposits',
+                '\$${(widget.deposits / 1000).toStringAsFixed(0)}k',
+                Colors.white,
+              ),
+              _buildMetricTile(
+                'Withdrawals',
+                '\$${(widget.withdrawals / 1000).toStringAsFixed(0)}k',
+                Colors.white70,
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.m),
@@ -161,13 +185,29 @@ class _AnalyticsSummaryCardState extends State<AnalyticsSummaryCard>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildSubStat(Boxicons.bx_cart, '${widget.cardsBought}', 'Bought'),
-                _buildSubStat(Boxicons.bx_dollar_circle, '${widget.cardsSold}', 'Sold'),
-                _buildSubStat(Boxicons.bx_check_circle, '${widget.successfulTxns}', 'Success'),
-                _buildSubStat(Boxicons.bx_time_five, '${widget.pendingTxns}', 'Pending'),
+                _buildSubStat(
+                  Boxicons.bx_cart,
+                  '${widget.cardsBought}',
+                  'Bought',
+                ),
+                _buildSubStat(
+                  Boxicons.bx_dollar_circle,
+                  '${widget.cardsSold}',
+                  'Sold',
+                ),
+                _buildSubStat(
+                  Boxicons.bx_check_circle,
+                  '${widget.successfulTxns}',
+                  'Success',
+                ),
+                _buildSubStat(
+                  Boxicons.bx_time_five,
+                  '${widget.pendingTxns}',
+                  'Pending',
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -215,7 +255,7 @@ class _AnalyticsSummaryCardState extends State<AnalyticsSummaryCard>
               style: const TextStyle(color: Colors.white54, fontSize: 9),
             ),
           ],
-        )
+        ),
       ],
     );
   }

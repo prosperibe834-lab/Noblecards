@@ -12,6 +12,9 @@ import 'screens/forgot_password_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
 import 'widgets/main_navigation_screen.dart';
 
+
+import 'navigation/app_router.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -49,6 +52,9 @@ class NobleCardsApp extends StatelessWidget {
 
       // Initial screen route
       home: const OnboardingScreen(),
+
+// <--- 2. ADDED THIS: Handles dynamic routes (/favourite-currencies, /exchange-rate)
+      onGenerateRoute: AppRouter.generateRoute,
 
       routes: {
         '/home': (context) => const MainNavigationScreen(),

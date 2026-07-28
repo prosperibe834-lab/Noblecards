@@ -37,12 +37,12 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
   // Currencies Dataset
   final List<CurrencyRate> _currencies = [
     CurrencyRate(code: 'USD', name: 'US Dollar', flag: '🇺🇸', symbol: '\$', rateToUsd: 1.0, change24h: 0.00, high24h: 1.00, low24h: 1.00),
-    CurrencyRate(code: 'NGN', name: 'Nigerian Naira', flag: '🇳🇬', symbol: '₦', rateToUsd: 1550.0, change24h: +1.45, high24h: 1565.0, low24h: 1535.0),
+    CurrencyRate(code: 'NGN', name: 'Nigerian Naira', flag: '🇳🇬', symbol: '₦', rateToUsd: 1550.0, change24h: 1.45, high24h: 1565.0, low24h: 1535.0),
     CurrencyRate(code: 'GBP', name: 'British Pound', flag: '🇬🇧', symbol: '£', rateToUsd: 0.78, change24h: -0.32, high24h: 0.79, low24h: 0.77),
-    CurrencyRate(code: 'EUR', name: 'Euro', flag: '🇪🇺', symbol: '€', rateToUsd: 0.92, change24h: +0.18, high24h: 0.93, low24h: 0.91),
-    CurrencyRate(code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', symbol: 'CA\$', rateToUsd: 1.36, change24h: +0.05, high24h: 1.37, low24h: 1.35),
+    CurrencyRate(code: 'EUR', name: 'Euro', flag: '🇪🇺', symbol: '€', rateToUsd: 0.92, change24h: 0.18, high24h: 0.93, low24h: 0.91),
+    CurrencyRate(code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', symbol: 'CA\$', rateToUsd: 1.36, change24h: 0.05, high24h: 1.37, low24h: 1.35),
     CurrencyRate(code: 'GHS', name: 'Ghanaian Cedi', flag: '🇬🇭', symbol: 'GH₵', rateToUsd: 15.20, change24h: -0.85, high24h: 15.40, low24h: 15.10),
-    CurrencyRate(code: 'KES', name: 'Kenyan Shilling', flag: '🇰🇪', symbol: 'KSh', rateToUsd: 129.50, change24h: +0.22, high24h: 130.10, low24h: 128.90),
+    CurrencyRate(code: 'KES', name: 'Kenyan Shilling', flag: '🇰🇪', symbol: 'KSh', rateToUsd: 129.50, change24h: 0.22, high24h: 130.10, low24h: 128.90),
     CurrencyRate(code: 'AED', name: 'UAE Dirham', flag: '🇦🇪', symbol: 'AED', rateToUsd: 3.67, change24h: 0.00, high24h: 3.67, low24h: 3.67),
   ];
 
