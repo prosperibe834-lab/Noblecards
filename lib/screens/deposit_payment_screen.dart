@@ -1,76 +1,157 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import '../theme/app_theme.dart';
-import '../theme/app_radius.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_button.dart';
-import 'deposit_success_screen.dart';
+import '../widgets/glass_card.dart';
+import '../widgets/deposit_step_indicator.dart';
+import 'bank_transfer_screen.dart';
 
-import '../theme/app_colors.dart';
+class PaymentMethodScreen extends StatelessWidget {
+  final double depositAmount;
+  final String currencyCode;
+  final double convertedUsd;
 
-import '../theme/app_spacing.dart';
-
-class DepositPaymentScreen extends StatelessWidget {
-  const DepositPaymentScreen({super.key});
+  const PaymentMethodScreen({
+    super.key,
+    required this.depositAmount,
+    required this.currencyCode,
+    required this.convertedUsd,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final methods = [
+      {
+        "id": "bank",
+        "title": "Local Bank Transfer",
+        "desc": "Flutterwave Virtual Account. Instant verification.",
+        "icon": Boxicons.bx_building_house,
+        "tag": "FREE & INSTANT",
+      },
+      {
+        "id": "card",
+        "title": "Debit or Credit Card",
+        "desc": "Visa, MasterCard, Verve, Amex",
+        "icon": Boxicons.bx_credit_card,
+        "tag": "1.5% FEE",
+      },
+      {
+        "id": "apple",
+        "title": "Apple Pay / Google Pay",
+        "desc": "Fast checkout via mobile wallet",
+        "icon": Boxicons.bx_mobile_alt,
+        "tag": "POPULAR",
+      },
+      {
+        "id": "wise",
+        "title": "Wise / Wire Transfer",
+        "desc": "International bank wire transfer",
+        "icon": Boxicons.bx_globe,
+        "tag": "1-2 DAYS",
+      },
+    ];
+
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
-      appBar: const CustomAppBar(title: 'Virtual Account'),
+      appBar: AppBar(
+        title: const Text("Payment Method", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkCard : AppColors.lightCard,
-                borderRadius: BorderRadius.circular(AppRadius.lg),
-                border: Border.all(
-                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-                ),
-              ),
-              child: Column(
-                children: [
-                  const Text('Flutterwave Bank Virtual Account'),
-                  const SizedBox(height: AppSpacing.md),
-                  Text(
-                    '0123456789',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  const Text('NobleCards - John Doe'),
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Boxicons.bx_copy, size: 16),
-                        label: const Text('Copy Account'),
+            const DepositStepIndicator(currentStep: 2),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: methods.length,
+                itemBuilder: (context, index) {
+                  final item = methods[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: GlassCard(
+                      onTap: () {
+                        if (item["id"] == "bank") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BankTransferScreen(
+                                amount: depositAmount,
+                                currency: currencyCode,
+                                convertedUsd: convertedUsd,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor.withOpacity(0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              item["icon"] as IconData,
+                              color: Theme.of(context).primaryColor,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      item["title"] as String,
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green.withOpacity(0.15),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        item["tag"] as String,
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  item["desc"] as String,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 11,
+                                    color: isDark ? Colors.white60 : Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Boxicons.bx_chevron_right, size: 20),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  );
+                },
               ),
-            ),
-            const Spacer(),
-            CustomButton(
-              text: 'I Have Made Payment',
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const DepositSuccessScreen()),
-                );
-              },
             ),
           ],
         ),
