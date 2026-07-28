@@ -716,16 +716,17 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
       });
     }
   }
-
-  @override
+@override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: EdgeInsets.fromLTRB(24, 20, 24, bottomPadding + 24),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -735,7 +736,7 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: isDark ? Colors.white24 : Colors.grey.shade300,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -745,22 +746,29 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Boxicons.bx_shield_quarter, color: Color(0xFF2563EB), size: 28),
-                  SizedBox(width: 8),
+                  Icon(
+                    Boxicons.bx_shield_quarter,
+                    color: theme.primaryColor,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     '3D Secure 2.0',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Color(0xFF1E293B),
+                      color: isDark ? Colors.white : const Color(0xFF1E293B),
                     ),
                   ),
                 ],
               ),
               IconButton(
-                icon: const Icon(Boxicons.bx_x, color: Colors.grey),
+                icon: Icon(
+                  Boxicons.bx_x,
+                  color: isDark ? Colors.white54 : Colors.grey,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -772,7 +780,7 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF1F5F9),
+              color: theme.primaryColor.withOpacity(0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -780,21 +788,31 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
               children: [
                 Text(
                   'Card ending in •••• ${widget.cardNumberLast4}',
-                  style: const TextStyle(fontSize: 13, color: Color(0xFF475569)),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white70 : const Color(0xFF475569),
+                  ),
                 ),
                 Text(
                   '${widget.currency}${widget.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
 
-          const Text(
+          Text(
             'An authentication code has been sent to your registered phone number / email.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: Colors.black54),
+            style: TextStyle(
+              fontSize: 13,
+              color: isDark ? Colors.white60 : Colors.black54,
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -804,7 +822,12 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             maxLength: 6,
-            style: const TextStyle(fontSize: 22, letterSpacing: 8, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 22,
+              letterSpacing: 8,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
               counterText: '',
@@ -812,13 +835,21 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
               hintStyle: TextStyle(
                 fontSize: 22,
                 letterSpacing: 8,
-                color: Colors.grey.shade300,
+                color: isDark ? Colors.white24 : Colors.grey.shade300,
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 14),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: isDark ? Colors.white24 : Colors.grey.shade300,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF2563EB), width: 2),
+                borderSide: BorderSide(color: theme.primaryColor, width: 2),
               ),
             ),
           ),
@@ -837,20 +868,27 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Boxicons.bx_mobile_alt, size: 16, color: Colors.grey),
+              Icon(
+                Boxicons.bx_mobile_alt,
+                size: 16,
+                color: isDark ? Colors.white54 : Colors.grey,
+              ),
               const SizedBox(width: 4),
               _timerSeconds > 0
                   ? Text(
                       'Resend code in ${_timerSeconds}s',
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? Colors.white54 : Colors.grey,
+                      ),
                     )
                   : GestureDetector(
                       onTap: _startTimer,
-                      child: const Text(
+                      child: Text(
                         'Resend OTP',
                         style: TextStyle(
                           fontSize: 13,
-                          color: Color(0xFF2563EB),
+                          color: theme.primaryColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -865,15 +903,20 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
             height: 50,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                backgroundColor: theme.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: _isAuthenticating ? null : _verifyOtp,
               child: _isAuthenticating
                   ? const SizedBox(
                       height: 22,
                       width: 22,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
                     )
                   : const Text(
                       'Authorize Payment',
@@ -889,4 +932,9 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
       ),
     );
   }
+
+
+  //     ),
+  //   );
+  // }
 }

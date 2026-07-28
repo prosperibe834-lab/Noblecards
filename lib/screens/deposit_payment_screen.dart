@@ -3,6 +3,8 @@ import 'package:boxicons/boxicons.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/deposit_step_indicator.dart';
 import 'bank_transfer_screen.dart';
+import 'card_payment_screen.dart';
+// import 'apple_pay_screen.dart'; // Uncomment if you have an apple pay screen file
 
 class PaymentMethodScreen extends StatelessWidget {
   final double depositAmount;
@@ -74,17 +76,53 @@ class PaymentMethodScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 12),
                     child: GlassCard(
                       onTap: () {
-                        if (item["id"] == "bank") {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BankTransferScreen(
-                                amount: depositAmount,
-                                currency: currencyCode,
-                                convertedUsd: convertedUsd,
+                        switch (item["id"]) {
+                          case "bank":
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BankTransferScreen(
+                                  amount: depositAmount,
+                                  currency: currencyCode,
+                                  convertedUsd: convertedUsd,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                            break;
+
+                          case "card":
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CardPaymentScreen(
+                                  amount: depositAmount,
+                                  currency: currencyCode,
+                                ),
+                              ),
+                            );
+                            break;
+
+                          case "wise":
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BankTransferScreen(
+                                  amount: depositAmount,
+                                  currency: currencyCode,
+                                  convertedUsd: convertedUsd,
+                                ),
+                              ),
+                            );
+                            break;
+
+                          case "apple":
+                            // Show snackbar or navigate to Apple/Google Pay screen
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Apple / Google Pay selected'),
+                              ),
+                            );
+                            break;
                         }
                       },
                       padding: const EdgeInsets.all(16),
