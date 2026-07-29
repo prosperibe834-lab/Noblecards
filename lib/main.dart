@@ -11,9 +11,10 @@ import 'screens/biometric_setup_screen.dart';
 import 'screens/forgot_password_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
 import 'widgets/main_navigation_screen.dart';
-
-
 import 'navigation/app_router.dart';
+
+import 'providers/payment_provider.dart';
+import 'providers/wallet_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,9 +27,13 @@ void main() {
     ),
   );
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+ runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
+        ChangeNotifierProvider(create: (_) => WalletProvider()),
+      ],
       child: const NobleCardsApp(),
     ),
   );

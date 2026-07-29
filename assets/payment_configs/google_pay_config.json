@@ -1,0 +1,10 @@
+{
+  "provider": "google_pay",
+  "data": {
+    "merchantId": "01234567890123456789",
+    "merchantName": "NobleCards",
+    "merchantCountryCode": "US",
+    "currencyCode": "USD",
+    "environment": "TEST"
+  }
+}

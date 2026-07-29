@@ -6,6 +6,8 @@ import 'bank_transfer_screen.dart';
 import 'card_payment_screen.dart';
 // import 'apple_pay_screen.dart'; // Uncomment if you have an apple pay screen file
 
+import 'apple_google_pay_screen.dart';
+
 class PaymentMethodScreen extends StatelessWidget {
   final double depositAmount;
   final String currencyCode;
@@ -116,13 +118,16 @@ class PaymentMethodScreen extends StatelessWidget {
                             break;
 
                           case "apple":
-                            // Show snackbar or navigate to Apple/Google Pay screen
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Apple / Google Pay selected'),
-                              ),
-                            );
-                            break;
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => AppleGooglePayScreen(
+        amount: depositAmount,
+        currency: currencyCode,
+      ),
+    ),
+  );
+  break;
                         }
                       },
                       padding: const EdgeInsets.all(16),
