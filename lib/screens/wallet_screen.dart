@@ -5,7 +5,7 @@ import '../widgets/wallet_balance_card.dart';
 import '../widgets/wallet_action_button.dart';
 import '../widgets/wallet_transaction_tile.dart';
 import 'deposit_screen.dart';
-import 'withdraw_screen.dart';
+import 'withraw/withdraw_screen.dart';
 import 'transaction_history_screen.dart';
 import 'transaction_details_screen.dart';
 import 'analytics_screen.dart';
