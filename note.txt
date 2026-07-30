@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i added withraw page"
+git commit -m "i fixed withraw page"
 git push origin main
 
 
@@ -250,3 +250,4 @@ Ctrl + Shift + P
 
 
 
+glassmorphism

@@ -1,11 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
 import '../../widgets/glass_card.dart';
-import '../../widgets/withdrawal_step_indicator.dart';
-import '../../widgets/withdrawal_summary_card.dart';
-import '../../models/withdrawal_models.dart';
-import 'withdraw_confirmation_screen.dart';
+import '../../widgets/pin_auth_dialog.dart'; // Reusing your existing PIN dialog
+import 'models/withdrawal_request_model.dart';
+import 'withdraw_processing_screen.dart';
+
+// --- ENUMS & HELPERS FOR DYNAMIC UI ---
+enum WithdrawalCategory {
+  bank,
+  paypal,
+  wise,
+  skrill,
+  payoneer,
+  mobileMoney,
+  crypto,
+  debitCard,
+}
+
+class _WithdrawalMethodData {
+  final String id;
+  final String name;
+  final String subtitle;
+  final IconData icon;
+  final WithdrawalCategory category;
+  final WithdrawalType type;
+  final bool isComingSoon;
+
+  const _WithdrawalMethodData({
+    required this.id,
+    required this.name,
+    required this.subtitle,
+    required this.icon,
+    required this.category,
+    required this.type,
+    this.isComingSoon = false,
+  });
+}
 
 class WithdrawScreen extends StatefulWidget {
   const WithdrawScreen({super.key});
@@ -15,144 +48,229 @@ class WithdrawScreen extends StatefulWidget {
 }
 
 class _WithdrawScreenState extends State<WithdrawScreen> {
-  int _currentStep = 0;
+  // Controllers
+  final TextEditingController _amountController = TextEditingController();
+  final FocusNode _amountFocus = FocusNode();
 
-  // Master State Data
-  CurrencyOption _selectedCurrency = const CurrencyOption(
-    code: 'NGN', name: 'Nigerian Naira', flag: '🇳🇬', rateToUsd: 1650.0,
-  );
+  // Form Controllers
+  final TextEditingController _bankAccountController = TextEditingController();
+  final TextEditingController _bankNameController = TextEditingController();
+  final TextEditingController _accountHolderController =
+      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _cryptoAddressController =
+      TextEditingController();
+  final TextEditingController _cryptoMemoController = TextEditingController();
 
-  WithdrawalMethodModel? _selectedMethod;
-  SavedAccountModel? _selectedAccount;
-  double _amount = 100.0;
-  bool _saveAccountToggle = true;
+  // State
+  double _amount = 0.0;
+  _WithdrawalMethodData? _selectedMethod;
+  bool _saveAccount = true;
 
-  // New Account Controllers
-  final _bankNameController = TextEditingController();
-  final _accountNumberController = TextEditingController();
-  final _accountNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+  // Dropdown States
+  String? _selectedCurrency = '🇺🇸 USD — US Dollar';
+  String? _selectedCryptoCoin = 'USDT';
+  String? _selectedCryptoNetwork = 'TRC20';
+  String? _selectedMobileProvider = 'MTN Mobile Money';
 
-  final List<CurrencyOption> _currencies = const [
-    CurrencyOption(code: 'NGN', name: 'Nigerian Naira', flag: '🇳🇬', rateToUsd: 1650.0),
-    CurrencyOption(code: 'USD', name: 'US Dollar', flag: '🇺🇸', rateToUsd: 1.0),
-    CurrencyOption(code: 'GBP', name: 'British Pound', flag: '🇬🇧', rateToUsd: 0.78),
-    CurrencyOption(code: 'EUR', name: 'Euro', flag: '🇪🇺', rateToUsd: 0.91),
-    CurrencyOption(code: 'CAD', name: 'Canadian Dollar', flag: '🇨🇦', rateToUsd: 1.36),
-    CurrencyOption(code: 'KES', name: 'Kenyan Shilling', flag: '🇰🇪', rateToUsd: 129.0),
-    CurrencyOption(code: 'GHS', name: 'Ghanaian Cedi', flag: '🇬🇭', rateToUsd: 15.5),
-  ];
-
-  final List<WithdrawalMethodModel> _methods = const [
-    WithdrawalMethodModel(
+  // Constants
+  final List<_WithdrawalMethodData> _methods = const [
+    _WithdrawalMethodData(
       id: 'bank',
-      title: 'Bank Account',
-      description: 'Fast direct bank transfer. Arrives in minutes.',
+      name: 'Bank Transfer',
+      subtitle: 'Local or international banks',
       icon: Boxicons.bx_building_house,
-      estimatedTime: 'Instant - 5 Mins',
-      badge: 'POPULAR',
-      supportedCurrencies: ['NGN', 'USD', 'GBP', 'EUR', 'CAD', 'KES', 'GHS'],
+      category: WithdrawalCategory.bank,
+      type: WithdrawalType.bank,
     ),
-    WithdrawalMethodModel(
+    _WithdrawalMethodData(
       id: 'paypal',
-      title: 'PayPal Account',
-      description: 'Instant transfer to your PayPal wallet.',
-      icon: Boxicons.bx_wallet,
-      estimatedTime: 'Instant',
-      supportedCurrencies: ['USD', 'EUR', 'GBP', 'CAD'],
+      name: 'PayPal',
+      subtitle: 'Send to PayPal wallet',
+      icon: Boxicons.bxl_paypal,
+      category: WithdrawalCategory.paypal,
+      type: WithdrawalType.paypal,
     ),
-    WithdrawalMethodModel(
+    _WithdrawalMethodData(
       id: 'wise',
-      title: 'Wise Transfer',
-      description: 'Low cost global payout to your Wise account.',
-      icon: Boxicons.bx_globe,
-      estimatedTime: '1 Business Day',
-      badge: 'LOW FEES',
-      supportedCurrencies: ['USD', 'GBP', 'EUR', 'CAD'],
+      name: 'Wise',
+      subtitle: 'Fast global transfers',
+      icon: Boxicons.bx_globe, // using globe as placeholder for wise
+      category: WithdrawalCategory.wise,
+      type: WithdrawalType.bank,
     ),
-    WithdrawalMethodModel(
-      id: 'momo',
-      title: 'Mobile Money',
-      description: 'Receive directly into your mobile money wallet.',
+    _WithdrawalMethodData(
+      id: 'skrill',
+      name: 'Skrill',
+      subtitle: 'Withdraw to Skrill',
+      icon: Boxicons.bx_wallet_alt,
+      category: WithdrawalCategory.skrill,
+      type: WithdrawalType.bank,
+    ),
+    _WithdrawalMethodData(
+      id: 'payoneer',
+      name: 'Payoneer',
+      subtitle: 'Send to Payoneer',
+      icon: Boxicons.bx_briefcase,
+      category: WithdrawalCategory.payoneer,
+      type: WithdrawalType.bank,
+    ),
+    _WithdrawalMethodData(
+      id: 'mobile_money',
+      name: 'Mobile Money',
+      subtitle: 'Supported mobile wallets',
       icon: Boxicons.bx_mobile_alt,
-      estimatedTime: 'Instant',
-      supportedCurrencies: ['NGN', 'KES', 'GHS'],
+      category: WithdrawalCategory.mobileMoney,
+      type: WithdrawalType.bank,
+    ),
+    _WithdrawalMethodData(
+      id: 'crypto',
+      name: 'Crypto Wallet',
+      subtitle: 'Withdraw using crypto',
+      icon: Boxicons.bx_bitcoin,
+      category: WithdrawalCategory.crypto,
+      type: WithdrawalType.crypto,
+    ),
+    _WithdrawalMethodData(
+      id: 'debit',
+      name: 'Debit Card',
+      subtitle: 'Instant card payout',
+      icon: Boxicons.bx_credit_card,
+      category: WithdrawalCategory.debitCard,
+      type: WithdrawalType.bank,
+      isComingSoon: true,
     ),
   ];
 
-  final List<SavedAccountModel> _savedAccounts = [
-    SavedAccountModel(
-      id: 'acc_1',
-      title: 'Access Bank',
-      details: '•••••••• 7821 (John Doe)',
-      methodId: 'bank',
-      isDefault: true,
-    ),
-    SavedAccountModel(
-      id: 'acc_2',
-      title: 'PayPal Wallet',
-      details: 'john.doe@example.com',
-      methodId: 'paypal',
-    ),
+  final List<String> _currencies = [
+    '🇺🇸 USD — US Dollar',
+    '🇪🇺 EUR — Euro',
+    '🇬🇧 GBP — British Pound',
+    '🇳🇬 NGN — Nigerian Naira',
+    '🇨🇦 CAD — Canadian Dollar',
+    '🇦🇺 AUD — Australian Dollar',
+    '🇦🇪 AED — UAE Dirham',
+    '🇯🇵 JPY — Japanese Yen',
+    '🇨🇭 CHF — Swiss Franc',
+    '🇸🇬 SGD — Singapore Dollar',
+    '🇬🇭 GHS — Ghanaian Cedi',
+    '🇰🇪 KES — Kenyan Shilling',
+    '🇲🇽 MXN — Mexican Peso',
+    '🇿🇦 ZAR — South African Rand',
+    '🇮🇳 INR — Indian Rupee',
+    '🇨🇳 CNY — Chinese Yuan',
+    '🇧🇷 BRL — Brazilian Real',
+    '🇹🇷 TRY — Turkish Lira',
+    '🇸🇪 SEK — Swedish Krona',
+    '🇳🇴 NOK — Norwegian Krone',
   ];
 
   @override
   void initState() {
     super.initState();
     _selectedMethod = _methods.first;
+    _amountController.addListener(_onAmountChanged);
+  }
+
+  void _onAmountChanged() {
+    setState(() {
+      _amount =
+          double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0.0;
+    });
   }
 
   @override
   void dispose() {
+    _amountController.dispose();
+    _amountFocus.dispose();
+    _bankAccountController.dispose();
     _bankNameController.dispose();
-    _accountNumberController.dispose();
-    _accountNameController.dispose();
+    _accountHolderController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _cryptoAddressController.dispose();
+    _cryptoMemoController.dispose();
     super.dispose();
   }
 
-  List<WithdrawalMethodModel> get _availableMethods {
-    return _methods
-        .where((m) => m.supportedCurrencies.contains(_selectedCurrency.code))
-        .toList();
+  // Quick Amount Math
+  void _addAmount(double value) {
+    setState(() {
+      _amount += value;
+      _amountController.text = _amount.toStringAsFixed(0);
+    });
   }
 
-  void _nextStep() {
-    if (_currentStep < 4) {
-      setState(() => _currentStep++);
-    } else {
-      // Navigate to Review / Confirmation
-      Navigator.push(
+  void _setMaxAmount() {
+    setState(() {
+      _amount = 5420.00; // Mock Max Balance
+      _amountController.text = _amount.toStringAsFixed(0);
+    });
+  }
+
+  double get _fee {
+    if (_amount <= 0) return 0;
+    // Dynamic fee based on method
+    if (_selectedMethod?.category == WithdrawalCategory.crypto)
+      return 1.50; // Fixed network fee
+    return 2.5 + (_amount * 0.01);
+  }
+
+  double get _exchangeRate => 1650.0; // Mock USD to NGN exchange rate
+
+  void _processWithdrawal() async {
+    if (_amount <= 0) return;
+
+    // 1. Authenticate with existing PIN Dialog
+    final bool? isAuthenticated = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => PinAuthDialog(onSuccess: (_) {}),
+    );
+
+    if (isAuthenticated != true) return;
+
+    // 2. Build model and navigate
+    final request = WithdrawalRequestModel(
+      amount: _amount,
+      currency: _selectedCurrency?.substring(3, 6) ?? 'USD',
+      method: WithdrawalMethod(
+        id: _selectedMethod!.id,
+        name: _selectedMethod!.name,
+        subtitle: _selectedMethod!.subtitle,
+        icon: _selectedMethod!.icon,
+        type: _selectedMethod!.type,
+      ),
+      destinationAccount: _getDestinationString(),
+      accountName: _accountHolderController.text.isNotEmpty
+          ? _accountHolderController.text
+          : 'You',
+      fee: _fee,
+      netAmount: _amount - _fee,
+      referenceNumber:
+          'WTH-${DateTime.now().millisecondsSinceEpoch.toString().substring(6)}',
+    );
+
+    if (mounted) {
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => WithdrawConfirmationScreen(
-            currency: _selectedCurrency,
-            method: _selectedMethod!,
-            accountDetails: _selectedAccount?.details ?? _getEnteredAccountDetails(),
-            amountUsd: _amount,
-            feeUsd: 2.50,
-          ),
+          builder: (_) => WithdrawProcessingScreen(request: request),
         ),
       );
     }
   }
 
-  String _getEnteredAccountDetails() {
-    if (_selectedMethod?.id == 'bank') {
-      return "${_bankNameController.text} • ${_accountNumberController.text}";
-    } else if (_selectedMethod?.id == 'momo') {
-      return "${_phoneController.text} (Mobile Money)";
-    }
-    return _emailController.text;
-  }
-
-  void _prevStep() {
-    if (_currentStep > 0) {
-      setState(() => _currentStep--);
-    } else {
-      Navigator.pop(context);
+  String _getDestinationString() {
+    switch (_selectedMethod?.category) {
+      case WithdrawalCategory.bank:
+        return _bankAccountController.text;
+      case WithdrawalCategory.crypto:
+        return _cryptoAddressController.text;
+      case WithdrawalCategory.mobileMoney:
+        return _phoneController.text;
+      default:
+        return _emailController.text;
     }
   }
 
@@ -160,127 +278,211 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final scaffoldBg = theme.scaffoldBackgroundColor;
 
     return Scaffold(
+      backgroundColor: scaffoldBg,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Boxicons.bx_arrow_back),
-          onPressed: _prevStep,
-        ),
+        backgroundColor: scaffoldBg,
+        elevation: 0,
+        centerTitle: true,
         title: Text(
-          "Withdraw Funds",
-          style: theme.textTheme.titleLarge?.copyWith(fontSize: 18),
+          'Withdraw Funds',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Boxicons.bx_chevron_left, size: 28),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: WithdrawalStepIndicator(currentStep: _currentStep),
-            ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: _buildCurrentStepView(theme, subTextColor),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: AppSpacing.md),
+                    _buildAmountInput(theme),
+                    const SizedBox(height: AppSpacing.xl),
+                    _buildSavedAccountsSlider(theme, isDark),
+                    const SizedBox(height: AppSpacing.xl),
+                    Text(
+                      'Withdrawal Method',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _buildMethodGrid(theme, isDark),
+                    const SizedBox(height: AppSpacing.xl),
+                    _buildDynamicFormContainer(theme, isDark),
+                    const SizedBox(height: AppSpacing.xxl),
+                  ],
                 ),
               ),
             ),
-            _buildBottomBar(theme),
+            _buildBottomSummaryAndAction(theme, isDark),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCurrentStepView(ThemeData theme, Color subTextColor) {
-    switch (_currentStep) {
-      case 0:
-        return _buildStep1Currency(theme, subTextColor);
-      case 1:
-        return _buildStep2Method(theme, subTextColor);
-      case 2:
-        return _buildStep3Accounts(theme, subTextColor);
-      case 3:
-        return _buildStep4Amount(theme, subTextColor);
-      default:
-        return const SizedBox.shrink();
-    }
+  // --- UI COMPONENTS ---
+
+  Widget _buildAmountInput(ThemeData theme) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text(
+              '\$',
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: theme.primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 4),
+            IntrinsicWidth(
+              child: TextField(
+                controller: _amountController,
+                focusNode: _amountFocus,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 48,
+                ),
+                decoration: InputDecoration(
+                  hintText: '0',
+                  hintStyle: theme.textTheme.displayMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 48,
+                    color: theme.hintColor.withValues(alpha: 0.3),
+                  ),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  isDense: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          alignment: WrapAlignment.center,
+          children: [
+            _buildAmountChip(theme, '+\$50', () => _addAmount(50)),
+            _buildAmountChip(theme, '+\$100', () => _addAmount(100)),
+            _buildAmountChip(theme, '+\$250', () => _addAmount(250)),
+            _buildAmountChip(theme, '+\$500', () => _addAmount(500)),
+            _buildAmountChip(theme, 'MAX', _setMaxAmount, isMax: true),
+          ],
+        ),
+      ],
+    );
   }
 
-  // STEP 1: Currency Selection
-  Widget _buildStep1Currency(ThemeData theme, Color subTextColor) {
+  Widget _buildAmountChip(
+    ThemeData theme,
+    String label,
+    VoidCallback onTap, {
+    bool isMax = false,
+  }) {
+    final isDark = theme.brightness == Brightness.dark;
+    final bgColor = isMax
+        ? AppColors.primary.withValues(alpha: 0.15)
+        : (isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.04));
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isMax
+                ? AppColors.primary.withValues(alpha: 0.3)
+                : Colors.transparent,
+          ),
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: isMax
+                ? AppColors.primary
+                : theme.textTheme.bodyMedium?.color,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavedAccountsSlider(ThemeData theme, bool isDark) {
     return Column(
-      key: const ValueKey(0),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Withdraw Currency",
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "Choose the currency you would like to withdraw in.",
-          style: theme.textTheme.bodyMedium?.copyWith(color: subTextColor),
-        ),
-        const SizedBox(height: 20),
-        DropdownButtonFormField<CurrencyOption>(
-          value: _selectedCurrency,
-          decoration: InputDecoration(
-            labelText: "Target Currency",
-            prefixIcon: const Icon(Boxicons.bx_globe),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          'Saved Accounts',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
-          items: _currencies.map((c) {
-            return DropdownMenuItem(
-              value: c,
-              child: Text("${c.flag}  ${c.code} - ${c.name}"),
-            );
-          }).toList(),
-          onChanged: (val) {
-            if (val != null) {
-              setState(() {
-                _selectedCurrency = val;
-                final available = _availableMethods;
-                if (!available.contains(_selectedMethod)) {
-                  _selectedMethod = available.isNotEmpty ? available.first : null;
-                }
-              });
-            }
-          },
         ),
-        const SizedBox(height: 24),
-        GlassCard(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        const SizedBox(height: AppSpacing.md),
+        SizedBox(
+          height: 80,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Current Exchange Rate", style: theme.textTheme.bodyMedium?.copyWith(color: subTextColor)),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text("Live", style: TextStyle(color: AppColors.success, fontSize: 10, fontWeight: FontWeight.bold)),
-                  ),
-                ],
+              _buildSavedAccountCard(
+                theme,
+                isDark,
+                'GTBank',
+                '•••• 4512',
+                Boxicons.bx_building_house,
+                true,
               ),
-              const SizedBox(height: 8),
-              Text(
-                "1 USD = ${_selectedCurrency.code} ${_selectedCurrency.rateToUsd.toStringAsFixed(2)}",
-                style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 22),
+              const SizedBox(width: AppSpacing.md),
+              _buildSavedAccountCard(
+                theme,
+                isDark,
+                'Binance',
+                '0x7F...9A',
+                Boxicons.bx_bitcoin,
+                false,
               ),
-              const SizedBox(height: 12),
-              Text(
-                "You are withdrawing in ${_selectedCurrency.name} (${_selectedCurrency.code}).",
-                style: theme.textTheme.bodySmall?.copyWith(color: subTextColor),
+              const SizedBox(width: AppSpacing.md),
+              _buildSavedAccountCard(
+                theme,
+                isDark,
+                'PayPal',
+                'john@•••.com',
+                Boxicons.bxl_paypal,
+                false,
               ),
             ],
           ),
@@ -289,240 +491,686 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
-  // STEP 2: Method Selection
-  Widget _buildStep2Method(ThemeData theme, Color subTextColor) {
-    final available = _availableMethods;
-
-    return Column(
-      key: const ValueKey(1),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Withdrawal Method",
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "Methods available for ${_selectedCurrency.name}.",
-          style: theme.textTheme.bodyMedium?.copyWith(color: subTextColor),
-        ),
-        const SizedBox(height: 20),
-        ...available.map((method) {
-          final isSelected = _selectedMethod?.id == method.id;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedMethod = method),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: GlassCard(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
+  Widget _buildSavedAccountCard(
+    ThemeData theme,
+    bool isDark,
+    String name,
+    String details,
+    IconData icon,
+    bool isDefault,
+  ) {
+    return GlassCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 20, color: theme.iconTheme.color),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    name,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (isDefault) ...[
+                    const SizedBox(width: 6),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: theme.primaryColor.withOpacity(0.1),
-                        shape: BoxShape.circle,
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Icon(method.icon, color: theme.primaryColor),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(method.title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                              if (method.badge != null) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: theme.primaryColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    method.badge!,
-                                    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(method.description, style: theme.textTheme.bodySmall?.copyWith(color: subTextColor)),
-                          const SizedBox(height: 4),
-                          Text(
-                            "Arrival: ${method.estimatedTime}",
-                            style: theme.textTheme.bodySmall?.copyWith(color: theme.primaryColor, fontWeight: FontWeight.w600),
-                          ),
-                        ],
+                      child: Text(
+                        'DEFAULT',
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    Radio<String>(
-                      value: method.id,
-                      groupValue: _selectedMethod?.id,
-                      onChanged: (_) => setState(() => _selectedMethod = method),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(
+                details,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.hintColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Icon(
+            Boxicons.bx_dots_vertical_rounded,
+            size: 20,
+            color: theme.hintColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMethodGrid(ThemeData theme, bool isDark) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: AppSpacing.md,
+        mainAxisSpacing: AppSpacing.md,
+        childAspectRatio: 1.4,
+      ),
+      itemCount: _methods.length,
+      itemBuilder: (context, index) {
+        final method = _methods[index];
+        final isSelected = _selectedMethod?.id == method.id;
+
+        return GestureDetector(
+          onTap: method.isComingSoon
+              ? null
+              : () {
+                  setState(() {
+                    _selectedMethod = method;
+                    _amountFocus
+                        .unfocus(); // dismiss keyboard smoothly on method change
+                  });
+                },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08)
+                  : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.primary
+                    : (isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.black.withValues(alpha: 0.05)),
+                width: isSelected ? 2 : 1,
+              ),
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  )
+                else if (!isDark)
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      method.icon,
+                      color: method.isComingSoon
+                          ? theme.hintColor.withValues(alpha: 0.5)
+                          : (isSelected
+                                ? AppColors.primary
+                                : theme.iconTheme.color),
+                      size: 28,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      method.name,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: method.isComingSoon
+                            ? theme.hintColor.withValues(alpha: 0.5)
+                            : null,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      method.subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: method.isComingSoon
+                            ? theme.hintColor.withValues(alpha: 0.3)
+                            : theme.hintColor,
+                        fontSize: 10,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  // STEP 3: Account Selection / Add New
-  Widget _buildStep3Accounts(ThemeData theme, Color subTextColor) {
-    final relevantAccounts = _savedAccounts.where((a) => a.methodId == _selectedMethod?.id).toList();
-
-    return Column(
-      key: const ValueKey(2),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Select Destination Account",
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "Choose a saved account or enter new details.",
-          style: theme.textTheme.bodyMedium?.copyWith(color: subTextColor),
-        ),
-        const SizedBox(height: 20),
-        if (relevantAccounts.isNotEmpty) ...[
-          Text("Saved Accounts", style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          ...relevantAccounts.map((acc) {
-            final isSelected = _selectedAccount?.id == acc.id;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedAccount = acc),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: GlassCard(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    children: [
-                      Icon(Boxicons.bx_check_circle, color: isSelected ? theme.primaryColor : subTextColor),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(acc.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            Text(acc.details, style: TextStyle(color: subTextColor, fontSize: 12)),
-                          ],
+                if (method.isComingSoon)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'SOON',
+                        style: TextStyle(
+                          fontSize: 8,
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (acc.isVerified)
-                        const Icon(Boxicons.bxs_badge_check, color: AppColors.success, size: 18),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          }),
-          const SizedBox(height: 16),
-        ],
-        Text("Enter New Payout Details", style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
-        if (_selectedMethod?.id == 'bank') ...[
-          TextField(
-            controller: _bankNameController,
-            decoration: const InputDecoration(labelText: "Bank Name", prefixIcon: Icon(Boxicons.bx_building)),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _accountNumberController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: "Account Number", prefixIcon: Icon(Boxicons.bx_hash)),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _accountNameController,
-            decoration: const InputDecoration(labelText: "Account Holder Name", prefixIcon: Icon(Boxicons.bx_user)),
-          ),
-        ] else if (_selectedMethod?.id == 'momo') ...[
-          TextField(
-            controller: _phoneController,
-            keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(labelText: "Mobile Number", prefixIcon: Icon(Boxicons.bx_phone)),
-          ),
-        ] else ...[
-          TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: "Account Email", prefixIcon: Icon(Boxicons.bx_envelope)),
-          ),
-        ],
-        const SizedBox(height: 12),
-        SwitchListTile(
-          title: const Text("Save account for future withdrawals", style: TextStyle(fontSize: 13)),
-          value: _saveAccountToggle,
-          onChanged: (val) => setState(() => _saveAccountToggle = val),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  // STEP 4: Amount Entry
-  Widget _buildStep4Amount(ThemeData theme, Color subTextColor) {
+  Widget _buildDynamicFormContainer(ThemeData theme, bool isDark) {
+    if (_selectedMethod == null) return const SizedBox.shrink();
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      switchInCurve: Curves.easeOutBack,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.05),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        key: ValueKey<String>(_selectedMethod!.id),
+        child: _getFormForCategory(_selectedMethod!.category, theme, isDark),
+      ),
+    );
+  }
+
+  Widget _getFormForCategory(
+    WithdrawalCategory category,
+    ThemeData theme,
+    bool isDark,
+  ) {
+    switch (category) {
+      case WithdrawalCategory.bank:
+        return _buildBankForm(theme, isDark);
+      case WithdrawalCategory.paypal:
+      case WithdrawalCategory.wise:
+      case WithdrawalCategory.skrill:
+      case WithdrawalCategory.payoneer:
+        return _buildEmailForm(theme, category);
+      case WithdrawalCategory.mobileMoney:
+        return _buildMobileMoneyForm(theme);
+      case WithdrawalCategory.crypto:
+        return _buildCryptoForm(theme, isDark);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildBankForm(ThemeData theme, bool isDark) {
     return Column(
-      key: const ValueKey(3),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Withdrawal Amount",
-          style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "Specify the amount in USD to withdraw.",
-          style: theme.textTheme.bodyMedium?.copyWith(color: subTextColor),
-        ),
-        const SizedBox(height: 24),
-        TextField(
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-          decoration: InputDecoration(
-            prefixText: "\$ ",
-            labelText: "Amount (USD)",
-            helperText: "Min: \$10.00  •  Max: \$10,000.00",
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        _buildLabel(theme, 'Receiving Currency'),
+        DropdownMenu<String>(
+          initialSelection: _selectedCurrency,
+          width: MediaQuery.of(context).size.width - (AppSpacing.lg * 2),
+          enableFilter: true,
+          requestFocusOnTap: true,
+          menuStyle: MenuStyle(
+            backgroundColor: WidgetStatePropertyAll(theme.cardColor),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
           ),
-          onChanged: (val) {
-            final parsed = double.tryParse(val);
-            if (parsed != null) setState(() => _amount = parsed);
-          },
+          inputDecorationTheme: _dropdownInputDecoration(theme),
+          onSelected: (val) => setState(() => _selectedCurrency = val),
+          dropdownMenuEntries: _currencies
+              .map((c) => DropdownMenuEntry(value: c, label: c))
+              .toList(),
         ),
-        const SizedBox(height: 24),
-        WithdrawalSummaryCard(
-          amountUsd: _amount,
-          rate: _selectedCurrency.rateToUsd,
-          currencyCode: _selectedCurrency.code,
-          feeUsd: 2.50,
-          estimatedArrival: _selectedMethod?.estimatedTime ?? 'Instant',
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Country'),
+        _buildTextField(theme, hint: 'e.g. Nigeria'),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Bank Name'),
+        _buildTextField(
+          theme,
+          controller: _bankNameController,
+          hint: 'Select or type bank name',
         ),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Account Number'),
+        _buildTextField(
+          theme,
+          controller: _bankAccountController,
+          hint: '10-12 digit account number',
+          keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Account Holder Name'),
+        _buildTextField(
+          theme,
+          controller: _accountHolderController,
+          hint: 'Exact name on account',
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildSaveAccountToggle(theme),
       ],
     );
   }
 
-  Widget _buildBottomBar(ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: ElevatedButton(
-          onPressed: _nextStep,
-          child: Text(
-            _currentStep == 3 ? "Review Withdrawal" : "Continue",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
-          ),
+  Widget _buildEmailForm(ThemeData theme, WithdrawalCategory category) {
+    String provider = category.name.capitalize();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(theme, '$provider Email Address'),
+        _buildTextField(
+          theme,
+          controller: _emailController,
+          hint: 'Enter your $provider email',
+          keyboardType: TextInputType.emailAddress,
+          icon: Boxicons.bx_envelope,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildSaveAccountToggle(theme),
+      ],
+    );
+  }
+
+  Widget _buildMobileMoneyForm(ThemeData theme) {
+    final providers = [
+      'MTN Mobile Money',
+      'Telecel Cash',
+      'Airtel Money',
+      'Orange Money',
+      'M-Pesa',
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(theme, 'Country'),
+        _buildTextField(theme, hint: 'e.g. Ghana'),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Provider'),
+        DropdownMenu<String>(
+          initialSelection: _selectedMobileProvider,
+          width: MediaQuery.of(context).size.width - (AppSpacing.lg * 2),
+          inputDecorationTheme: _dropdownInputDecoration(theme),
+          onSelected: (val) => setState(() => _selectedMobileProvider = val),
+          dropdownMenuEntries: providers
+              .map((p) => DropdownMenuEntry(value: p, label: p))
+              .toList(),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Mobile Number'),
+        _buildTextField(
+          theme,
+          controller: _phoneController,
+          hint: '+233 54 123 4567',
+          keyboardType: TextInputType.phone,
+          icon: Boxicons.bx_phone,
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildSaveAccountToggle(theme),
+      ],
+    );
+  }
+
+  Widget _buildCryptoForm(ThemeData theme, bool isDark) {
+    final coins = ['USDT', 'USDC', 'BTC', 'ETH', 'BNB', 'SOL'];
+    final networks = [
+      'TRC20',
+      'ERC20',
+      'BEP20',
+      'Polygon',
+      'Arbitrum',
+      'Optimism',
+      'Solana',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLabel(theme, 'Coin'),
+                  DropdownMenu<String>(
+                    initialSelection: _selectedCryptoCoin,
+                    width:
+                        (MediaQuery.of(context).size.width -
+                            (AppSpacing.lg * 2) -
+                            AppSpacing.md) /
+                        2,
+                    inputDecorationTheme: _dropdownInputDecoration(theme),
+                    onSelected: (val) =>
+                        setState(() => _selectedCryptoCoin = val),
+                    dropdownMenuEntries: coins
+                        .map((c) => DropdownMenuEntry(value: c, label: c))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLabel(theme, 'Network'),
+                  DropdownMenu<String>(
+                    initialSelection: _selectedCryptoNetwork,
+                    width:
+                        (MediaQuery.of(context).size.width -
+                            (AppSpacing.lg * 2) -
+                            AppSpacing.md) /
+                        2,
+                    inputDecorationTheme: _dropdownInputDecoration(theme),
+                    onSelected: (val) =>
+                        setState(() => _selectedCryptoNetwork = val),
+                    dropdownMenuEntries: networks
+                        .map((n) => DropdownMenuEntry(value: n, label: n))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Wallet Address'),
+        _buildTextField(
+          theme,
+          controller: _cryptoAddressController,
+          hint: 'Paste address here',
+          icon: Boxicons.bx_wallet,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildLabel(theme, 'Memo / Tag (Optional)'),
+        _buildTextField(
+          theme,
+          controller: _cryptoMemoController,
+          hint: 'Required for some exchanges',
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _buildSaveAccountToggle(theme),
+      ],
+    );
+  }
+
+  // --- REUSABLE FORM ELEMENTS ---
+
+  Widget _buildLabel(ThemeData theme, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
+      child: Text(
+        text,
+        style: theme.textTheme.bodySmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: theme.hintColor,
         ),
       ),
     );
+  }
+
+  Widget _buildTextField(
+    ThemeData theme, {
+    TextEditingController? controller,
+    String? hint,
+    TextInputType? keyboardType,
+    IconData? icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.hintColor.withValues(alpha: 0.5),
+        ),
+        prefixIcon: icon != null
+            ? Icon(icon, color: theme.hintColor, size: 20)
+            : null,
+        filled: true,
+        fillColor: theme.brightness == Brightness.dark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Colors.black.withValues(alpha: 0.03),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: AppColors.primary.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+      ),
+    );
+  }
+
+  InputDecorationTheme _dropdownInputDecoration(ThemeData theme) {
+    return InputDecorationTheme(
+      filled: true,
+      fillColor: theme.brightness == Brightness.dark
+          ? Colors.white.withValues(alpha: 0.03)
+          : Colors.black.withValues(alpha: 0.03),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: AppColors.primary.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveAccountToggle(ThemeData theme) {
+    return Row(
+      children: [
+        Switch.adaptive(
+          value: _saveAccount,
+          activeColor: AppColors.primary,
+          onChanged: (val) => setState(() => _saveAccount = val),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          'Save this account for future withdrawals',
+          style: theme.textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+
+  // --- BOTTOM SUMMARY & ACTION ---
+
+  Widget _buildBottomSummaryAndAction(ThemeData theme, bool isDark) {
+    final netAmount = _amount > _fee ? _amount - _fee : 0.0;
+    final convertedAmount = netAmount * _exchangeRate;
+    final showExchange =
+        _selectedMethod?.category == WithdrawalCategory.bank &&
+        _selectedCurrency?.contains('NGN') == true;
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF151515) : Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Processing Fee',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.hintColor,
+                ),
+              ),
+              Text(
+                '\$${_fee.toStringAsFixed(2)}',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          if (showExchange) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Exchange Rate',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.hintColor,
+                  ),
+                ),
+                Text(
+                  '1 USD = ₦${_exchangeRate.toStringAsFixed(0)}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: AppSpacing.md),
+          const Divider(),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'You\'ll Receive',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Est. arrival: ${showExchange ? '1-3 Business Days' : 'Instant'}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.hintColor,
+                    ),
+                  ),
+                ],
+              ),
+              Text(
+                showExchange
+                    ? '₦${convertedAmount.toStringAsFixed(2)}'
+                    : '\$${netAmount.toStringAsFixed(2)}',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: _amount > 0 && _selectedMethod != null
+                  ? _processWithdrawal
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'Continue',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }

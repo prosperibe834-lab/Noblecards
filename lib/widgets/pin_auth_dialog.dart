@@ -25,8 +25,10 @@ class _PinAuthDialogState extends State<PinAuthDialog> {
       setState(() => _pin += val);
       if (_pin.length == 4) {
         Future.delayed(const Duration(milliseconds: 200), () {
-          Navigator.pop(context);
           widget.onSuccess(_pin);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, true);
+          }
         });
       }
     }
