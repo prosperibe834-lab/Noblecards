@@ -1044,129 +1044,102 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   // --- BOTTOM SUMMARY & ACTION ---
 
   Widget _buildBottomSummaryAndAction(ThemeData theme, bool isDark) {
-    final netAmount = _amount > _fee ? _amount - _fee : 0.0;
-    final convertedAmount = netAmount * _exchangeRate;
-    final showExchange =
-        _selectedMethod?.category == WithdrawalCategory.bank &&
-        _selectedCurrency?.contains('NGN') == true;
+  final netAmount = _amount > _fee ? _amount - _fee : 0.0;
+  final convertedAmount = netAmount * _exchangeRate;
+  final showExchange = _selectedMethod?.category == WithdrawalCategory.bank && 
+                       _selectedCurrency?.contains('NGN') == true;
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF151515) : Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+  return Container(
+    padding: const EdgeInsets.all(AppSpacing.lg),
+    decoration: BoxDecoration(
+      color: isDark ? const Color(0xFF151515) : Colors.white,
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(32), 
+        topRight: Radius.circular(32),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+          blurRadius: 20,
+          offset: const Offset(0, -5),
+        )
+      ],
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Smoothly expands when _amount > 0
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: _amount > 0
+              ? Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Processing Fee', style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor)),
+                        Text('\$${_fee.toStringAsFixed(2)}', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    if (showExchange) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Exchange Rate', style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor)),
+                          Text('1 USD = ₦${_exchangeRate.toStringAsFixed(0)}', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.md),
+                    const Divider(),
+                    const SizedBox(height: AppSpacing.md),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('You\'ll Receive', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Text('Est. arrival: ${showExchange ? '1-3 Business Days' : 'Instant'}', style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor)),
+                          ],
+                        ),
+                        Text(
+                          showExchange ? '₦${convertedAmount.toStringAsFixed(2)}' : '\$${netAmount.toStringAsFixed(2)}',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                  ],
+                )
+              : const SizedBox.shrink(),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Processing Fee',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.hintColor,
-                ),
-              ),
-              Text(
-                '\$${_fee.toStringAsFixed(2)}',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          if (showExchange) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Exchange Rate',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.hintColor,
-                  ),
-                ),
-                Text(
-                  '1 USD = ₦${_exchangeRate.toStringAsFixed(0)}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+
+        // Action Button
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: ElevatedButton(
+            onPressed: _amount > 0 && _selectedMethod != null ? _processWithdrawal : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 0,
             ),
-          ],
-          const SizedBox(height: AppSpacing.md),
-          const Divider(),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'You\'ll Receive',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Est. arrival: ${showExchange ? '1-3 Business Days' : 'Instant'}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.hintColor,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                showExchange
-                    ? '₦${convertedAmount.toStringAsFixed(2)}'
-                    : '\$${netAmount.toStringAsFixed(2)}',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
+            child: const Text('Continue', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: AppSpacing.xl),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _amount > 0 && _selectedMethod != null
-                  ? _processWithdrawal
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Continue',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }
 
 extension StringExtension on String {
@@ -1174,3 +1147,5 @@ extension StringExtension on String {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
   }
 }
+
+

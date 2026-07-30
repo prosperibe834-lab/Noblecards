@@ -210,7 +210,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: [
                             // Graphic Illustration Container
                             Container(
-                              height: size.height * 0.52,
+                              height: size.height * 0.45,
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
