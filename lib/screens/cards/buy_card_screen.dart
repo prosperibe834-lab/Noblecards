@@ -23,7 +23,7 @@ import 'widgets/region_selector_card.dart';
 class BuyCardScreen extends StatelessWidget {
   final GiftCardModel card;
 
-  const BuyCardScreen({Key? key, required this.card}) : super(key: key);
+  const BuyCardScreen({super.key, required this.card});
 
   void _handlePayment(BuildContext context) {
     // Show existing PIN Dialog
@@ -37,8 +37,7 @@ class BuyCardScreen extends StatelessWidget {
       }
     });
     */
-    // Placeholder print to simulate navigation
-    print("Navigating to payment_processing_screen.dart");
+    // Navigation placeholder.
   }
 
   Future<void> _openRegionSelector(BuildContext context) async {
@@ -106,7 +105,7 @@ class BuyCardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const BuyCardHeader(),
+                BuyCardHeader(card: card),
                 const SizedBox(height: AppSpacing.md),
                 Builder(
                   builder: (context) => RegionSelectorCard(

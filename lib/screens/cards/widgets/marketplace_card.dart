@@ -48,7 +48,7 @@ class MarketplaceCard extends StatelessWidget {
                   card.logoUrl,
                   height: 36,
                   width: 36,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, size: 36),
+                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, size: 36),
                 ),
                 FavoriteButton(cardId: card.id),
               ],

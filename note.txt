@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i fixed buy page"
+git commit -m "i did some stuffs in buy page and region bottom sheet"
 git push origin main
 
 
