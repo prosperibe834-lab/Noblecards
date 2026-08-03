@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:boxicons/boxicons.dart';
+import 'package:noble_cards/theme/app_colors.dart';
+import 'package:noble_cards/theme/app_spacing.dart';
+// Assuming pin dialog is in widgets/
+// import 'package:noble_cards/widgets/pin_auth_dialog.dart';
+
+import 'models/gift_card_model.dart';
+import 'providers/buy_provider.dart';
+import 'widgets/buy_card_header.dart';
+import 'widgets/rate_info_card.dart';
+import 'widgets/amount_input_card.dart';
+import 'widgets/quantity_selector.dart';
+import 'widgets/payment_method_card.dart';
+import 'widgets/order_summary_card.dart';
+import 'widgets/continue_payment_button.dart';
+
+class BuyCardScreen extends StatelessWidget {
+  final GiftCardModel card;
+
+  const BuyCardScreen({Key? key, required this.card}) : super(key: key);
+
+  void _handlePayment(BuildContext context) {
+    // Show existing PIN Dialog
+    /*
+    showDialog(
+      context: context,
+      builder: (_) => const PinAuthDialog(),
+    ).then((success) {
+      if (success == true) {
+         Navigator.pushNamed(context, '/payment_processing_screen');
+      }
+    });
+    */
+    // Placeholder print to simulate navigation
+    print("Navigating to payment_processing_screen.dart");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightBackground;
+    final textColor = isDark ? AppColors.darkText : AppColors.lightText;
+
+    return ChangeNotifierProvider(
+      create: (_) => BuyProvider(),
+      child: Scaffold(
+        backgroundColor: bgColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Boxicons.bx_chevron_left, color: textColor),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            'Buy Gift Card',
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 18,
+            ),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Boxicons.bx_headphone, color: textColor),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                BuyCardHeader(),
+                SizedBox(height: AppSpacing.lg),
+                RateInfoCard(),
+                SizedBox(height: AppSpacing.lg),
+                AmountInputCard(),
+                SizedBox(height: AppSpacing.lg),
+                QuantitySelector(),
+                SizedBox(height: AppSpacing.lg),
+                PaymentMethodCard(),
+                SizedBox(height: AppSpacing.lg),
+                OrderSummaryCard(),
+                SizedBox(height: 100), // padding for bottom button
+              ],
+            ),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Builder(
+            builder: (ctx) =>
+                ContinuePaymentButton(onPressed: () => _handlePayment(ctx)),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noble_cards/widgets/custom_bottom_nav.dart';
 import 'package:noble_cards/screens/home_screen.dart';
-import 'package:noble_cards/screens/cards_screen.dart';
+import 'package:noble_cards/screens/cards/cards_screen.dart';
 import 'package:noble_cards/screens/wallet_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -22,18 +22,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     final screens = [
       HomeScreen(onNavigateToCards: () => _changeTab(1)),
-      // const PlaceholderScreen(title: "Cards"),
-       const CardsMarketplaceScreen(),
+      const CardsScreen(),
       const WalletScreen(),
       const PlaceholderScreen(title: "Orders"),
       const PlaceholderScreen(title: "Profile"),
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentTab,
-        children: screens,
-      ),
+      body: IndexedStack(index: _currentTab, children: screens),
       bottomNavigationBar: CustomBottomNav(
         currentTab: _currentTab,
         onTabSelected: _changeTab,

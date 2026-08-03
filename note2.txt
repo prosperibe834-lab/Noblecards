@@ -1,29 +1,1993 @@
+
+# Project Architecture & Folder Structure
+
+You are a Senior Flutter Engineer, Senior UI/UX Designer and Software Architect.
+
+Your task is NOT to build just another Flutter UI.
+
+You are building a production-ready fintech application called NobleCards.
+
+The quality should be comparable to top fintech applications like Revolut, Wise, PayPal, Binance, Chime, Cash App and other premium financial apps.
+
+DO NOT create a basic Flutter project.
+
+Everything must look premium.
+
+Every animation must be smooth.
+
+Every spacing must feel intentional.
+
+Every widget must be reusable.
+
+Everything must support both Light Mode and Dark Mode.
+
+-----------------------------------
+
+VERY IMPORTANT
+
+The project already has a complete theme system.
+
+DO NOT recreate another theme.
+
+DO NOT create another AppColors.
+
+DO NOT create another AppTheme.
+
+DO NOT create another spacing class.
+
+DO NOT create another animation class.
+
+Reuse the existing project theme.
+
+Existing files already available:
+
+AppColors
+AppTheme
+AppAnimation
+AppSpacing
+AppRadius
+AppShadow
+AppTextTheme
+ThemeProvider
+
+Use them everywhere.
+
+-----------------------------------
+
+Existing transaction authentication already exists.
+
+DO NOT create another transaction PIN dialog.
+
+Reuse
+
+pin_auth_dialog.dart
+
+Whenever a Buy or Sell transaction requires authorization.
+
+-----------------------------------
+
+ARCHITECTURE
+
+The Cards module must be scalable.
+
+No massive files.
+
+No business logic inside widgets.
+
+No duplicated widgets.
+
+Use reusable components.
+
+Follow clean architecture.
+
+-----------------------------------
+
+Create the following folder structure.
+
 lib/
-└── screens/
+
+screens/
+
+cards/
+
+cards_screen.dart
+
+buy_card_screen.dart
+
+sell_card_screen.dart
+
+gift_card_details_screen.dart
+
+card_search_screen.dart
+
+widgets/
+
+models/
+
+providers/
+
+services/
+
+-----------------------------------
+
+Inside
+
+screens/cards/widgets/
+
+Create reusable widgets only.
+
+Each widget must have one responsibility.
+
+Example:
+
+live_market_marquee.dart
+
+Displays live market ticker.
+
+search_bar_widget.dart
+
+Animated search field.
+
+country_selector.dart
+
+Country selector.
+
+category_chip.dart
+
+Category chip.
+
+marketplace_card.dart
+
+Gift card item.
+
+gift_card_logo.dart
+
+Displays official brand logos.
+
+favorite_button.dart
+
+Favorite animation.
+
+promo_banner.dart
+
+Animated banner.
+
+highest_rate_card.dart
+
+Highest rate widget.
+
+marketplace_grid.dart
+
+Responsive grid.
+
+section_header.dart
+
+Reusable title header.
+
+verification_checkbox.dart
+
+Checkbox before selling.
+
+bulk_card_input.dart
+
+Dynamic card input.
+
+card_upload_widget.dart
+
+Upload card image.
+
+card_code_field.dart
+
+Gift card code input.
+
+quantity_selector.dart
+
+Select number of cards.
+
+filter_bottom_sheet.dart
+
+Advanced filters.
+
+country_bottom_sheet.dart
+
+Country selector.
+
+loading_dialog.dart
+
+Pending verification dialog.
+
+success_dialog.dart
+
+Animated success dialog.
+
+failed_dialog.dart
+
+Verification failed dialog.
+
+pending_dialog.dart
+
+Verification pending dialog.
+
+network_error_widget.dart
+
+Offline widget.
+
+empty_market_widget.dart
+
+Marketplace empty state.
+
+shimmer_marketplace.dart
+
+Skeleton loading.
+
+buy_sell_buttons.dart
+
+Buy and Sell buttons.
+
+price_badge.dart
+
+Live rate badge.
+
+updated_time_badge.dart
+
+Shows last updated.
+
+availability_badge.dart
+
+Available / Unavailable.
+
+-----------------------------------
+
+Inside
+
+models/cards/
+
+Create
+
+gift_card_model.dart
+
+country_model.dart
+
+gift_card_category_model.dart
+
+gift_card_rate_model.dart
+
+live_market_activity_model.dart
+
+bulk_sell_model.dart
+
+sell_card_model.dart
+
+buy_card_model.dart
+
+gift_card_region_model.dart
+
+-----------------------------------
+
+Inside
+
+providers/cards/
+
+Create
+
+cards_provider.dart
+
+search_provider.dart
+
+country_provider.dart
+
+filter_provider.dart
+
+favorites_provider.dart
+
+buy_provider.dart
+
+sell_provider.dart
+
+live_market_provider.dart
+
+bulk_upload_provider.dart
+
+details_provider.dart
+
+-----------------------------------
+
+Inside
+
+services/cards/
+
+Create
+
+cards_service.dart
+
+search_service.dart
+
+country_service.dart
+
+gift_card_service.dart
+
+verification_service.dart
+
+live_market_service.dart
+
+bulk_upload_service.dart
+
+rates_service.dart
+
+favorite_service.dart
+
+-----------------------------------
+
+RULES
+
+Every screen must remain below approximately 300 lines whenever possible.
+
+Every widget should be reusable.
+
+Never duplicate UI.
+
+Never duplicate logic.
+
+Keep providers responsible only for state.
+
+Keep services responsible for API communication.
+
+Keep models for data only.
+
+Widgets must never call APIs directly.
+
+Providers communicate with Services.
+
+Services communicate with Laravel API later.
+
+-----------------------------------
+
+All animations must use
+
+AppAnimation.fast
+
+AppAnimation.normal
+
+AppAnimation.slow
+
+Never hardcode animation durations.
+
+-----------------------------------
+
+Every border radius must use
+
+AppRadius
+
+Every spacing
+
+AppSpacing
+
+Every shadow
+
+AppShadow
+
+Never hardcode them.
+
+-----------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HOME CONTENT, FILTERS, MARKETPLACE & CARD LIST
+
+
+
+The Cards page must feel like one of the world's best fintech applications.
+
+Everything should be smooth.
+
+Everything should animate.
+
+Nothing should feel static.
+
+Use Hero animations, fade animations, slide animations, scale animations, shimmer loading, skeleton loading, micro interactions and haptic feedback.
+
+----------------------------------------------------
+COUNTRY / REGION SELECTOR
+----------------------------------------------------
+
+Directly under the search bar.
+
+Beautiful pill container.
+
+Contains
+
+• Country flag
+• Country name
+• Chevron icon
+
+Examples
+
+🇺🇸 United States
+
+🇬🇧 United Kingdom
+
+🇨🇦 Canada
+
+etc.
+
+Tapping opens a full screen searchable country selector.
+
+Search countries instantly.
+
+Show
+
+Flag
+
+Country name
+
+Supported regions
+
+When selected
+
+refresh all marketplace cards.
+
+Support about 120+ countries/regions.
+
+Examples
+
+United States
+
+United Kingdom
+
+Canada
+
+Australia
+
+Germany
+
+France
+
+Italy
+
+Spain
+
+Netherlands
+
+Belgium
+
+Ireland
+
+Austria
+
+Switzerland
+
+Portugal
+
+Norway
+
+Sweden
+
+Finland
+
+Denmark
+
+Poland
+
+Romania
+
+Turkey
+
+Mexico
+
+Brazil
+
+Argentina
+
+Chile
+
+Colombia
+
+United Arab Emirates
+
+Saudi Arabia
+
+Qatar
+
+Kuwait
+
+South Africa
+
+Nigeria
+
+Ghana
+
+Kenya
+
+Japan
+
+China
+
+Singapore
+
+Malaysia
+
+India
+
+Pakistan
+
+Philippines
+
+Thailand
+
+Indonesia
+
+Vietnam
+
+South Korea
+
+and many more.
+
+----------------------------------------------------
+CATEGORY FILTERS
+----------------------------------------------------
+
+Horizontal animated chips.
+
+All
+
+Shopping
+
+Gaming
+
+Streaming
+
+Entertainment
+
+Food
+
+Travel
+
+Finance
+
+Music
+
+Fashion
+
+Tech
+
+Lifestyle
+
+Education
+
+Mobile
+
+Crypto
+
+Sports
+
+Beauty
+
+Health
+
+Digital
+
+Utilities
+
+Animations when selected.
+
+Filter instantly.
+
+----------------------------------------------------
+QUICK FILTERS
+----------------------------------------------------
+
+Animated chips.
+
+All
+
+Trending
+
+Popular
+
+Highest Rate
+
+Instant Delivery
+
+Recently Added
+
+Available
+
+Favorites
+
+Filter immediately.
+
+----------------------------------------------------
+PROMOTIONAL BANNERS
+----------------------------------------------------
+
+Beautiful auto sliding banners.
+
+4–6 banners.
+
+Examples
+
+Trade Gift Cards Securely
+
+Highest Rates Today
+
+Instant Verification
+
+24/7 Support
+
+Global Marketplace
+
+Fast Payments
+
+Animated indicators.
+
+Glassmorphism.
+
+Gradient backgrounds.
+
+Floating illustrations.
+
+----------------------------------------------------
+LIVE MARKET TICKER
+----------------------------------------------------
+
+One of the most important premium features.
+
+NOT vertical.
+
+Horizontal marquee.
+
+Moves continuously from RIGHT to LEFT.
+
+Infinite loop.
+
+When one message disappears another enters.
+
+Each message contains
+
+small logo
+
+card name
+
+country
+
+rate
+
+time
+
+Examples use images online images dont use emoji
+
+🍎 Apple US sold 2 mins ago
+
+🎮 Steam UK sold 1 min ago
+
+🎁 Amazon CA sold 30 sec ago
+
+🎵 Spotify Germany sold 4 mins ago
+
+🎮 Xbox US sold now
+
+🎬 Netflix UK sold 5 mins ago
+
+🛒 Walmart US sold 2 mins ago
+
+🎮 PSN Canada sold now
+
+Smooth marquee animation.
+
+Do NOT restart suddenly.
+
+Must feel like Binance ticker.
+
+----------------------------------------------------
+HOT TODAY SECTION
+----------------------------------------------------
+
+Horizontal cards.
+
+Large premium cards.
+
+Each card shows
+
+Logo
+
+Name
+
+Country
+
+Current Buy
+
+Current Sell
+
+Availability
+
+Tap opens details.
+
+----------------------------------------------------
+TOP RATES TODAY
+----------------------------------------------------
+
+Premium container.
+
+Live indicator.
+
+Top cards with highest sell rate.
+
+Examples
+
+Apple
+
+Amazon
+
+Steam
+
+Visa
+
+Razer Gold
+
+Nike
+
+Sephora
+
+etc.
+
+----------------------------------------------------
+RECENTLY VIEWED
+----------------------------------------------------
+
+Automatically generated.
+
+Shows last opened cards.
+
+Horizontal list.
+
+----------------------------------------------------
+MARKETPLACE SECTION
+----------------------------------------------------
+
+Beautiful title.
+
+Marketplace
+
+Small subtitle
+
+Showing XXX Cards
+
+----------------------------------------------------
+MAIN GRID
+----------------------------------------------------
+
+Responsive 2 column layout.
+
+Large premium cards.
+
+Every card contains
+
+Original logo
+
+Country flag
+
+Card name
+
+Category
+
+Current Buy Rate
+
+Current Sell Rate
+
+Available badge
+
+Favorite icon
+
+Instant badge if available
+
+Animated button
+
+Button text MUST be
+
+Buy
+
+or
+
+Sell
+
+NOT Trade.
+
+----------------------------------------------------
+SUPPORTED GIFT CARDS
+----------------------------------------------------
+
+Populate marketplace with many cards.
+
+Shopping
+
+Amazon
+
+Walmart
+
+Target
+
+Best Buy
+
+Costco
+
+eBay
+
+Macy's
+
+Home Depot
+
+Lowe's
+
+Sephora
+
+Ulta
+
+IKEA
+
+H&M
+
+Zara
+
+Shein
+
+Temu
+
+AliExpress
+
+Gaming
+
+Steam
+
+PlayStation
+
+Xbox
+
+Nintendo
+
+Razer Gold
+
+Riot Points
+
+EA
+
+Epic Games
+
+Blizzard
+
+Roblox
+
+PUBG
+
+Free Fire
+
+Entertainment
+
+Netflix
+
+Disney+
+
+Hulu
+
+Spotify
+
+Apple Music
+
+YouTube Premium
+
+Crunchyroll
+
+Prime Video
+
+HBO Max
+
+Paramount+
+
+Tech
+
+Apple
+
+Google Play
+
+Microsoft
+
+Dell
+
+HP
+
+Lenovo
+
+Adobe
+
+Canva
+
+Food
+
+Uber Eats
+
+DoorDash
+
+Starbucks
+
+McDonald's
+
+KFC
+
+Subway
+
+Burger King
+
+Travel
+
+Uber
+
+Lyft
+
+Airbnb
+
+Hotels.com
+
+Booking.com
+
+Expedia
+
+Air Canada
+
+Delta
+
+Finance
+
+Visa
+
+Mastercard
+
+American Express
+
+Vanilla Visa
+
+OneVanilla
+
+SecureSpend
+
+American Express Reward
+
+Fashion
+
+Nike
+
+Adidas
+
+Puma
+
+Foot Locker
+
+Gucci
+
+Louis Vuitton
+
+Balenciaga
+
+Education
+
+Udemy
+
+Coursera
+
+LinkedIn Learning
+
+Mobile
+
+AT&T
+
+T-Mobile
+
+Verizon
+
+Vodafone
+
+Orange
+
+Utilities
+
+Paysafecard
+
+Neosurf
+
+Cashlib
+
+Flexepin
+
+Crypto
+
+Binance Gift Card
+
+Bybit Card
+
+Bitrefill
+
+Continue with realistic data.
+
+Each card should have
+
+Buy rate
+
+Sell rate
+
+Availability
+
+Region
+
+Description
+
+Processing time
+
+Popularity
+
+Trending
+
+New badge where applicable.
+
+Everything must animate beautifully.
+
+Continue to Part 1C.
+
+
+
+
+ SELL, DETAILS PAGE, MULTI-CARD SELLING & PROFESSIONAL FLOW
+
+
+
+Everything below must be implemented with a premium fintech UI/UX.
+
+Follow my existing theme files exactly.
+
+Reuse existing widgets where possible.
+
+Never create duplicate design systems.
+
+Everything must support Light Mode and Dark Mode.
+
+----------------------------------------------------
+GIFT CARD DETAILS PAGE
+----------------------------------------------------
+
+When a user taps any gift card from the marketplace, open a beautiful premium details page using Hero animation.
+
+Display:
+
+• Original gift card logo
+• Gift card name
+• Country/Region
+• Category
+• Availability status
+• Buy rate
+• Sell rate
+• Processing time
+• Supported denominations (display "Flexible Amount" or "Any Amount Supported" instead of fixed maximum limits where appropriate)
+• Description
+• Last updated time
+
+Add beautiful gradient header.
+
+Floating logo.
+
+Premium glassmorphism cards.
+
+Smooth page animations.
+
+Bottom sticky action buttons:
+
+BUY CARD
+
+SELL CARD
+
+No "Trade" button anywhere.
+
+----------------------------------------------------
+BUY FLOW
+----------------------------------------------------
+
+When user taps BUY:
+
+Open Buy Screen.
+
+Include:
+
+• Selected gift card
+• Region
+• Current buy rate
+• Amount input
+• Quantity selector
+• Live total calculation
+• Wallet balance
+• Payment method
+• Summary card
+• Continue button
+
+Before payment...
+
+Open the existing
+
+pin_auth_dialog.dart
+
+Require user's 4-digit transaction PIN.
+
+If PIN succeeds
+
+Continue payment flow.
+
+----------------------------------------------------
+SELL FLOW
+----------------------------------------------------
+
+This is the most important part.
+
+Do NOT make users submit cards one after another.
+
+Support selling multiple cards in one submission.
+
+The UI should be beautiful and easy to understand.
+
+Example:
+
+Card 1
+
+Gift Card Type
+
+Country
+
+Amount
+
+Card Code
+
+Upload Front Image (optional)
+
+Upload Back Image (optional)
+
+Remove Card
+
+----------------------------------
+
+Card 2
+
+Gift Card Type
+
+Country
+
+Amount
+
+Card Code
+
+Upload Images
+
+----------------------------------
+
+Large animated button
+
++ Add Another Card
+
+Users should be able to continue adding cards.
+
+Apple
+
+Steam
+
+Nike
+
+Amazon
+
+Xbox
+
+PlayStation
+
+Visa
+
+Netflix
+
+etc.
+
+All in one submission.
+
+----------------------------------------------------
+IMPORTANT CHECKBOX
+----------------------------------------------------
+
+Before Continue button...
+
+Show an animated checkbox.
+
+Checkbox gently bounces every few seconds to attract attention.
+
+Text:
+
+"I understand that every submitted gift card will be verified by NobleCards before approval. Processing time may vary depending on the verification result."
+
+If unchecked...
+
+Continue button remains disabled.
+
+Only when checked...
+
+Continue button becomes enabled.
+
+----------------------------------------------------
+TRANSACTION PIN
+----------------------------------------------------
+
+When Continue is tapped
+
+Open existing
+
+pin_auth_dialog.dart
+
+DO NOT create another PIN dialog.
+
+Reuse existing widget.
+
+----------------------------------------------------
+PROCESSING SCREEN
+----------------------------------------------------
+
+After correct PIN
+
+Show premium processing dialog.
+
+Animated loader.
+
+Text changes automatically.
+
+Examples:
+
+Preparing transaction...
+
+Uploading cards...
+
+Checking submitted information...
+
+Sending for verification...
+
+Almost done...
+
+After about 3–5 seconds...
+
+Automatically move to
+
+PENDING
+
+unless backend has already responded.
+
+----------------------------------------------------
+PENDING SCREEN
+----------------------------------------------------
+
+Beautiful success-style pending page.
+
+Large animated illustration.
+
+Title:
+
+Submission Received
+
+Subtitle:
+
+Your submitted gift cards have been received successfully.
+
+They are currently being verified by our system.
+
+You will receive a notification immediately after verification is completed.
+
+Status badge:
+
+Pending Verification
+
+Buttons:
+
+Done
+
+View Orders
+
+If Done
+
+Return to Cards page.
+
+If View Orders
+
+Open Orders page.
+
+----------------------------------------------------
+BACKEND VERIFICATION
+----------------------------------------------------
+
+The frontend must NEVER assume approval.
+
+Backend decides:
+
+Approved
+
+Rejected
+
+Needs Review
+
+Pending
+
+Frontend only reflects backend status.
+
+----------------------------------------------------
+NOTIFICATIONS
+----------------------------------------------------
+
+When backend updates status:
+
+Send push notification.
+
+Examples:
+
+✅ Apple Gift Card Approved
+
+💰 Payment Sent Successfully
+
+❌ Steam Gift Card Rejected
+
+⏳ Card Still Under Review
+
+Tapping notification opens Orders page.
+
+----------------------------------------------------
+ORDERS PAGE
+----------------------------------------------------
+
+Recent Successful Trades section should NOT exist on the Cards page.
+
+Move all transaction history to the Orders page.
+
+Orders should contain:
+
+Pending
+
+Approved
+
+Rejected
+
+Completed
+
+Cancelled
+
+Each order shows:
+
+Card logo
+
+Card name
+
+Country
+
+Submitted amount
+
+Submitted date
+
+Status badge
+
+Reference ID
+
+Processing progress
+
+Payment amount
+
+Tap to open details.
+
+----------------------------------------------------
+SEARCH
+----------------------------------------------------
+
+Smart search.
+
+Search by:
+
+Card name
+
+Country
+
+Category
+
+Popular keywords
+
+Instant filtering.
+
+----------------------------------------------------
+ANIMATIONS
+----------------------------------------------------
+
+Add premium animations everywhere:
+
+Hero animations
+
+Fade
+
+Scale
+
+Slide
+
+Bounce
+
+Ripple
+
+Micro interactions
+
+Smooth page transitions
+
+Loading shimmer
+
+Skeleton loading
+
+Button press animation
+
+Favorite animation
+
+Checkbox bounce
+
+Marquee ticker animation
+
+Refresh animation
+
+Pull-to-refresh
+
+Use haptic feedback on important actions:
+
+Favorite
+
+Buy
+
+Sell
+
+Add card
+
+PIN success
+
+Submission complete
+
+----------------------------------------------------
+PROJECT STRUCTURE
+----------------------------------------------------
+
+Keep everything modular.
+
+Do NOT build the entire feature inside one file.
+
+Create folders inside:
+
+lib/screens/cards/
+
+
+Code must be clean, reusable, scalable, production-ready, and feel comparable to the quality of top global fintech apps such as Revolut, Wise, Monzo, Cash App, and Coinbase—while preserving the NobleCards brand identity and existing theme system.
+
+
+i made a mistake all those folders will be in cards folder please and also any code u send u tell me the file name and the folder it will be please and send me the all the files codes all the phases
+
+
+
+
+
+
+
+
+
+
+
+
+This project is UI-first, but every screen must be built so it can connect cleanly to a real backend later without requiring a redesign.
+
+Do NOT hardcode business logic into widgets.
+
+Use Providers for state management.
+
+Keep UI, models, providers and services separated.
+
+----------------------------------------------------
+BACKEND READY ARCHITECTURE
+----------------------------------------------------
+
+Prepare every feature for future API integration.
+
+Cards
+
+Countries
+
+Categories
+
+Rates
+
+Favorites
+
+Orders
+
+Notifications
+
+Buy
+
+Sell
+
+Wallet
+
+must all load through service classes later.
+
+For now use mock data through services.
+
+When backend is connected later, only the service layer should change.
+
+----------------------------------------------------
+LIVE RATES
+----------------------------------------------------
+
+Rates must be dynamic.
+
+Design the UI so rates can refresh automatically.
+
+When a rate changes:
+
+Animate the value instead of instantly replacing it.
+
+Examples:
+
+Fade
+
+Count-up animation
+
+Color flash
+
+Smooth transition
+
+Show:
+
+Last Updated
+
+Example:
+
+Updated 15 seconds ago
+
+----------------------------------------------------
+NETWORK STATES
+----------------------------------------------------
+
+Every screen must support:
+
+Loading
+
+Empty
+
+Offline
+
+Error
+
+Success
+
+Loading:
+
+Beautiful shimmer skeleton.
+
+Offline:
+
+Friendly illustration.
+
+Message explaining no internet.
+
+Retry button.
+
+Error:
+
+Friendly message.
+
+Retry button.
+
+Never show ugly Flutter errors.
+
+----------------------------------------------------
+IMAGE LOADING
+----------------------------------------------------
+
+Gift card logos should load gracefully.
+
+Show shimmer while loading.
+
+If image fails:
+
+Display a beautiful branded placeholder.
+
+Never leave broken image icons.
+
+----------------------------------------------------
+PERFORMANCE
+----------------------------------------------------
+
+The Cards page should remain smooth even with hundreds or thousands of cards.
+
+Use lazy loading where appropriate.
+
+Avoid rebuilding the whole page unnecessarily.
+
+Optimise scrolling.
+
+Optimise animations.
+
+----------------------------------------------------
+ACCESSIBILITY
+----------------------------------------------------
+
+Support:
+
+Large text sizes
+
+Screen readers
+
+Proper semantic labels
+
+High contrast
+
+Large tap targets
+
+Keyboard navigation where applicable
+
+----------------------------------------------------
+FAVORITES
+----------------------------------------------------
+
+Favorite button should animate smoothly.
+
+When added:
+
+Heart fills with animation.
+
+Small haptic feedback.
+
+Small success toast:
+
+Added to Favorites
+
+When removed:
+
+Removed from Favorites
+
+----------------------------------------------------
+PULL TO REFRESH
+----------------------------------------------------
+
+Refreshing should feel premium.
+
+Do not use a plain default indicator.
+
+Animate content refresh smoothly.
+
+Refresh:
+
+Cards
+
+Rates
+
+Featured sections
+
+Market ticker
+
+----------------------------------------------------
+MICRO INTERACTIONS
+----------------------------------------------------
+
+Every important action should feel alive.
+
+Examples:
+
+Button press
+
+Card press
+
+Favorite
+
+Category selection
+
+Country selection
+
+Search focus
+
+Search clear
+
+Bottom sheet open
+
+Bottom sheet close
+
+Dialog open
+
+Dialog close
+
+PIN success
+
+Submission success
+
+Order status update
+
+----------------------------------------------------
+BOTTOM SHEETS
+----------------------------------------------------
+
+Use premium rounded sheets.
+
+Smooth drag interaction.
+
+Backdrop blur if suitable.
+
+Nice entrance animation.
+
+----------------------------------------------------
+TOASTS & SNACKBARS
+----------------------------------------------------
+
+Use elegant floating snackbars.
+
+Examples:
+
+Added to Favorites
+
+PIN Verified
+
+Submission Received
+
+Network Restored
+
+Copied Successfully
+
+Use appropriate icons.
+
+----------------------------------------------------
+SEARCH EXPERIENCE
+----------------------------------------------------
+
+As user types:
+
+Results update instantly.
+
+Show recent searches.
+
+Show popular searches.
+
+Allow clearing recent searches.
+
+----------------------------------------------------
+COUNTRY EXPERIENCE
+----------------------------------------------------
+
+Country picker should include:
+
+Search
+
+Alphabetical scrolling
+
+Flags
+
+Country names
+
+Recently selected countries
+
+Smooth selection animation
+
+----------------------------------------------------
+VISUAL QUALITY
+----------------------------------------------------
+
+The app should not feel like a template.
+
+It should feel handcrafted.
+
+Use:
+
+Soft shadows
+
+Premium spacing
+
+Rounded corners
+
+Beautiful gradients
+
+Glassmorphism where appropriate
+
+Layered cards
+
+Depth
+
+Elegant typography
+
+Consistent icon sizing
+
+Professional alignment
+
+No crowded layouts
+
+----------------------------------------------------
+LIGHT MODE & DARK MODE
+----------------------------------------------------
+
+Support both perfectly.
+
+No text visibility issues.
+
+No overflow.
+
+No washed-out colors.
+
+Dark mode should feel premium, not simply black.
+
+Use the existing NobleCards theme as the foundation and extend it only where needed to create a world-class fintech appearance.
+
+----------------------------------------------------
+FILE ORGANIZATION
+----------------------------------------------------
+
+Follow clean architecture.
+
+No massive files.
+
+Keep widgets focused on one responsibility.
+
+Keep providers small.
+
+Keep models reusable.
+
+Keep services independent.
+
+No duplicated code.
+
+----------------------------------------------------
+CODE QUALITY
+----------------------------------------------------
+
+Write production-quality Flutter code.
+
+Meaningful names.
+
+Null-safe.
+
+Well-commented only where necessary.
+
+Reusable widgets.
+
+Reusable components.
+
+No dead code.
+
+No unnecessary dependencies.
+
+----------------------------------------------------
+FINAL DESIGN GOAL
+----------------------------------------------------
+
+The finished Cards module should immediately give users confidence.
+
+The first impression should be:
+
+• Fast
+• Secure
+• Modern
+• Premium
+• Professional
+• Trustworthy
+
+The quality target is comparable to the UI polish of leading fintech products, while remaining unique to NobleCards rather than copying any existing app.
+
+Before considering the module complete, review every screen, animation, spacing, transition, typography, icon, loading state, and interaction to ensure they meet a premium production standard.
+
+
+
+# FINAL INSTRUCTIONS
+
+This is a production-grade fintech application, not a UI demo.
+
+Do not skip any feature described in this prompt.
+
+Do not simplify any screen.
+
+Do not replace premium UI components with basic Material widgets unless customized to match the NobleCards design language.
+
+Use my existing theme system (AppColors, AppTheme, AppTextTheme, AppSpacing, AppRadius, AppShadow, AppAnimation) throughout the module. Extend it only when necessary without breaking consistency.
+
+Every widget must support both Light Mode and Dark Mode.
+
+Use my existing reusable widgets whenever possible instead of creating duplicates.
+
+Do not place everything inside one file. Follow the folder structure exactly and keep the code modular, reusable, maintainable, and scalable.
+
+Every interaction should feel polished:
+- Smooth animations
+- Haptic feedback
+- Loading states
+- Skeleton shimmer
+- Hero transitions
+- Premium bottom sheets
+- Elegant dialogs
+- Floating snackbars
+- Graceful empty, offline, and error states
+
+The UI should look custom-designed rather than template-based.
+
+Aim for App Store / Google Play production quality.
+
+Before finishing, review the entire module and refine spacing, typography, icon sizes, colors, shadows, gradients, transitions, and responsiveness until the experience feels like a premium global fintech product.
+
+Do not stop until every screen in this module is complete, polished, and connected together.
+
+and also dont leave anything empty like for u to wait to ad it in backend just build all the frontend i mentioned late ri will do backend by my self when am done building the frontend and also those filter make them to work anything i filter let it show what i filtered and also add designs u think is good and each code u send me tell me the file name and the folder name it will be make the design to be very beautifull to look like top fintech apps and have animations and be very nice 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+lib/
+├── screens/
+│   └── cards/
+│       ├── cards_screen.dart
+│       ├── buy_card_screen.dart
+│       ├── sell_card_screen.dart
+│       ├── gift_card_details_screen.dart
+│       ├── card_search_screen.dart
+│       └── widgets/
+│           ├── live_market_marquee.dart
+│           ├── search_bar_widget.dart
+│           ├── country_selector.dart
+│           ├── category_chip.dart
+│           ├── marketplace_card.dart
+│           ├── promo_banner.dart
+│           ├── marketplace_grid.dart
+│           ├── verification_checkbox.dart
+│           ├── multi_card_item.dart
+│           └── shimmer_marketplace.dart
+├── models/
+│   └── cards/
+│       ├── gift_card_model.dart
+│       ├── country_model.dart
+│       ├── sell_submission_model.dart
+│       └── live_market_activity_model.dart
+├── providers/
+│   └── cards/
+│       ├── cards_provider.dart
+│       ├── sell_provider.dart
+│       └── live_market_provider.dart
+└── services/
     └── cards/
-        ├── cards_screen.dart
-        ├── card_details_screen.dart
-        ├── buy_card_screen.dart
-        ├── sell_card_screen.dart
-        ├── widgets/
-        │   ├── cards_app_bar.dart
-        │   ├── search_bar.dart
-        │   ├── promo_banner.dart
-        │   ├── category_chips.dart
-        │   ├── quick_filters.dart
-        │   ├── marketplace_grid.dart
-        │   ├── marketplace_card.dart
-        │   ├── highest_rates.dart
-        │   ├── hot_today.dart
-        │   ├── country_selector.dart
-        │   ├── loading_grid.dart
-        │   ├── empty_state.dart
-        │   └── live_market_badge.dart
-        ├── models/
-        │   ├── gift_card.dart
-        │   ├── country.dart
-        │   └── filter_model.dart
-        ├── services/
-        │   └── gift_card_service.dart
-        └── data/
-            └── mock_cards.dart
+        ├── cards_service.dart
+        ├── sell_service.dart
+        └── live_market_service.dart
