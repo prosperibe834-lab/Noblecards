@@ -7,7 +7,9 @@ import 'package:noble_cards/theme/app_spacing.dart';
 // import 'package:noble_cards/widgets/pin_auth_dialog.dart';
 
 import 'models/gift_card_model.dart';
+import 'models/gift_card_region_model.dart';
 import 'providers/buy_provider.dart';
+import 'providers/region_provider.dart';
 import 'widgets/buy_card_header.dart';
 import 'widgets/rate_info_card.dart';
 import 'widgets/amount_input_card.dart';
@@ -15,6 +17,8 @@ import 'widgets/quantity_selector.dart';
 import 'widgets/payment_method_card.dart';
 import 'widgets/order_summary_card.dart';
 import 'widgets/continue_payment_button.dart';
+import 'widgets/region_bottom_sheet.dart';
+import 'widgets/region_selector_card.dart';
 
 class BuyCardScreen extends StatelessWidget {
   final GiftCardModel card;
@@ -37,6 +41,26 @@ class BuyCardScreen extends StatelessWidget {
     print("Navigating to payment_processing_screen.dart");
   }
 
+  Future<void> _openRegionSelector(BuildContext context) async {
+    final buyProvider = context.read<BuyProvider>();
+
+    final regionProvider = context.read<RegionProvider>();
+    final GiftCardRegionModel? pickedRegion = await showModalBottomSheet<GiftCardRegionModel>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ChangeNotifierProvider.value(
+        value: regionProvider,
+        child: const RegionBottomSheet(),
+      ),
+    );
+
+    if (pickedRegion != null) {
+      buyProvider.setRegion(pickedRegion);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -45,8 +69,11 @@ class BuyCardScreen extends StatelessWidget {
         : AppColors.lightBackground;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
 
-    return ChangeNotifierProvider(
-      create: (_) => BuyProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BuyProvider()),
+        ChangeNotifierProvider(create: (_) => RegionProvider()),
+      ],
       child: Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
@@ -78,19 +105,25 @@ class BuyCardScreen extends StatelessWidget {
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                BuyCardHeader(),
-                SizedBox(height: AppSpacing.lg),
-                RateInfoCard(),
-                SizedBox(height: AppSpacing.lg),
-                AmountInputCard(),
-                SizedBox(height: AppSpacing.lg),
-                QuantitySelector(),
-                SizedBox(height: AppSpacing.lg),
-                PaymentMethodCard(),
-                SizedBox(height: AppSpacing.lg),
-                OrderSummaryCard(),
-                SizedBox(height: 100), // padding for bottom button
+              children: [
+                const BuyCardHeader(),
+                const SizedBox(height: AppSpacing.md),
+                Builder(
+                  builder: (context) => RegionSelectorCard(
+                    onTap: () => _openRegionSelector(context),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                const RateInfoCard(),
+                const SizedBox(height: AppSpacing.lg),
+                const AmountInputCard(),
+                const SizedBox(height: AppSpacing.lg),
+                const QuantitySelector(),
+                const SizedBox(height: AppSpacing.lg),
+                const PaymentMethodCard(),
+                const SizedBox(height: AppSpacing.lg),
+                const OrderSummaryCard(),
+                const SizedBox(height: 100), // padding for bottom button
               ],
             ),
           ),

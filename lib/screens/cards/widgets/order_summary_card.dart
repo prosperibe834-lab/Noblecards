@@ -59,7 +59,7 @@ class OrderSummaryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           _buildRow(
             'Amount',
-            '\$${provider.amount.toStringAsFixed(2)}',
+            '${provider.currencySymbol}${provider.amount.toStringAsFixed(2)}',
             subTextColor,
             textColor,
           ),
@@ -93,7 +93,7 @@ class OrderSummaryCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$${provider.totalToPay.toStringAsFixed(2)}',
+                '${provider.currencySymbol}${provider.totalToPay.toStringAsFixed(2)}',
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 20,

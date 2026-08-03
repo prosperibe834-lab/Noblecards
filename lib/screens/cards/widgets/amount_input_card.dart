@@ -16,6 +16,9 @@ class AmountInputCard extends StatelessWidget {
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
     final inputColor = isDark ? AppColors.darkInput : AppColors.lightInput;
     final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
+    final denominationValues = provider.availableDenominations.isEmpty
+        ? [10.0, 25.0, 50.0, 100.0, 200.0]
+        : provider.availableDenominations.map((value) => double.tryParse(value) ?? 0.0).where((value) => value > 0).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +35,7 @@ class AmountInputCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Text('\$', style: TextStyle(color: textColor, fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(provider.currencySymbol, style: TextStyle(color: textColor, fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: TextFormField(
@@ -57,7 +60,7 @@ class AmountInputCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Text('USD', style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
+                    Text(provider.currencyCode, style: TextStyle(color: textColor, fontWeight: FontWeight.w600)),
                     const Icon(Icons.keyboard_arrow_down, size: 16),
                   ],
                 ),
@@ -69,7 +72,7 @@ class AmountInputCard extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [10.0, 25.0, 50.0, 100.0, 200.0].map((amount) {
+            children: denominationValues.map((amount) {
               return Padding(
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: AmountChip(
