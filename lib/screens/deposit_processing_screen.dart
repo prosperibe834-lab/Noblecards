@@ -7,12 +7,14 @@ class DepositProcessingScreen extends StatefulWidget {
   final double amount;
   final String currency;
   final double convertedUsd;
+  final bool returnToPreviousScreen;
 
   const DepositProcessingScreen({
     super.key,
     required this.amount,
     required this.currency,
     required this.convertedUsd,
+    this.returnToPreviousScreen = false,
   });
 
   @override
@@ -40,6 +42,12 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
         if (mounted) setState(() => _currentStage++);
       } else {
         timer.cancel();
+        if (widget.returnToPreviousScreen) {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+          return;
+        }
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

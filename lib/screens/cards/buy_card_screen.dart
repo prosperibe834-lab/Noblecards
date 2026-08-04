@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
-// Assuming pin dialog is in widgets/
-// import 'package:noble_cards/widgets/pin_auth_dialog.dart';
+import 'package:noble_cards/widgets/pin_auth_dialog.dart';
+import 'package:noble_cards/screens/deposit_processing_screen.dart';
 
 import 'models/gift_card_model.dart';
 import 'models/gift_card_region_model.dart';
@@ -25,19 +26,34 @@ class BuyCardScreen extends StatelessWidget {
 
   const BuyCardScreen({super.key, required this.card});
 
-  void _handlePayment(BuildContext context) {
-    // Show existing PIN Dialog
-    /*
-    showDialog(
+  Future<void> _handlePayment(BuildContext context) async {
+    final navigator = Navigator.of(context);
+
+    final success = await showDialog<bool>(
       context: context,
-      builder: (_) => const PinAuthDialog(),
-    ).then((success) {
-      if (success == true) {
-         Navigator.pushNamed(context, '/payment_processing_screen');
-      }
-    });
-    */
-    // Navigation placeholder.
+      builder: (_) => PinAuthDialog(
+        onSuccess: (pin) {
+          navigator.pop(true);
+        },
+      ),
+    );
+
+    if (!context.mounted || success != true) return;
+
+    HapticFeedback.mediumImpact();
+    if (!context.mounted) return;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const DepositProcessingScreen(
+          amount: 0,
+          currency: 'USD',
+          convertedUsd: 0,
+          returnToPreviousScreen: true,
+        ),
+      ),
+    );
   }
 
   Future<void> _openRegionSelector(BuildContext context) async {

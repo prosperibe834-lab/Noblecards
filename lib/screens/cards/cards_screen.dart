@@ -30,6 +30,7 @@ import 'widgets/cards_app_bar.dart';
 import 'widgets/section_header.dart';
 import 'widgets/shimmer_marketplace.dart';
 import 'widgets/top_rates_card.dart';
+import 'sell_gift_card_screen.dart';
 
 class CardsScreen extends StatelessWidget {
   const CardsScreen({super.key});
@@ -39,7 +40,12 @@ class CardsScreen extends StatelessWidget {
   }
 
   void _onSellTap(BuildContext context, GiftCardModel card) {
-    showFloatingSnackbar(context, 'Sell Screen Placeholder for ${card.name}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SellGiftCardScreen(card: card),
+      ),
+    );
   }
 
   void _onCardDetailsTap(BuildContext context, GiftCardModel card) {
