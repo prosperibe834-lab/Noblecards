@@ -15,6 +15,8 @@ import 'navigation/app_router.dart';
 
 import 'providers/payment_provider.dart';
 import 'providers/wallet_provider.dart';
+import 'screens/cards/providers/submission_provider.dart';
+import 'screens/cards/providers/sell_receipt_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +35,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
         ChangeNotifierProvider(create: (_) => WalletProvider()),
+        ChangeNotifierProvider(create: (_) => SubmissionProvider()),
+        ChangeNotifierProvider(create: (_) => SellReceiptProvider()),
       ],
       child: const NobleCardsApp(),
     ),

@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i added 4 digits pin in buy cards and sale"
+git commit -m "i did sale receipt"
 git push origin main
 
 

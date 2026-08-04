@@ -110,7 +110,8 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
           amount: 0,
           currency: 'USD',
           convertedUsd: 0,
-          returnToPreviousScreen: true,
+          navigateToSubmissionReceived: true,
+          transactionId: 'sale-submission-001',
         ),
       ),
     );
