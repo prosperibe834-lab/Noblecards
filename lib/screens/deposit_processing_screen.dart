@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import 'deposit_success_screen.dart';
 import 'cards/giftcard_submission_received_screen.dart';
+import 'cards/buy_submission_received_screen.dart';
 
 class DepositProcessingScreen extends StatefulWidget {
   final double amount;
@@ -10,6 +11,7 @@ class DepositProcessingScreen extends StatefulWidget {
   final double convertedUsd;
   final bool returnToPreviousScreen;
   final bool navigateToSubmissionReceived;
+  final bool navigateToBuySubmissionReceived;
   final String transactionId;
 
   const DepositProcessingScreen({
@@ -19,6 +21,7 @@ class DepositProcessingScreen extends StatefulWidget {
     required this.convertedUsd,
     this.returnToPreviousScreen = false,
     this.navigateToSubmissionReceived = false,
+    this.navigateToBuySubmissionReceived = false,
     this.transactionId = '',
   });
 
@@ -47,6 +50,15 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
         if (mounted) setState(() => _currentStage++);
       } else {
         timer.cancel();
+        if (widget.navigateToBuySubmissionReceived) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const BuySubmissionReceivedScreen(),
+            ),
+          );
+          return;
+        }
         if (widget.navigateToSubmissionReceived) {
           final transactionId = widget.transactionId.isNotEmpty
               ? widget.transactionId

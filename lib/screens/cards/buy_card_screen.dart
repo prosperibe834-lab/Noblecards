@@ -50,7 +50,7 @@ class BuyCardScreen extends StatelessWidget {
           amount: 0,
           currency: 'USD',
           convertedUsd: 0,
-          returnToPreviousScreen: true,
+          navigateToBuySubmissionReceived: true,
         ),
       ),
     );

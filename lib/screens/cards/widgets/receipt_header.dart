@@ -3,7 +3,12 @@ import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 
 class ReceiptHeader extends StatelessWidget {
-  const ReceiptHeader({super.key});
+  final String subtitle;
+  
+  const ReceiptHeader({
+    super.key, 
+    this.subtitle = 'GIFT CARD SUBMISSION RECEIPT',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,7 @@ class ReceiptHeader extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'GIFT CARD SUBMISSION RECEIPT',
+              subtitle,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
