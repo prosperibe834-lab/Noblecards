@@ -132,7 +132,10 @@ class CardsScreen extends StatelessWidget {
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
-                            builder: (_) => const FilterBottomSheet(),
+                            builder: (sheetContext) => ChangeNotifierProvider.value(
+                              value: context.read<FilterProvider>(),
+                              child: const FilterBottomSheet(),
+                            ),
                           );
                         },
                       ),
@@ -146,7 +149,10 @@ class CardsScreen extends StatelessWidget {
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
-                            builder: (_) => const CountryBottomSheet(),
+                            builder: (sheetContext) => ChangeNotifierProvider.value(
+                              value: context.read<CountryProvider>(),
+                              child: const CountryBottomSheet(),
+                            ),
                           );
                         },
                       ),
@@ -216,3 +222,4 @@ class CardsScreen extends StatelessWidget {
     );
   }
 }
+

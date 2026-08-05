@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i added some cards in the cards service "
+git commit -m "i remove view all button in cards screen"
 git push origin main
 
 

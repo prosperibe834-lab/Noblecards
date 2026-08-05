@@ -82,3 +82,4 @@ class TopRatesCard extends StatelessWidget {
     );
   }
 }
+

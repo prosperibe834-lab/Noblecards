@@ -49,7 +49,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
     return Column(
       children: [
         SizedBox(
-          height: 160,
+          height: 180,
           child: PageView.builder(
             controller: _controller,
             onPageChanged: (i) => setState(() => _currentIndex = i),
@@ -73,6 +73,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
                   ),
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Column(
@@ -81,6 +82,8 @@ class _PromoCarouselState extends State<PromoCarousel> {
                         children: [
                           Text(
                             slide['title']!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.bold,
@@ -91,6 +94,8 @@ class _PromoCarouselState extends State<PromoCarousel> {
                           const SizedBox(height: 6),
                           Text(
                             slide['sub']!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 11,
                               color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
@@ -115,9 +120,10 @@ class _PromoCarouselState extends State<PromoCarousel> {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 12),
                     Icon(
                       Icons.account_balance_wallet_rounded,
-                      size: 64,
+                      size: 56,
                       color: AppColors.accentViolet.withOpacity(0.8),
                     )
                   ],

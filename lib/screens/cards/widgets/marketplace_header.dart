@@ -37,13 +37,7 @@ class MarketplaceHeader extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            children: [
-              Icon(Icons.search, size: 20, color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
-              const SizedBox(width: 12),
-              Icon(Icons.grid_view_rounded, size: 20, color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
-            ],
-          ),
+          
         ],
       ),
     );
