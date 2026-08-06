@@ -12,6 +12,7 @@ import 'biometric_login_screen.dart';
 import 'services/biometric_service.dart';
 import 'package:provider/provider.dart';
 import 'appearance/appearance_screen.dart';
+import 'help_center_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -226,11 +227,18 @@ class ProfileScreen extends StatelessWidget {
                 ProfileSection(
                   title: 'Support',
                   children: [
-                    ProfileTile(
-                      icon: Boxicons.bx_help_circle,
-                      title: 'Help Center',
-                      onTap: () {},
-                    ),
+                   ProfileTile(
+  icon: Boxicons.bx_help_circle,
+  title: 'Help Center',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HelpCenterScreen(),
+      ),
+    );
+  },
+),
                     ProfileTile(
                       icon: Boxicons.bx_message_dots,
                       title: 'Live Chat',

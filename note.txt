@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did appearance screen and added image picker and shared preferences"
+git commit -m "i did help center"
 git push origin main
 
 
