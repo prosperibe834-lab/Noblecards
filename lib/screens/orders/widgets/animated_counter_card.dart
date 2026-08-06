@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 
 class AnimatedCounterCard extends StatefulWidget {
@@ -22,31 +21,40 @@ class AnimatedCounterCard extends StatefulWidget {
   State<AnimatedCounterCard> createState() => _AnimatedCounterCardState();
 }
 
-class _AnimatedCounterCardState extends State<AnimatedCounterCard> {
-  int _startCount = 0;
+class _AnimatedCounterCardState extends State<AnimatedCounterCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    // Start count from 0 and animate up to targetCount when the screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          _startCount = widget.targetCount;
-        });
-      }
-    });
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _animation = Tween<double>(begin: 0, end: widget.targetCount.toDouble())
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _controller.forward();
   }
 
   @override
   void didUpdateWidget(covariant AnimatedCounterCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // If the order data changes, update the animation target
+
     if (oldWidget.targetCount != widget.targetCount) {
-      setState(() {
-        _startCount = widget.targetCount;
-      });
+      _animation = Tween<double>(begin: 0, end: widget.targetCount.toDouble())
+          .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+      _controller
+        ..reset()
+        ..forward();
     }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -63,7 +71,6 @@ class _AnimatedCounterCardState extends State<AnimatedCounterCard> {
             color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
           ),
         ),
-        // Changed Row to Column to match the vertical layout in your design
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,14 +96,11 @@ class _AnimatedCounterCardState extends State<AnimatedCounterCard> {
               ),
             ),
             const SizedBox(height: 4),
-            // The counter animation logic
-            TweenAnimationBuilder<double>(
-              tween: Tween<double>(begin: 0, end: _startCount.toDouble()),
-              duration: const Duration(milliseconds: 1200),
-              curve: Curves.easeOutCubic,
-              builder: (context, value, child) {
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
                 return Text(
-                  value.toInt().toString(),
+                  _animation.value.toInt().toString(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

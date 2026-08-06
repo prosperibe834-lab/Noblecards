@@ -225,7 +225,7 @@ class ThemeProvider extends ChangeNotifier {
 
 
 git add .
-git commit -m "i orders page"
+git commit -m "i did profile screen"
 git push origin main
 
 

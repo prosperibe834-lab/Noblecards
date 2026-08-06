@@ -4,6 +4,7 @@ import 'package:noble_cards/screens/home_screen.dart';
 import 'package:noble_cards/screens/cards/cards_screen.dart';
 import 'package:noble_cards/screens/wallet_screen.dart';
 import 'package:noble_cards/screens/orders/orders_screen.dart';
+import 'package:noble_cards/screens/profile/profile_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -26,7 +27,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       const CardsScreen(),
       const WalletScreen(),
       const OrdersScreen(),
-      const PlaceholderScreen(title: "Profile"),
+      const ProfileScreen(),
     ];
 
     return Scaffold(
