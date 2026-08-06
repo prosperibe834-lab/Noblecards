@@ -30,6 +30,11 @@
 	<dict>
 	<key>NSFaceIDUsageDescription</key>
 <string>NobleCards requires Face ID to securely authenticate your account and transactions.</string>
+	<!-- Permissions for image picker -->
+	<key>NSCameraUsageDescription</key>
+<string>Noble Cards needs camera access to let you take a profile photo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+<string>Noble Cards needs access to your photo library to choose a profile photo.</string>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>

@@ -8,6 +8,10 @@ import 'widgets/profile_header.dart';
 import 'widgets/account_level_card.dart';
 import 'widgets/quick_stats_section.dart';
 import 'widgets/profile_section.dart';
+import 'biometric_login_screen.dart';
+import 'services/biometric_service.dart';
+import 'package:provider/provider.dart';
+import 'appearance/appearance_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -99,13 +103,23 @@ class ProfileScreen extends StatelessWidget {
                       title: 'Payment Methods',
                       onTap: () {},
                     ),
-                    ProfileTile(
-                      icon: Boxicons.bx_fingerprint,
-                      title: 'Biometric Login',
-                      trailingText: 'Enabled',
-                      trailingTextColor: AppColors.success,
-                      onTap: () {},
-                    ),
+                      ProfileTile(
+                        icon: Boxicons.bx_fingerprint,
+                        title: 'Biometric Login',
+                        trailingText: 'Enabled',
+                        trailingTextColor: AppColors.success,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChangeNotifierProvider(
+                                create: (_) => BiometricProvider(),
+                                child: const BiometricLoginScreen(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ProfileTile(
                       icon: Boxicons.bx_lock_alt,
                       title: 'Change Password',
@@ -182,11 +196,18 @@ class ProfileScreen extends StatelessWidget {
                 ProfileSection(
                   title: 'Preferences',
                   children: [
-                    ProfileTile(
-                      icon: Boxicons.bx_palette,
-                      title: 'Appearance',
-                      onTap: () {},
-                    ),
+                   ProfileTile(
+  icon: Boxicons.bx_palette,
+  title: 'Appearance',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AppearanceScreen(),
+      ),
+    );
+  },
+),
                     ProfileTile(
                       icon: Boxicons.bx_globe,
                       title: 'Language',

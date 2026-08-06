@@ -8,8 +8,8 @@ class EditProfileProvider extends ChangeNotifier {
   final ProfileStorageService _storageService = ProfileStorageService();
   final ImagePickerService _imagePickerService = ImagePickerService();
 
-  late EditableProfileModel _initialProfile;
-  late EditableProfileModel _currentProfile;
+  EditableProfileModel _initialProfile = EditableProfileModel.initial();
+  EditableProfileModel _currentProfile = EditableProfileModel.initial();
 
   bool _isLoading = true;
   bool _isSaving = false;

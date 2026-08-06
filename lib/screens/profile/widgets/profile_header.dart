@@ -4,7 +4,6 @@ import 'package:boxicons/boxicons.dart';
 import 'package:provider/provider.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
-import '../../../../theme/app_shadow.dart';
 import 'package:noble_cards/screens/profile/edit_profile_screen.dart';
 import 'package:noble_cards/screens/profile/providers/edit_profile_provider.dart';
 

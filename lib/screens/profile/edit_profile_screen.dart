@@ -10,6 +10,7 @@ import 'widgets/edit_profile_shimmer.dart';
 import 'widgets/image_source_bottom_sheet.dart';
 import 'widgets/info_banner.dart';
 import 'widgets/profile_photo_picker.dart';
+import 'package:country_picker/country_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -252,8 +253,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             leadingIcon: Boxicons.bx_globe,
                             isDropdown: true,
                             onTap: () {
-                              // Reuses standard picker
-                              provider.updateCountry('Nigeria');
+                              final isDarkPicker = Theme.of(context).brightness == Brightness.dark;
+                              showCountryPicker(
+                                context: context,
+                                showPhoneCode: false,
+                                favorite: const ['NG', 'US', 'GB', 'CA'],
+                                countryListTheme: CountryListThemeData(
+                                  backgroundColor: isDarkPicker ? AppColors.darkCard : AppColors.lightCard,
+                                  borderRadius: BorderRadius.circular(AppRadius.xl),
+                                  bottomSheetHeight: 520,
+                                  inputDecoration: InputDecoration(
+                                    hintText: 'Search country',
+                                    prefixIcon: const Icon(Icons.search),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(AppRadius.md),
+                                    ),
+                                  ),
+                                ),
+                                onSelect: (Country country) {
+                                  provider.updateCountry(country.name);
+                                },
+                              );
                             },
                           ),
                           EditableTextField(

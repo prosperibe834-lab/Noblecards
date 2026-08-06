@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 
-class EditableTextField extends StatelessWidget {
+class EditableTextField extends StatefulWidget {
   final String label;
   final String value;
   final IconData leadingIcon;
@@ -27,26 +27,53 @@ class EditableTextField extends StatelessWidget {
   });
 
   @override
+  State<EditableTextField> createState() => _EditableTextFieldState();
+}
+
+class _EditableTextFieldState extends State<EditableTextField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value);
+  }
+
+  @override
+  void didUpdateWidget(covariant EditableTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value && _controller.text != widget.value) {
+      _controller.text = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
-        initialValue: value,
-        readOnly: isDropdown,
-        onTap: onTap,
-        onChanged: onChanged,
-        maxLines: isMultiline ? 2 : 1,
-        keyboardType: keyboardType,
-        validator: validator,
+        controller: _controller,
+        readOnly: widget.isDropdown,
+        onTap: widget.onTap,
+        onChanged: widget.onChanged,
+        maxLines: widget.isMultiline ? 2 : 1,
+        keyboardType: widget.keyboardType,
+        validator: widget.validator,
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
           color: isDark ? Colors.white : Colors.black87,
         ),
         decoration: InputDecoration(
-          labelText: label,
+          labelText: widget.label,
           labelStyle: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -54,11 +81,11 @@ class EditableTextField extends StatelessWidget {
           ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           prefixIcon: Icon(
-            leadingIcon,
+            widget.leadingIcon,
             color: AppColors.success,
             size: 20,
           ),
-          suffixIcon: isDropdown
+          suffixIcon: widget.isDropdown
               ? Icon(
                   Boxicons.bx_chevron_down,
                   color: isDark ? Colors.white54 : Colors.black54,

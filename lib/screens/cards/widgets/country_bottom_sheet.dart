@@ -78,9 +78,9 @@ class _CountryBottomSheetState extends State<CountryBottomSheet> {
                     style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText),
                   ),
                   onTap: () {
-                    countryProvider.selectCountry(country);
-                    Navigator.pop(context);
-                  },
+                      countryProvider.selectCountry(country);
+                      Navigator.pop(context, country);
+                    },
                 );
               },
             ),
