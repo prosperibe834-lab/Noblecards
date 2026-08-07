@@ -13,6 +13,8 @@ import 'services/biometric_service.dart';
 import 'package:provider/provider.dart';
 import 'appearance/appearance_screen.dart';
 import 'help_center_screen.dart';
+import './livechat/live_chat_screen.dart';
+import 'security_pin/change_transaction_pin_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -89,11 +91,18 @@ class ProfileScreen extends StatelessWidget {
                       title: 'Personal Information',
                       onTap: () {},
                     ),
-                    ProfileTile(
-                      icon: Boxicons.bx_check_shield,
-                      title: 'Security & PIN',
-                      onTap: () {},
-                    ),
+                   ProfileTile(
+  icon: Boxicons.bx_check_shield,
+  title: 'Security & PIN',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ChangeTransactionPinScreen(),
+      ),
+    );
+  },
+),
                     ProfileTile(
                       icon: Boxicons.bxs_bank,
                       title: 'Bank Accounts',
@@ -240,15 +249,29 @@ class ProfileScreen extends StatelessWidget {
   },
 ),
                     ProfileTile(
-                      icon: Boxicons.bx_message_dots,
-                      title: 'Live Chat',
-                      onTap: () {},
-                    ),
+  icon: Boxicons.bx_message_dots,
+  title: 'Live Chat',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LiveChatScreen(),
+      ),
+    );
+  },
+),
                     ProfileTile(
                       icon: Boxicons.bx_error_circle,
                       title: 'Report a Problem',
                       showBorder: false,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LiveChatScreen(),
+      ),
+    );
+                      },
                     ),
                   ],
                 ),
