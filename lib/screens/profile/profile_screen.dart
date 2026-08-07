@@ -16,6 +16,7 @@ import 'help_center_screen.dart';
 import './livechat/live_chat_screen.dart';
 import 'security_pin/change_transaction_pin_screen.dart';
 import 'language/language_screen.dart';
+import '../notification/notification_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -47,11 +48,19 @@ class ProfileScreen extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: Icon(Boxicons.bx_bell, color: isDark ? Colors.white : Colors.black),
-                onPressed: () {
-                  // TODO: Open Notifications
-                },
-              ),
+  icon: Icon(
+    Boxicons.bx_bell,
+    color: isDark ? Colors.white : Colors.black,
+  ),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NotificationScreen(),
+      ),
+    );
+  },
+),
               Positioned(
                 top: 12,
                 right: 12,

@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did language page"
+git commit -m "i did notification page"
 git push origin main
 
 
