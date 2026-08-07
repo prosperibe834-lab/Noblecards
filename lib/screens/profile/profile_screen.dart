@@ -15,6 +15,7 @@ import 'appearance/appearance_screen.dart';
 import 'help_center_screen.dart';
 import './livechat/live_chat_screen.dart';
 import 'security_pin/change_transaction_pin_screen.dart';
+import 'language/language_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -219,10 +220,17 @@ class ProfileScreen extends StatelessWidget {
   },
 ),
                     ProfileTile(
-                      icon: Boxicons.bx_globe,
-                      title: 'Language',
-                      onTap: () {},
-                    ),
+  icon: Boxicons.bx_globe,
+  title: 'Language',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LanguageScreen(), // Replace with your Language Screen widget
+      ),
+    );
+  },
+),
                     ProfileTile(
                       icon: Boxicons.bx_money,
                       title: 'Currency',

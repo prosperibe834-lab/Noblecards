@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did change pin page and added live chat"
+git commit -m "i did language page"
 git push origin main
 
 
