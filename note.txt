@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did Qr scanner page"
+git commit -m "i added Reac js Dependencies/ folders for Admin Dashboard"
 git push origin main
 
 

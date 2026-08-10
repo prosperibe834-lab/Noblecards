@@ -1,0 +1,49 @@
+:root {
+  /* =========================
+     NOBLECARDS ADMIN - LIGHT
+     ========================= */
+
+  --primary-green: #10B981;
+  --dark-green: #059669;
+  --blue: #2563EB;
+  --accent-gold: #F59E0B;
+
+  --success: #22C55E;
+  --error: #EF4444;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+
+  --background: #F8FAFC;
+  --card: #FFFFFF;
+  --sidebar: #FFFFFF;
+
+  --primary-text: #0F172A;
+  --secondary-text: #64748B;
+
+  --border: #E2E8F0;
+}
+
+/* =========================
+   NOBLECARDS ADMIN - DARK
+   ========================= */
+
+[data-theme="dark"] {
+  --background: #070D12;
+  --card: #0D151C;
+  --sidebar: #0A1117;
+
+  --primary-text: #F8FAFC;
+  --secondary-text: #94A3B8;
+
+  --border: #1E293B;
+
+  --primary-green: #10B981;
+  --dark-green: #059669;
+  --blue: #2563EB;
+  --accent-gold: #F59E0B;
+
+  --success: #22C55E;
+  --error: #EF4444;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+}

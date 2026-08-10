@@ -4,6 +4,7 @@ import 'package:boxicons/boxicons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart' show Icons;
+import 'widgets/qr_scanner_info_sheet.dart';
 import 'qr_scanner_overlay.dart';
 
 class QrScannerScreen extends StatefulWidget {
@@ -70,6 +71,15 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
       }
       // If found, the onDetect callback of MobileScanner handles the success routing.
     }
+  }
+
+  void _showScannerInfoSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const QrScannerInfoSheet(),
+    );
   }
 
   void _onDetect(BarcodeCapture capture) async {
@@ -254,7 +264,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               color: primaryTextColor,
               size: 24,
             ),
-            onPressed: () {}, // Optional info action
+            onPressed: _showScannerInfoSheet,
           ),
         ],
       ),
