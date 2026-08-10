@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did notification page"
+git commit -m "i change password screen"
 git push origin main
 
 
@@ -29,3 +29,5 @@ Ctrl + Shift + P
 
 
 glassmorphism
+
+

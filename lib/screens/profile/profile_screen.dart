@@ -17,6 +17,8 @@ import './livechat/live_chat_screen.dart';
 import 'security_pin/change_transaction_pin_screen.dart';
 import 'language/language_screen.dart';
 import '../notification/notification_screen.dart';
+import 'personal_information_screen.dart';
+import 'change_password_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -96,11 +98,18 @@ class ProfileScreen extends StatelessWidget {
                 ProfileSection(
                   title: 'My Account',
                   children: [
-                    ProfileTile(
-                      icon: Boxicons.bx_user,
-                      title: 'Personal Information',
-                      onTap: () {},
-                    ),
+                  ProfileTile(
+  icon: Boxicons.bx_user,
+  title: 'Personal Information',
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PersonalInformationScreen(),
+      ),
+    );
+  },
+),
                    ProfileTile(
   icon: Boxicons.bx_check_shield,
   title: 'Security & PIN',
@@ -144,7 +153,14 @@ class ProfileScreen extends StatelessWidget {
                       icon: Boxicons.bx_lock_alt,
                       title: 'Change Password',
                       showBorder: false,
-                      onTap: () {},
+                     onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ChangePasswordScreen(),
+      ),
+    );
+  },
                     ),
                   ],
                 ),

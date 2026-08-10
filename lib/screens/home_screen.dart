@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 
+import 'referral/referral_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToCards;
 
@@ -640,7 +642,18 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         final item = actions[index];
         return GestureDetector(
-          onTap: widget.onNavigateToCards ?? () {},
+          onTap: () {
+            if (item['label'] == 'Referral\nProgram') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ReferralScreen(),
+                ),
+              );
+            } else {
+              widget.onNavigateToCards?.call();
+            }
+          },
           child: Container(
             decoration: BoxDecoration(
               color: cardBg,

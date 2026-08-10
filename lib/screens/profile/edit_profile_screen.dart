@@ -13,7 +13,9 @@ import 'widgets/profile_photo_picker.dart';
 import 'package:country_picker/country_picker.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  final String? selectedField;
+
+  const EditProfileScreen({super.key, this.selectedField});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
