@@ -19,6 +19,7 @@ import 'language/language_screen.dart';
 import '../notification/notification_screen.dart';
 import 'personal_information_screen.dart';
 import 'change_password_screen.dart';
+import '../qrScanner/qr_scanner_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -43,8 +44,14 @@ class ProfileScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Boxicons.bx_qr_scan, color: isDark ? Colors.white : Colors.black),
             onPressed: () {
-              // TODO: Open QR Code BottomSheet
-            },
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const QrScannerScreen(),
+    );
+  },
           ),
           Stack(
             alignment: Alignment.center,

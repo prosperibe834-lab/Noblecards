@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i change password screen"
+git commit -m "i did Qr scanner page"
 git push origin main
 
 
