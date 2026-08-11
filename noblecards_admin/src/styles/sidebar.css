@@ -352,10 +352,16 @@
 
 /* Mobile Drawer Styles */
 @media (max-width: 992px) {
+  .mobile-backdrop {
+    display: block;
+    z-index: 40;
+  }
+
   .sidebar {
     position: fixed;
     transform: translateX(-100%);
     width: 280px; /* Force full width on mobile drawer */
+    z-index: 50;
   }
 
   .sidebar.mobile-open {
