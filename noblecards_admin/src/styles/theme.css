@@ -21,6 +21,19 @@
   --secondary-text: #64748B;
 
   --border: #E2E8F0;
+
+  /* Theme alias variables for page-specific styles */
+  --text-primary: var(--primary-text);
+  --text-secondary: var(--secondary-text);
+  --bg-card: var(--card);
+  --bg-primary: var(--background);
+  --bg-hover: #F1F5F9;
+  --border-color: var(--border);
+  --primary-color: var(--blue);
+  --danger-color: var(--error);
+  --success-color: var(--success);
+  --info-color: var(--info);
+  --warning-color: var(--warning);
 }
 
 /* =========================
@@ -46,4 +59,17 @@
   --error: #EF4444;
   --warning: #F59E0B;
   --info: #3B82F6;
+
+  /* Theme alias variables for page-specific styles */
+  --text-primary: var(--primary-text);
+  --text-secondary: var(--secondary-text);
+  --bg-card: var(--card);
+  --bg-primary: var(--background);
+  --bg-hover: #0B1220;
+  --border-color: var(--border);
+  --primary-color: var(--blue);
+  --danger-color: var(--error);
+  --success-color: var(--success);
+  --info-color: var(--info);
+  --warning-color: var(--warning);
 }
