@@ -15,6 +15,14 @@ import Reports from "../pages/Dashboard/Reports";
 import SecurityLogs from "../pages/Dashboard/SecurityLogs";
 import Settings from "../pages/Dashboard/Settings";
 
+
+// Import the Auth pages
+import AdminLogin from "../pages/Auth/AdminLogin";
+import AdminSignup from "../pages/Auth/AdminSignup";
+import OTPVerification from "../pages/Auth/OTPVerification";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+import ResetPassword from "../pages/Auth/ResetPassword";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -31,6 +39,15 @@ const AppRoutes = () => {
       <Route path="/reports" element={<Reports />} />
       <Route path="/security-logs" element={<SecurityLogs />} />
       <Route path="/settings" element={<Settings />} />
+
+
+      // Inside your Router / Routes block:
+<Route path="/login" element={<AdminLogin />} />
+<Route path="/signup" element={<AdminSignup />} />
+<Route path="/verify-otp" element={<OTPVerification />} />
+<Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password" element={<ResetPassword />} />
+
     </Routes>
   );
 };

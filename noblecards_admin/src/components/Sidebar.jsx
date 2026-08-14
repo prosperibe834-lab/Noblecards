@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { SIDEBAR_LINKS } from '../constants/navigation';
 import '../styles/sidebar.css';
@@ -10,6 +10,7 @@ import DarkLogo from '../assets/logo/MainDarkLogo.png.png';
 
 const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   
   // Desktop collapse state
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -25,8 +26,7 @@ const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
   };
 
   const handleLogout = () => {
-    // TODO: Implement Auth Service Logout logic here
-    console.log('Admin logged out.');
+    navigate('/signup');
   };
 
   return (
