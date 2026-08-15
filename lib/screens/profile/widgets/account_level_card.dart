@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_radius.dart';
 import '../../../../theme/app_shadow.dart';
+import '../account_level_screen.dart';
 
 class AccountLevelCard extends StatelessWidget {
   const AccountLevelCard({super.key});
@@ -9,9 +10,14 @@ class AccountLevelCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // TODO: Navigate to Tier Benefits
-      },
+     onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const AccountLevelScreen(),
+    ),
+  );
+},
       borderRadius: BorderRadius.circular(AppRadius.lg),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

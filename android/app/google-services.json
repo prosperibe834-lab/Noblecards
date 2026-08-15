@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "592393631321",
+    "project_id": "noble-cards",
+    "storage_bucket": "noble-cards.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592393631321:android:1e3f70e9b8662d49f2e348",
+        "android_client_info": {
+          "package_name": "com.example.noble_cards"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWzxqzwU-aYzcGca3i0ISWNLJZy-xDHI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
