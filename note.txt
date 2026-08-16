@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did account level page"
+git commit -m "i fixed the appearance page to be functional"
 git push origin main
 
 

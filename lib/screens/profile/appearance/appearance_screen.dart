@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_text_styles.dart';
+import '../../../theme/theme_provider.dart';
 import 'models/appearance_option.dart';
 import 'widgets/appearance_card.dart';
 import 'widgets/appearance_footer.dart';
@@ -15,14 +18,15 @@ class AppearanceScreen extends StatefulWidget {
 }
 
 class _AppearanceScreenState extends State<AppearanceScreen> {
-  // Local state for UI building (Global implementation will be tied to ThemeProvider later)
   ThemeOption _selectedOption = ThemeOption.system;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // Simulating quick load to show off the requested shimmer component gracefully
+    final themeProvider = context.read<ThemeProvider>();
+    _selectedOption = _themeOptionFromMode(themeProvider.themeMode);
+
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
         setState(() {
@@ -32,12 +36,42 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     });
   }
 
-  void _handleOptionTap(ThemeOption option) {
-    if (_selectedOption != option) {
+  ThemeOption _themeOptionFromMode(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return ThemeOption.light;
+      case ThemeMode.dark:
+        return ThemeOption.dark;
+      case ThemeMode.system:
+        return ThemeOption.system;
+    }
+  }
+
+  Future<void> _handleOptionTap(ThemeOption option) async {
+    final themeProvider = context.read<ThemeProvider>();
+    final newMode = _themeModeFromOption(option);
+
+    if (themeProvider.themeMode == newMode) {
+      return;
+    }
+
+    await themeProvider.setThemeMode(newMode);
+
+    if (mounted) {
       setState(() {
         _selectedOption = option;
       });
-      // TODO: Call context.read<ThemeProvider>().setTheme(option) when provider is ready
+    }
+  }
+
+  ThemeMode _themeModeFromOption(ThemeOption option) {
+    switch (option) {
+      case ThemeOption.light:
+        return ThemeMode.light;
+      case ThemeOption.dark:
+        return ThemeMode.dark;
+      case ThemeOption.system:
+        return ThemeMode.system;
     }
   }
 
