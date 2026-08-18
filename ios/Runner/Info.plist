@@ -26,15 +26,15 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
 	<key>NSFaceIDUsageDescription</key>
-<string>NobleCards requires Face ID to securely authenticate your account and transactions.</string>
+	<string>We need Face ID to authenticate your login quickly and securely.</string>
 	<!-- Permissions for image picker -->
 	<key>NSCameraUsageDescription</key>
-<string>Noble Cards needs camera access to let you take a profile photo.</string>
+	<string>Noble Cards needs camera access to let you take a profile photo.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-<string>Noble Cards needs access to your photo library to choose a profile photo.</string>
+	<string>Noble Cards needs access to your photo library to choose a profile photo.</string>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>

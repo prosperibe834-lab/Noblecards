@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i fixed the appearance page to be functional"
+git commit -m "i recoded new authentication page"
 git push origin main
 
 
@@ -422,3 +422,26 @@ class ThemeProvider extends ChangeNotifier {
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
