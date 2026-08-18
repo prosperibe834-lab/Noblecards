@@ -18,17 +18,25 @@ import 'providers/wallet_provider.dart';
 import 'screens/cards/providers/submission_provider.dart';
 import 'screens/cards/providers/sell_receipt_provider.dart';
 import 'screens/cards/providers/buy_receipt_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Transparent status bar for edge-to-edge UI
+  // Initialize Supabase before starting the app.
+  await Supabase.initialize(
+     url: 'https://cboxcprrzzpyyzylgffb.supabase.co',
+     anonKey: 'sb_publishable_bauRSw8hHi6KkOCOHx-36w_QYIupMYH',
+  );
+
+  // Transparent status bar for edge-to-edge UI.
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ),
   );
+
 
   runApp(
     MultiProvider(

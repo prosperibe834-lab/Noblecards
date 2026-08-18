@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i recoded new authentication page"
+git commit -m "i connected superbase"
 git push origin main
 
 
