@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
-import '../create_new_password/create_new_password_screen.dart';
+import '../services/authentication_service.dart';
 import 'models/otp_timer_model.dart';
 import 'utils/otp_validator.dart';
 import 'widgets/otp_background.dart';
@@ -13,10 +13,12 @@ import 'widgets/otp_resend_section.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String email;
+  final Map<String, dynamic> profileData;
 
   const VerifyOtpScreen({
     super.key,
     required this.email,
+    this.profileData = const {},
   });
 
   @override
@@ -24,6 +26,7 @@ class VerifyOtpScreen extends StatefulWidget {
 }
 
 class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
+  final AuthenticationService _authService = AuthenticationService();
   String _currentOtp = '';
   bool _isLoading = false;
   late OtpTimerModel _timerModel;
@@ -54,18 +57,16 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
   }
 
   Future<void> onResendOtp() async {
-    // Prevent interaction if already loading
     if (_isLoading) return;
 
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Connect Backend Resend Logic here
-      await Future.delayed(const Duration(seconds: 1)); // Simulate network
+      await _authService.resendEmailOtp(email: widget.email);
 
       _timerModel.resetTimer();
       _currentOtp = '';
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -75,11 +76,12 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (error) {
       if (mounted) {
+        final message = error.toString().replaceFirst('Exception: ', '');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to resend OTP', style: TextStyle(color: Colors.white)),
+          SnackBar(
+            content: Text(message, style: const TextStyle(color: Colors.white)),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -117,11 +119,25 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     FocusScope.of(context).unfocus();
 
     try {
-      // TODO: Connect Firebase / Backend OTP Verification here
-      await Future.delayed(const Duration(seconds: 2)); // Simulate network
+      final response = await _authService.verifyEmailOtp(
+        email: widget.email,
+        token: _currentOtp,
+      );
 
-      if (mounted) {
-        // Success Navigation to Create New Password Screen
+      if (!mounted) return;
+
+      if (response.session != null) {
+        final verifiedUser = response.user ?? _authService.currentUser;
+        if (verifiedUser == null) {
+          throw Exception('OTP verification did not create an authenticated session.');
+        }
+
+        await _authService.saveUserProfile(
+          userId: verifiedUser.id,
+          profileData: widget.profileData,
+        );
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Verification successful!', style: TextStyle(color: Colors.white)),
@@ -130,22 +146,29 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           ),
         );
 
-        // Navigate to Create New Password screen
         await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CreateNewPasswordScreen(),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
+        if (!mounted) return;
+
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Invalid OTP. Please try again.', style: TextStyle(color: Colors.white)),
+            content: Text('Verification failed. Please try again.', style: TextStyle(color: Colors.white)),
+            backgroundColor: AppColors.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (error) {
+      final message = error.toString().replaceFirst('Exception: ', '');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message, style: const TextStyle(color: Colors.white)),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),

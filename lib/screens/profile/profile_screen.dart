@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_shadow.dart';
@@ -331,7 +332,30 @@ class ProfileScreen extends StatelessWidget {
                       iconColor: AppColors.error,
                       textColor: AppColors.error,
                       hideChevron: true,
-                      onTap: () {},
+                      onTap: () async {
+                        try {
+                          await Supabase.instance.client.auth.signOut();
+                          if (context.mounted) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/login',
+                              (route) => false,
+                            );
+                          }
+                        } catch (error) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  error.toString().replaceFirst('Exception: ', ''),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                          }
+                        }
+                      },
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_trash,

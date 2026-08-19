@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
-import '../verifyOtp/verify_otp_screen.dart';
 import 'models/forgot_password_state.dart';
 import 'services/password_reset_service.dart';
 import 'widgets/forgot_password_background.dart';
@@ -88,15 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         );
       });
 
-      // Navigate to Verify OTP screen after successful email sending
-      await Future.delayed(const Duration(seconds: 1));
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyOtpScreen(email: email),
-        ),
-      );
+      // Supabase reset email has been sent successfully. Stay on the existing success UI.
     } catch (e) {
       if (!mounted) return;
       setState(() {

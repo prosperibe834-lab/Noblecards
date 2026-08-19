@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_shadow.dart';
-import 'services/authentication_service.dart';
+import '../services/authentication_service.dart';
 import 'widgets/auth_text_field.dart';
 import 'widgets/reset_password_background.dart';
 import 'widgets/reset_password_illustration.dart';
@@ -51,9 +51,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       setState(() => _isLoading = true);
 
       try {
-        final success = await _authService.sendPasswordResetCode(_emailController.text.trim());
+        await _authService.resetPasswordForEmail(_emailController.text.trim());
         
-        if (success && mounted) {
+        if (mounted) {
           HapticFeedback.mediumImpact();
           // TODO: Navigate to OTP Verification Screen
           // Navigator.push(context, MaterialPageRoute(builder: (_) => const OtpVerificationScreen()));

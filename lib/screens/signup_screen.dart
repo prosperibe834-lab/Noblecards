@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:country_picker/country_picker.dart';
+import 'authentication/services/authentication_service.dart';
+import 'authentication/verifyOtp/verify_otp_screen.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
-import '../theme/app_shadow.dart';
 import '../theme/app_animation.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  final AuthenticationService _authService = AuthenticationService();
 
   // Controllers
   final _fullNameController = TextEditingController();
@@ -122,28 +124,93 @@ class _SignupScreenState extends State<SignupScreen>
       return;
     }
 
-    if (_formKey.currentState!.validate() && _passwordStrength >= 0.8) {
-      setState(() => _isLoading = true);
-
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Account created successfully!"),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
-    } else if (_passwordStrength < 0.8) {
+    if (_selectedCountry['name'] == null || _selectedCountry['name']!.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please satisfy all password security requirements."),
+          content: Text("Please select your country."),
           backgroundColor: AppColors.error,
         ),
       );
+      return;
+    }
+
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_passwordStrength < 0.8) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please satisfy all password security requirements."),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+
+      final fullName = _fullNameController.text.trim();
+      final email = _emailController.text.trim();
+      final phoneNumber = _phoneController.text.trim();
+      final country = _selectedCountry['name']!.trim();
+      final gender = _selectedGender.trim();
+      final password = _passwordController.text;
+      final referralCode = _referralController.text.trim();
+
+      setState(() => _isLoading = true);
+      FocusScope.of(context).unfocus();
+
+      try {
+        final response = await _authService.signUpWithEmail(
+          email: email,
+          password: password,
+        );
+
+        if (!mounted) return;
+
+        if (response.user != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Account created. Please verify your email to continue."),
+              backgroundColor: AppColors.success,
+            ),
+          );
+
+          await Future.delayed(const Duration(milliseconds: 400));
+          if (!mounted) return;
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerifyOtpScreen(
+                email: email,
+                profileData: {
+                  'full_name': fullName,
+                  'email': email,
+                  'phone_number': phoneNumber,
+                  'country': country,
+                  'gender': gender,
+                  'referral_code': referralCode,
+                },
+              ),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Unable to create account right now. Please try again."),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      } catch (error) {
+        final message = error.toString().replaceFirst('Exception: ', '');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -368,8 +435,8 @@ class _SignupScreenState extends State<SignupScreen>
                     hintText: "8123456789",
                     hintStyle: TextStyle(
                       color: isDark
-                          ? AppColors.darkSubText.withOpacity(0.5)
-                          : AppColors.lightSubText.withOpacity(0.5),
+                          ? AppColors.darkSubText.withValues(alpha: 0.5)
+                          : AppColors.lightSubText.withValues(alpha: 0.5),
                     ),
                     filled: true,
                     fillColor: isDark
@@ -458,7 +525,7 @@ class _SignupScreenState extends State<SignupScreen>
                 _buildFieldLabel("Gender", isDark),
                 const SizedBox(height: AppSpacing.xs),
                 DropdownButtonFormField<String>(
-                  value: _selectedGender,
+                  initialValue: _selectedGender,
                   dropdownColor: isDark
                       ? AppColors.darkCard
                       : AppColors.lightCard,
@@ -865,8 +932,8 @@ class _SignupScreenState extends State<SignupScreen>
         hintText: hintText,
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.darkSubText.withOpacity(0.5)
-              : AppColors.lightSubText.withOpacity(0.5),
+              ? AppColors.darkSubText.withValues(alpha: 0.5)
+              : AppColors.lightSubText.withValues(alpha: 0.5),
         ),
         filled: true,
         fillColor: isDark ? AppColors.darkInput : AppColors.lightInput,

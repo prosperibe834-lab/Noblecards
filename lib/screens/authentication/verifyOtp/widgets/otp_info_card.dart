@@ -11,11 +11,11 @@ class OtpInfoCard extends StatelessWidget {
 
     // Matching the soft card appearance from the reference image
     final Color cardColor = isDark 
-        ? AppColors.primary.withOpacity(0.08) 
+        ? AppColors.primary.withValues(alpha: 0.08)
         : const Color(0xFFF0FDF4); // Soft green
     final Color borderColor = isDark 
-        ? AppColors.primary.withOpacity(0.15) 
-        : AppColors.successLight.withOpacity(0.3);
+        ? AppColors.primary.withValues(alpha: 0.15)
+        : AppColors.successLight.withValues(alpha: 0.3);
 
     return Container(
       padding: const EdgeInsets.all(16),

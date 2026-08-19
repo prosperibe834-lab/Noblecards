@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i connected superbase"
+git commit -m "i did authentidation but its not sending otp"
 git push origin main
 
 
@@ -445,3 +445,14 @@ class ThemeProvider extends ChangeNotifier {
 
 
 
+
+
+
+
+
+
+
+
+
+
+i have offed i and i restarted my app and it still sending me link and also i noticed another thing if user signs in without verifying email like that code stuff to verify it will be stored in data base i dont like it like that i want if the fill in their info if it will now take them to verify otp if the put their otp code then their info we be stored

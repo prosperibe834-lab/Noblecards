@@ -25,8 +25,8 @@ Future<void> main() async {
 
   // Initialize Supabase before starting the app.
   await Supabase.initialize(
-     url: 'https://cboxcprrzzpyyzylgffb.supabase.co',
-     anonKey: 'sb_publishable_bauRSw8hHi6KkOCOHx-36w_QYIupMYH',
+    url: 'https://cboxcprrzzpyyzylgffb.supabase.co',
+    anonKey: 'sb_publishable_bauRSw8hHi6KkOCOHx-36w_QYIupMYH',
   );
 
   // Transparent status bar for edge-to-edge UI.
@@ -59,6 +59,7 @@ class NobleCardsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final bool hasActiveSession = Supabase.instance.client.auth.currentSession != null;
 
     return MaterialApp(
       title: 'NobleCards',
@@ -69,8 +70,8 @@ class NobleCardsApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
 
-      // Initial screen route
-      home: const OnboardingScreen(),
+      // Initial screen route based on existing Supabase session state.
+      home: hasActiveSession ? const MainNavigationScreen() : const OnboardingScreen(),
 
       // <--- 2. ADDED THIS: Handles dynamic routes (/favourite-currencies, /exchange-rate)
       onGenerateRoute: AppRouter.generateRoute,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_shadow.dart';
+import '../services/authentication_service.dart';
 import '../services/biometric_auth_service.dart';
 import '../forgotPassword/forgot_password_screen.dart';
 import 'widgets/login_background.dart';
@@ -22,7 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordFocus = FocusNode();
 
   final BiometricAuthService _biometricService = BiometricAuthService();
-  
+  final AuthenticationService _authService = AuthenticationService();
+
   bool _isLoading = false;
   bool _isBiometricLoading = false;
   BiometricSupportType _biometricType = BiometricSupportType.none;
@@ -60,20 +62,20 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = true);
 
       try {
-        // TODO: Implement Firebase Auth Here
-        // await FirebaseAuth.instance.signInWithEmailAndPassword(
-        //   email: _emailController.text.trim(),
-        //   password: _passwordController.text,
-        // );
-        
-        // Simulate network delay
-        await Future.delayed(const Duration(seconds: 2));
+        await _authService.signInWithEmail(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
 
-        // TODO: Navigate to Main Layout/Dashboard
-        // Navigator.pushReplacementNamed(context, '/dashboard');
-
-      } catch (e) {
-        _showErrorSnackBar('Authentication failed. Please check your credentials.');
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/home',
+          (route) => false,
+        );
+      } catch (error) {
+        final message = error.toString().replaceFirst('Exception: ', '');
+        _showErrorSnackBar(message);
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }
@@ -109,8 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleSignUp() {
-    // TODO: Navigate to Sign Up Screen
-    
+    if (!mounted) return;
+    Navigator.pushNamed(context, '/signup');
   }
 
   void _showErrorSnackBar(String message) {

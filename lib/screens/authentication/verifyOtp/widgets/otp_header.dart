@@ -73,8 +73,8 @@ class _OtpHeaderState extends State<OtpHeader> with SingleTickerProviderStateMix
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isDark 
-                  ? AppColors.primary.withOpacity(0.1) 
-                  : AppColors.successLight.withOpacity(0.15),
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : AppColors.successLight.withValues(alpha: 0.15),
             ),
             child: Stack(
               alignment: Alignment.center,
