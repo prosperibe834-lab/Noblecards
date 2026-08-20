@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../services/authentication_service.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
 import 'models/password_strength.dart';
@@ -18,6 +19,7 @@ class CreateNewPasswordScreen extends StatefulWidget {
 }
 
 class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
+  final AuthenticationService _authService = AuthenticationService();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   
@@ -42,7 +44,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
   }
 
   void onBackToSignIn() {
-    // TODO: Navigate to Login screen
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
   void toggleNewPasswordVisibility() {
@@ -98,14 +100,9 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // TODO: Connect Firebase / Backend logic here
-      // await authService.updatePassword(newPassword);
-      
-      // Simulate network request
-      await Future.delayed(const Duration(seconds: 2));
+      await _authService.updatePassword(newPassword);
 
       if (mounted) {
-        // TODO: Navigate to Success Screen or Login
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Password updated successfully!', style: TextStyle(color: Colors.white)),
@@ -113,9 +110,15 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
             behavior: SnackBarBehavior.floating,
           ),
         );
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+        }
       }
     } catch (e) {
-      if (mounted) _showError('Failed to update password. Please try again.');
+      if (mounted) {
+        _showError(e.toString().replaceFirst('Exception: ', ''));
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

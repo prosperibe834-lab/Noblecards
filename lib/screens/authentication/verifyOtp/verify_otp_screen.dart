@@ -14,11 +14,13 @@ import 'widgets/otp_resend_section.dart';
 class VerifyOtpScreen extends StatefulWidget {
   final String email;
   final Map<String, dynamic> profileData;
+  final bool isPasswordRecovery;
 
   const VerifyOtpScreen({
     super.key,
     required this.email,
     this.profileData = const {},
+    this.isPasswordRecovery = false,
   });
 
   @override
@@ -62,7 +64,11 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await _authService.resendEmailOtp(email: widget.email);
+      if (widget.isPasswordRecovery) {
+        await _authService.resendPasswordResetOtp(email: widget.email);
+      } else {
+        await _authService.resendEmailOtp(email: widget.email);
+      }
 
       _timerModel.resetTimer();
       _currentOtp = '';
@@ -119,14 +125,24 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     FocusScope.of(context).unfocus();
 
     try {
-      final response = await _authService.verifyEmailOtp(
-        email: widget.email,
-        token: _currentOtp,
-      );
+      final response = widget.isPasswordRecovery
+          ? await _authService.verifyPasswordResetOtp(
+              email: widget.email,
+              token: _currentOtp,
+            )
+          : await _authService.verifyEmailOtp(
+              email: widget.email,
+              token: _currentOtp,
+            );
 
       if (!mounted) return;
 
       if (response.session != null) {
+        if (widget.isPasswordRecovery) {
+          Navigator.pushReplacementNamed(context, '/create-new-password');
+          return;
+        }
+
         final verifiedUser = response.user ?? _authService.currentUser;
         if (verifiedUser == null) {
           throw Exception('OTP verification did not create an authenticated session.');

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthenticationService {
@@ -86,6 +87,10 @@ class AuthenticationService {
 
   /// Sign up with email and password.
   /// Profile fields are deliberately not sent as auth metadata before verification.
+  ///
+  /// `signUp()` creates the auth user and triggers the "Confirm signup" email.
+  /// For the email to contain a 6-digit OTP (instead of a confirmation link),
+  /// the Supabase "Confirm signup" email template must use `{{ .Token }}`.
   Future<AuthResponse> signUpWithEmail({
     required String email,
     required String password,
@@ -103,19 +108,27 @@ class AuthenticationService {
         password: password,
       );
 
-      if (response.user != null) {
-        await _client.auth.signInWithOtp(
+      // If the user already exists, signUp() returns user: null and does NOT
+      // send an email. Explicitly send the signup OTP in that case so the
+      // user still receives a 6-digit code.
+      if (response.user == null) {
+        await _client.auth.resend(
+          type: OtpType.signup,
           email: email.trim(),
-          shouldCreateUser: false,
         );
       }
 
       return response;
     } on AuthException catch (error) {
+      debugPrint(
+        'signUpWithEmail AuthException: ${error.message} (status: ${error.statusCode})',
+      );
       throw Exception(_friendlyMessage(error));
     } on PostgrestException catch (error) {
+      debugPrint('signUpWithEmail PostgrestException: ${error.message}');
       throw Exception(_friendlyMessage(error));
     } catch (error) {
+      debugPrint('signUpWithEmail Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
@@ -135,15 +148,20 @@ class AuthenticationService {
         password: password,
       );
     } on AuthException catch (error) {
+      debugPrint(
+        'signInWithEmail AuthException: ${error.message} (status: ${error.statusCode})',
+      );
       throw Exception(_friendlyMessage(error));
     } on PostgrestException catch (error) {
+      debugPrint('signInWithEmail PostgrestException: ${error.message}');
       throw Exception(_friendlyMessage(error));
     } catch (error) {
+      debugPrint('signInWithEmail Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
 
-  /// Verify the email OTP issued by signUp().
+  /// Verify the email signup OTP issued by signUp().
   Future<AuthResponse> verifyEmailOtp({
     required String email,
     required String token,
@@ -160,13 +178,18 @@ class AuthenticationService {
       return await _client.auth.verifyOTP(
         email: email.trim(),
         token: token.trim(),
-        type: OtpType.email,
+        type: OtpType.signup,
       );
     } on AuthException catch (error) {
+      debugPrint(
+        'verifyEmailOtp AuthException: ${error.message} (status: ${error.statusCode})',
+      );
       throw Exception(_friendlyMessage(error));
     } on PostgrestException catch (error) {
+      debugPrint('verifyEmailOtp PostgrestException: ${error.message}');
       throw Exception(_friendlyMessage(error));
     } catch (error) {
+      debugPrint('verifyEmailOtp Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
@@ -179,19 +202,137 @@ class AuthenticationService {
       }
 
       await _client.auth.resend(
-        type: OtpType.email,
+        type: OtpType.signup,
         email: email.trim(),
       );
     } on AuthException catch (error) {
+      debugPrint(
+        'resendEmailOtp AuthException: ${error.message} (status: ${error.statusCode})',
+      );
       throw Exception(_friendlyMessage(error));
     } on PostgrestException catch (error) {
+      debugPrint('resendEmailOtp PostgrestException: ${error.message}');
       throw Exception(_friendlyMessage(error));
     } catch (error) {
+      debugPrint('resendEmailOtp Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
 
-  /// Send password reset email
+  /// Send a 6-digit OTP for password recovery (no reset link).
+  ///
+  /// Uses the email OTP endpoint with account creation disabled. The
+  /// recovery OTP is verified with [OtpType.recovery].
+  Future<void> sendPasswordResetOtp({required String email}) async {
+    try {
+      if (email.trim().isEmpty) {
+        throw Exception('Please enter your email address.');
+      }
+
+      await _client.auth.signInWithOtp(
+        email: email.trim(),
+        shouldCreateUser: false,
+      );
+    } on AuthException catch (error) {
+      debugPrint(
+        'sendPasswordResetOtp AuthException: ${error.message} (status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('sendPasswordResetOtp PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('sendPasswordResetOtp Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
+  /// Resend a password recovery email OTP without creating a user.
+  Future<void> resendPasswordResetOtp({required String email}) async {
+    try {
+      if (email.trim().isEmpty) {
+        throw Exception('Please enter your email address.');
+      }
+
+      await _client.auth.signInWithOtp(
+        email: email.trim(),
+        shouldCreateUser: false,
+      );
+    } on AuthException catch (error) {
+      debugPrint(
+        'resendPasswordResetOtp AuthException: ${error.message} '
+        '(status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('resendPasswordResetOtp PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('resendPasswordResetOtp Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
+  /// Verify the password recovery OTP.
+  Future<AuthResponse> verifyPasswordResetOtp({
+    required String email,
+    required String token,
+  }) async {
+    try {
+      if (email.trim().isEmpty || token.trim().isEmpty) {
+        throw Exception('Email and OTP are required.');
+      }
+
+      if (token.trim().length != 6) {
+        throw Exception('Please enter a valid 6-digit code.');
+      }
+
+      return await _client.auth.verifyOTP(
+        email: email.trim(),
+        token: token.trim(),
+        type: OtpType.recovery,
+      );
+    } on AuthException catch (error) {
+      debugPrint(
+        'verifyPasswordResetOtp AuthException: ${error.message} (status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('verifyPasswordResetOtp PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('verifyPasswordResetOtp Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
+  /// Update the current user's password.
+  /// Requires an active session (e.g. after a successful recovery OTP verify).
+  Future<void> updatePassword(String newPassword) async {
+    try {
+      if (newPassword.isEmpty || newPassword.length < 8) {
+        throw Exception('Password must be at least 8 characters long.');
+      }
+
+      await _client.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
+    } on AuthException catch (error) {
+      debugPrint(
+        'updatePassword AuthException: ${error.message} (status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('updatePassword PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('updatePassword Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
+  /// Send password reset email (legacy reset-link flow).
+  /// NOTE: Not used by the OTP-based forgot-password flow.
   Future<void> resetPasswordForEmail(String email) async {
     try {
       if (email.trim().isEmpty) {
@@ -200,10 +341,15 @@ class AuthenticationService {
 
       await _client.auth.resetPasswordForEmail(email.trim());
     } on AuthException catch (error) {
+      debugPrint(
+        'resetPasswordForEmail AuthException: ${error.message} (status: ${error.statusCode})',
+      );
       throw Exception(_friendlyMessage(error));
     } on PostgrestException catch (error) {
+      debugPrint('resetPasswordForEmail PostgrestException: ${error.message}');
       throw Exception(_friendlyMessage(error));
     } catch (error) {
+      debugPrint('resetPasswordForEmail Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
@@ -213,16 +359,22 @@ class AuthenticationService {
     try {
       await _client.auth.signOut();
     } on AuthException catch (error) {
+      debugPrint(
+        'signOut AuthException: ${error.message} (status: ${error.statusCode})',
+      );
       throw Exception(_friendlyMessage(error));
     } on PostgrestException catch (error) {
+      debugPrint('signOut PostgrestException: ${error.message}');
       throw Exception(_friendlyMessage(error));
     } catch (error) {
+      debugPrint('signOut Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
 
-  /// Optional: Save user profile data to profiles table
-  /// Call this after successful OTP verification if you have a profiles table
+  /// Save user profile data to profiles table.
+  /// Call this after successful OTP verification.
+  /// Uses upsert so repeated verification does not create duplicate rows.
   Future<void> saveUserProfile({
     required String userId,
     required Map<String, dynamic> profileData,
@@ -237,12 +389,13 @@ class AuthenticationService {
         ...profileData,
       };
 
-      await _client.from('profiles').insert(dataToInsert);
+      await _client.from('profiles').upsert(dataToInsert);
     } on PostgrestException catch (error) {
       if (error.code != 'PGRST116') {
         throw Exception('Failed to save profile: ${error.message}');
       }
     } catch (error) {
+      debugPrint('saveUserProfile Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }
@@ -265,6 +418,7 @@ class AuthenticationService {
       }
       throw Exception('Failed to fetch profile: ${error.message}');
     } catch (error) {
+      debugPrint('getUserProfile Error: $error');
       throw Exception(_friendlyMessage(error));
     }
   }

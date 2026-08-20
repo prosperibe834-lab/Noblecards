@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
+import '../verifyOtp/verify_otp_screen.dart';
 import 'models/forgot_password_state.dart';
 import 'services/password_reset_service.dart';
 import 'widgets/forgot_password_background.dart';
@@ -64,7 +65,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return true;
   }
 
-  Future<void> _handleSendResetLink() async {
+  Future<void> _handleSendResetOtp() async {
     final email = _emailController.text.trim();
     if (!_validateEmail(email)) return;
 
@@ -78,16 +79,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     });
 
     try {
-      await _resetService.sendPasswordResetEmail(email);
+      await _resetService.sendPasswordResetOtp(email);
 
       if (!mounted) return;
-      setState(() {
-        _state = _state.copyWith(
-          status: ForgotPasswordStatus.success,
-        );
-      });
-
-      // Supabase reset email has been sent successfully. Stay on the existing success UI.
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerifyOtpScreen(
+            email: email,
+            isPasswordRecovery: true,
+          ),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -162,7 +165,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         isLoading: _state.status == ForgotPasswordStatus.loading,
                         onPressed: _state.status == ForgotPasswordStatus.loading
                             ? null
-                            : _handleSendResetLink,
+                            : _handleSendResetOtp,
                       ),
                       const SizedBox(height: 36),
 

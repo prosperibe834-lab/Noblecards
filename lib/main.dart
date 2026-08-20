@@ -7,6 +7,7 @@ import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/authentication/login/login_screen.dart';
 import 'screens/authentication/forgotPassword/forgot_password_screen.dart';
+import 'screens/authentication/create_new_password/create_new_password_screen.dart';
 import 'screens/setup_pin_screen.dart';
 import 'screens/biometric_setup_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
@@ -85,6 +86,7 @@ class NobleCardsApp extends StatelessWidget {
         '/biometric-setup': (context) => const BiometricSetupScreen(),
 
         '/forgot-password': (context) => const ForgotPasswordScreen(),
+        '/create-new-password': (context) => const CreateNewPasswordScreen(),
 
         '/register': (context) => Scaffold(
           appBar: AppBar(title: const Text('Create Account')),
