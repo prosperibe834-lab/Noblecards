@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i fixed forgotten password otp"
+git commit -m "i did signup otp stuff"
 git push origin main
 
 

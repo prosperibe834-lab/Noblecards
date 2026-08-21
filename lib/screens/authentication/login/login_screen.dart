@@ -5,6 +5,7 @@ import '../../../../theme/app_shadow.dart';
 import '../services/authentication_service.dart';
 import '../services/biometric_auth_service.dart';
 import '../forgotPassword/forgot_password_screen.dart';
+import '../verifyOtp/verify_otp_screen.dart';
 import 'widgets/login_background.dart';
 import 'widgets/login_text_field.dart';
 
@@ -62,12 +63,25 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = true);
 
       try {
-        await _authService.signInWithEmail(
+        final requiresOtp = await _authService.signInWithEmailAndOtp(
           email: _emailController.text,
           password: _passwordController.text,
         );
 
         if (!mounted) return;
+        if (requiresOtp) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerifyOtpScreen(
+                email: _emailController.text.trim(),
+                flow: OtpVerificationFlow.signIn,
+              ),
+            ),
+          );
+          return;
+        }
+
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/home',

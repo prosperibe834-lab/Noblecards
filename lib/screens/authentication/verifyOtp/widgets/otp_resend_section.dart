@@ -25,7 +25,7 @@ class OtpResendSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Code expires in ',
+              'Resend available in ',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
               ),

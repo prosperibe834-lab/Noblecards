@@ -16,8 +16,7 @@ class AuthenticationService {
       // Invalid login credentials
       if (message.contains('invalid login credentials') ||
           message.contains('user not found') ||
-          message.contains('invalid email or password') ||
-          message.contains('email or password')) {
+          message.contains('invalid email or password')) {
         return 'Invalid email or password. Please try again.';
       }
 
@@ -96,6 +95,7 @@ class AuthenticationService {
     required String password,
   }) async {
     try {
+      debugPrint('SIGNUP DEBUG: starting');
       // Validate inputs
       if (email.trim().isEmpty) {
         throw Exception('Please enter your email address.');
@@ -107,19 +107,33 @@ class AuthenticationService {
         email: email.trim(),
         password: password,
       );
+      debugPrint('SIGNUP DEBUG: email = ${email.trim()}');
+      debugPrint('SIGNUP DEBUG: signup completed');
+      debugPrint('SIGNUP DEBUG: user = ${response.user?.id}');
+      debugPrint('SIGNUP DEBUG: session = ${response.session != null}');
+      debugPrint(
+        'SIGNUP DEBUG: email confirmation required = ${response.user != null && response.session == null}',
+      );
 
-      // If the user already exists, signUp() returns user: null and does NOT
-      // send an email. Explicitly send the signup OTP in that case so the
-      // user still receives a 6-digit code.
       if (response.user == null) {
-        await _client.auth.resend(
-          type: OtpType.signup,
-          email: email.trim(),
+        throw Exception('Signup did not return a user. Please try again.');
+      }
+
+      if (response.session != null) {
+        throw Exception(
+          'Signup completed without email verification. Enable Supabase email confirmation to receive a signup OTP.',
         );
       }
 
+      // A successful signup with email confirmation enabled already sends the
+      // signup OTP. Resends are handled from VerifyOtpScreen after expiry.
+      debugPrint('SIGNUP DEBUG: waiting for email verification');
       return response;
     } on AuthException catch (error) {
+      debugPrint(
+        'SIGNUP DEBUG: AuthException: ${error.message} '
+        '(statusCode: ${error.statusCode})',
+      );
       debugPrint(
         'signUpWithEmail AuthException: ${error.message} (status: ${error.statusCode})',
       );
@@ -161,6 +175,108 @@ class AuthenticationService {
     }
   }
 
+  /// Sign in with a password, sending an email OTP when the email is not
+  /// confirmed yet. Returns true when the OTP screen should be shown.
+  Future<bool> signInWithEmailAndOtp({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      if (email.trim().isEmpty || password.isEmpty) {
+        throw Exception('Please enter both email and password.');
+      }
+
+      await _client.auth.signInWithPassword(
+        email: email.trim(),
+        password: password,
+      );
+      return false;
+    } on AuthException catch (error) {
+      final message = error.message.toLowerCase();
+      if (message.contains('email not confirmed') ||
+          message.contains('confirm your email') ||
+          message.contains('email confirmation')) {
+        await sendSignInOtp(email: email);
+        return true;
+      }
+
+      debugPrint(
+        'signInWithEmailAndOtp AuthException: ${error.message} '
+        '(status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('signInWithEmailAndOtp PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('signInWithEmailAndOtp Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
+  /// Send the sign-in email OTP without creating a new user.
+  Future<void> sendSignInOtp({required String email}) async {
+    try {
+      if (email.trim().isEmpty) {
+        throw Exception('Please enter your email address.');
+      }
+
+      await _client.auth.signInWithOtp(
+        email: email.trim(),
+        shouldCreateUser: false,
+      );
+    } on AuthException catch (error) {
+      debugPrint(
+        'sendSignInOtp AuthException: ${error.message} (status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('sendSignInOtp PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('sendSignInOtp Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
+  /// Resend a new sign-in email OTP.
+  Future<void> resendSignInOtp({required String email}) async {
+    await sendSignInOtp(email: email);
+  }
+
+  /// Verify the sign-in email OTP.
+  Future<AuthResponse> verifySignInOtp({
+    required String email,
+    required String token,
+  }) async {
+    try {
+      if (email.trim().isEmpty || token.trim().isEmpty) {
+        throw Exception('Email and OTP are required.');
+      }
+
+      if (!RegExp(r'^\d{6}$').hasMatch(token.trim())) {
+        throw Exception('Please enter a valid 6-digit code.');
+      }
+
+      return await _client.auth.verifyOTP(
+        email: email.trim(),
+        token: token.trim(),
+        type: OtpType.email,
+      );
+    } on AuthException catch (error) {
+      debugPrint(
+        'verifySignInOtp AuthException: ${error.message} (status: ${error.statusCode})',
+      );
+      throw Exception(_friendlyMessage(error));
+    } on PostgrestException catch (error) {
+      debugPrint('verifySignInOtp PostgrestException: ${error.message}');
+      throw Exception(_friendlyMessage(error));
+    } catch (error) {
+      debugPrint('verifySignInOtp Error: $error');
+      throw Exception(_friendlyMessage(error));
+    }
+  }
+
   /// Verify the email signup OTP issued by signUp().
   Future<AuthResponse> verifyEmailOtp({
     required String email,
@@ -171,9 +287,13 @@ class AuthenticationService {
         throw Exception('Email and OTP are required.');
       }
 
-      if (token.trim().length != 6) {
+      if (!RegExp(r'^\d{6}$').hasMatch(token.trim())) {
         throw Exception('Please enter a valid 6-digit code.');
       }
+
+      debugPrint('VERIFY SIGNUP OTP: email = ${email.trim()}');
+      debugPrint('VERIFY SIGNUP OTP: token length = ${token.trim().length}');
+      debugPrint('VERIFY SIGNUP OTP: type = OtpType.signup');
 
       return await _client.auth.verifyOTP(
         email: email.trim(),

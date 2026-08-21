@@ -164,7 +164,7 @@ class _SignupScreenState extends State<SignupScreen>
 
         if (!mounted) return;
 
-        if (response.user != null) {
+        if (response.user != null && response.session == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Account created. Please verify your email to continue."),
@@ -180,6 +180,7 @@ class _SignupScreenState extends State<SignupScreen>
             MaterialPageRoute(
               builder: (context) => VerifyOtpScreen(
                 email: email,
+                flow: OtpVerificationFlow.signup,
                 profileData: {
                   'full_name': fullName,
                   'email': email,

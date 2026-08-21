@@ -87,7 +87,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         MaterialPageRoute(
           builder: (context) => VerifyOtpScreen(
             email: email,
-            isPasswordRecovery: true,
+            flow: OtpVerificationFlow.passwordRecovery,
           ),
         ),
       );

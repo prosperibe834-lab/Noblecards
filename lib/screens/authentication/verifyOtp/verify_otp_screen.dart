@@ -11,16 +11,18 @@ import 'widgets/otp_info_card.dart';
 import 'widgets/otp_input_field.dart';
 import 'widgets/otp_resend_section.dart';
 
+enum OtpVerificationFlow { signup, signIn, passwordRecovery }
+
 class VerifyOtpScreen extends StatefulWidget {
   final String email;
   final Map<String, dynamic> profileData;
-  final bool isPasswordRecovery;
+  final OtpVerificationFlow flow;
 
   const VerifyOtpScreen({
     super.key,
     required this.email,
     this.profileData = const {},
-    this.isPasswordRecovery = false,
+    this.flow = OtpVerificationFlow.signup,
   });
 
   @override
@@ -64,10 +66,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      if (widget.isPasswordRecovery) {
-        await _authService.resendPasswordResetOtp(email: widget.email);
-      } else {
-        await _authService.resendEmailOtp(email: widget.email);
+      switch (widget.flow) {
+        case OtpVerificationFlow.signup:
+          await _authService.resendEmailOtp(email: widget.email);
+        case OtpVerificationFlow.signIn:
+          await _authService.resendSignInOtp(email: widget.email);
+        case OtpVerificationFlow.passwordRecovery:
+          await _authService.resendPasswordResetOtp(email: widget.email);
       }
 
       _timerModel.resetTimer();
@@ -110,49 +115,46 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       return;
     }
 
-    if (_timerModel.isExpired) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP expired. Please request a new one.', style: TextStyle(color: Colors.white)),
-          backgroundColor: AppColors.warning,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
     setState(() => _isLoading = true);
     FocusScope.of(context).unfocus();
 
     try {
-      final response = widget.isPasswordRecovery
-          ? await _authService.verifyPasswordResetOtp(
-              email: widget.email,
-              token: _currentOtp,
-            )
-          : await _authService.verifyEmailOtp(
-              email: widget.email,
-              token: _currentOtp,
-            );
+      final response = switch (widget.flow) {
+        OtpVerificationFlow.signup => await _authService.verifyEmailOtp(
+            email: widget.email,
+            token: _currentOtp,
+          ),
+        OtpVerificationFlow.signIn => await _authService.verifySignInOtp(
+            email: widget.email,
+            token: _currentOtp,
+          ),
+        OtpVerificationFlow.passwordRecovery =>
+          await _authService.verifyPasswordResetOtp(
+            email: widget.email,
+            token: _currentOtp,
+          ),
+      };
 
       if (!mounted) return;
 
       if (response.session != null) {
-        if (widget.isPasswordRecovery) {
+        if (widget.flow == OtpVerificationFlow.passwordRecovery) {
           Navigator.pushReplacementNamed(context, '/create-new-password');
           return;
         }
 
-        final verifiedUser = response.user ?? _authService.currentUser;
-        if (verifiedUser == null) {
-          throw Exception('OTP verification did not create an authenticated session.');
-        }
+        if (widget.flow == OtpVerificationFlow.signup) {
+          final verifiedUser = response.user ?? _authService.currentUser;
+          if (verifiedUser == null) {
+            throw Exception('OTP verification did not create an authenticated session.');
+          }
 
-        await _authService.saveUserProfile(
-          userId: verifiedUser.id,
-          profileData: widget.profileData,
-        );
-        if (!mounted) return;
+          await _authService.saveUserProfile(
+            userId: verifiedUser.id,
+            profileData: widget.profileData,
+          );
+          if (!mounted) return;
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
