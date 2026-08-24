@@ -160,11 +160,16 @@ class _SignupScreenState extends State<SignupScreen>
         final response = await _authService.signUpWithEmail(
           email: email,
           password: password,
+          firstName: fullName.split(RegExp(r'\s+')).first,
+          lastName: fullName.split(RegExp(r'\s+')).skip(1).join(' '),
+          phone: phoneNumber,
+          country: country,
+          gender: gender,
         );
 
         if (!mounted) return;
 
-        if (response.user != null && response.session == null) {
+        if (response.session == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Account created. Please verify your email to continue."),

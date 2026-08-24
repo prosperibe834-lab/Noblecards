@@ -19,16 +19,12 @@ import 'providers/wallet_provider.dart';
 import 'screens/cards/providers/submission_provider.dart';
 import 'screens/cards/providers/sell_receipt_provider.dart';
 import 'screens/cards/providers/buy_receipt_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'screens/authentication/services/authentication_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase before starting the app.
-  await Supabase.initialize(
-    url: 'https://cboxcprrzzpyyzylgffb.supabase.co',
-    anonKey: 'sb_publishable_bauRSw8hHi6KkOCOHx-36w_QYIupMYH',
-  );
+  await AuthenticationService.initialize();
 
   // Transparent status bar for edge-to-edge UI.
   SystemChrome.setSystemUIOverlayStyle(
@@ -60,7 +56,7 @@ class NobleCardsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final bool hasActiveSession = Supabase.instance.client.auth.currentSession != null;
+    final bool hasActiveSession = AuthenticationService().isAuthenticated;
 
     return MaterialApp(
       title: 'NobleCards',
@@ -71,7 +67,7 @@ class NobleCardsApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
 
-      // Initial screen route based on existing Supabase session state.
+      // Initial screen route based on the locally persisted API session.
       home: hasActiveSession ? const MainNavigationScreen() : const OnboardingScreen(),
 
       // <--- 2. ADDED THIS: Handles dynamic routes (/favourite-currencies, /exchange-rate)

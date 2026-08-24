@@ -2,7 +2,7 @@
 
 
 git add .
-git commit -m "i did signup otp stuff"
+git commit -m "i added next js "
 git push origin main
 
 
@@ -466,3 +466,5 @@ i have offed i and i restarted my app and it still sending me link and also i no
 
 
 llvy ihgh qgbx ryuw
+
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"

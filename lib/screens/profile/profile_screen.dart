@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../authentication/services/authentication_service.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_shadow.dart';
@@ -334,7 +334,7 @@ class ProfileScreen extends StatelessWidget {
                       hideChevron: true,
                       onTap: () async {
                         try {
-                          await Supabase.instance.client.auth.signOut();
+                          await AuthenticationService().signOut();
                           if (context.mounted) {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
