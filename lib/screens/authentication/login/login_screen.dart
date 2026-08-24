@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _checkBiometrics() async {
-    final canUse = await _biometricService.canUseBiometrics();
+    final canUse = await _biometricService.canLoginWithBiometrics();
     if (canUse) {
       final type = await _biometricService.getAvailableBiometricType();
       if (mounted) {
@@ -102,14 +102,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final authenticated = await _biometricService.authenticate();
     
     if (authenticated) {
-      // TODO: Handle successful biometric session restore
-      // Either trigger Firebase custom token login or restore secure session
-      
-      // Simulate verification delay
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // TODO: Navigate to Main Layout/Dashboard
-      // Navigator.pushReplacementNamed(context, '/dashboard');
+      final restored = await _biometricService.restoreSession();
+      if (!restored) {
+        _showErrorSnackBar('Your secure session has expired. Please log in again.');
+      } else if (mounted) {
+        await _biometricService.recordAuthentication();
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      }
     } else {
       _showErrorSnackBar('Biometric authentication failed or was canceled.');
     }

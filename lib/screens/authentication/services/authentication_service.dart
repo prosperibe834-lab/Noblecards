@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthUser {
@@ -33,20 +34,31 @@ class AuthenticationService {
   static const _baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:3000');
   static const _accessKey = 'noble_cards_access_token';
   static const _refreshKey = 'noble_cards_refresh_token';
+  static const biometricAccessKey = 'noble_cards_biometric_access_token';
+  static const biometricRefreshKey = 'noble_cards_biometric_refresh_token';
   static const _recoveryEmailKey = 'noble_cards_recovery_email';
   static const _recoveryCodeKey = 'noble_cards_recovery_code';
 
   static SharedPreferences? _sharedPreferences;
+  static FlutterSecureStorage? _secureStorage;
+  static bool _hasPersistedSession = false;
   final SharedPreferences? _preferences;
+  final FlutterSecureStorage? _storage;
   AuthUser? _currentUser;
 
-  AuthenticationService({SharedPreferences? preferences}) : _preferences = preferences ?? _sharedPreferences;
+  AuthenticationService({SharedPreferences? preferences, FlutterSecureStorage? storage})
+      : _preferences = preferences ?? _sharedPreferences,
+        _storage = storage ?? _secureStorage;
 
   static Future<void> initialize() async {
     _sharedPreferences = await SharedPreferences.getInstance();
+    _secureStorage = const FlutterSecureStorage();
+    await _sharedPreferences!.remove(_accessKey);
+    await _sharedPreferences!.remove(_refreshKey);
+    _hasPersistedSession = (await _secureStorage!.read(key: _accessKey))?.isNotEmpty == true;
   }
 
-  bool get isAuthenticated => _preferences?.getString(_accessKey)?.isNotEmpty == true;
+  bool get isAuthenticated => _hasPersistedSession;
   AuthUser? get currentUser => _currentUser;
 
   Future<AuthResponse> signUpWithEmail({
@@ -140,7 +152,52 @@ class AuthenticationService {
     }
     await _remove(_accessKey);
     await _remove(_refreshKey);
+    await clearBiometricSession();
+    await _preferences?.remove('biometric_face_id');
+    await _preferences?.remove('biometric_fingerprint');
+    await _preferences?.remove('biometric_remember_device');
     _currentUser = null;
+  }
+
+  Future<bool> restorePersistedSession() async {
+    final accessToken = await _storage?.read(key: _accessKey);
+    _hasPersistedSession = accessToken?.isNotEmpty == true;
+    return _hasPersistedSession;
+  }
+
+  Future<bool> hasSecureSession() async =>
+      (await _storage?.read(key: _accessKey))?.isNotEmpty == true;
+
+  Future<bool> hasBiometricSession() async =>
+      (await _storage?.read(key: biometricRefreshKey))?.isNotEmpty == true;
+
+  Future<void> saveBiometricSession() async {
+    final accessToken = await _storage?.read(key: _accessKey);
+    final refreshToken = await _storage?.read(key: _refreshKey);
+    if (accessToken == null || refreshToken == null) {
+      throw Exception('Your secure session is unavailable. Please log in again.');
+    }
+    await _storage?.write(key: biometricAccessKey, value: accessToken);
+    await _storage?.write(key: biometricRefreshKey, value: refreshToken);
+  }
+
+  Future<void> clearBiometricSession() async {
+    await _storage?.delete(key: biometricAccessKey);
+    await _storage?.delete(key: biometricRefreshKey);
+  }
+
+  Future<bool> restoreBiometricSession() async {
+    final refreshToken = await _storage?.read(key: biometricRefreshKey);
+    if (refreshToken == null || refreshToken.isEmpty) return false;
+    try {
+      final data = await _request('POST', '/auth/refresh', body: {'refreshToken': refreshToken});
+      await _storeSession(data);
+      await saveBiometricSession();
+      return true;
+    } catch (_) {
+      await clearBiometricSession();
+      return false;
+    }
   }
 
   Future<void> saveUserProfile({required String userId, required Map<String, dynamic> profileData}) async {}
@@ -148,7 +205,7 @@ class AuthenticationService {
 
   Future<Map<String, dynamic>> _request(String method, String path, {Map<String, dynamic>? body, bool authenticated = false}) async {
     final headers = {'Content-Type': 'application/json'};
-    if (authenticated) headers['Authorization'] = 'Bearer ${_preferences?.getString(_accessKey)}';
+    if (authenticated) headers['Authorization'] = 'Bearer ${await _storage?.read(key: _accessKey)}';
     final response = method == 'POST'
         ? await http.post(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
         : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
@@ -166,8 +223,23 @@ class AuthenticationService {
     return AuthResponse(user: user, session: AuthSession(access));
   }
 
-  Future<void> _save(String key, String value) async { await _preferences?.setString(key, value); }
-  Future<void> _remove(String key) async { await _preferences?.remove(key); }
+  Future<void> _save(String key, String value) async {
+    if (key == _accessKey || key == _refreshKey) {
+      await _storage?.write(key: key, value: value);
+      if (key == _accessKey) _hasPersistedSession = true;
+      return;
+    }
+    await _preferences?.setString(key, value);
+  }
+
+  Future<void> _remove(String key) async {
+    if (key == _accessKey || key == _refreshKey) {
+      await _storage?.delete(key: key);
+      if (key == _accessKey) _hasPersistedSession = false;
+      return;
+    }
+    await _preferences?.remove(key);
+  }
 
   String _friendlyMessage(Object message) {
     final text = message.toString().toLowerCase();

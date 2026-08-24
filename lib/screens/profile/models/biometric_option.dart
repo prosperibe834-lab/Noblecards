@@ -19,12 +19,12 @@ class BiometricSettingsModel {
 
   factory BiometricSettingsModel.initial() {
     return const BiometricSettingsModel(
-      isFaceIdAvailable: true,
-      isFingerprintAvailable: true,
-      isFaceIdEnabled: true,
-      isFingerprintEnabled: true,
-      isRememberDeviceEnabled: true,
-      isRequireForTransactionsEnabled: true,
+      isFaceIdAvailable: false,
+      isFingerprintAvailable: false,
+      isFaceIdEnabled: false,
+      isFingerprintEnabled: false,
+      isRememberDeviceEnabled: false,
+      isRequireForTransactionsEnabled: false,
       autoLockTime: '5 Minutes',
     );
   }
