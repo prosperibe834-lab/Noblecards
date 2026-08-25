@@ -2,20 +2,36 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
 
 class AuthUser {
   final String id;
   final String email;
   final String firstName;
   final String lastName;
+  final String? username;
+  final String? displayName;
+  final String? phone;
+  final String? country;
+  final String? countryCode;
+  final String? gender;
+  final String? dateOfBirth;
+  final String? bio;
+  final String? address;
+  final String? profileImageUrl;
+  final bool isEmailVerified;
+  final bool isProfileComplete;
+  final bool isVerified;
 
-  const AuthUser({required this.id, required this.email, required this.firstName, required this.lastName});
+  const AuthUser({required this.id, required this.email, required this.firstName, required this.lastName, this.username, this.displayName, this.phone, this.country, this.countryCode, this.gender, this.dateOfBirth, this.bio, this.address, this.profileImageUrl, this.isEmailVerified = false, this.isProfileComplete = false, this.isVerified = false});
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => AuthUser(
         id: json['id'] as String,
         email: json['email'] as String,
         firstName: json['firstName'] as String? ?? '',
         lastName: json['lastName'] as String? ?? '',
+        username: json['username'] as String?, displayName: json['displayName'] as String?, phone: json['phone'] as String?, country: json['country'] as String?, countryCode: json['countryCode'] as String?, gender: json['gender'] as String?, dateOfBirth: json['dateOfBirth'] as String?, bio: json['bio'] as String?, address: json['address'] as String?, profileImageUrl: json['profileImageUrl'] as String?, isEmailVerified: json['isEmailVerified'] as bool? ?? false, isProfileComplete: json['isProfileComplete'] as bool? ?? false, isVerified: json['isVerified'] as bool? ?? false,
       );
 }
 
@@ -31,7 +47,8 @@ class AuthResponse {
 }
 
 class AuthenticationService {
-  static const _baseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:3000');
+  static const apiBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:3000');
+  static const _baseUrl = apiBaseUrl;
   static const _accessKey = 'noble_cards_access_token';
   static const _refreshKey = 'noble_cards_refresh_token';
   static const biometricAccessKey = 'noble_cards_biometric_access_token';
@@ -200,18 +217,62 @@ class AuthenticationService {
     }
   }
 
-  Future<void> saveUserProfile({required String userId, required Map<String, dynamic> profileData}) async {}
-  Future<Map<String, dynamic>?> getUserProfile(String userId) async => null;
+  Future<Map<String, dynamic>> saveUserProfile({required String userId, required Map<String, dynamic> profileData, XFile? image, bool removeImage = false}) async {
+    final accessToken = await _storage?.read(key: _accessKey);
+    if (accessToken == null || accessToken.isEmpty) throw Exception('Your login session has expired. Please log in again.');
+    if (image != null) {
+      final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/users/me/image'));
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      final extension = image.name.split('.').last.toLowerCase();
+      final subtype = extension == 'jpg' || extension == 'jpeg' ? 'jpeg' : extension;
+      request.files.add(http.MultipartFile.fromBytes('image', await image.readAsBytes(), filename: image.name, contentType: MediaType('image', subtype)));
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw Exception(_friendlyMessage(_responseMessage(responseBody, 'Profile image upload failed.')));
+      }
+      final uploadData = jsonDecode(responseBody) as Map<String, dynamic>;
+      final uploadedUser = uploadData['user'] as Map<String, dynamic>?;
+      final uploadedImageUrl = uploadedUser?['profileImageUrl'] as String?;
+      if (uploadedImageUrl == null || uploadedImageUrl.isEmpty) throw Exception('Profile image upload did not return a saved image.');
+      profileData = {...profileData, 'profileImageUrl': uploadedImageUrl};
+    } else if (removeImage) {
+      await _request('DELETE', '/users/me/image', authenticated: true);
+    }
+    final data = await _request('PATCH', '/users/me', body: profileData, authenticated: true);
+    final updatedUser = data['user'] as Map<String, dynamic>?;
+    if (updatedUser == null) throw Exception('Profile update did not return the saved user.');
+    final refreshedData = await _request('GET', '/users/me', authenticated: true);
+    final refreshedUser = refreshedData['user'] as Map<String, dynamic>?;
+    if (refreshedUser == null) throw Exception('Profile could not be refreshed after saving.');
+    _currentUser = AuthUser.fromJson(refreshedUser);
+    return refreshedUser;
+  }
+
+  Future<Map<String, dynamic>?> getUserProfile(String userId) async {
+    final data = await _request('GET', '/users/me', authenticated: true);
+    if (data['user'] is Map<String, dynamic>) _currentUser = AuthUser.fromJson(data['user'] as Map<String, dynamic>);
+    return data['user'] as Map<String, dynamic>?;
+  }
 
   Future<Map<String, dynamic>> _request(String method, String path, {Map<String, dynamic>? body, bool authenticated = false}) async {
     final headers = {'Content-Type': 'application/json'};
     if (authenticated) headers['Authorization'] = 'Bearer ${await _storage?.read(key: _accessKey)}';
     final response = method == 'POST'
         ? await http.post(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
-        : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
+      : method == 'PATCH' ? await http.patch(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
+      : method == 'DELETE' ? await http.delete(Uri.parse('$_baseUrl$path'), headers: headers) : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
     final data = response.body.isEmpty ? <String, dynamic>{} : jsonDecode(response.body) as Map<String, dynamic>;
     if (response.statusCode < 200 || response.statusCode >= 300) throw Exception(_friendlyMessage(data['message'] ?? 'Something went wrong. Please try again.'));
     return data;
+  }
+
+  String _responseMessage(String responseBody, String fallback) {
+    try {
+      final data = jsonDecode(responseBody);
+      if (data is Map<String, dynamic> && data['message'] != null) return data['message'].toString();
+    } catch (_) {}
+    return fallback;
   }
 
   Future<AuthResponse> _storeSession(Map<String, dynamic> data) async {

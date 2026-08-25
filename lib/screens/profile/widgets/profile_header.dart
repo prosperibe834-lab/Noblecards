@@ -6,6 +6,7 @@ import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import 'package:noble_cards/screens/profile/edit_profile_screen.dart';
 import 'package:noble_cards/screens/profile/providers/edit_profile_provider.dart';
+import '../../authentication/services/authentication_service.dart';
 
 class ProfileHeader extends StatefulWidget {
   const ProfileHeader({super.key});
@@ -17,6 +18,7 @@ class ProfileHeader extends StatefulWidget {
 class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProviderStateMixin {
   late AnimationController _copyAnimController;
   late Animation<double> _copyScaleAnim;
+  AuthUser? _user;
 
   @override
   void initState() {
@@ -28,6 +30,13 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
     _copyScaleAnim = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _copyAnimController, curve: Curves.easeInOut),
     );
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final auth = AuthenticationService();
+    await auth.getUserProfile('current');
+    if (mounted) setState(() => _user = auth.currentUser);
   }
 
   @override
@@ -54,10 +63,11 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final user = _user ?? AuthenticationService().currentUser;
 
     return InkWell(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ChangeNotifierProvider(
@@ -66,6 +76,7 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
             ),
           ),
         );
+        if (mounted) await _loadUser();
       },
       borderRadius: BorderRadius.circular(AppRadius.lg),
       child: Container(
@@ -91,8 +102,8 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isDark ? AppColors.darkBackground : Colors.grey[200],
-                image: const DecorationImage(
-                  image: NetworkImage('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'), // Placeholder
+                image: DecorationImage(
+                  image: user?.profileImageUrl != null ? NetworkImage(user!.profileImageUrl!.startsWith('/') ? '${AuthenticationService.apiBaseUrl}${user.profileImageUrl}' : user.profileImageUrl!) : const NetworkImage('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'),
                   fit: BoxFit.cover,
                 ),
                 border: Border.all(
@@ -110,7 +121,7 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                   Row(
                     children: [
                       Text(
-                        'Prosper Ibe',
+                        user?.displayName ?? '${user?.firstName ?? ''} ${user?.lastName ?? ''}'.trim(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -118,16 +129,16 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(Boxicons.bxs_check_circle, color: AppColors.success, size: 18),
+                      if (user?.isVerified == true) const Icon(Boxicons.bxs_check_circle, color: AppColors.success, size: 18),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 14),
+                      if (user?.isVerified == true) const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        'Noble Verified',
+                        user?.isVerified == true ? 'Noble Verified' : 'Profile incomplete',
                         style: TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w600),
                       ),
                     ],

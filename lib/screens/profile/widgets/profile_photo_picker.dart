@@ -1,16 +1,18 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 
 class ProfilePhotoPicker extends StatelessWidget {
   final String? photoPath;
+  final Uint8List? photoBytes;
   final VoidCallback onTap;
 
   const ProfilePhotoPicker({
     super.key,
     required this.photoPath,
     required this.onTap,
+    this.photoBytes,
   });
 
   @override
@@ -18,8 +20,10 @@ class ProfilePhotoPicker extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ImageProvider imageProvider;
-    if (photoPath != null && photoPath!.isNotEmpty) {
-      imageProvider = FileImage(File(photoPath!));
+    if (photoBytes != null) {
+      imageProvider = MemoryImage(photoBytes!);
+    } else if (photoPath != null && photoPath!.isNotEmpty) {
+      imageProvider = NetworkImage(photoPath!);
     } else {
       imageProvider = const NetworkImage('https://i.pravatar.cc/150?img=11');
     }

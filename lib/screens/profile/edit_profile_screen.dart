@@ -182,6 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     // Profile Photo
                     ProfilePhotoPicker(
                       photoPath: profile.photoPath,
+                      photoBytes: provider.selectedImageBytes,
                       onTap: () => _showImagePickerModal(context),
                     ),
                     const SizedBox(height: 24),
@@ -273,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                 ),
                                 onSelect: (Country country) {
-                                  provider.updateCountry(country.name);
+                                  provider.updateCountry(country.name, countryCode: country.countryCode);
                                 },
                               );
                             },
@@ -342,6 +343,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     final success = await provider.saveChanges();
                                     if (success && mounted) {
                                       _showSnackBar('Profile updated successfully.');
+                                    } else if (!success && mounted && provider.errorMessage != null && provider.errorMessage!.isNotEmpty) {
+                                      _showSnackBar(provider.errorMessage!, isError: true);
                                     }
                                   }
                                 }

@@ -4,6 +4,7 @@ import 'package:boxicons/boxicons.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../authentication/services/authentication_service.dart';
 import 'edit_profile_screen.dart';
 import 'providers/edit_profile_provider.dart';
 
@@ -15,23 +16,13 @@ class PersonalInformationScreen extends StatefulWidget {
 }
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> with SingleTickerProviderStateMixin {
-  bool _isLoading = false;
+  final AuthenticationService _auth = AuthenticationService();
+  AuthUser? _user;
+  bool _isLoading = true;
+  bool _imageLoadFailed = false;
+  String? _errorMessage;
   late AnimationController _animController;
   late Animation<double> _fadeAnimation;
-
-  // Example dynamic user data model state (Replace with your actual Provider/Bloc/State)
-  final Map<String, String> _userData = {
-    'fullName': 'Prosper Ibe',
-    'username': 'prosperibe',
-    'email': 'prosperibe@gmail.com',
-    'phone': '+234 810 234 5678',
-    'country': 'Nigeria',
-    'dob': '12 July 2001',
-    'gender': 'Male',
-    'address': 'Lagos, Nigeria',
-    'userId': 'NC-004829',
-    'avatarUrl': 'https://i.pravatar.cc/300', // Dynamic user photo URL
-  };
 
   @override
   void initState() {
@@ -44,6 +35,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
       parent: _animController,
       curve: Curves.easeOut,
     );
+    _loadProfile();
     _animController.forward();
   }
 
@@ -54,11 +46,69 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
   }
 
   Future<void> _handleRefresh() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 1200));
+    await _loadProfile(showError: true);
+  }
+
+  Future<void> _loadProfile({bool showError = false}) async {
     if (mounted) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
     }
+
+    try {
+      await _auth.getUserProfile('current');
+      if (!mounted) return;
+      setState(() {
+        _user = _auth.currentUser;
+        _imageLoadFailed = false;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Unable to load your profile. Please try again.';
+      });
+      if (showError) _showErrorSnackBar();
+    }
+  }
+
+  void _showErrorSnackBar() {
+    final message = _errorMessage;
+    if (message == null || message.isEmpty) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  String _value(String? value) => value?.trim() ?? '';
+
+  String get _fullName {
+    final user = _user;
+    if (user == null) return '';
+    return [user.firstName, user.lastName]
+        .where((value) => value.trim().isNotEmpty)
+        .join(' ');
+  }
+
+  String _formatDateOfBirth(String? value) {
+    if (value == null || value.trim().isEmpty) return '';
+    final parsed = DateTime.tryParse(value);
+    if (parsed == null) return value;
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
+    return '${parsed.day} ${months[parsed.month - 1]} ${parsed.year}';
+  }
+
+  String? _profileImageUrl(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    return value.startsWith('/')
+        ? '${AuthenticationService.apiBaseUrl}$value'
+        : value;
   }
 
   void _copyToClipboard(String text) {
@@ -103,7 +153,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
           child: EditProfileScreen(selectedField: selectedField),
         ),
       ),
-    );
+    ).then((_) => _loadProfile());
   }
 
   @override
@@ -196,7 +246,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_user,
                         label: 'Full Name',
-                        value: _userData['fullName']!,
+                        value: _fullName,
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -207,7 +257,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_at,
                         label: 'Username',
-                        value: _userData['username']!,
+                        value: _value(_user?.username),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -218,7 +268,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_envelope,
                         label: 'Email Address',
-                        value: _userData['email']!,
+                        value: _value(_user?.email),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -229,7 +279,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_phone,
                         label: 'Phone Number',
-                        value: _userData['phone']!,
+                        value: _value(_user?.phone),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -240,19 +290,19 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_globe,
                         label: 'Country',
-                        value: _userData['country']!,
+                        value: _value(_user?.country),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
                         primaryTextColor: primaryTextColor,
                         secondaryTextColor: secondaryTextColor,
-                        leadingWidget: _buildNigeriaFlag(),
+                        leadingWidget: _buildCountryFlag(_user?.country),
                         onTap: () => _navigateToEditProfile('Country'),
                       ),
                       _buildInfoTile(
                         icon: Boxicons.bx_calendar,
                         label: 'Date of Birth',
-                        value: _userData['dob']!,
+                        value: _formatDateOfBirth(_user?.dateOfBirth),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -263,7 +313,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_user,
                         label: 'Gender',
-                        value: _userData['gender']!,
+                        value: _value(_user?.gender),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -274,7 +324,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       _buildInfoTile(
                         icon: Boxicons.bx_map_pin,
                         label: 'Address',
-                        value: _userData['address']!,
+                        value: _value(_user?.address),
                         isDark: isDark,
                         cardBg: cardBg,
                         borderColor: borderColor,
@@ -310,6 +360,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
     required Color secondaryTextColor,
     required Color primaryGreen,
   }) {
+    final imageUrl = _profileImageUrl(_user?.profileImageUrl);
+    final backgroundImage = !_imageLoadFailed && imageUrl != null
+        ? NetworkImage(imageUrl)
+        : null;
+
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
@@ -335,7 +390,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
             child: CircleAvatar(
               radius: 34,
               backgroundColor: primaryGreen.withOpacity(0.1),
-              backgroundImage: NetworkImage(_userData['avatarUrl']!),
+              backgroundImage: backgroundImage,
+              onBackgroundImageError: backgroundImage == null
+                  ? null
+                  : (_, __) {
+                      if (mounted) setState(() => _imageLoadFailed = true);
+                    },
+              child: backgroundImage == null
+                  ? Icon(Boxicons.bx_user, color: primaryGreen, size: 30)
+                  : null,
             ),
           ),
           const SizedBox(width: 14),
@@ -354,7 +417,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                     children: [
                       Flexible(
                         child: Text(
-                          _userData['fullName']!,
+                          _fullName,
                           style: TextStyle(
                             color: primaryTextColor,
                             fontSize: 18,
@@ -365,41 +428,43 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(
-                        Boxicons.bxs_check_circle,
-                        color: Color(0xFF10B981),
-                        size: 18,
-                      ),
+                      if (_user?.isVerified == true)
+                        const Icon(
+                          Boxicons.bxs_check_circle,
+                          color: Color(0xFF10B981),
+                          size: 18,
+                        ),
                     ],
                   ),
                   const SizedBox(height: 4),
 
                   // Noble Verified Pill
-                  Row(
-                    children: [
-                      const Icon(
-                        Boxicons.bx_shield_quarter,
-                        color: Color(0xFF10B981),
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Noble Verified',
-                        style: TextStyle(
-                          color: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                  if (_user?.isVerified == true)
+                    Row(
+                      children: [
+                        const Icon(
+                          Boxicons.bx_shield_quarter,
+                          color: Color(0xFF10B981),
+                          size: 14,
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Noble Verified',
+                          style: TextStyle(
+                            color: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   const SizedBox(height: 6),
 
                   // User ID + Copy Icon
                   Row(
                     children: [
                       Text(
-                        'User ID: ${_userData['userId']}',
+                        'User ID: ${_user?.id ?? ''}',
                         style: TextStyle(
                           color: secondaryTextColor,
                           fontSize: 13,
@@ -408,7 +473,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       ),
                       const SizedBox(width: 6),
                       InkWell(
-                        onTap: () => _copyToClipboard(_userData['userId']!),
+                        onTap: _user == null ? null : () => _copyToClipboard(_user!.id),
                         borderRadius: BorderRadius.circular(4),
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
@@ -627,7 +692,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
   }
 
   // DECORATIVE: Flag Widget for Country Row
-  Widget _buildNigeriaFlag() {
+  Widget _buildCountryFlag(String? country) {
+    final countryCode = _user?.countryCode?.toUpperCase();
+    if (countryCode == null || countryCode.length != 2 || country == null || country.trim().isEmpty) {
+      return const SizedBox(width: 20, height: 14);
+    }
+
+    final firstLetter = String.fromCharCode(countryCode.codeUnitAt(0) + 127397);
+    final secondLetter = String.fromCharCode(countryCode.codeUnitAt(1) + 127397);
     return Container(
       width: 20,
       height: 14,
@@ -636,12 +708,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
         border: Border.all(color: Colors.black12, width: 0.5),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          Expanded(child: Container(color: const Color(0xFF008751))),
-          Expanded(child: Container(color: Colors.white)),
-          Expanded(child: Container(color: const Color(0xFF008751))),
-        ],
+      child: Center(
+        child: Text(
+          '$firstLetter$secondLetter',
+          style: const TextStyle(fontSize: 12, height: 1),
+        ),
       ),
     );
   }
