@@ -4,11 +4,13 @@ import 'package:boxicons/boxicons.dart';
 
 class CountdownTimerCard extends StatefulWidget {
   final int totalSeconds;
+  final String? expiryTime;
   final VoidCallback onExpired;
 
   const CountdownTimerCard({
     super.key,
     this.totalSeconds = 900, // 15 minutes default
+    this.expiryTime,
     required this.onExpired,
   });
 
@@ -23,8 +25,22 @@ class _CountdownTimerCardState extends State<CountdownTimerCard> {
   @override
   void initState() {
     super.initState();
-    _remainingSeconds = widget.totalSeconds;
+    _remainingSeconds = _resolveRemainingSeconds();
     _startTimer();
+  }
+
+  int _resolveRemainingSeconds() {
+    if (widget.expiryTime != null && widget.expiryTime!.isNotEmpty) {
+      try {
+        final expiry = DateTime.tryParse(widget.expiryTime!);
+        if (expiry != null) {
+          final diff = expiry.difference(DateTime.now()).inSeconds;
+          if (diff > 0) return diff;
+          return 0;
+        }
+      } catch (_) {}
+    }
+    return widget.totalSeconds;
   }
 
   void _startTimer() {
@@ -33,7 +49,7 @@ class _CountdownTimerCardState extends State<CountdownTimerCard> {
         if (mounted) setState(() => _remainingSeconds--);
       } else {
         _timer?.cancel();
-        widget.onExpired();
+        if (mounted) widget.onExpired();
       }
     });
   }
@@ -60,15 +76,20 @@ class _CountdownTimerCardState extends State<CountdownTimerCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final progress = _remainingSeconds / widget.totalSeconds;
+    final total = widget.expiryTime != null && widget.expiryTime!.isNotEmpty
+        ? _resolveRemainingSeconds() == 0
+            ? 1
+            : _resolveRemainingSeconds()
+        : widget.totalSeconds;
+    final progress = total <= 0 ? 0.0 : (_remainingSeconds / total).clamp(0.0, 1.0);
     final color = _getTimerColor();
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -81,7 +102,7 @@ class _CountdownTimerCardState extends State<CountdownTimerCard> {
                 CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 4,
-                  backgroundColor: color.withOpacity(0.2),
+                  backgroundColor: color.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
                 Icon(Boxicons.bx_time_five, color: color, size: 20),

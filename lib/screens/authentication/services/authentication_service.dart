@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http_parser/http_parser.dart';
+import '../../../core/config/api_config.dart';
 
 class AuthUser {
   final String id;
@@ -47,8 +48,8 @@ class AuthResponse {
 }
 
 class AuthenticationService {
-  static const apiBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:3000');
-  static const _baseUrl = apiBaseUrl;
+  static String get apiBaseUrl => ApiConfig.baseUrl;
+  static String get _baseUrl => apiBaseUrl;
   static const _accessKey = 'noble_cards_access_token';
   static const _refreshKey = 'noble_cards_refresh_token';
   static const biometricAccessKey = 'noble_cards_biometric_access_token';
@@ -76,6 +77,69 @@ class AuthenticationService {
   }
 
   bool get isAuthenticated => _hasPersistedSession;
+
+  Future<bool> _refreshAccessTokenIfNeeded() async {
+    final refreshToken = await _storage?.read(key: _refreshKey);
+    if (refreshToken == null || refreshToken.isEmpty) {
+      await _clearSessionQuietly();
+      return false;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/auth/refresh'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refreshToken': refreshToken}),
+      );
+
+      final data = response.body.isEmpty ? <String, dynamic>{} : jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode >= 200 && response.statusCode < 300 && data['accessToken'] != null) {
+        final accessToken = data['accessToken'] as String;
+        final nextRefreshToken = data['refreshToken'] as String?;
+        await _save(_accessKey, accessToken);
+        if (nextRefreshToken != null && nextRefreshToken.isNotEmpty) {
+          await _save(_refreshKey, nextRefreshToken);
+        }
+        _hasPersistedSession = true;
+        return true;
+      }
+
+      await _clearSessionQuietly();
+      return false;
+    } catch (_) {
+      await _clearSessionQuietly();
+      return false;
+    }
+  }
+
+  Future<void> _clearSessionQuietly() async {
+    await _remove(_accessKey);
+    await _remove(_refreshKey);
+    _currentUser = null;
+    _hasPersistedSession = false;
+  }
+
+  String? _safeTokenExpiry(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length < 2) return null;
+      final payload = parts[1].padRight((parts[1].length + 3) ~/ 4 * 4, '=');
+      final normalized = payload.replaceAll('-', '+').replaceAll('_', '/');
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      final data = jsonDecode(decoded) as Map<String, dynamic>;
+      final exp = data['exp'];
+      if (exp is int) {
+        final date = DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
+        return date.toIso8601String();
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  void _debugLog(String method, String path, {required int statusCode, required bool tokenExists, String? expiry}) {
+    final safeExpiry = expiry == null ? 'unknown' : expiry;
+    print('[AuthDebug] $method $path status=$statusCode tokenExists=$tokenExists expiry=$safeExpiry');
+  }
   AuthUser? get currentUser => _currentUser;
 
   Future<AuthResponse> signUpWithEmail({
@@ -88,7 +152,7 @@ class AuthenticationService {
     String? countryCode,
     String? gender,
   }) async {
-    await _request('POST', '/auth/register', body: {
+    final body = <String, dynamic>{
       'email': email.trim(),
       'password': password,
       'firstName': firstName ?? '',
@@ -97,7 +161,8 @@ class AuthenticationService {
       if (country != null) 'country': country,
       if (countryCode != null) 'countryCode': countryCode,
       if (gender != null) 'gender': gender,
-    });
+    };
+    await _request('POST', '/auth/register', body: body);
     return AuthResponse(user: null, session: null);
   }
 
@@ -185,6 +250,8 @@ class AuthenticationService {
   Future<bool> hasSecureSession() async =>
       (await _storage?.read(key: _accessKey))?.isNotEmpty == true;
 
+  Future<String?> getAccessToken() async => _storage?.read(key: _accessKey);
+
   Future<bool> hasBiometricSession() async =>
       (await _storage?.read(key: biometricRefreshKey))?.isNotEmpty == true;
 
@@ -255,15 +322,44 @@ class AuthenticationService {
     return data['user'] as Map<String, dynamic>?;
   }
 
-  Future<Map<String, dynamic>> _request(String method, String path, {Map<String, dynamic>? body, bool authenticated = false}) async {
+  Future<Map<String, dynamic>> _request(String method, String path, {Map<String, dynamic>? body, bool authenticated = false, bool retryOnUnauthorized = true}) async {
+    String? accessToken = authenticated ? await _storage?.read(key: _accessKey) : null;
+    if (authenticated && (accessToken == null || accessToken.isEmpty)) {
+      final refreshed = await _refreshAccessTokenIfNeeded();
+      if (!refreshed) {
+        throw Exception('Your login session has expired. Please log in again.');
+      }
+      accessToken = await _storage?.read(key: _accessKey);
+    }
+
     final headers = {'Content-Type': 'application/json'};
-    if (authenticated) headers['Authorization'] = 'Bearer ${await _storage?.read(key: _accessKey)}';
+    if (authenticated && accessToken != null && accessToken.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $accessToken';
+    }
+
     final response = method == 'POST'
         ? await http.post(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
-      : method == 'PATCH' ? await http.patch(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
-      : method == 'DELETE' ? await http.delete(Uri.parse('$_baseUrl$path'), headers: headers) : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
+        : method == 'PATCH'
+            ? await http.patch(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
+            : method == 'DELETE'
+                ? await http.delete(Uri.parse('$_baseUrl$path'), headers: headers)
+                : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
+
+    _debugLog(method, path, statusCode: response.statusCode, tokenExists: accessToken != null && accessToken.isNotEmpty, expiry: accessToken == null ? null : _safeTokenExpiry(accessToken));
+
+    if (response.statusCode == 401 && authenticated && retryOnUnauthorized) {
+      final refreshed = await _refreshAccessTokenIfNeeded();
+      if (refreshed) {
+        return _request(method, path, body: body, authenticated: authenticated, retryOnUnauthorized: false);
+      }
+      await _clearSessionQuietly();
+      throw Exception('Your login session has expired. Please log in again.');
+    }
+
     final data = response.body.isEmpty ? <String, dynamic>{} : jsonDecode(response.body) as Map<String, dynamic>;
-    if (response.statusCode < 200 || response.statusCode >= 300) throw Exception(_friendlyMessage(data['message'] ?? 'Something went wrong. Please try again.'));
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(_friendlyMessage(data['message'] ?? 'Something went wrong. Please try again.'));
+    }
     return data;
   }
 

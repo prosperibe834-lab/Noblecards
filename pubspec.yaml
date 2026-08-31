@@ -53,12 +53,16 @@ flutter:
     - family: Poppins
       fonts:
         - asset: lib/assets/fonts/Poppins-Regular.ttf
+        - asset: lib/assets/fonts/Poppins-Medium.ttf
+        - asset: lib/assets/fonts/Poppins-SemiBold.ttf
         - asset: lib/assets/fonts/Poppins-Bold.ttf
 
     - family: Inter
       fonts:
         - asset: lib/assets/fonts/Inter-Regular.ttf
         - asset: lib/assets/fonts/Inter-Medium.ttf
+        - asset: lib/assets/fonts/Inter-SemiBold.ttf
+        - asset: lib/assets/fonts/Inter-Bold.ttf
 
     - family: SpaceGrotesk
       fonts:

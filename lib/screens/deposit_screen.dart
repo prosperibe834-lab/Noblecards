@@ -3,6 +3,7 @@ import 'package:boxicons/boxicons.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/favorite_currency_chip.dart';
 import '../widgets/deposit_step_indicator.dart';
+import '../providers/exchange_rate_provider.dart';
 import 'currency_selector_screen.dart';
 import 'deposit_payment_screen.dart';
 
@@ -21,7 +22,6 @@ class _DepositScreenState extends State<DepositScreen> {
   bool _isBalanceVisible = true;
   String _selectedCurrencyCode = "NGN";
   String _selectedFlag = "🇳🇬";
-  double _exchangeRate = 1640.00; // 1 USD = 1640 NGN
   final TextEditingController _amountController = TextEditingController(
     text: "656000",
   );
@@ -35,7 +35,7 @@ class _DepositScreenState extends State<DepositScreen> {
 
   double get _enteredAmount => double.tryParse(_amountController.text) ?? 0.0;
   double get _calculatedUsd =>
-      _enteredAmount > 0 ? _enteredAmount / _exchangeRate : 0.0;
+      ExchangeRateProvider.convertToUSD(_enteredAmount, _selectedCurrencyCode);
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +260,7 @@ class _DepositScreenState extends State<DepositScreen> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            "1 USD = $_selectedCurrencyCode ${_exchangeRate.toStringAsFixed(0)}",
+                            "1 USD = $_selectedCurrencyCode ${ExchangeRateProvider.getRate(_selectedCurrencyCode).toStringAsFixed(0)}",
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
@@ -310,7 +310,7 @@ class _DepositScreenState extends State<DepositScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [50, 100, 200, 500, 1000].map((usd) {
-                final localAmt = (usd * _exchangeRate).toInt();
+                final localAmt = (usd * ExchangeRateProvider.getRate(_selectedCurrencyCode)).toInt();
                 return InkWell(
                   onTap: () => setState(
                     () => _amountController.text = localAmt.toString(),

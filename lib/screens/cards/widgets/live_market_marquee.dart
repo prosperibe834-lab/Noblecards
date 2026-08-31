@@ -32,19 +32,35 @@ class _LiveMarketMarqueeState extends State<LiveMarketMarquee> {
   }
 
   void _startAutoScroll() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(milliseconds: 50), (_) {
-      if (_scrollController.hasClients) {
-        double maxExtent = _scrollController.position.maxScrollExtent;
-        double currentOffset = _scrollController.offset;
-        if (currentOffset >= maxExtent) {
+      if (!mounted || !_scrollController.hasClients || _items.isEmpty) {
+        return;
+      }
+
+      final position = _scrollController.position;
+      if (!position.hasContentDimensions) {
+        return;
+      }
+
+      final maxExtent = position.maxScrollExtent;
+      final currentOffset = _scrollController.offset;
+
+      if (maxExtent <= 0) {
+        if (_scrollController.offset != 0) {
           _scrollController.jumpTo(0);
-        } else {
-          _scrollController.animateTo(
-            currentOffset + 2.0,
-            duration: const Duration(milliseconds: 50),
-            curve: Curves.linear,
-          );
         }
+        return;
+      }
+
+      if (currentOffset >= maxExtent) {
+        _scrollController.jumpTo(0);
+      } else {
+        _scrollController.animateTo(
+          currentOffset + 2.0,
+          duration: const Duration(milliseconds: 50),
+          curve: Curves.linear,
+        );
       }
     });
   }
