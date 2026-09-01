@@ -3,6 +3,7 @@ import 'package:boxicons/boxicons.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/deposit_step_indicator.dart';
 import 'bank_transfer_screen.dart';
+import 'gbp_bank_payment_screen.dart';
 import 'card_payment_screen.dart';
 // import 'apple_pay_screen.dart'; // Uncomment if you have an apple pay screen file
 
@@ -24,36 +25,8 @@ class PaymentMethodScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final methods = [
-      {
-        "id": "bank",
-        "title": "Local Bank Transfer",
-        "desc": "Flutterwave Virtual Account. Instant verification.",
-        "icon": Boxicons.bx_building_house,
-        "tag": "FREE & INSTANT",
-      },
-      {
-        "id": "card",
-        "title": "Debit or Credit Card",
-        "desc": "Visa, MasterCard, Verve, Amex",
-        "icon": Boxicons.bx_credit_card,
-        "tag": "1.5% FEE",
-      },
-      {
-        "id": "apple",
-        "title": "Apple Pay / Google Pay",
-        "desc": "Fast checkout via mobile wallet",
-        "icon": Boxicons.bx_mobile_alt,
-        "tag": "POPULAR",
-      },
-      {
-        "id": "wise",
-        "title": "Wise / Wire Transfer",
-        "desc": "International bank wire transfer",
-        "icon": Boxicons.bx_globe,
-        "tag": "1-2 DAYS",
-      },
-    ];
+    // Build methods list conditionally based on currency
+    final methods = _buildPaymentMethods(currencyCode);
 
     return Scaffold(
       appBar: AppBar(
@@ -80,16 +53,29 @@ class PaymentMethodScreen extends StatelessWidget {
                       onTap: () {
                         switch (item["id"]) {
                           case "bank":
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BankTransferScreen(
-                                  amount: depositAmount,
-                                  currency: currencyCode,
-                                  convertedUsd: convertedUsd,
+                            if (currencyCode == 'GBP') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => GbpBankPaymentScreen(
+                                    amount: depositAmount,
+                                    currency: currencyCode,
+                                    convertedUsd: convertedUsd,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BankTransferScreen(
+                                    amount: depositAmount,
+                                    currency: currencyCode,
+                                    convertedUsd: convertedUsd,
+                                  ),
+                                ),
+                              );
+                            }
                             break;
 
                           case "card":
@@ -118,16 +104,16 @@ class PaymentMethodScreen extends StatelessWidget {
                             break;
 
                           case "apple":
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => AppleGooglePayScreen(
-        amount: depositAmount,
-        currency: currencyCode,
-      ),
-    ),
-  );
-  break;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => AppleGooglePayScreen(
+                                  amount: depositAmount,
+                                  currency: currencyCode,
+                                ),
+                              ),
+                            );
+                            break;
                         }
                       },
                       padding: const EdgeInsets.all(16),
@@ -210,5 +196,46 @@ class PaymentMethodScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Map<String, dynamic>> _buildPaymentMethods(String currencyCode) {
+    final bankTitle = currencyCode == 'GBP'
+        ? "Pay from UK Bank Account"
+        : "Local Bank Transfer";
+    final bankDesc = currencyCode == 'GBP'
+        ? "ACH debit. Secure authorization required."
+        : "Flutterwave Virtual Account. Instant verification.";
+    final bankTag = currencyCode == 'GBP' ? "SECURE" : "FREE & INSTANT";
+
+    return [
+      {
+        "id": "bank",
+        "title": bankTitle,
+        "desc": bankDesc,
+        "icon": Boxicons.bx_building_house,
+        "tag": bankTag,
+      },
+      {
+        "id": "card",
+        "title": "Debit or Credit Card",
+        "desc": "Visa, MasterCard, Verve, Amex",
+        "icon": Boxicons.bx_credit_card,
+        "tag": "1.5% FEE",
+      },
+      {
+        "id": "apple",
+        "title": "Apple Pay / Google Pay",
+        "desc": "Fast checkout via mobile wallet",
+        "icon": Boxicons.bx_mobile_alt,
+        "tag": "POPULAR",
+      },
+      {
+        "id": "wise",
+        "title": "Wise / Wire Transfer",
+        "desc": "International bank wire transfer",
+        "icon": Boxicons.bx_globe,
+        "tag": "1-2 DAYS",
+      },
+    ];
   }
 }

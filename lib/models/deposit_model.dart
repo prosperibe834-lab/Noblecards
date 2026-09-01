@@ -25,6 +25,7 @@ class Deposit {
   final String netAmount;
   final String? paymentMethod;
   final String? paymentLink;
+  final String? authorizationUrl;
   final BankTransferDetails? bankTransfer;
   final String? providerReference;
   final String? providerTransactionId;
@@ -41,6 +42,7 @@ class Deposit {
     required this.netAmount,
     this.paymentMethod,
     this.paymentLink,
+    this.authorizationUrl,
     this.bankTransfer,
     this.providerReference,
     this.providerTransactionId,
@@ -62,6 +64,9 @@ class Deposit {
       netAmount: _safeString(json['netAmount'], fallback: '0.00'),
       paymentMethod: json['paymentMethod'] == null ? null : _safeString(json['paymentMethod']),
       paymentLink: json['paymentLink'] == null ? null : _safeString(json['paymentLink']),
+      authorizationUrl: (json['authorizationUrl'] ?? json['authorization_url']) == null
+          ? null
+          : _safeString(json['authorizationUrl'] ?? json['authorization_url']),
       bankTransfer: bankTransferJson != null && bankTransferJson is Map<String, dynamic>
           ? BankTransferDetails.fromJson(bankTransferJson)
           : bankTransferJson is Map
@@ -88,6 +93,8 @@ class Deposit {
         'netAmount': netAmount,
         'paymentMethod': paymentMethod,
         'paymentLink': paymentLink,
+        'authorizationUrl': authorizationUrl,
+        'authorization_url': authorizationUrl,
         'bankTransfer': bankTransfer?.toJson(),
         'providerReference': providerReference,
         'providerTransactionId': providerTransactionId,
