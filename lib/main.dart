@@ -14,6 +14,7 @@ import 'screens/biometric_setup_screen.dart';
 import 'widgets/main_navigation_screen.dart';
 import 'navigation/app_router.dart';
 
+import 'providers/exchange_rate_provider.dart';
 import 'providers/payment_provider.dart';
 import 'providers/wallet_provider.dart';
 import 'screens/cards/providers/submission_provider.dart';
@@ -25,6 +26,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AuthenticationService.initialize();
+  await ExchangeRateProvider.loadRates();
 
   // Transparent status bar for edge-to-edge UI.
   SystemChrome.setSystemUIOverlayStyle(

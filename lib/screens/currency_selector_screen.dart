@@ -11,16 +11,9 @@ class CurrencySelectorScreen extends StatefulWidget {
 class _CurrencySelectorScreenState extends State<CurrencySelectorScreen> {
   final String _query = "";
   final List<Map<String, String>> _allCurrencies = [
-    {"code": "USD", "name": "United States Dollar", "flag": "🇺🇸"},
     {"code": "NGN", "name": "Nigerian Naira", "flag": "🇳🇬"},
     {"code": "GBP", "name": "British Pound", "flag": "🇬🇧"},
-    {"code": "EUR", "name": "Euro", "flag": "🇪🇺"},
-    {"code": "CAD", "name": "Canadian Dollar", "flag": "🇨🇦"},
-    {"code": "AUD", "name": "Australian Dollar", "flag": "🇦🇺"},
-    {"code": "AED", "name": "UAE Dirham", "flag": "🇦🇪"},
-    {"code": "ZAR", "name": "South African Rand", "flag": "🇿🇦"},
-    {"code": "JPY", "name": "Japanese Yen", "flag": "🇯🇵"},
-    {"code": "SGD", "name": "Singapore Dollar", "flag": "🇸🇬"},
+    {"code": "GHS", "name": "Ghanaian Cedi", "flag": "🇬🇭"},
   ];
 
   @override

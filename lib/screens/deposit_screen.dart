@@ -29,13 +29,20 @@ class _DepositScreenState extends State<DepositScreen> {
   final List<Map<String, String>> _favorites = [
     {"code": "NGN", "flag": "🇳🇬"},
     {"code": "GBP", "flag": "🇬🇧"},
-    {"code": "EUR", "flag": "🇪🇺"},
-    {"code": "CAD", "flag": "🇨🇦"},
+    {"code": "GHS", "flag": "🇬🇭"},
   ];
 
   double get _enteredAmount => double.tryParse(_amountController.text) ?? 0.0;
+  double get _rawFxRate => ExchangeRateProvider.getRate(_selectedCurrencyCode);
+  double get _effectiveRate => ExchangeRateProvider.getEffectiveRate(_selectedCurrencyCode);
   double get _calculatedUsd =>
       ExchangeRateProvider.convertToUSD(_enteredAmount, _selectedCurrencyCode);
+
+  void _applyUsdQuickAmount(double usdAmount) {
+    final localAmount = usdAmount * _rawFxRate;
+    _amountController.text = localAmount.toStringAsFixed(2);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +267,7 @@ class _DepositScreenState extends State<DepositScreen> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            "1 USD = $_selectedCurrencyCode ${ExchangeRateProvider.getRate(_selectedCurrencyCode).toStringAsFixed(0)}",
+                            "FX rate: 1 USD = $_selectedCurrencyCode ${_rawFxRate.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
@@ -310,11 +317,8 @@ class _DepositScreenState extends State<DepositScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [50, 100, 200, 500, 1000].map((usd) {
-                final localAmt = (usd * ExchangeRateProvider.getRate(_selectedCurrencyCode)).toInt();
                 return InkWell(
-                  onTap: () => setState(
-                    () => _amountController.text = localAmt.toString(),
-                  ),
+                  onTap: () => _applyUsdQuickAmount(usd.toDouble()),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
