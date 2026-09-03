@@ -87,5 +87,21 @@ class ExchangeRateProvider {
     return amountUSD * rate;
   }
 
+  static double convertFromUSDWithDepositFees(
+    double amountUSD,
+    String currencyCode,
+  ) {
+    final baseAmount = convertFromUSD(amountUSD, currencyCode);
+    if (baseAmount <= 0) {
+      return 0.0;
+    }
+
+    final providerFee = double.parse((baseAmount * 0.02).toStringAsFixed(2));
+    final nobleCardsFee = double.parse((baseAmount * 0.01).toStringAsFixed(2));
+    return double.parse(
+      (baseAmount + providerFee + nobleCardsFee).toStringAsFixed(2),
+    );
+  }
+
   static bool get hasLoaded => _hasLoaded;
 }

@@ -10,10 +10,7 @@ class DepositsService {
   final http.Client httpClient;
   final String Function() getAuthToken;
 
-  DepositsService({
-    required this.httpClient,
-    required this.getAuthToken,
-  });
+  DepositsService({required this.httpClient, required this.getAuthToken});
 
   Future<Deposit> createDeposit({
     required double amount,
@@ -24,7 +21,7 @@ class DepositsService {
     String? idempotencyKey,
   }) async {
     final token = getAuthToken();
-    
+
     final response = await httpClient.post(
       Uri.parse('$_baseUrl/deposits'),
       headers: {
@@ -51,14 +48,52 @@ class DepositsService {
     return Deposit.fromJson(json);
   }
 
-  Future<Deposit> getDeposit(String depositId) async {
+  Future<Deposit> createCardDeposit({
+    required double amount,
+    required double requestedAmount,
+    required String currency,
+    required String cardNumber,
+    required String cvv,
+    required String expiryMonth,
+    required String expiryYear,
+    required String cardHolderName,
+    String? idempotencyKey,
+  }) async {
     final token = getAuthToken();
-    
-    final response = await httpClient.get(
-      Uri.parse('$_baseUrl/deposits/$depositId'),
+    final response = await httpClient.post(
+      Uri.parse('$_baseUrl/deposits/card'),
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
+      body: jsonEncode({
+        'amount': amount,
+        'requestedAmount': requestedAmount,
+        'currency': currency,
+        'idempotencyKey': idempotencyKey,
+        'card': {
+          'cardNumber': cardNumber,
+          'cvv': cvv,
+          'expiryMonth': expiryMonth,
+          'expiryYear': expiryYear,
+          'cardHolderName': cardHolderName,
+        },
+      }),
+    );
+
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      throw Exception('Failed to create card deposit: ${response.body}');
+    }
+
+    return Deposit.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  Future<Deposit> getDeposit(String depositId) async {
+    final token = getAuthToken();
+
+    final response = await httpClient.get(
+      Uri.parse('$_baseUrl/deposits/$depositId'),
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode != 200) {
@@ -73,12 +108,10 @@ class DepositsService {
   /// This is called when user taps "I Have Made The Transfer".
   Future<Deposit> verifyAndCheckDeposit(String depositId) async {
     final token = getAuthToken();
-    
+
     final response = await httpClient.post(
       Uri.parse('$_baseUrl/deposits/$depositId/verify'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode != 200) {
@@ -95,7 +128,7 @@ class DepositsService {
     String? provider,
   }) async {
     final token = getAuthToken();
-    
+
     final uri = Uri.parse('$_baseUrl/deposits').replace(
       queryParameters: {
         if (status != null) 'status': status,
@@ -106,9 +139,7 @@ class DepositsService {
 
     final response = await httpClient.get(
       uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode != 200) {
@@ -116,6 +147,8 @@ class DepositsService {
     }
 
     final List<dynamic> json = jsonDecode(response.body) as List<dynamic>;
-    return json.map((item) => Deposit.fromJson(item as Map<String, dynamic>)).toList();
+    return json
+        .map((item) => Deposit.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 }

@@ -2,18 +2,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import '../services/deposits_service.dart';
+import 'authentication/services/authentication_service.dart';
 
 enum CardType { visa, mastercard, verve, amex, unknown }
 
 class CardPaymentScreen extends StatefulWidget {
   final double amount;
   final String currency;
+  final double? requestedUsdAmount;
   final VoidCallback? onPaymentSuccess;
 
   const CardPaymentScreen({
     super.key,
     this.amount = 49.99,
     this.currency = '\$',
+    this.requestedUsdAmount,
     this.onPaymentSuccess,
   });
 
@@ -59,7 +65,9 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   CardType _detectCardType(String number) {
     if (number.startsWith(RegExp(r'^4'))) {
       return CardType.visa;
-    } else if (number.startsWith(RegExp(r'^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[0-1]|2720)'))) {
+    } else if (number.startsWith(
+      RegExp(r'^(5[1-5]|222[1-9]|22[3-9]|2[3-6]|27[0-1]|2720)'),
+    )) {
       return CardType.mastercard;
     } else if (number.startsWith(RegExp(r'^(506|507|650|639)'))) {
       return CardType.verve;
@@ -86,43 +94,62 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   void _processPayment() async {
     if (!_formKey.currentState!.validate()) return;
 
+    if (widget.requestedUsdAmount == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to determine the requested USD amount.'),
+        ),
+      );
+      return;
+    }
+
     setState(() => _isProcessing = true);
 
-    // Simulate initial gateway authorization handshake
-    await Future.delayed(const Duration(milliseconds: 1200));
+    try {
+      final accessToken = await AuthenticationService().getAccessToken();
+      if (accessToken == null || accessToken.isEmpty) {
+        throw Exception('Your login session has expired. Please log in again.');
+      }
 
-    if (!mounted) return;
-    setState(() => _isProcessing = false);
-
-    // Trigger 3D Secure Challenge
-    _show3DSecureModal(context);
-  }
-
-  void _show3DSecureModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _ThreeDSecureModal(
+      final expiryParts = _expiryController.text.split('/');
+      final depositsService = DepositsService(
+        httpClient: http.Client(),
+        getAuthToken: () => accessToken,
+      );
+      final deposit = await depositsService.createCardDeposit(
         amount: widget.amount,
+        requestedAmount: widget.requestedUsdAmount!,
         currency: widget.currency,
-        cardNumberLast4: _cardNumberController.text.replaceAll(' ', '').runes.length >= 4
-            ? _cardNumberController.text.replaceAll(' ', '').substring(
-                _cardNumberController.text.replaceAll(' ', '').length - 4,
-              )
-            : '0000',
-        onVerified: () {
-          Navigator.pop(context); // Close modal
-          _showSuccessSnackbar();
-          if (widget.onPaymentSuccess != null) {
-            widget.onPaymentSuccess!();
-          }
-        },
-      ),
-    );
+        cardNumber: _cardNumberController.text.replaceAll(' ', ''),
+        cvv: _cvvController.text,
+        expiryMonth: expiryParts[0],
+        expiryYear: expiryParts[1],
+        cardHolderName: _cardHolderController.text.trim(),
+      );
+
+      if (!mounted) return;
+      if (deposit.authorizationUrl != null &&
+          deposit.authorizationUrl!.isNotEmpty) {
+        await launchUrl(
+          Uri.parse(deposit.authorizationUrl!),
+          mode: LaunchMode.externalApplication,
+        );
+      }
+      _showPendingSnackbar();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
   }
 
-  void _showSuccessSnackbar() {
+  void _showPendingSnackbar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: const Color(0xFF10B981),
@@ -133,8 +160,11 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
             Icon(Boxicons.bx_check_circle, color: Colors.white),
             SizedBox(width: 12),
             Text(
-              'Payment authorized successfully!',
-              style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+              'Payment submitted for verification.',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -149,7 +179,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Card Payment', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Card Payment',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -318,7 +351,8 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                           'Save card for future payments',
                           style: TextStyle(
                             fontSize: 14,
-                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
+                            color: theme.textTheme.bodyMedium?.color
+                                ?.withOpacity(0.8),
                           ),
                         ),
                       ],
@@ -350,7 +384,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Boxicons.bx_shield_quarter, color: Colors.white),
+                                  const Icon(
+                                    Boxicons.bx_shield_quarter,
+                                    color: Colors.white,
+                                  ),
                                   const SizedBox(width: 10),
                                   Text(
                                     'Pay ${widget.currency}${widget.amount.toStringAsFixed(2)}',
@@ -407,7 +444,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1.8),
+        borderSide: BorderSide(
+          color: Theme.of(context).primaryColor,
+          width: 1.8,
+        ),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -423,7 +463,9 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     final cardNumber = _cardNumberController.text.isEmpty
         ? '•••• •••• •••• ••••'
         : _cardNumberController.text;
-    final expiry = _expiryController.text.isEmpty ? 'MM/YY' : _expiryController.text;
+    final expiry = _expiryController.text.isEmpty
+        ? 'MM/YY'
+        : _expiryController.text;
 
     return Container(
       width: double.infinity,
@@ -441,7 +483,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
             color: Colors.black.withOpacity(0.25),
             blurRadius: 15,
             offset: const Offset(0, 8),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -495,7 +537,11 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                 children: [
                   const Text(
                     'CARD HOLDER',
-                    style: TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 1),
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 10,
+                      letterSpacing: 1,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -514,7 +560,11 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                 children: [
                   const Text(
                     'EXPIRES',
-                    style: TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 1),
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 10,
+                      letterSpacing: 1,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -539,22 +589,46 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
       case CardType.visa:
         return const Padding(
           padding: EdgeInsets.all(12),
-          child: Text('VISA', style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF1A1F71))),
+          child: Text(
+            'VISA',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF1A1F71),
+            ),
+          ),
         );
       case CardType.mastercard:
         return const Padding(
           padding: EdgeInsets.all(12),
-          child: Text('MC', style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFFEB001B))),
+          child: Text(
+            'MC',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Color(0xFFEB001B),
+            ),
+          ),
         );
       case CardType.verve:
         return const Padding(
           padding: EdgeInsets.all(12),
-          child: Text('VERVE', style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF00B140))),
+          child: Text(
+            'VERVE',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF00B140),
+            ),
+          ),
         );
       case CardType.amex:
         return const Padding(
           padding: EdgeInsets.all(12),
-          child: Text('AMEX', style: TextStyle(fontWeight: FontWeight.w900, color: Color(0xFF007BC1))),
+          child: Text(
+            'AMEX',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF007BC1),
+            ),
+          ),
         );
       default:
         return const Icon(Boxicons.bx_credit_card, color: Colors.grey);
@@ -716,7 +790,8 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
       });
     }
   }
-@override
+
+  @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
     final theme = Theme.of(context);
@@ -932,7 +1007,6 @@ class _ThreeDSecureModalState extends State<_ThreeDSecureModal> {
       ),
     );
   }
-
 
   //     ),
   //   );

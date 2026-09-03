@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/favorite_currency_chip.dart';
 import '../widgets/deposit_step_indicator.dart';
 import '../providers/exchange_rate_provider.dart';
+import '../providers/wallet_provider.dart';
 import 'currency_selector_screen.dart';
 import 'deposit_payment_screen.dart';
-
-
 
 // Import your app routes file if applicable
 // import '../routes/app_routes.dart';
@@ -34,9 +35,23 @@ class _DepositScreenState extends State<DepositScreen> {
 
   double get _enteredAmount => double.tryParse(_amountController.text) ?? 0.0;
   double get _rawFxRate => ExchangeRateProvider.getRate(_selectedCurrencyCode);
-  double get _effectiveRate => ExchangeRateProvider.getEffectiveRate(_selectedCurrencyCode);
+  double get _effectiveRate =>
+      ExchangeRateProvider.getEffectiveRate(_selectedCurrencyCode);
   double get _calculatedUsd =>
       ExchangeRateProvider.convertToUSD(_enteredAmount, _selectedCurrencyCode);
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<WalletProvider?>()?.refresh();
+  }
+
+  String _formatBalance(double balance) {
+    return NumberFormat.currency(
+      symbol: '\$',
+      decimalDigits: 2,
+    ).format(balance);
+  }
 
   void _applyUsdQuickAmount(double usdAmount) {
     final localAmount = usdAmount * _rawFxRate;
@@ -124,7 +139,11 @@ class _DepositScreenState extends State<DepositScreen> {
                     ],
                   ),
                   Text(
-                    _isBalanceVisible ? "\$2,350.00" : "••••••••",
+                    _isBalanceVisible
+                        ? _formatBalance(
+                            context.watch<WalletProvider?>()?.balance ?? 0,
+                          )
+                        : "••••••••",
                     style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 28,
@@ -358,8 +377,9 @@ class _DepositScreenState extends State<DepositScreen> {
                 ),
                 onPressed: _enteredAmount <= 0
                     ? null
-                    : () {
-                        Navigator.push(
+                    : () async {
+                        final walletProvider = context.read<WalletProvider?>();
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => PaymentMethodScreen(
@@ -369,6 +389,9 @@ class _DepositScreenState extends State<DepositScreen> {
                             ),
                           ),
                         );
+                        if (mounted) {
+                          await walletProvider?.refresh();
+                        }
                       },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,

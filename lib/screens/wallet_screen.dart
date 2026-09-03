@@ -13,6 +13,8 @@ import 'favorite_currencies_screen.dart';
 import '../theme/app_colors.dart';
 
 import '../theme/app_spacing.dart';
+import '../providers/wallet_provider.dart';
+import 'package:provider/provider.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -22,7 +24,9 @@ class WalletScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -36,16 +40,15 @@ class WalletScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Boxicons.bx_bell),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Boxicons.bx_bell), onPressed: () {}),
           IconButton(
             icon: const Icon(Boxicons.bx_history),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const TransactionHistoryScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const TransactionHistoryScreen(),
+                ),
               );
             },
           ),
@@ -60,7 +63,7 @@ class WalletScreen extends StatelessWidget {
           children: [
             // --- 1. Balance Card ---
             WalletBalanceCard(
-              balance: 2350.00,
+              balance: context.watch<WalletProvider>().balance,
               onDeposit: () {
                 Navigator.push(
                   context,
@@ -108,7 +111,9 @@ class WalletScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const DepositScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const DepositScreen(),
+                        ),
                       );
                     },
                   ),
@@ -118,7 +123,9 @@ class WalletScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const WithdrawScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const WithdrawScreen(),
+                        ),
                       );
                     },
                   ),
@@ -140,7 +147,9 @@ class WalletScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const AnalyticsScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const AnalyticsScreen(),
+                        ),
                       );
                     },
                   ),
@@ -310,7 +319,9 @@ class WalletScreen extends StatelessWidget {
                     'Live Exchange Rate',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                   ),
                 ],
@@ -322,7 +333,9 @@ class WalletScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const FavoriteCurrenciesScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const FavoriteCurrenciesScreen(),
+                ),
               );
             },
           ),
