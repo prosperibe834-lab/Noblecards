@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import 'models/withdrawal_request_model.dart';
+import 'models/withdrawal_transaction_model.dart';
 import 'withdraw_success_screen.dart';
 
 class WithdrawProcessingScreen extends StatefulWidget {
-  final WithdrawalRequestModel request;
+  final WithdrawalTransactionModel transaction;
 
-  const WithdrawProcessingScreen({
-    super.key,
-    required this.request,
-  });
+  const WithdrawProcessingScreen({super.key, required this.transaction});
 
   @override
-  State<WithdrawProcessingScreen> createState() => _WithdrawProcessingScreenState();
+  State<WithdrawProcessingScreen> createState() =>
+      _WithdrawProcessingScreenState();
 }
 
 class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
@@ -22,7 +20,7 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
     "Verifying payout account details...",
     "Checking withdrawal limits & fees...",
     "Initiating transfer with payment provider...",
-    "Finalizing withdrawal request..."
+    "Finalizing withdrawal request...",
   ];
 
   @override
@@ -40,7 +38,8 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => WithdrawSuccessScreen(request: widget.request),
+            builder: (_) =>
+                WithdrawSuccessScreen(transaction: widget.transaction),
           ),
         );
       }
@@ -64,10 +63,16 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
                     height: 100,
                     child: CircularProgressIndicator(
                       strokeWidth: 6,
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor,
+                      ),
                     ),
                   ),
-                  const Icon(Boxicons.bx_transfer, size: 40, color: Colors.blue),
+                  const Icon(
+                    Boxicons.bx_transfer,
+                    size: 40,
+                    color: Colors.blue,
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -87,8 +92,12 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
               const SizedBox(height: 12),
               const Text(
                 "Please do not close this screen",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: Colors.grey),
-              )
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
             ],
           ),
         ),

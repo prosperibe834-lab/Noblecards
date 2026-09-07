@@ -8,16 +8,24 @@ class CardTypeSelector extends StatelessWidget {
   final bool isPhysical;
   final ValueChanged<bool> onChanged;
 
-  const CardTypeSelector({super.key, required this.isPhysical, required this.onChanged});
+  const CardTypeSelector({
+    super.key,
+    required this.isPhysical,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).brightness == Brightness.dark ? AppColors.darkText : AppColors.lightText;
+    final textColor = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkText
+        : AppColors.lightText;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkCard : AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkCard
+            : AppColors.white,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.12)),
       ),
@@ -30,7 +38,12 @@ class CardTypeSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildOption(BuildContext context, bool value, String label, Color textColor) {
+  Widget _buildOption(
+    BuildContext context,
+    bool value,
+    String label,
+    Color textColor,
+  ) {
     final isSelected = value == isPhysical;
     return Expanded(
       child: GestureDetector(
@@ -40,9 +53,15 @@ class CardTypeSelector extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
           decoration: BoxDecoration(
             gradient: isSelected
-                ? const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark])
+                ? const LinearGradient(
+                    colors: [AppColors.primary, AppColors.primaryDark],
+                  )
                 : null,
-            color: isSelected ? null : Theme.of(context).brightness == Brightness.dark ? AppColors.darkCard : AppColors.lightInput,
+            color: isSelected
+                ? null
+                : Theme.of(context).brightness == Brightness.dark
+                ? AppColors.darkCard
+                : AppColors.lightInput,
             borderRadius: BorderRadius.circular(AppRadius.full),
           ),
           child: Center(

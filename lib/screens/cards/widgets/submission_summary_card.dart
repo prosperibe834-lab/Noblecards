@@ -17,40 +17,91 @@ class SubmissionSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.white,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
             blurRadius: 15,
             offset: const Offset(0, 5),
-          )
+          ),
         ],
       ),
       child: Column(
         children: [
-          _buildRow(context, Boxicons.bx_hash, 'Reference ID', data.referenceId, isHighlighted: true),
+          _buildRow(
+            context,
+            Boxicons.bx_hash,
+            'Reference ID',
+            data.referenceId,
+            isHighlighted: true,
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_layer, 'Cards Submitted', '${data.cardsSubmitted}'),
+          _buildRow(
+            context,
+            Boxicons.bx_layer,
+            'Cards Submitted',
+            '${data.cardsSubmitted}',
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_dollar_circle, 'Total Face Value', '\$${data.totalFaceValue.toStringAsFixed(2)}'),
+          _buildRow(
+            context,
+            Boxicons.bx_dollar_circle,
+            'Total Face Value',
+            '\$${data.totalFaceValue.toStringAsFixed(2)}',
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_line_chart, 'Sell Rate', '${data.sellRate.toStringAsFixed(2)}%', isHighlighted: true),
+          _buildRow(
+            context,
+            Boxicons.bx_line_chart,
+            'Sell Rate',
+            '${data.sellRate.toStringAsFixed(2)}%',
+            isHighlighted: true,
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_wallet, 'Estimated You Receive', '\$${data.estimatedReceive.toStringAsFixed(2)}', isHighlighted: true),
+          _buildRow(
+            context,
+            Boxicons.bx_wallet,
+            'Estimated You Receive',
+            '\$${data.estimatedReceive.toStringAsFixed(2)}',
+            isHighlighted: true,
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_time_five, 'Verification Time', data.verificationTime),
+          _buildRow(
+            context,
+            Boxicons.bx_time_five,
+            'Verification Time',
+            data.verificationTime,
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_calendar, 'Submitted On', data.submittedOn),
+          _buildRow(
+            context,
+            Boxicons.bx_calendar,
+            'Submitted On',
+            data.submittedOn,
+          ),
           _buildDivider(isDark),
-          _buildRow(context, Boxicons.bx_credit_card, 'Payment Method', data.paymentMethod),
+          _buildRow(
+            context,
+            Boxicons.bx_credit_card,
+            'Payment Method',
+            data.paymentMethod,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildRow(BuildContext context, IconData icon, String label, String value, {bool isHighlighted = false}) {
+  Widget _buildRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value, {
+    bool isHighlighted = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -73,8 +124,8 @@ class SubmissionSummaryCard extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w600,
-            color: isHighlighted 
-                ? AppColors.success 
+            color: isHighlighted
+                ? AppColors.success
                 : (isDark ? AppColors.darkText : AppColors.lightText),
           ),
         ),
@@ -99,7 +150,9 @@ class SubmissionSummaryCard extends StatelessWidget {
                 width: dashWidth,
                 height: 1,
                 child: DecoratedBox(
-                  decoration: BoxDecoration(color: isDark ? Colors.white12 : Colors.black12),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white12 : Colors.black12,
+                  ),
                 ),
               );
             }),

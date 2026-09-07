@@ -52,7 +52,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
       try {
         await _authService.resetPasswordForEmail(_emailController.text.trim());
-        
+
         if (mounted) {
           HapticFeedback.mediumImpact();
           // TODO: Navigate to OTP Verification Screen
@@ -72,7 +72,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          message, 
+          message,
           style: const TextStyle(color: Colors.white, fontFamily: 'Inter'),
         ),
         backgroundColor: AppColors.error,
@@ -101,7 +101,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           children: [
             // Top App Bar Area
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -112,13 +115,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   onPressed: _isLoading ? null : _onBackToLogin,
                   tooltip: 'Back to Sign In',
                   style: IconButton.styleFrom(
-                    backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
+                    backgroundColor: isDark
+                        ? AppColors.darkCard
+                        : AppColors.lightCard,
                     shape: const CircleBorder(),
                   ),
                 ),
               ),
             ),
-            
+
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
@@ -130,17 +135,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 16),
-                      
+
                       // Logo
                       Center(
                         child: Image.asset(
-                          isDark 
-                              ? 'lib/assets/logos/MainDarkLogo.png.png' 
+                          isDark
+                              ? 'lib/assets/logos/MainDarkLogo.png.png'
                               : 'lib/assets/logos/MainLightLogo.png.png',
                           height: 48,
                           errorBuilder: (context, error, stackTrace) => Icon(
-                            Boxicons.bx_credit_card_front, 
-                            size: 48, 
+                            Boxicons.bx_credit_card_front,
+                            size: 48,
                             color: Theme.of(context).primaryColor,
                           ),
                         ),
@@ -159,9 +164,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         child: Text(
                           'Enter your email address and we\'ll send\nyou a 6-digit OTP code to reset your password.',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            height: 1.5,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(height: 1.5),
                         ),
                       ),
                       const SizedBox(height: 32),
@@ -183,7 +188,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your email address';
                           }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
                             return 'Please enter a valid email address';
                           }
                           return null;
@@ -195,13 +202,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark 
-                              ? AppColors.primary.withOpacity(0.08) 
+                          color: isDark
+                              ? AppColors.primary.withOpacity(0.08)
                               : AppColors.successLight.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isDark 
-                                ? AppColors.primary.withOpacity(0.2) 
+                            color: isDark
+                                ? AppColors.primary.withOpacity(0.2)
                                 : AppColors.successLight.withOpacity(0.3),
                           ),
                         ),
@@ -216,11 +223,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             Expanded(
                               child: Text(
                                 'We\'ll send a secure OTP code to your email address to help you reset your password.',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: isDark ? AppColors.darkText : AppColors.lightText,
-                                  fontSize: 13,
-                                  height: 1.4,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: isDark
+                                          ? AppColors.darkText
+                                          : AppColors.lightText,
+                                      fontSize: 13,
+                                      height: 1.4,
+                                    ),
                               ),
                             ),
                           ],
@@ -234,7 +244,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           gradient: const LinearGradient(
-                            colors: [AppColors.primary, AppColors.primary], // Fallback if primaryLight missing
+                            colors: [
+                              AppColors.primary,
+                              AppColors.primary,
+                            ], // Fallback if primaryLight missing
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -263,7 +276,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               : const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Boxicons.bx_paper_plane, color: Colors.white, size: 20),
+                                    Icon(
+                                      Boxicons.bx_paper_plane,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
                                     SizedBox(width: 8),
                                     Text(
                                       'Send OTP Code',
@@ -292,10 +309,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             onTap: _isLoading ? null : _onBackToLogin,
                             child: Text(
                               'Back to Sign In',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                           ),
                         ],

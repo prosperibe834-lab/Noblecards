@@ -12,7 +12,9 @@ class FavoriteCurrenciesScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: const CustomAppBar(title: 'Favorite Currencies'),
       body: Center(
         child: Text(

@@ -9,11 +9,7 @@ class HotTodayCard extends StatelessWidget {
   final GiftCardModel card;
   final VoidCallback onTap;
 
-  const HotTodayCard({
-    super.key,
-    required this.card,
-    required this.onTap,
-  });
+  const HotTodayCard({super.key, required this.card, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +35,8 @@ class HotTodayCard extends StatelessWidget {
                 card.logoUrl,
                 height: 40,
                 width: 40,
-                errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, size: 40),
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.credit_card, size: 40),
               ),
             ),
             const SizedBox(height: 10),
@@ -65,7 +62,13 @@ class HotTodayCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Buy', style: TextStyle(fontSize: 9, color: AppColors.lightSubText)),
+                    const Text(
+                      'Buy',
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: AppColors.lightSubText,
+                      ),
+                    ),
                     Text(
                       '${card.buyRate}%',
                       style: const TextStyle(
@@ -79,7 +82,13 @@ class HotTodayCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text('Sell', style: TextStyle(fontSize: 9, color: AppColors.lightSubText)),
+                    const Text(
+                      'Sell',
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: AppColors.lightSubText,
+                      ),
+                    ),
                     Text(
                       '${card.sellRate}%',
                       style: const TextStyle(

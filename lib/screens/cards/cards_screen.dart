@@ -42,15 +42,16 @@ class CardsScreen extends StatelessWidget {
   void _onSellTap(BuildContext context, GiftCardModel card) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => SellGiftCardScreen(card: card),
-      ),
+      MaterialPageRoute(builder: (context) => SellGiftCardScreen(card: card)),
     );
   }
 
   void _onCardDetailsTap(BuildContext context, GiftCardModel card) {
     context.read<CardsProvider>().addRecentlyViewed(card);
-    showFloatingSnackbar(context, 'Details Screen Placeholder for ${card.name}');
+    showFloatingSnackbar(
+      context,
+      'Details Screen Placeholder for ${card.name}',
+    );
   }
 
   @override
@@ -73,11 +74,14 @@ class CardsScreen extends StatelessWidget {
           final favProvider = context.watch<FavoritesProvider>();
 
           // Dynamic Client Side Filtering Logic
-          List<GiftCardModel> filteredCards = cardsProvider.allCards.where((card) {
+          List<GiftCardModel> filteredCards = cardsProvider.allCards.where((
+            card,
+          ) {
             // 1. Search filter
             final q = searchProvider.query.toLowerCase();
             if (q.isNotEmpty) {
-              final matches = card.name.toLowerCase().contains(q) ||
+              final matches =
+                  card.name.toLowerCase().contains(q) ||
                   card.category.toLowerCase().contains(q) ||
                   card.country.toLowerCase().contains(q);
               if (!matches) return false;
@@ -92,7 +96,8 @@ class CardsScreen extends StatelessWidget {
             // 3. Country filter
             if (countryProvider.selectedCountry.id != 'all' &&
                 !card.country.toLowerCase().contains(
-                    countryProvider.selectedCountry.name.toLowerCase())) {
+                  countryProvider.selectedCountry.name.toLowerCase(),
+                )) {
               return false;
             }
 
@@ -101,7 +106,8 @@ class CardsScreen extends StatelessWidget {
             if (qf == 'Trending' && !card.isTrending) return false;
             if (qf == 'Instant Delivery' && !card.isInstant) return false;
             if (qf == 'Available' && !card.isAvailable) return false;
-            if (qf == 'Favorites' && !favProvider.isFavorite(card.id)) return false;
+            if (qf == 'Favorites' && !favProvider.isFavorite(card.id))
+              return false;
 
             return true;
           }).toList();
@@ -111,7 +117,9 @@ class CardsScreen extends StatelessWidget {
           }
 
           return Scaffold(
-            backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+            backgroundColor: isDark
+                ? AppColors.darkBackground
+                : AppColors.lightBackground,
             appBar: const CardsAppBar(),
             body: RefreshIndicator(
               color: AppColors.accentViolet,
@@ -125,34 +133,40 @@ class CardsScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: AppSpacing.sm),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.m,
+                      ),
                       child: AnimatedSearchBar(
                         onFilterTap: () {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
-                            builder: (sheetContext) => ChangeNotifierProvider.value(
-                              value: context.read<FilterProvider>(),
-                              child: const FilterBottomSheet(),
-                            ),
+                            builder: (sheetContext) =>
+                                ChangeNotifierProvider.value(
+                                  value: context.read<FilterProvider>(),
+                                  child: const FilterBottomSheet(),
+                                ),
                           );
                         },
                       ),
                     ),
                     const SizedBox(height: 12),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.m,
+                      ),
                       child: CountrySelector(
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
-                            builder: (sheetContext) => ChangeNotifierProvider.value(
-                              value: context.read<CountryProvider>(),
-                              child: const CountryBottomSheet(),
-                            ),
+                            builder: (sheetContext) =>
+                                ChangeNotifierProvider.value(
+                                  value: context.read<CountryProvider>(),
+                                  child: const CountryBottomSheet(),
+                                ),
                           );
                         },
                       ),
@@ -166,13 +180,12 @@ class CardsScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     const LiveMarketMarquee(),
                     const SizedBox(height: 24),
-                    SectionHeader(
-                      title: 'Hot Today 🔥',
-                      onViewAll: () {},
-                    ),
+                    SectionHeader(title: 'Hot Today 🔥', onViewAll: () {}),
                     const SizedBox(height: 12),
                     HotTodayList(
-                      cards: cardsProvider.allCards.where((c) => c.isTrending).toList(),
+                      cards: cardsProvider.allCards
+                          .where((c) => c.isTrending)
+                          .toList(),
                       onCardTap: (card) => _onCardDetailsTap(context, card),
                     ),
                     const SizedBox(height: 24),
@@ -185,10 +198,7 @@ class CardsScreen extends StatelessWidget {
                     TopRatesCard(cards: cardsProvider.allCards),
                     const SizedBox(height: 24),
                     if (cardsProvider.recentlyViewed.isNotEmpty) ...[
-                      SectionHeader(
-                        title: 'Recently Viewed',
-                        onViewAll: () {},
-                      ),
+                      SectionHeader(title: 'Recently Viewed', onViewAll: () {}),
                       const SizedBox(height: 12),
                       RecentlyViewedList(
                         cards: cardsProvider.recentlyViewed,
@@ -222,4 +232,3 @@ class CardsScreen extends StatelessWidget {
     );
   }
 }
-

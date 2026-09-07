@@ -11,7 +11,10 @@ class HelpCenterData {
     QuickHelpModel(title: 'Withdrawals', icon: Boxicons.bx_money),
     QuickHelpModel(title: 'Security & PIN', icon: Boxicons.bx_check_shield),
     QuickHelpModel(title: 'Account', icon: Boxicons.bx_user),
-    QuickHelpModel(title: 'Verification (KYC)', icon: Boxicons.bx_shield_quarter),
+    QuickHelpModel(
+      title: 'Verification (KYC)',
+      icon: Boxicons.bx_shield_quarter,
+    ),
     QuickHelpModel(title: 'App Settings', icon: Boxicons.bx_cog),
   ];
 
@@ -47,9 +50,25 @@ class HelpCenterData {
   ];
 
   static const List<ArticleModel> contactSupportItems = [
-    ArticleModel(title: 'Live Chat', subtitle: 'Chat with us', icon: Boxicons.bx_message_rounded_dots),
-    ArticleModel(title: 'Email Support', subtitle: 'Send us email', icon: Boxicons.bx_envelope),
-    ArticleModel(title: 'WhatsApp', subtitle: 'Chat on WhatsApp', icon: Boxicons.bxl_whatsapp),
-    ArticleModel(title: 'Call Support', subtitle: 'Talk to us', icon: Boxicons.bx_phone_call),
+    ArticleModel(
+      title: 'Live Chat',
+      subtitle: 'Chat with us',
+      icon: Boxicons.bx_message_rounded_dots,
+    ),
+    ArticleModel(
+      title: 'Email Support',
+      subtitle: 'Send us email',
+      icon: Boxicons.bx_envelope,
+    ),
+    ArticleModel(
+      title: 'WhatsApp',
+      subtitle: 'Chat on WhatsApp',
+      icon: Boxicons.bxl_whatsapp,
+    ),
+    ArticleModel(
+      title: 'Call Support',
+      subtitle: 'Talk to us',
+      icon: Boxicons.bx_phone_call,
+    ),
   ];
 }

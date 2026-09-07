@@ -11,11 +11,19 @@ class EmptyMarketWidget extends StatelessWidget {
         padding: EdgeInsets.all(32.0),
         child: Column(
           children: [
-            Icon(Icons.search_off_rounded, size: 56, color: AppColors.lightSubText),
+            Icon(
+              Icons.search_off_rounded,
+              size: 56,
+              color: AppColors.lightSubText,
+            ),
             SizedBox(height: 12),
             Text(
               'No Cards Found',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 4),
             Text(

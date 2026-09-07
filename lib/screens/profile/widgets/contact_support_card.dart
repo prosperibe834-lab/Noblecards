@@ -23,7 +23,7 @@ class ContactSupportCard extends StatelessWidget {
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
-          )
+          ),
         ],
       ),
       child: Material(
@@ -37,11 +37,7 @@ class ContactSupportCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  item.icon,
-                  color: AppColors.success,
-                  size: 28,
-                ),
+                Icon(item.icon, color: AppColors.success, size: 28),
                 const SizedBox(height: 8),
                 Text(
                   item.title,
@@ -58,7 +54,9 @@ class ContactSupportCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 9,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                 ),
               ],

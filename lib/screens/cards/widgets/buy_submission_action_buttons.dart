@@ -27,9 +27,9 @@ class BuySubmissionActionButtons extends StatelessWidget {
           isPrimary: true,
           onTap: onViewGiftCard,
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // Button 2: Secondary / Outlined - View Receipt
         _buildActionButton(
           context,
@@ -38,9 +38,9 @@ class BuySubmissionActionButtons extends StatelessWidget {
           isPrimary: false,
           onTap: onViewReceipt,
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // Button 3: Text / Ghost - Done
         _buildActionButton(
           context,
@@ -63,28 +63,32 @@ class BuySubmissionActionButtons extends StatelessWidget {
     bool isGhost = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Color Logic strictly mapping to requested theme layout
-    final bg = isPrimary 
-        ? AppColors.success 
-        : (isGhost ? Colors.transparent : (isDark ? AppColors.darkCard : AppColors.white));
-        
-    final textColor = isPrimary 
-        ? Colors.white 
+    final bg = isPrimary
+        ? AppColors.success
+        : (isGhost
+              ? Colors.transparent
+              : (isDark ? AppColors.darkCard : AppColors.white));
+
+    final textColor = isPrimary
+        ? Colors.white
         : (isDark ? Colors.white : Colors.black);
-        
-    final borderColor = isPrimary 
-        ? Colors.transparent 
-        : (isGhost 
-            ? (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)) 
-            : (isDark ? Colors.white24 : Colors.black12));
+
+    final borderColor = isPrimary
+        ? Colors.transparent
+        : (isGhost
+              ? (isDark ? Colors.white10 : Colors.black.withOpacity(0.05))
+              : (isDark ? Colors.white24 : Colors.black12));
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        splashColor: isPrimary ? Colors.white24 : AppColors.success.withOpacity(0.1),
+        splashColor: isPrimary
+            ? Colors.white24
+            : AppColors.success.withOpacity(0.1),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -99,17 +103,17 @@ class BuySubmissionActionButtons extends StatelessWidget {
               Icon(icon, color: textColor, size: 20),
               const SizedBox(width: 8),
               Text(
-                label, 
+                label,
                 style: TextStyle(
-                  fontSize: 15, 
-                  fontWeight: FontWeight.w600, 
-                  color: textColor
-                )
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
               ),
               if (isPrimary || !isGhost) ...[
-                 const SizedBox(width: 8),
-                 Icon(Boxicons.bx_chevron_right, color: textColor, size: 18),
-              ]
+                const SizedBox(width: 8),
+                Icon(Boxicons.bx_chevron_right, color: textColor, size: 18),
+              ],
             ],
           ),
         ),

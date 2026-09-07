@@ -16,10 +16,7 @@ class SecurityFooterCard extends StatelessWidget {
             ? AppColors.success.withOpacity(0.08)
             : AppColors.success.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.success.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.success.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [

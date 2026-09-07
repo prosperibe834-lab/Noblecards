@@ -31,7 +31,7 @@ class WalletCard extends StatelessWidget {
             color: const Color(0xFF10B981).withOpacity(0.3),
             blurRadius: 18,
             offset: const Offset(0, 8),
-          )
+          ),
         ],
       ),
       child: Stack(
@@ -76,7 +76,9 @@ class WalletCard extends StatelessWidget {
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),
                             child: Icon(
-                              isBalanceHidden ? Boxicons.bx_hide : Boxicons.bx_show,
+                              isBalanceHidden
+                                  ? Boxicons.bx_hide
+                                  : Boxicons.bx_show,
                               key: ValueKey<bool>(isBalanceHidden),
                               color: Colors.white70,
                               size: 18,
@@ -92,8 +94,12 @@ class WalletCard extends StatelessWidget {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Boxicons.bx_plus, color: Color(0xFF10B981), size: 20),
-                    )
+                      child: const Icon(
+                        Boxicons.bx_plus,
+                        color: Color(0xFF10B981),
+                        size: 20,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -123,11 +129,19 @@ class WalletCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: const [
-                    Icon(Boxicons.bx_up_arrow_alt, color: Colors.greenAccent, size: 16),
+                    Icon(
+                      Boxicons.bx_up_arrow_alt,
+                      color: Colors.greenAccent,
+                      size: 16,
+                    ),
                     SizedBox(width: 2),
                     Text(
                       "12.5%",
-                      style: TextStyle(color: Colors.greenAccent, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(width: 4),
                     Text(
@@ -138,7 +152,10 @@ class WalletCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.18),
                     borderRadius: BorderRadius.circular(14),
@@ -146,15 +163,21 @@ class WalletCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildSubBalance("Available Balance", isBalanceHidden ? "\$••••••" : "\$200,000.00"),
-                      _buildSubBalance("Pending Balance", isBalanceHidden ? "\$••••••" : "\$25,000.00"),
+                      _buildSubBalance(
+                        "Available Balance",
+                        isBalanceHidden ? "\$••••••" : "\$200,000.00",
+                      ),
+                      _buildSubBalance(
+                        "Pending Balance",
+                        isBalanceHidden ? "\$••••••" : "\$25,000.00",
+                      ),
                       _buildSubBalance("Reward Points", "2,450"),
                     ],
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -164,9 +187,19 @@ class WalletCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 10)),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white60, fontSize: 10),
+        ),
         const SizedBox(height: 3),
-        Text(val, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+        Text(
+          val,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }

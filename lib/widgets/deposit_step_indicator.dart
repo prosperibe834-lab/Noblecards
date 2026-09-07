@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 
 class DepositStepIndicator extends StatelessWidget {
-  final int currentStep; // 1: Amount & Currency, 2: Payment Method, 3: Confirmation
+  final int
+  currentStep; // 1: Amount & Currency, 2: Payment Method, 3: Confirmation
   final int totalSteps;
 
   const DepositStepIndicator({
@@ -48,13 +49,17 @@ class DepositStepIndicator extends StatelessWidget {
                               color: primaryColor.withOpacity(0.4),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
-                            )
+                            ),
                           ]
                         : [],
                   ),
                   child: Center(
                     child: isDone
-                        ? const Icon(Boxicons.bx_check, color: Colors.white, size: 18)
+                        ? const Icon(
+                            Boxicons.bx_check,
+                            color: Colors.white,
+                            size: 18,
+                          )
                         : Text(
                             "$stepNum",
                             style: TextStyle(

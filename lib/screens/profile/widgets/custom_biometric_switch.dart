@@ -5,11 +5,7 @@ class CustomBiometricSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
 
-  const CustomBiometricSwitch({
-    super.key,
-    required this.value,
-    this.onChanged,
-  });
+  const CustomBiometricSwitch({super.key, required this.value, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +25,8 @@ class CustomBiometricSwitch extends StatelessWidget {
           color: isDisabled
               ? (isDark ? Colors.white12 : Colors.grey.shade300)
               : (value
-                  ? AppColors.success
-                  : (isDark ? Colors.white24 : Colors.grey.shade400)),
+                    ? AppColors.success
+                    : (isDark ? Colors.white24 : Colors.grey.shade400)),
         ),
         child: AnimatedAlign(
           duration: const Duration(milliseconds: 220),

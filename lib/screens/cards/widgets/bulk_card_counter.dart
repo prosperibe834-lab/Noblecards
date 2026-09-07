@@ -10,7 +10,12 @@ class BulkCardCounter extends StatelessWidget {
   final VoidCallback onAdd;
   final VoidCallback onRemove;
 
-  const BulkCardCounter({super.key, required this.quantity, required this.onAdd, required this.onRemove});
+  const BulkCardCounter({
+    super.key,
+    required this.quantity,
+    required this.onAdd,
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +28,19 @@ class BulkCardCounter extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Cards to Sell', style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.w700)),
+            Text(
+              'Cards to Sell',
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: AppSpacing.xs),
-            const Text('Add cards to sell in one batch', style: TextStyle(color: AppColors.lightSubText, fontSize: 12)),
+            const Text(
+              'Add cards to sell in one batch',
+              style: TextStyle(color: AppColors.lightSubText, fontSize: 12),
+            ),
           ],
         ),
         Container(
@@ -33,7 +48,9 @@ class BulkCardCounter extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkCard : AppColors.lightInput,
             borderRadius: BorderRadius.circular(AppRadius.full),
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.12)),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.12),
+            ),
           ),
           child: Row(
             children: [
@@ -41,8 +58,15 @@ class BulkCardCounter extends StatelessWidget {
                 onTap: onRemove,
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.primary.withValues(alpha: 0.1)),
-                  child: Icon(Boxicons.bx_minus, size: 16, color: AppColors.primary),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                  ),
+                  child: Icon(
+                    Boxicons.bx_minus,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -51,7 +75,11 @@ class BulkCardCounter extends StatelessWidget {
                 child: Text(
                   '$quantity',
                   key: ValueKey(quantity),
-                  style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -59,8 +87,15 @@ class BulkCardCounter extends StatelessWidget {
                 onTap: onAdd,
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary),
-                  child: const Icon(Boxicons.bx_plus, size: 16, color: Colors.white),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary,
+                  ),
+                  child: const Icon(
+                    Boxicons.bx_plus,
+                    size: 16,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],

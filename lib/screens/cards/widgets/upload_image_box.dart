@@ -49,10 +49,17 @@ class _UploadImageBoxState extends State<UploadImageBox> {
                 children: [
                   const Icon(Icons.add, color: AppColors.primary, size: 32),
                   const SizedBox(height: AppSpacing.sm),
-                  Text(widget.label, style: TextStyle(color: isDark ? AppColors.darkSubText : AppColors.lightSubText)),
+                  Text(
+                    widget.label,
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
+                    ),
+                  ),
                 ],
               )
-              : Stack(
+            : Stack(
                 children: [
                   UploadImagePreview(imageFile: _selectedImage!),
                   Positioned(
@@ -62,8 +69,15 @@ class _UploadImageBoxState extends State<UploadImageBox> {
                       onTap: _removeImage,
                       child: Container(
                         padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.error),
-                        child: const Icon(Icons.close, size: 16, color: Colors.white),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.error,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

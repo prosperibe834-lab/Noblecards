@@ -72,7 +72,9 @@ class _StatCardState extends State<_StatCard> {
   @override
   void initState() {
     super.initState();
-    _targetValue = widget.isCurrency ? widget.targetDouble! : widget.targetCount!.toDouble();
+    _targetValue = widget.isCurrency
+        ? widget.targetDouble!
+        : widget.targetCount!.toDouble();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
@@ -92,7 +94,9 @@ class _StatCardState extends State<_StatCard> {
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkCard : AppColors.white,
           borderRadius: BorderRadius.circular(AppRadius.md),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04)),
+          border: Border.all(
+            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -131,7 +135,8 @@ class _StatCardState extends State<_StatCard> {
                   style: TextStyle(
                     fontSize: widget.isCurrency ? 14 : 18,
                     fontWeight: FontWeight.bold,
-                    color: widget.baseColor, // Text color matches icon color as per design
+                    color: widget
+                        .baseColor, // Text color matches icon color as per design
                   ),
                 );
               },
@@ -144,7 +149,7 @@ class _StatCardState extends State<_StatCard> {
                 color: widget.baseColor,
                 borderRadius: BorderRadius.circular(2),
               ),
-            )
+            ),
           ],
         ),
       ),

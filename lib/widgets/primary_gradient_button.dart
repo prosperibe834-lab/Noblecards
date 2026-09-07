@@ -36,7 +36,7 @@ class PrimaryGradientButton extends StatelessWidget {
                   color: const Color(0xFF00C853).withOpacity(0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
       ),
       child: Material(
@@ -49,7 +49,10 @@ class PrimaryGradientButton extends StatelessWidget {
                 ? const SizedBox(
                     height: 24,
                     width: 24,
-                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,

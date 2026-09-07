@@ -80,7 +80,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -102,7 +104,10 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
               )
             : SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 4.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -119,7 +124,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       'Customize how NobleCards looks',
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                        color: isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -143,7 +150,9 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                             'Choose your preferred theme for the app.',
                             style: TextStyle(
                               fontSize: 13,
-                              color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                              color: isDark
+                                  ? AppColors.darkSubText
+                                  : AppColors.lightSubText,
                             ),
                           ),
                         ],

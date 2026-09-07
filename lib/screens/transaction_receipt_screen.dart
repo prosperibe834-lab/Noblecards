@@ -10,10 +10,8 @@ import '../widgets/transaction_timeline.dart';
 class TransactionReceiptScreen extends StatelessWidget {
   final TransactionModel transaction;
 
-  const TransactionReceiptScreen({
-    Key? key,
-    required this.transaction,
-  }) : super(key: key);
+  const TransactionReceiptScreen({Key? key, required this.transaction})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +21,12 @@ class TransactionReceiptScreen extends StatelessWidget {
           icon: const Icon(Boxicons.bx_arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Official Receipt', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Official Receipt',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Boxicons.bx_share_alt),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Boxicons.bx_share_alt), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -41,13 +39,9 @@ class TransactionReceiptScreen extends StatelessWidget {
             const SizedBox(height: 24),
             Row(
               children: [
-                Expanded(
-                  child: DownloadReceiptButton(onPressed: () {}),
-                ),
+                Expanded(child: DownloadReceiptButton(onPressed: () {})),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: ShareReceiptButton(onPressed: () {}),
-                ),
+                Expanded(child: ShareReceiptButton(onPressed: () {})),
               ],
             ),
             const SizedBox(height: 16),

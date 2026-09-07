@@ -26,7 +26,8 @@ class DepositProcessingScreen extends StatefulWidget {
   });
 
   @override
-  State<DepositProcessingScreen> createState() => _DepositProcessingScreenState();
+  State<DepositProcessingScreen> createState() =>
+      _DepositProcessingScreenState();
 }
 
 class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
@@ -35,7 +36,7 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
     "Checking bank settlement...",
     "Verifying payment reference...",
     "Confirming deposit amount...",
-    "Crediting USD Wallet..."
+    "Crediting USD Wallet...",
   ];
 
   @override
@@ -66,7 +67,9 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => GiftcardSubmissionReceivedScreen(transactionId: transactionId),
+              builder: (_) => GiftcardSubmissionReceivedScreen(
+                transactionId: transactionId,
+              ),
             ),
           );
           return;
@@ -108,10 +111,16 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
                     height: 100,
                     child: CircularProgressIndicator(
                       strokeWidth: 6,
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor,
+                      ),
                     ),
                   ),
-                  const Icon(Boxicons.bx_transfer, size: 40, color: Colors.blue),
+                  const Icon(
+                    Boxicons.bx_transfer,
+                    size: 40,
+                    color: Colors.blue,
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -130,8 +139,12 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
               const SizedBox(height: 12),
               const Text(
                 "Please do not close this screen",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: Colors.grey),
-              )
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
             ],
           ),
         ),

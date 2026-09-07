@@ -123,13 +123,17 @@ class TransactionModel {
         title: 'Payment Processing',
         description: 'Verified with banking/crypto provider gateway',
         timestamp: date.add(const Duration(seconds: 45)),
-        isCompleted: status != TransactionStatus.failed && status != TransactionStatus.cancelled,
+        isCompleted:
+            status != TransactionStatus.failed &&
+            status != TransactionStatus.cancelled,
       ),
       TimelineStepModel(
         title: 'Security Verification',
         description: 'Fraud & AML automated check cleared',
         timestamp: date.add(const Duration(minutes: 2)),
-        isCompleted: status == TransactionStatus.successful || status == TransactionStatus.refunded,
+        isCompleted:
+            status == TransactionStatus.successful ||
+            status == TransactionStatus.refunded,
       ),
       TimelineStepModel(
         title: 'Wallet Settlement',

@@ -37,18 +37,18 @@ class ProfileSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkCard : AppColors.white,
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04)),
+            border: Border.all(
+              color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(isDark ? 0.2 : 0.02),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
-              )
+              ),
             ],
           ),
-          child: Column(
-            children: children,
-          ),
+          child: Column(children: children),
         ),
         const SizedBox(height: 24),
       ],
@@ -83,7 +83,7 @@ class ProfileTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultIconColor = isDark ? AppColors.success : AppColors.success; 
+    final defaultIconColor = isDark ? AppColors.success : AppColors.success;
     // ^ Assuming your standard list icon color is the primary/success color based on the design.
 
     return InkWell(
@@ -120,7 +120,9 @@ class ProfileTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: trailingTextColor ?? (isDark ? Colors.white70 : Colors.black54),
+                  color:
+                      trailingTextColor ??
+                      (isDark ? Colors.white70 : Colors.black54),
                 ),
               ),
               const SizedBox(width: 8),

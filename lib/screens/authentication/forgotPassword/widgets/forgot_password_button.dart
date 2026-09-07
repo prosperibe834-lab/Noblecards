@@ -40,14 +40,13 @@ class _ForgotPasswordButtonState extends State<ForgotPasswordButton> {
                   ],
                 )
               : const LinearGradient(
-                  colors: [
-                    AppColors.successLight,
-                    AppColors.primary,
-                  ],
+                  colors: [AppColors.successLight, AppColors.primary],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-          boxShadow: isDisabled ? [] : (isDark ? AppShadow.dark : AppShadow.light),
+          boxShadow: isDisabled
+              ? []
+              : (isDark ? AppShadow.dark : AppShadow.light),
         ),
         child: Material(
           color: Colors.transparent,
@@ -80,7 +79,8 @@ class _ForgotPasswordButtonState extends State<ForgotPasswordButton> {
                         const SizedBox(width: 10),
                         Text(
                           'Send Reset Link',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -95,5 +95,3 @@ class _ForgotPasswordButtonState extends State<ForgotPasswordButton> {
     );
   }
 }
-
-

@@ -14,9 +14,16 @@ class PriceUpdatePage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const Icon(Boxicons.bx_trending_up, size: 70, color: Color(0xFF00C853)),
+            const Icon(
+              Boxicons.bx_trending_up,
+              size: 70,
+              color: Color(0xFF00C853),
+            ),
             const SizedBox(height: 16),
-            const Text("Apple Gift Card Rate Increased", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              "Apple Gift Card Rate Increased",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
             Card(
               child: Padding(
@@ -33,10 +40,12 @@ class PriceUpdatePage extends StatelessWidget {
             ),
             const Spacer(),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               onPressed: () {},
               child: const Text("Sell Apple Cards"),
-            )
+            ),
           ],
         ),
       ),

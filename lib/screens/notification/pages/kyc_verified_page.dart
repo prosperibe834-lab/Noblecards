@@ -14,17 +14,28 @@ class KycVerifiedPage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const Icon(Boxicons.bx_check_shield, size: 70, color: Color(0xFF00C853)),
+            const Icon(
+              Boxicons.bx_check_shield,
+              size: 70,
+              color: Color(0xFF00C853),
+            ),
             const SizedBox(height: 16),
-            const Text("Identity Verified!", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              "Identity Verified!",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
-            const Text("Higher transaction limits and instant bank withdrawals are now unlocked for your account."),
+            const Text(
+              "Higher transaction limits and instant bank withdrawals are now unlocked for your account.",
+            ),
             const Spacer(),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               onPressed: () => Navigator.pop(context),
               child: const Text("Done"),
-            )
+            ),
           ],
         ),
       ),

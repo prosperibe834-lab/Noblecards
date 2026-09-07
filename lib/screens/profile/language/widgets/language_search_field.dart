@@ -21,7 +21,10 @@ class LanguageSearchField extends StatelessWidget {
       ),
       child: TextField(
         onChanged: onChanged,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 16,
+        ),
         decoration: InputDecoration(
           hintText: "Search languages...",
           hintStyle: TextStyle(

@@ -15,14 +15,8 @@ class BiometricHeaderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           colors: isDark
-              ? [
-                  const Color(0xFF072718),
-                  const Color(0xFF0B3A24),
-                ]
-              : [
-                  const Color(0xFFE8F8F0),
-                  const Color(0xFFD3F3E3),
-                ],
+              ? [const Color(0xFF072718), const Color(0xFF0B3A24)]
+              : [const Color(0xFFE8F8F0), const Color(0xFFD3F3E3)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -35,7 +29,7 @@ class BiometricHeaderCard extends StatelessWidget {
             color: AppColors.success.withOpacity(isDark ? 0.1 : 0.05),
             blurRadius: 16,
             offset: const Offset(0, 6),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -114,7 +108,7 @@ class BiometricHeaderCard extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
                         blurRadius: 4,
-                      )
+                      ),
                     ],
                   ),
                   child: const Icon(

@@ -32,7 +32,9 @@ class AnimatedSearchBar extends StatelessWidget {
               children: [
                 Icon(
                   Icons.search_rounded,
-                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                  color: isDark
+                      ? AppColors.darkSubText
+                      : AppColors.lightSubText,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -45,7 +47,9 @@ class AnimatedSearchBar extends StatelessWidget {
                       hintText: 'Search gift cards, brands or categories',
                       hintStyle: TextStyle(
                         fontSize: 13,
-                        color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                        color: isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText,
                       ),
                       border: InputBorder.none,
                       isDense: true,

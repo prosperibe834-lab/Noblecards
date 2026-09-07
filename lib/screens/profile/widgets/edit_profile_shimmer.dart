@@ -8,7 +8,8 @@ class EditProfileShimmer extends StatefulWidget {
   State<EditProfileShimmer> createState() => _EditProfileShimmerState();
 }
 
-class _EditProfileShimmerState extends State<EditProfileShimmer> with SingleTickerProviderStateMixin {
+class _EditProfileShimmerState extends State<EditProfileShimmer>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnim;
 

@@ -6,7 +6,7 @@ enum SubmissionState { loading, success, error }
 
 class SubmissionProvider extends ChangeNotifier {
   final SubmissionService _service = SubmissionService();
-  
+
   SubmissionState _state = SubmissionState.loading;
   SubmissionModel? _submissionData;
   String _errorMessage = '';

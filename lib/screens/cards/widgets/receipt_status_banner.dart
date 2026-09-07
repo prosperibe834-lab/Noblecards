@@ -6,7 +6,7 @@ import '../models/sell_receipt_model.dart';
 
 class ReceiptStatusBanner extends StatelessWidget {
   final VerificationStatus status;
-  
+
   const ReceiptStatusBanner({super.key, required this.status});
 
   Color _getStatusColor() {
@@ -25,11 +25,16 @@ class ReceiptStatusBanner extends StatelessWidget {
 
   String _getStatusText() {
     switch (status) {
-      case VerificationStatus.approved: return 'APPROVED';
-      case VerificationStatus.rejected: return 'REJECTED';
-      case VerificationStatus.needsReview: return 'NEEDS REVIEW';
-      case VerificationStatus.completed: return 'COMPLETED';
-      case VerificationStatus.pending: return 'PENDING VERIFICATION';
+      case VerificationStatus.approved:
+        return 'APPROVED';
+      case VerificationStatus.rejected:
+        return 'REJECTED';
+      case VerificationStatus.needsReview:
+        return 'NEEDS REVIEW';
+      case VerificationStatus.completed:
+        return 'COMPLETED';
+      case VerificationStatus.pending:
+        return 'PENDING VERIFICATION';
     }
   }
 
@@ -82,13 +87,21 @@ class _DashedRectPainter extends CustomPainter {
     const dashWidth = 5.0;
     const dashSpace = 4.0;
     final path = Path()
-      ..addRRect(RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height), const Radius.circular(8)));
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          const Radius.circular(8),
+        ),
+      );
 
     Path dashPath = Path();
     for (PathMetric metric in path.computeMetrics()) {
       double distance = 0.0;
       while (distance < metric.length) {
-        dashPath.addPath(metric.extractPath(distance, distance + dashWidth), Offset.zero);
+        dashPath.addPath(
+          metric.extractPath(distance, distance + dashWidth),
+          Offset.zero,
+        );
         distance += dashWidth + dashSpace;
       }
     }

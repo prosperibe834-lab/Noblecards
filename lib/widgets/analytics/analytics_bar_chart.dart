@@ -22,7 +22,9 @@ class AnalyticsBarChartCard extends StatelessWidget {
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.05),
         ),
       ),
       child: Column(
@@ -62,7 +64,7 @@ class AnalyticsBarChartCard extends StatelessWidget {
                 );
               }).toList(),
             ),
-          )
+          ),
         ],
       ),
     );

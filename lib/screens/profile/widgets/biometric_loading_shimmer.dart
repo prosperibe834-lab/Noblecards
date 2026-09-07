@@ -5,7 +5,8 @@ class BiometricLoadingShimmer extends StatefulWidget {
   const BiometricLoadingShimmer({super.key});
 
   @override
-  State<BiometricLoadingShimmer> createState() => _BiometricLoadingShimmerState();
+  State<BiometricLoadingShimmer> createState() =>
+      _BiometricLoadingShimmerState();
 }
 
 class _BiometricLoadingShimmerState extends State<BiometricLoadingShimmer>

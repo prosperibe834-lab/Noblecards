@@ -34,7 +34,11 @@ class CurrentLevelCard extends StatelessWidget {
                   children: [
                     const Text(
                       "Your Current Level",
-                      style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Text(
                       data.currentTier,
@@ -48,7 +52,11 @@ class CurrentLevelCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     const Text(
                       "Great job! You're enjoying premium benefits and higher limits.",
-                      style: TextStyle(color: Colors.white, fontSize: 12, height: 1.4),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
                     ),
                   ],
                 ),
@@ -61,11 +69,19 @@ class CurrentLevelCard extends StatelessWidget {
             children: [
               Text(
                 "Progress to ${data.nextTier}",
-                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               Text(
                 "${(data.progressPercentage * 100).toInt()}%",
-                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -89,7 +105,11 @@ class CurrentLevelCard extends StatelessWidget {
         color: const Color(0xFFFBBF24), // Gold accent
         shape: BoxShape.circle,
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: const Center(

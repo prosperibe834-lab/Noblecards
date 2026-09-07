@@ -29,7 +29,7 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   final NotificationService _service = NotificationService();
-  
+
   List<NotificationModel> _allNotifications = [];
   NotificationCategory _selectedCategory = NotificationCategory.all;
   bool _isLoading = true;
@@ -112,21 +112,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final filtered = _service.filterByCategory(_allNotifications, _selectedCategory);
+    final filtered = _service.filterByCategory(
+      _allNotifications,
+      _selectedCategory,
+    );
 
     // Grouping
     final todayItems = filtered.where((e) => e.group == "Today").toList();
-    final yesterdayItems = filtered.where((e) => e.group == "Yesterday").toList();
-    final thisWeekItems = filtered.where((e) => e.group == "This Week").toList();
+    final yesterdayItems = filtered
+        .where((e) => e.group == "Yesterday")
+        .toList();
+    final thisWeekItems = filtered
+        .where((e) => e.group == "This Week")
+        .toList();
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B0E11) : const Color(0xFFFAFAFA),
+      backgroundColor: isDark
+          ? const Color(0xFF0B0E11)
+          : const Color(0xFFFAFAFA),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -139,7 +152,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Boxicons.bx_cog, color: isDark ? Colors.white : Colors.black, size: 22),
+            icon: Icon(
+              Boxicons.bx_cog,
+              color: isDark ? Colors.white : Colors.black,
+              size: 22,
+            ),
             onPressed: _openSettings,
           ),
         ],
@@ -150,8 +167,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
               onRefresh: _fetchData,
               color: const Color(0xFF00C853),
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -163,28 +185,46 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         children: [
                           NotificationCategoryChip(
                             label: "All",
-                            isSelected: _selectedCategory == NotificationCategory.all,
-                            onTap: () => _onCategorySelected(NotificationCategory.all),
+                            isSelected:
+                                _selectedCategory == NotificationCategory.all,
+                            onTap: () =>
+                                _onCategorySelected(NotificationCategory.all),
                           ),
                           NotificationCategoryChip(
                             label: "Transactions",
-                            isSelected: _selectedCategory == NotificationCategory.transactions,
-                            onTap: () => _onCategorySelected(NotificationCategory.transactions),
+                            isSelected:
+                                _selectedCategory ==
+                                NotificationCategory.transactions,
+                            onTap: () => _onCategorySelected(
+                              NotificationCategory.transactions,
+                            ),
                           ),
                           NotificationCategoryChip(
                             label: "Promotions",
-                            isSelected: _selectedCategory == NotificationCategory.promotions,
-                            onTap: () => _onCategorySelected(NotificationCategory.promotions),
+                            isSelected:
+                                _selectedCategory ==
+                                NotificationCategory.promotions,
+                            onTap: () => _onCategorySelected(
+                              NotificationCategory.promotions,
+                            ),
                           ),
                           NotificationCategoryChip(
                             label: "Updates",
-                            isSelected: _selectedCategory == NotificationCategory.updates,
-                            onTap: () => _onCategorySelected(NotificationCategory.updates),
+                            isSelected:
+                                _selectedCategory ==
+                                NotificationCategory.updates,
+                            onTap: () => _onCategorySelected(
+                              NotificationCategory.updates,
+                            ),
                           ),
                           NotificationCategoryChip(
                             label: "Security",
-                            isSelected: _selectedCategory == NotificationCategory.security,
-                            onTap: () => _onCategorySelected(NotificationCategory.security),
+                            isSelected:
+                                _selectedCategory ==
+                                NotificationCategory.security,
+                            onTap: () => _onCategorySelected(
+                              NotificationCategory.security,
+                            ),
                           ),
                         ],
                       ),
@@ -224,13 +264,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF082215) : const Color(0xFFEBF9F0),
+                          color: isDark
+                              ? const Color(0xFF082215)
+                              : const Color(0xFFEBF9F0),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFF00C853).withOpacity(0.2)),
+                          border: Border.all(
+                            color: const Color(0xFF00C853).withOpacity(0.2),
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Boxicons.bxs_bell, color: Color(0xFF00C853), size: 36),
+                            const Icon(
+                              Boxicons.bxs_bell,
+                              color: Color(0xFF00C853),
+                              size: 36,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -241,7 +289,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
-                                      color: isDark ? Colors.white : Colors.black,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
@@ -249,7 +299,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     "Turn on push notifications to never miss important updates.",
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: isDark ? Colors.white54 : Colors.black54,
+                                      color: isDark
+                                          ? Colors.white54
+                                          : Colors.black54,
                                     ),
                                   ),
                                 ],
@@ -258,15 +310,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF00C853),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                               onPressed: () {},
-                              child: const Text("Enable", style: TextStyle(color: Colors.white, fontSize: 12)),
+                              child: const Text(
+                                "Enable",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
                             IconButton(
-                              icon: Icon(Boxicons.bx_x, color: isDark ? Colors.white54 : Colors.black45, size: 20),
-                              onPressed: () => setState(() => _showPushCard = false),
-                            )
+                              icon: Icon(
+                                Boxicons.bx_x,
+                                color: isDark ? Colors.white54 : Colors.black45,
+                                size: 20,
+                              ),
+                              onPressed: () =>
+                                  setState(() => _showPushCard = false),
+                            ),
                           ],
                         ),
                       ),
@@ -297,11 +362,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
       item: item,
       onToggleRead: () => setState(() => _service.toggleReadStatus(item)),
       onTogglePin: () => setState(() => _service.togglePin(item)),
-      onDelete: () => setState(() => _allNotifications.removeWhere((e) => e.id == item.id)),
-      child: NotificationCard(
-        item: item,
-        onTap: () => _navigateToDetail(item),
-      ),
+      onDelete: () =>
+          setState(() => _allNotifications.removeWhere((e) => e.id == item.id)),
+      child: NotificationCard(item: item, onTap: () => _navigateToDetail(item)),
     );
   }
 }

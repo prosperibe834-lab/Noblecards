@@ -40,12 +40,15 @@ class BiometricSettingsModel {
   }) {
     return BiometricSettingsModel(
       isFaceIdAvailable: isFaceIdAvailable ?? this.isFaceIdAvailable,
-      isFingerprintAvailable: isFingerprintAvailable ?? this.isFingerprintAvailable,
+      isFingerprintAvailable:
+          isFingerprintAvailable ?? this.isFingerprintAvailable,
       isFaceIdEnabled: isFaceIdEnabled ?? this.isFaceIdEnabled,
       isFingerprintEnabled: isFingerprintEnabled ?? this.isFingerprintEnabled,
-      isRememberDeviceEnabled: isRememberDeviceEnabled ?? this.isRememberDeviceEnabled,
+      isRememberDeviceEnabled:
+          isRememberDeviceEnabled ?? this.isRememberDeviceEnabled,
       isRequireForTransactionsEnabled:
-          isRequireForTransactionsEnabled ?? this.isRequireForTransactionsEnabled,
+          isRequireForTransactionsEnabled ??
+          this.isRequireForTransactionsEnabled,
       autoLockTime: autoLockTime ?? this.autoLockTime,
     );
   }

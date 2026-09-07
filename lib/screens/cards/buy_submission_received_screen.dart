@@ -14,10 +14,13 @@ class BuySubmissionReceivedScreen extends StatefulWidget {
   const BuySubmissionReceivedScreen({super.key});
 
   @override
-  State<BuySubmissionReceivedScreen> createState() => _BuySubmissionReceivedScreenState();
+  State<BuySubmissionReceivedScreen> createState() =>
+      _BuySubmissionReceivedScreenState();
 }
 
-class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScreen> with SingleTickerProviderStateMixin {
+class _BuySubmissionReceivedScreenState
+    extends State<BuySubmissionReceivedScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -35,7 +38,10 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: const Interval(0.4, 1.0, curve: Curves.easeIn)),
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.4, 1.0, curve: Curves.easeIn),
+      ),
     );
 
     _animationController.forward();
@@ -53,20 +59,25 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_arrow_back, color: isDark ? Colors.white : Colors.black),
+          icon: Icon(
+            Boxicons.bx_arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Submission Received',
           style: TextStyle(
-            fontSize: 16, 
-            fontWeight: FontWeight.w600, 
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: isDark ? Colors.white : Colors.black,
           ),
         ),
@@ -80,7 +91,7 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
-              
+
               // Enhanced Animated Success Widget
               ScaleTransition(
                 scale: _scaleAnimation,
@@ -104,17 +115,21 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
                             blurRadius: 20,
                             spreadRadius: -5,
                             offset: Offset(0, 8),
-                          )
+                          ),
                         ],
                       ),
-                      child: const Icon(Boxicons.bx_check, color: Colors.white, size: 48),
+                      child: const Icon(
+                        Boxicons.bx_check,
+                        color: Colors.white,
+                        size: 48,
+                      ),
                     ),
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               Text(
                 'Purchase Successful!',
                 style: TextStyle(
@@ -124,9 +139,9 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
                   letterSpacing: -0.5,
                 ),
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               Text(
                 'Your gift card has been successfully purchased.\nYou can now securely view your gift card details or download your receipt.',
                 textAlign: TextAlign.center,
@@ -136,20 +151,29 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
                   color: isDark ? Colors.white70 : Colors.black54,
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Status Chip
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.success.withValues(alpha: 0.1) : AppColors.success.withValues(alpha: 0.08),
+                  color: isDark
+                      ? AppColors.success.withValues(alpha: 0.1)
+                      : AppColors.success.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(AppRadius.full),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Boxicons.bx_time_five, color: AppColors.success, size: 16),
+                    const Icon(
+                      Boxicons.bx_time_five,
+                      color: AppColors.success,
+                      size: 16,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       'Status: Completed',
@@ -162,19 +186,19 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Details Card (GlassCard reusable pattern)
               const BuySubmissionInfoCard(),
-              
+
               const SizedBox(height: 24),
-              
+
               // Notice Card
               const BuySubmissionStatusCard(),
-              
+
               const SizedBox(height: 32),
-              
+
               // Action Buttons
               BuySubmissionActionButtons(
                 onViewGiftCard: () {
@@ -206,7 +230,11 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
                   HapticFeedback.lightImpact();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const BuyReceiptScreen(transactionId: 'NC-2026-54231')),
+                    MaterialPageRoute(
+                      builder: (_) => const BuyReceiptScreen(
+                        transactionId: 'NC-2026-54231',
+                      ),
+                    ),
                   );
                 },
                 onDone: () {
@@ -214,7 +242,7 @@ class _BuySubmissionReceivedScreenState extends State<BuySubmissionReceivedScree
                   Navigator.popUntil(context, (route) => route.isFirst);
                 },
               ),
-              
+
               const SizedBox(height: 40),
             ],
           ),

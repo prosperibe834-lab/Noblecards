@@ -36,7 +36,10 @@ class FilterBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Filter Transactions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text(
+                'Filter Transactions',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               IconButton(
                 icon: const Icon(Boxicons.bx_x),
                 onPressed: () => Navigator.pop(context),

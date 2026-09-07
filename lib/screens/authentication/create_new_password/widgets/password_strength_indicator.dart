@@ -38,18 +38,25 @@ class PasswordStrengthIndicator extends StatelessWidget {
 
   int _getActiveSegments() {
     switch (strength) {
-      case PasswordStrengthLevel.empty: return 0;
-      case PasswordStrengthLevel.weak: return 1;
-      case PasswordStrengthLevel.medium: return 2;
-      case PasswordStrengthLevel.strong: return 3;
-      case PasswordStrengthLevel.veryStrong: return 4;
+      case PasswordStrengthLevel.empty:
+        return 0;
+      case PasswordStrengthLevel.weak:
+        return 1;
+      case PasswordStrengthLevel.medium:
+        return 2;
+      case PasswordStrengthLevel.strong:
+        return 3;
+      case PasswordStrengthLevel.veryStrong:
+        return 4;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color baseColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
+    final Color baseColor = isDark
+        ? AppColors.darkBorder
+        : AppColors.lightBorder;
     final Color activeColor = _getStrengthColor();
     final int activeCount = _getActiveSegments();
 
@@ -68,7 +75,7 @@ class PasswordStrengthIndicator extends StatelessWidget {
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: strength == PasswordStrengthLevel.empty 
+                color: strength == PasswordStrengthLevel.empty
                     ? (isDark ? AppColors.darkSubText : AppColors.lightSubText)
                     : activeColor,
                 fontWeight: FontWeight.w600,

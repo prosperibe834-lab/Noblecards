@@ -20,10 +20,7 @@ class BiometricAuthWidget extends StatelessWidget {
       children: [
         IconButton(
           iconSize: 64,
-          icon: const Icon(
-            Boxicons.bx_fingerprint,
-            color: AppColors.primary,
-          ),
+          icon: const Icon(Boxicons.bx_fingerprint, color: AppColors.primary),
           onPressed: onAuthenticated,
         ),
         const SizedBox(height: AppSpacing.xs),

@@ -166,7 +166,9 @@ class ReferralInfoSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
     final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
-    final iconBgColor = isDark ? const Color(0xFF233026) : const Color(0xFFE8F6ED);
+    final iconBgColor = isDark
+        ? const Color(0xFF233026)
+        : const Color(0xFFE8F6ED);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -222,7 +224,12 @@ class ReferralInfoSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                _buildHighlightedText(description, subTextColor!, highlight, highlight2),
+                _buildHighlightedText(
+                  description,
+                  subTextColor!,
+                  highlight,
+                  highlight2,
+                ),
               ],
             ),
           ),
@@ -232,7 +239,11 @@ class ReferralInfoSheet extends StatelessWidget {
   }
 
   Widget _buildHighlightedText(
-      String text, Color baseColor, String? highlight1, String? highlight2) {
+    String text,
+    Color baseColor,
+    String? highlight1,
+    String? highlight2,
+  ) {
     List<TextSpan> spans = [];
     String remainingText = text;
 
@@ -242,11 +253,15 @@ class ReferralInfoSheet extends StatelessWidget {
         if (index > 0) {
           spans.add(TextSpan(text: remainingText.substring(0, index)));
         }
-        spans.add(TextSpan(
-          text: highlight,
-          style: const TextStyle(
-              color: Color(0xFF00B94A), fontWeight: FontWeight.bold),
-        ));
+        spans.add(
+          TextSpan(
+            text: highlight,
+            style: const TextStyle(
+              color: Color(0xFF00B94A),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
         remainingText = remainingText.substring(index + highlight.length);
       }
     }
@@ -268,7 +283,9 @@ class ReferralInfoSheet extends StatelessWidget {
 
   Widget _buildExampleBox(bool isDark) {
     final bgColor = isDark ? const Color(0xFF1B2A20) : const Color(0xFFF1F9F3);
-    final borderColor = isDark ? const Color(0xFF263C2E) : const Color(0xFFE0EFE5);
+    final borderColor = isDark
+        ? const Color(0xFF263C2E)
+        : const Color(0xFFE0EFE5);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -305,28 +322,36 @@ class ReferralInfoSheet extends StatelessWidget {
                     children: const [
                       TextSpan(text: 'You invite John → John deposits '),
                       TextSpan(
-                          text: '\$100',
-                          style: TextStyle(
-                              color: Color(0xFF00B94A),
-                              fontWeight: FontWeight.bold)),
+                        text: '\$100',
+                        style: TextStyle(
+                          color: Color(0xFF00B94A),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       TextSpan(text: ' → John buys a '),
                       TextSpan(
-                          text: '\$10',
-                          style: TextStyle(
-                              color: Color(0xFF00B94A),
-                              fontWeight: FontWeight.bold)),
+                        text: '\$10',
+                        style: TextStyle(
+                          color: Color(0xFF00B94A),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       TextSpan(text: ' gift card → you earn '),
                       TextSpan(
-                          text: '1.5%',
-                          style: TextStyle(
-                              color: Color(0xFF00B94A),
-                              fontWeight: FontWeight.bold)),
+                        text: '1.5%',
+                        style: TextStyle(
+                          color: Color(0xFF00B94A),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       TextSpan(text: ' of John\'s first deposit = '),
                       TextSpan(
-                          text: '\$1.50.',
-                          style: TextStyle(
-                              color: Color(0xFF00B94A),
-                              fontWeight: FontWeight.bold)),
+                        text: '\$1.50.',
+                        style: TextStyle(
+                          color: Color(0xFF00B94A),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                 ),

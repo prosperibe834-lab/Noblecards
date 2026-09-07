@@ -22,7 +22,10 @@ class FAQTile extends StatelessWidget {
             splashColor: AppColors.success.withOpacity(0.1),
             highlightColor: Colors.transparent,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 8.0,
+              ),
               child: Row(
                 children: [
                   Expanded(

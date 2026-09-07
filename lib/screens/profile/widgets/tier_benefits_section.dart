@@ -16,20 +16,56 @@ class TierBenefitsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Tier Benefits", style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18)),
+            Text(
+              "Tier Benefits",
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontSize: 18),
+            ),
             TextButton(
               onPressed: () {},
-              child: const Text("View All Benefits >", style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+              child: const Text(
+                "View All Benefits >",
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
         const SizedBox(height: 12),
         Row(
           children: [
-            _buildBenefitItem(context, "Higher Limits", Boxicons.bx_line_chart, AppColors.success, isDark),
-            _buildBenefitItem(context, "Better Rates", Boxicons.bx_cog, AppColors.info, isDark),
-            _buildBenefitItem(context, "Priority Support", Boxicons.bx_headphone, AppColors.accentViolet, isDark),
-            _buildBenefitItem(context, "Faster Payouts", Boxicons.bxs_zap, AppColors.warning, isDark),
+            _buildBenefitItem(
+              context,
+              "Higher Limits",
+              Boxicons.bx_line_chart,
+              AppColors.success,
+              isDark,
+            ),
+            _buildBenefitItem(
+              context,
+              "Better Rates",
+              Boxicons.bx_cog,
+              AppColors.info,
+              isDark,
+            ),
+            _buildBenefitItem(
+              context,
+              "Priority Support",
+              Boxicons.bx_headphone,
+              AppColors.accentViolet,
+              isDark,
+            ),
+            _buildBenefitItem(
+              context,
+              "Faster Payouts",
+              Boxicons.bxs_zap,
+              AppColors.warning,
+              isDark,
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -41,18 +77,33 @@ class TierBenefitsSection extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               elevation: 0,
             ),
             icon: const Icon(Boxicons.bx_crown, size: 20),
-            label: const Text("View All Tier Benefits", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, fontFamily: 'Poppins')),
+            label: const Text(
+              "View All Tier Benefits",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildBenefitItem(BuildContext context, String title, IconData icon, Color iconColor, bool isDark) {
+  Widget _buildBenefitItem(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color iconColor,
+    bool isDark,
+  ) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -60,7 +111,9 @@ class TierBenefitsSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkCard : AppColors.lightCard,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
           boxShadow: isDark ? AppShadow.dark : AppShadow.light,
         ),
         child: Column(
@@ -70,7 +123,10 @@ class TierBenefitsSection extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 10, fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

@@ -158,20 +158,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               isDark
                                   ? 'lib/assets/logos/DarkModeLogo.png'
                                   : 'lib/assets/logos/LightModeLogo.png',
-                              height:
-                                  90,
-                              fit: BoxFit
-                                  .contain, 
-                              errorBuilder: (context, error, stackTrace) => Text(
-                                "NobleCards",
-                                style: TextStyle(
-                                  fontFamily: "Poppins",
-                                  fontSize:
-                                      40, // 
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
-                              ),
+                              height: 90,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Text(
+                                    "NobleCards",
+                                    style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      fontSize: 40, //
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
                             ),
                       if (_currentPage < _pages.length - 1)
                         GestureDetector(
@@ -205,121 +203,140 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.lg,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Graphic Illustration Container
-                            Container(
-                              height: size.height * 0.45,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.xl,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: constraints.maxHeight,
                                 ),
-                                boxShadow: isDark
-                                    ? AppShadow.dark
-                                    : AppShadow.light,
-                                image: DecorationImage(
-                                  image: page.imagePath.startsWith('http')
-                                      ? NetworkImage(page.imagePath)
-                                            as ImageProvider
-                                      : AssetImage(page.imagePath),
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: AppSpacing.lg),
-
-                            // Dynamic Title
-                            Text(
-                              page.title,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: "Poppins",
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-
-                            const SizedBox(height: AppSpacing.sm),
-
-                            // Description
-                            Text(
-                              page.description,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: "Inter",
-                                fontSize: 14,
-                                height: 1.5,
-                                color: subTextColor,
-                              ),
-                            ),
-
-                            // Feature Grid for Slide 2
-                            if (page.features != null) ...[
-                              const SizedBox(height: AppSpacing.md),
-                              GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: AppSpacing.sm,
-                                      mainAxisSpacing: AppSpacing.sm,
-                                      childAspectRatio: 2.7,
-                                    ),
-                                itemCount: page.features!.length,
-                                itemBuilder: (context, fIndex) {
-                                  final feat = page.features![fIndex];
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.sm,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: cardColor,
-                                      borderRadius: BorderRadius.circular(
-                                        AppRadius.sm,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Graphic Illustration Container
+                                    Container(
+                                      height: size.height * 0.45,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.xl,
+                                        ),
+                                        boxShadow: isDark
+                                            ? AppShadow.dark
+                                            : AppShadow.light,
+                                        image: DecorationImage(
+                                          image:
+                                              page.imagePath.startsWith('http')
+                                              ? NetworkImage(page.imagePath)
+                                                    as ImageProvider
+                                              : AssetImage(page.imagePath),
+                                          fit: BoxFit.contain,
+                                        ),
                                       ),
-                                      border: Border.all(color: borderColor),
                                     ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(
-                                            AppSpacing.xs,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.success
-                                                .withOpacity(0.15),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(
-                                            Boxicons.bx_check,
-                                            color: AppColors.success,
-                                            size: 14,
-                                          ),
-                                        ),
-                                        const SizedBox(width: AppSpacing.sm),
-                                        Expanded(
-                                          child: Text(
-                                            feat['title']!,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              color: textColor,
+
+                                    const SizedBox(height: AppSpacing.lg),
+
+                                    // Dynamic Title
+                                    Text(
+                                      page.title,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontFamily: "Poppins",
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: textColor,
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: AppSpacing.sm),
+
+                                    // Description
+                                    Text(
+                                      page.description,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
+                                        height: 1.5,
+                                        color: subTextColor,
+                                      ),
+                                    ),
+
+                                    // Feature Grid for Slide 2
+                                    if (page.features != null) ...[
+                                      const SizedBox(height: AppSpacing.md),
+                                      GridView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        gridDelegate:
+                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              crossAxisSpacing: AppSpacing.sm,
+                                              mainAxisSpacing: AppSpacing.sm,
+                                              childAspectRatio: 2.7,
                                             ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                                        itemCount: page.features!.length,
+                                        itemBuilder: (context, fIndex) {
+                                          final feat = page.features![fIndex];
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AppSpacing.sm,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: cardColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    AppRadius.sm,
+                                                  ),
+                                              border: Border.all(
+                                                color: borderColor,
+                                              ),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.all(
+                                                    AppSpacing.xs,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.success
+                                                        .withOpacity(0.15),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Boxicons.bx_check,
+                                                    color: AppColors.success,
+                                                    size: 14,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: AppSpacing.sm,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    feat['title']!,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: textColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ],
+                                ),
                               ),
-                            ],
-                          ],
+                            );
+                          },
                         ),
                       );
                     },
@@ -361,9 +378,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               width: double.infinity,
                               height: 52,
                               child: ElevatedButton(
-                              onPressed: () {
-  Navigator.pushNamed(context, '/signup');
-},
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/signup');
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   elevation: 0,
@@ -388,10 +405,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               width: double.infinity,
                               height: 52,
                               child: OutlinedButton(
-                               // NEW CODE:
-onPressed: () {
-  Navigator.pushNamed(context, '/login');
-},
+                                // NEW CODE:
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/login');
+                                },
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide(color: borderColor),
                                   shape: RoundedRectangleBorder(
@@ -445,5 +462,3 @@ onPressed: () {
     );
   }
 }
-
-

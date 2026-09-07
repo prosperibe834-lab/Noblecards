@@ -4,12 +4,13 @@ import 'package:boxicons/boxicons.dart';
 class ReferralBalanceCard extends StatelessWidget {
   final double balance;
 
-  const ReferralBalanceCard({Key? key, required this.balance}) : super(key: key);
+  const ReferralBalanceCard({Key? key, required this.balance})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     final gradientColors = isDark
         ? [const Color(0xFF0B4C26), const Color(0xFF00220F)]
         : [const Color(0xFF00E15A), const Color(0xFF009C3E)];
@@ -75,7 +76,10 @@ class ReferralBalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(12),
@@ -83,7 +87,11 @@ class ReferralBalanceCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Boxicons.bxs_lock_alt, color: Colors.white, size: 14),
+                      const Icon(
+                        Boxicons.bxs_lock_alt,
+                        color: Colors.white,
+                        size: 14,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Not withdrawable',
@@ -106,11 +114,7 @@ class ReferralBalanceCard extends StatelessWidget {
               color: Colors.white.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Boxicons.bxs_gift,
-              color: Colors.white,
-              size: 48,
-            ),
+            child: const Icon(Boxicons.bxs_gift, color: Colors.white, size: 48),
           ),
         ],
       ),

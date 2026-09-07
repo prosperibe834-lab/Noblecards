@@ -85,7 +85,9 @@ class AutoLockBottomSheet extends StatelessWidget {
                       option,
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
                         color: isSelected
                             ? AppColors.success
                             : (isDark ? Colors.white : Colors.black87),

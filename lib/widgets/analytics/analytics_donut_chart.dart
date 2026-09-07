@@ -14,7 +14,11 @@ class AnalyticsDonutChartCard extends StatelessWidget {
       {'name': 'Gaming', 'percentage': 35, 'color': AppColors.primary},
       {'name': 'Shopping', 'percentage': 25, 'color': AppColors.secondary},
       {'name': 'Streaming', 'percentage': 15, 'color': AppColors.info},
-      {'name': 'Entertainment', 'percentage': 15, 'color': AppColors.accentViolet},
+      {
+        'name': 'Entertainment',
+        'percentage': 15,
+        'color': AppColors.accentViolet,
+      },
       {'name': 'Others', 'percentage': 10, 'color': Colors.orangeAccent},
     ];
 
@@ -24,7 +28,9 @@ class AnalyticsDonutChartCard extends StatelessWidget {
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.05),
         ),
       ),
       child: Row(
@@ -32,9 +38,7 @@ class AnalyticsDonutChartCard extends StatelessWidget {
           SizedBox(
             width: 120,
             height: 120,
-            child: CustomPaint(
-              painter: DonutChartPainter(),
-            ),
+            child: CustomPaint(painter: DonutChartPainter()),
           ),
           const SizedBox(width: AppSpacing.l),
           Expanded(
@@ -58,20 +62,26 @@ class AnalyticsDonutChartCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             c['name'].toString(),
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
                       Text(
                         '${c['percentage']}%',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
                 );
               }).toList(),
             ),
-          )
+          ),
         ],
       ),
     );

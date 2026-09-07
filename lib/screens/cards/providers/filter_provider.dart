@@ -8,13 +8,35 @@ class FilterProvider extends ChangeNotifier {
   String get selectedQuickFilter => _selectedQuickFilter;
 
   final List<String> categories = const [
-    'All', 'Shopping', 'Gaming', 'Streaming', 'Food', 'Travel', 'Finance',
-    'Music', 'Fashion', 'Tech', 'Lifestyle', 'Education', 'Mobile', 'Crypto',
-    'Sports', 'Beauty', 'Health', 'Digital', 'Utilities'
+    'All',
+    'Shopping',
+    'Gaming',
+    'Streaming',
+    'Food',
+    'Travel',
+    'Finance',
+    'Music',
+    'Fashion',
+    'Tech',
+    'Lifestyle',
+    'Education',
+    'Mobile',
+    'Crypto',
+    'Sports',
+    'Beauty',
+    'Health',
+    'Digital',
+    'Utilities',
   ];
 
   final List<String> quickFilters = const [
-    'All', 'Trending', 'Highest Rate', 'Instant Delivery', 'Recently Added', 'Available', 'Favorites'
+    'All',
+    'Trending',
+    'Highest Rate',
+    'Instant Delivery',
+    'Recently Added',
+    'Available',
+    'Favorites',
   ];
 
   void setCategory(String category) {

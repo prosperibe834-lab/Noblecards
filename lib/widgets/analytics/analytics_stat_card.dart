@@ -30,7 +30,9 @@ class AnalyticsStatCard extends StatelessWidget {
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.05),
         ),
       ),
       child: Column(
@@ -51,7 +53,8 @@ class AnalyticsStatCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: (isPositive ? AppColors.success : AppColors.error).withOpacity(0.12),
+                  color: (isPositive ? AppColors.success : AppColors.error)
+                      .withOpacity(0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(

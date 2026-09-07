@@ -4,10 +4,8 @@ import 'package:boxicons/boxicons.dart';
 class ShareReceiptButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const ShareReceiptButton({
-    Key? key,
-    required this.onPressed,
-  }) : super(key: key);
+  const ShareReceiptButton({Key? key, required this.onPressed})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

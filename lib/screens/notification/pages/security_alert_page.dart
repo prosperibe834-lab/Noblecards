@@ -14,9 +14,16 @@ class SecurityAlertPage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const Icon(Boxicons.bx_shield_quarter, size: 70, color: Colors.redAccent),
+            const Icon(
+              Boxicons.bx_shield_quarter,
+              size: 70,
+              color: Colors.redAccent,
+            ),
             const SizedBox(height: 16),
-            const Text("New Login Detected", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              "New Login Detected",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 24),
             Card(
               child: Padding(
@@ -42,10 +49,15 @@ class SecurityAlertPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             OutlinedButton(
-              style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               onPressed: () {},
-              child: const Text("Secure My Account", style: TextStyle(color: Colors.redAccent)),
-            )
+              child: const Text(
+                "Secure My Account",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
           ],
         ),
       ),

@@ -22,7 +22,9 @@ class NetworkErrorWidget extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -57,7 +59,9 @@ class NetworkErrorWidget extends StatelessWidget {
                 'Please check your internet connection and try again.',
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                  color: isDark
+                      ? AppColors.darkSubText
+                      : AppColors.lightSubText,
                 ),
                 textAlign: TextAlign.center,
               ),

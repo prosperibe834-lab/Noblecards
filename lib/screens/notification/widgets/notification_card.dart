@@ -7,11 +7,7 @@ class NotificationCard extends StatelessWidget {
   final NotificationModel item;
   final VoidCallback onTap;
 
-  const NotificationCard({
-    super.key,
-    required this.item,
-    required this.onTap,
-  });
+  const NotificationCard({super.key, required this.item, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +19,9 @@ class NotificationCard extends StatelessWidget {
         color: isDark ? const Color(0xFF12181F) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.04),
         ),
         boxShadow: [
           BoxShadow(
@@ -70,7 +68,9 @@ class NotificationCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
+                                fontWeight: item.isRead
+                                    ? FontWeight.w600
+                                    : FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
@@ -82,7 +82,9 @@ class NotificationCard extends StatelessWidget {
                                 item.time,
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: isDark ? Colors.white38 : Colors.black38,
+                                  color: isDark
+                                      ? Colors.white38
+                                      : Colors.black38,
                                 ),
                               ),
                               if (!item.isRead) ...[

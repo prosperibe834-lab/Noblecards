@@ -4,10 +4,8 @@ import 'package:boxicons/boxicons.dart';
 class ReportTransactionButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const ReportTransactionButton({
-    Key? key,
-    required this.onPressed,
-  }) : super(key: key);
+  const ReportTransactionButton({Key? key, required this.onPressed})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {

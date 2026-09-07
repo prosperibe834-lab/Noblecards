@@ -14,7 +14,10 @@ class PhysicalCardUploadSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Upload Card Images', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        const Text(
+          'Upload Card Images',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: AppSpacing.sm),
         Row(
           children: const [

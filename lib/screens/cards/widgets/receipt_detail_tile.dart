@@ -50,8 +50,8 @@ class ReceiptDetailTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w600,
-                color: isGreen 
-                    ? AppColors.success 
+                color: isGreen
+                    ? AppColors.success
                     : (isDark ? Colors.white : Colors.black),
               ),
             ),

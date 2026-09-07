@@ -92,7 +92,10 @@ class _EditableTextFieldState extends State<EditableTextField> {
                   size: 20,
                 )
               : null,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           filled: true,
           fillColor: isDark ? AppColors.darkCard : AppColors.white,
           enabledBorder: OutlineInputBorder(
@@ -104,24 +107,15 @@ class _EditableTextFieldState extends State<EditableTextField> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: AppColors.success,
-              width: 1.5,
-            ),
+            borderSide: const BorderSide(color: AppColors.success, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: AppColors.error,
-              width: 1,
-            ),
+            borderSide: const BorderSide(color: AppColors.error, width: 1),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: AppColors.error,
-              width: 1.5,
-            ),
+            borderSide: const BorderSide(color: AppColors.error, width: 1.5),
           ),
         ),
       ),

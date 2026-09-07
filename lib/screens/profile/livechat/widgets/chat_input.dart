@@ -6,11 +6,7 @@ class ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
 
-  const ChatInput({
-    super.key,
-    required this.controller,
-    required this.onSend,
-  });
+  const ChatInput({super.key, required this.controller, required this.onSend});
 
   void _showAttachmentOptions(BuildContext context) {
     showModalBottomSheet(
@@ -43,7 +39,9 @@ class ChatInput extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E252D) : Colors.grey.shade100,
+                  color: isDark
+                      ? const Color(0xFF1E252D)
+                      : Colors.grey.shade100,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -58,14 +56,14 @@ class ChatInput extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E252D) : Colors.grey.shade100,
+                  color: isDark
+                      ? const Color(0xFF1E252D)
+                      : Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: TextField(
                   controller: controller,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
                   decoration: InputDecoration(
                     hintText: 'Type a message...',
                     hintStyle: TextStyle(

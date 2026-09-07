@@ -15,14 +15,17 @@ class DailyLimitCard extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => TransactionLimitSelector(tiers: data.allTiers, currentTierName: data.currentTier),
+      builder: (context) => TransactionLimitSelector(
+        tiers: data.allTiers,
+        currentTierName: data.currentTier,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return InkWell(
       onTap: () => _showLimitsSheet(context),
       borderRadius: BorderRadius.circular(20),
@@ -31,7 +34,9 @@ class DailyLimitCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkCard : AppColors.lightCard,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
           boxShadow: isDark ? AppShadow.dark : AppShadow.light,
         ),
         child: Column(
@@ -44,15 +49,26 @@ class DailyLimitCard extends StatelessWidget {
                     color: AppColors.primary.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Boxicons.bx_shield_quarter, color: AppColors.primary, size: 18),
+                  child: const Icon(
+                    Boxicons.bx_shield_quarter,
+                    color: AppColors.primary,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Text(
                   "Daily Transaction Limit",
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 16),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontSize: 16),
                 ),
                 const Spacer(),
-                Icon(Boxicons.bx_chevron_right, color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
+                Icon(
+                  Boxicons.bx_chevron_right,
+                  color: isDark
+                      ? AppColors.darkSubText
+                      : AppColors.lightSubText,
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -65,7 +81,8 @@ class DailyLimitCard extends StatelessWidget {
                   children: [
                     Text(
                       "\$${data.dailyLimit.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')}",
-                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: AppColors.primary, fontSize: 32),
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(color: AppColors.primary, fontSize: 32),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -81,7 +98,11 @@ class DailyLimitCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       "\$${data.remainingDailyLimit.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')} left",
-                      style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),

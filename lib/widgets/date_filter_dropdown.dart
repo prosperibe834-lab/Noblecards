@@ -23,7 +23,7 @@ class DateFilterDropdown extends StatelessWidget {
     'Last Month',
     'This Year',
     'Last Year',
-    'Custom Date'
+    'Custom Date',
   ];
 
   @override

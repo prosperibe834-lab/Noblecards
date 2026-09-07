@@ -2,7 +2,12 @@ import '../models/language_model.dart';
 
 class LanguageData {
   static const List<LanguageModel> languages = [
-    LanguageModel(id: '1', name: 'English (United States)', flag: '🇺🇸', isDefault: true),
+    LanguageModel(
+      id: '1',
+      name: 'English (United States)',
+      flag: '🇺🇸',
+      isDefault: true,
+    ),
     LanguageModel(id: '2', name: 'English (United Kingdom)', flag: '🇬🇧'),
     LanguageModel(id: '3', name: 'Français (French)', flag: '🇫🇷'),
     LanguageModel(id: '4', name: 'Español (Spanish)', flag: '🇪🇸'),

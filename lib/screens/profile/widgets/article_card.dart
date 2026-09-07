@@ -25,7 +25,7 @@ class ArticleCard extends StatelessWidget {
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
-          )
+          ),
         ],
       ),
       child: Material(
@@ -46,11 +46,7 @@ class ArticleCard extends StatelessWidget {
                     color: AppColors.success.withOpacity(isDark ? 0.15 : 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    article.icon,
-                    color: AppColors.success,
-                    size: 24,
-                  ),
+                  child: Icon(article.icon, color: AppColors.success, size: 24),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -71,7 +67,9 @@ class ArticleCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     height: 1.3,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

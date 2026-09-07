@@ -15,14 +15,15 @@ class CreateNewPasswordScreen extends StatefulWidget {
   const CreateNewPasswordScreen({super.key});
 
   @override
-  State<CreateNewPasswordScreen> createState() => _CreateNewPasswordScreenState();
+  State<CreateNewPasswordScreen> createState() =>
+      _CreateNewPasswordScreenState();
 }
 
 class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
   final AuthenticationService _authService = AuthenticationService();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _isNewPasswordObscured = true;
   bool _isConfirmPasswordObscured = true;
   bool _isLoading = false;
@@ -83,8 +84,10 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
       _showError('Please enter a new password.');
       return;
     }
-    
-    if (!_validationState.isFullyValid && _validationState.strengthLevel != PasswordStrengthLevel.strong && _validationState.strengthLevel != PasswordStrengthLevel.veryStrong) {
+
+    if (!_validationState.isFullyValid &&
+        _validationState.strengthLevel != PasswordStrengthLevel.strong &&
+        _validationState.strengthLevel != PasswordStrengthLevel.veryStrong) {
       _showError('Please ensure your password meets all requirements.');
       return;
     }
@@ -105,14 +108,21 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Password updated successfully!', style: TextStyle(color: Colors.white)),
+            content: Text(
+              'Password updated successfully!',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
         );
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/login',
+            (route) => false,
+          );
         }
       }
     } catch (e) {
@@ -134,7 +144,10 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
           children: [
             // Top Navigation Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -144,7 +157,9 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                   ),
                   onPressed: _isLoading ? null : onBack,
                   style: IconButton.styleFrom(
-                    backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
+                    backgroundColor: isDark
+                        ? AppColors.darkCard
+                        : AppColors.lightCard,
                     shape: const CircleBorder(),
                   ),
                 ),
@@ -155,7 +170,10 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 8.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -165,14 +183,15 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     // Inputs Area
                     PasswordInputField(
                       label: 'New Password',
-                      hintText: 'At least 8 characters with letters, numbers & symbols',
+                      hintText:
+                          'At least 8 characters with letters, numbers & symbols',
                       controller: _newPasswordController,
                       isObscured: _isNewPasswordObscured,
                       onToggleVisibility: toggleNewPasswordVisibility,
                       onChanged: _onPasswordChanged,
                     ),
                     const SizedBox(height: 16),
-                    
+
                     PasswordInputField(
                       label: 'Confirm New Password',
                       hintText: 'Re-enter your new password',
@@ -183,7 +202,9 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    PasswordStrengthIndicator(strength: _validationState.strengthLevel),
+                    PasswordStrengthIndicator(
+                      strength: _validationState.strengthLevel,
+                    ),
                     const SizedBox(height: 24),
 
                     PasswordTipsCard(validationState: _validationState),
@@ -232,7 +253,11 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                                     ),
                                   ),
                                   SizedBox(width: 8),
-                                  Icon(Boxicons.bx_right_arrow_alt, color: Colors.white, size: 24),
+                                  Icon(
+                                    Boxicons.bx_right_arrow_alt,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
                                 ],
                               ),
                       ),
@@ -242,12 +267,19 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     // Footer Divider & Navigation
                     Row(
                       children: [
-                        Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                        Expanded(
+                          child: Divider(color: Theme.of(context).dividerColor),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('or', style: Theme.of(context).textTheme.bodyMedium),
+                          child: Text(
+                            'or',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
-                        Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                        Expanded(
+                          child: Divider(color: Theme.of(context).dividerColor),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -255,13 +287,18 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     Center(
                       child: TextButton.icon(
                         onPressed: _isLoading ? null : onBackToSignIn,
-                        icon: const Icon(Boxicons.bx_arrow_back, color: AppColors.primary, size: 18),
+                        icon: const Icon(
+                          Boxicons.bx_arrow_back,
+                          color: AppColors.primary,
+                          size: 18,
+                        ),
                         label: Text(
                           'Back to Sign In',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                       ),
                     ),

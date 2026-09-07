@@ -23,7 +23,10 @@ class NotificationSoundTile extends StatelessWidget {
       onTap: onSelect,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       leading: IconButton(
-        icon: Icon(Boxicons.bx_volume_full, color: isDark ? Colors.white54 : Colors.black54),
+        icon: Icon(
+          Boxicons.bx_volume_full,
+          color: isDark ? Colors.white54 : Colors.black54,
+        ),
         onPressed: () {
           // Play sound preview simulation
         },
@@ -37,7 +40,11 @@ class NotificationSoundTile extends StatelessWidget {
       ),
       trailing: isSelected
           ? const Icon(Boxicons.bx_check, color: Color(0xFF00C853), size: 24)
-          : Icon(Boxicons.bx_circle, color: isDark ? Colors.white24 : Colors.black26, size: 22),
+          : Icon(
+              Boxicons.bx_circle,
+              color: isDark ? Colors.white24 : Colors.black26,
+              size: 22,
+            ),
     );
   }
 }

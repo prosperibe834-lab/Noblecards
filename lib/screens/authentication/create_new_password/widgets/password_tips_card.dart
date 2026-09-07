@@ -11,13 +11,15 @@ class PasswordTipsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Accurately matching the reference image's card colors
-    final Color cardColor = isDark 
-        ? AppColors.primary.withOpacity(0.08) 
-        : const Color(0xFFF0FDF4); // Matches the soft green in the light mode reference
-    final Color borderColor = isDark 
-        ? AppColors.primary.withOpacity(0.2) 
+    final Color cardColor = isDark
+        ? AppColors.primary.withOpacity(0.08)
+        : const Color(
+            0xFFF0FDF4,
+          ); // Matches the soft green in the light mode reference
+    final Color borderColor = isDark
+        ? AppColors.primary.withOpacity(0.2)
         : AppColors.successLight.withOpacity(0.3);
 
     return Container(
@@ -48,13 +50,29 @@ class PasswordTipsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          _buildTipRow(context, 'Use at least 8 characters', validationState.hasMinLength),
+          _buildTipRow(
+            context,
+            'Use at least 8 characters',
+            validationState.hasMinLength,
+          ),
           const SizedBox(height: 12),
-          _buildTipRow(context, 'Include uppercase and lowercase letters', validationState.hasUpperAndLower),
+          _buildTipRow(
+            context,
+            'Include uppercase and lowercase letters',
+            validationState.hasUpperAndLower,
+          ),
           const SizedBox(height: 12),
-          _buildTipRow(context, 'Include numbers and special characters', validationState.hasDigitAndSpecial),
+          _buildTipRow(
+            context,
+            'Include numbers and special characters',
+            validationState.hasDigitAndSpecial,
+          ),
           const SizedBox(height: 12),
-          _buildTipRow(context, 'Avoid using personal information', validationState.avoidsPersonalInfo),
+          _buildTipRow(
+            context,
+            'Avoid using personal information',
+            validationState.avoidsPersonalInfo,
+          ),
         ],
       ),
     );
@@ -62,8 +80,8 @@ class PasswordTipsCard extends StatelessWidget {
 
   Widget _buildTipRow(BuildContext context, String text, bool isMet) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color iconColor = isMet 
-        ? AppColors.success 
+    final Color iconColor = isMet
+        ? AppColors.success
         : (isDark ? AppColors.darkSubText : AppColors.lightSubText);
 
     return Row(

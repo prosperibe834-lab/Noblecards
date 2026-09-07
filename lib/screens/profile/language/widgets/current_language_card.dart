@@ -24,14 +24,16 @@ class CurrentLanguageCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: Border.all(
-          color: isDark ? const Color(0xFF00C853).withOpacity(0.1) : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? const Color(0xFF00C853).withOpacity(0.1)
+              : Colors.black.withOpacity(0.05),
         ),
         boxShadow: [
           BoxShadow(
             color: isDark ? Colors.black26 : Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -60,7 +62,10 @@ class CurrentLanguageCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF00C853).withOpacity(0.15),
                     borderRadius: BorderRadius.circular(8),
@@ -94,7 +99,7 @@ class CurrentLanguageCard extends StatelessWidget {
                         color: const Color(0xFF00C853).withOpacity(0.2),
                         blurRadius: 20,
                         spreadRadius: 5,
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -108,12 +113,20 @@ class CurrentLanguageCard extends StatelessWidget {
                 Positioned(
                   top: 0,
                   right: 10,
-                  child: Icon(Boxicons.bxs_star, color: const Color(0xFF00C853).withOpacity(0.6), size: 10),
+                  child: Icon(
+                    Boxicons.bxs_star,
+                    color: const Color(0xFF00C853).withOpacity(0.6),
+                    size: 10,
+                  ),
                 ),
                 Positioned(
                   bottom: 10,
                   left: 0,
-                  child: Icon(Boxicons.bxs_star, color: const Color(0xFF00C853).withOpacity(0.8), size: 14),
+                  child: Icon(
+                    Boxicons.bxs_star,
+                    color: const Color(0xFF00C853).withOpacity(0.8),
+                    size: 14,
+                  ),
                 ),
               ],
             ),

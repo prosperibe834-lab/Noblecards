@@ -6,7 +6,7 @@ enum ReceiptState { loading, success, error, offline, empty }
 
 class SellReceiptProvider extends ChangeNotifier {
   final SellReceiptService _service = SellReceiptService();
-  
+
   ReceiptState _state = ReceiptState.loading;
   SellReceiptModel? _receipt;
   String _errorMessage = '';

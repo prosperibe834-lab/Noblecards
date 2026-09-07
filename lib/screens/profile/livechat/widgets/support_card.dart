@@ -14,7 +14,7 @@ class SupportCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
-          colors: isDark 
+          colors: isDark
               ? [const Color(0xFF0A2E1A), const Color(0xFF06180E)]
               : [const Color(0xFFE8F8F0), const Color(0xFFCFF1DF)],
           begin: Alignment.topLeft,
@@ -25,7 +25,7 @@ class SupportCard extends StatelessWidget {
             color: const Color(0xFF00B75F).withOpacity(0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          )
+          ),
         ],
       ),
       child: Stack(

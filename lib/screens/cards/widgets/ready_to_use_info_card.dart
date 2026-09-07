@@ -18,13 +18,19 @@ class ReadyToUseInfoCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.success.withOpacity(0.08) : AppColors.success.withOpacity(0.05),
+          color: isDark
+              ? AppColors.success.withOpacity(0.08)
+              : AppColors.success.withOpacity(0.05),
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(color: AppColors.success.withOpacity(0.3)),
         ),
         child: Row(
           children: [
-            const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 28),
+            const Icon(
+              Boxicons.bx_check_shield,
+              color: AppColors.success,
+              size: 28,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -43,13 +49,19 @@ class ReadyToUseInfoCard extends StatelessWidget {
                     'You can view your gift card details securely.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Boxicons.bx_chevron_right, color: isDark ? AppColors.darkText : AppColors.lightText, size: 24),
+            Icon(
+              Boxicons.bx_chevron_right,
+              color: isDark ? AppColors.darkText : AppColors.lightText,
+              size: 24,
+            ),
           ],
         ),
       ),

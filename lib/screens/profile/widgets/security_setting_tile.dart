@@ -50,7 +50,9 @@ class SecuritySettingTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       height: 1.3,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                   ),
                 ],

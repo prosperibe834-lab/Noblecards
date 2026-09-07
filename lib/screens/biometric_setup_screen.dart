@@ -25,7 +25,8 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
 
   Future<void> _checkBiometricType() async {
     try {
-      final List<BiometricType> available = await _auth.getAvailableBiometrics();
+      final List<BiometricType> available = await _auth
+          .getAvailableBiometrics();
       if (available.contains(BiometricType.face)) {
         setState(() => _isFaceIdAvailable = true);
       } else {
@@ -75,7 +76,9 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
     final subtitle = _isFaceIdAvailable
         ? 'Unlock NobleCards instantly using Face ID.'
         : 'Unlock NobleCards instantly using your fingerprint.';
-    final iconData = _isFaceIdAvailable ? Boxicons.bx_scan : Boxicons.bx_fingerprint;
+    final iconData = _isFaceIdAvailable
+        ? Boxicons.bx_scan
+        : Boxicons.bx_fingerprint;
 
     return Scaffold(
       appBar: AppBar(elevation: 0, backgroundColor: Colors.transparent),
@@ -101,7 +104,11 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
 
               Text(title, style: textTheme.headlineLarge),
               const SizedBox(height: AppSpacing.xs),
-              Text(subtitle, textAlign: TextAlign.center, style: textTheme.bodyMedium),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: textTheme.bodyMedium,
+              ),
 
               const Spacer(),
 
@@ -112,11 +119,17 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
                   onPressed: _enableBiometrics,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
                   ),
                   child: Text(
                     title,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -124,8 +137,12 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
               const SizedBox(height: AppSpacing.md),
 
               TextButton(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
-                child: const Text('Skip for Now', style: TextStyle(color: AppColors.lightSubText)),
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, '/home'),
+                child: const Text(
+                  'Skip for Now',
+                  style: TextStyle(color: AppColors.lightSubText),
+                ),
               ),
             ],
           ),

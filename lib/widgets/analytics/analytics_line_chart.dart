@@ -22,7 +22,9 @@ class _AnalyticsLineChartCardState extends State<AnalyticsLineChartCard> {
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.05),
         ),
       ),
       child: Column(
@@ -40,17 +42,15 @@ class _AnalyticsLineChartCardState extends State<AnalyticsLineChartCard> {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                  color: isDark
+                      ? Colors.white10
+                      : Colors.black.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
-                  children: [
-                    _subTab('D', 0),
-                    _subTab('W', 1),
-                    _subTab('M', 2),
-                  ],
+                  children: [_subTab('D', 0), _subTab('W', 1), _subTab('M', 2)],
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.l),
@@ -79,7 +79,7 @@ class _AnalyticsLineChartCardState extends State<AnalyticsLineChartCard> {
               Text('Sat', style: TextStyle(fontSize: 10, color: Colors.grey)),
               Text('Sun', style: TextStyle(fontSize: 10, color: Colors.grey)),
             ],
-          )
+          ),
         ],
       ),
     );

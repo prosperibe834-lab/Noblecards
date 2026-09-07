@@ -22,7 +22,10 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
     Clipboard.setData(ClipboardData(text: text));
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$label copied to clipboard!'), behavior: SnackBarBehavior.floating),
+      SnackBar(
+        content: Text('$label copied to clipboard!'),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
@@ -31,28 +34,43 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_arrow_back, color: isDark ? Colors.white : Colors.black),
+          icon: Icon(
+            Boxicons.bx_arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Card Details',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: isDark ? Colors.white : Colors.black),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Boxicons.bx_share_alt, color: isDark ? Colors.white : Colors.black),
+            icon: Icon(
+              Boxicons.bx_share_alt,
+              color: isDark ? Colors.white : Colors.black,
+            ),
             onPressed: () {
               // Implement Share Plus logic
             },
           ),
           IconButton(
-            icon: Icon(Boxicons.bx_heart, color: isDark ? Colors.white : Colors.black),
+            icon: Icon(
+              Boxicons.bx_heart,
+              color: isDark ? Colors.white : Colors.black,
+            ),
             onPressed: () {
               // Implement Favorite logic
             },
@@ -76,7 +94,11 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
-                  BoxShadow(color: Colors.black26, blurRadius: 15, offset: const Offset(0, 8)),
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
                 ],
               ),
               child: Stack(
@@ -86,11 +108,19 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                     left: 20,
                     child: Row(
                       children: [
-                        const Icon(Boxicons.bxl_amazon, color: Colors.orange, size: 32),
+                        const Icon(
+                          Boxicons.bxl_amazon,
+                          color: Colors.orange,
+                          size: 32,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           widget.card.brandName,
-                          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -100,7 +130,11 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                     left: 20,
                     child: Text(
                       '\$${widget.card.faceValue.toStringAsFixed(2)}',
-                      style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
                   Positioned(
@@ -110,7 +144,10 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                       children: [
                         const Text('🇺🇸', style: TextStyle(fontSize: 20)),
                         const SizedBox(width: 8),
-                        Text(widget.card.region, style: const TextStyle(color: Colors.white70)),
+                        Text(
+                          widget.card.region,
+                          style: const TextStyle(color: Colors.white70),
+                        ),
                       ],
                     ),
                   ),
@@ -125,10 +162,11 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
               label: 'Gift Card Code',
               value: widget.card.cardCode,
               isVisible: _isCodeVisible,
-              onToggleVisibility: () => setState(() => _isCodeVisible = !_isCodeVisible),
+              onToggleVisibility: () =>
+                  setState(() => _isCodeVisible = !_isCodeVisible),
               onCopy: () => _copyToClipboard(widget.card.cardCode, 'Code'),
             ),
-            
+
             const SizedBox(height: 20),
 
             // Pin Section (If applicable)
@@ -138,7 +176,8 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                 label: 'Card PIN',
                 value: widget.card.pin!,
                 isVisible: _isPinVisible,
-                onToggleVisibility: () => setState(() => _isPinVisible = !_isPinVisible),
+                onToggleVisibility: () =>
+                    setState(() => _isPinVisible = !_isPinVisible),
                 onCopy: () => _copyToClipboard(widget.card.pin!, 'PIN'),
               ),
               const SizedBox(height: 32),
@@ -159,7 +198,11 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                   Expanded(
                     child: Text(
                       'Never share your card code or PIN with anyone. NobleCards will never ask for these details.',
-                      style: TextStyle(fontSize: 12, color: Colors.amber, height: 1.4),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.amber,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ],
@@ -186,7 +229,11 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 13, color: isDark ? AppColors.darkSubText : AppColors.lightSubText, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 13,
+            color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         Container(
@@ -194,7 +241,9 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkCard : AppColors.white,
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            ),
           ),
           child: Row(
             children: [
@@ -210,10 +259,18 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                 ),
               ),
               IconButton(
-                icon: Icon(isVisible ? Boxicons.bx_hide : Boxicons.bx_show, color: isDark ? Colors.white54 : Colors.black54),
+                icon: Icon(
+                  isVisible ? Boxicons.bx_hide : Boxicons.bx_show,
+                  color: isDark ? Colors.white54 : Colors.black54,
+                ),
                 onPressed: onToggleVisibility,
               ),
-              Container(width: 1, height: 24, color: isDark ? Colors.white24 : Colors.black12, margin: const EdgeInsets.symmetric(horizontal: 8)),
+              Container(
+                width: 1,
+                height: 24,
+                color: isDark ? Colors.white24 : Colors.black12,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+              ),
               IconButton(
                 icon: const Icon(Boxicons.bx_copy, color: AppColors.success),
                 onPressed: onCopy,

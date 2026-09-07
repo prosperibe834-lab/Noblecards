@@ -18,7 +18,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   bool _isLoading = false;
 
   // Placeholder. Connect your actual user state here.
-  final String _userEmail = "user@gmail.com"; 
+  final String _userEmail = "user@gmail.com";
 
   @override
   void initState() {
@@ -47,10 +47,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   void _verifyOtp(String otp) async {
     setState(() => _isLoading = true);
-    
+
     // Simulate verification delay
     await Future.delayed(const Duration(seconds: 2));
-    
+
     if (!mounted) return;
     setState(() => _isLoading = false);
 
@@ -74,7 +74,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -94,18 +98,25 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             const SizedBox(height: 12),
             RichText(
               text: TextSpan(
-                style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : Colors.black54, height: 1.5),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? Colors.white70 : Colors.black54,
+                  height: 1.5,
+                ),
                 children: [
-                  const TextSpan(text: "Fill in the box below with the OTP.\nPlease check the OTP sent to "),
-                  TextSpan(text: _userEmail, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const TextSpan(
+                    text:
+                        "Fill in the box below with the OTP.\nPlease check the OTP sent to ",
+                  ),
+                  TextSpan(
+                    text: _userEmail,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 40),
-            OtpInput(
-              controller: _otpCtrl,
-              onCompleted: _verifyOtp,
-            ),
+            OtpInput(controller: _otpCtrl, onCompleted: _verifyOtp),
             const SizedBox(height: 40),
             Center(
               child: _seconds > 0
@@ -121,7 +132,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       children: [
                         Text(
                           "Didn't receive code?",
-                          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                          style: TextStyle(
+                            color: isDark ? Colors.white70 : Colors.black54,
+                          ),
                         ),
                         TextButton(
                           onPressed: () {
@@ -135,7 +148,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           },
                           child: const Text(
                             "Try Again / Resend OTP",
-                            style: TextStyle(color: Color(0xFF00C853), fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: Color(0xFF00C853),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
@@ -145,7 +161,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             PrimaryGradientButton(
               text: "Verify",
               isLoading: _isLoading,
-              onPressed: _otpCtrl.text.length == 6 ? () => _verifyOtp(_otpCtrl.text) : null,
+              onPressed: _otpCtrl.text.length == 6
+                  ? () => _verifyOtp(_otpCtrl.text)
+                  : null,
             ),
             const SizedBox(height: 24),
           ],

@@ -17,15 +17,22 @@ class PromotionDetailsPage extends StatelessWidget {
           children: [
             const Icon(Boxicons.bx_bell, size: 60, color: Colors.amber),
             const SizedBox(height: 16),
-            const Text("2% Bonus Weekend Special", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              "2% Bonus Weekend Special",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
-            const Text("Sell any gift card this weekend and instantly receive a 2% extra bonus credited to your wallet balance."),
+            const Text(
+              "Sell any gift card this weekend and instantly receive a 2% extra bonus credited to your wallet balance.",
+            ),
             const Spacer(),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               onPressed: () {},
               child: const Text("Trade Now"),
-            )
+            ),
           ],
         ),
       ),

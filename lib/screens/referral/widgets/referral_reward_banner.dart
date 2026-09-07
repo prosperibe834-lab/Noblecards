@@ -8,7 +8,9 @@ class ReferralRewardBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF1B2A20) : const Color(0xFFF1F9F3);
-    final borderColor = isDark ? const Color(0xFF263C2E) : const Color(0xFFE0EFE5);
+    final borderColor = isDark
+        ? const Color(0xFF263C2E)
+        : const Color(0xFFE0EFE5);
     final textColor = isDark ? Colors.white : Colors.black;
 
     return Container(
@@ -37,7 +39,10 @@ class ReferralRewardBanner extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00B94A),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -50,7 +55,10 @@ class ReferralRewardBanner extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Browse Gift Cards', style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(
+                        'Browse Gift Cards',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       SizedBox(width: 4),
                       Icon(Boxicons.bx_right_arrow_alt, size: 18),
                     ],
@@ -79,7 +87,14 @@ class ReferralRewardBanner extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Center(
-                        child: Text('a', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          'a',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -98,7 +113,11 @@ class ReferralRewardBanner extends StatelessWidget {
                         border: Border.all(color: Colors.grey[300]!),
                       ),
                       child: Center(
-                        child: Icon(Boxicons.bxl_play_store, color: Colors.blue[400], size: 24),
+                        child: Icon(
+                          Boxicons.bxl_play_store,
+                          color: Colors.blue[400],
+                          size: 24,
+                        ),
                       ),
                     ),
                   ),

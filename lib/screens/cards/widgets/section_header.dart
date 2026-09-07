@@ -42,7 +42,9 @@ class SectionHeader extends StatelessWidget {
                   subtitle!,
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                 ),
               ],

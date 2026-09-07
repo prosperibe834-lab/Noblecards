@@ -28,8 +28,12 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final secondaryTextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
-    final borderColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFEEF2F6);
+    final secondaryTextColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
+    final borderColor = isDark
+        ? const Color(0xFF1E293B)
+        : const Color(0xFFEEF2F6);
     final fillColor = isDark ? const Color(0xFF141C28) : Colors.white;
 
     return Column(
@@ -47,10 +51,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
         TextFormField(
           controller: widget.controller,
           obscureText: _obscureText,
-          style: TextStyle(
-            color: primaryTextColor,
-            fontSize: 15,
-          ),
+          style: TextStyle(color: primaryTextColor, fontSize: 15),
           onChanged: widget.onChanged,
           validator: widget.validator,
           decoration: InputDecoration(
@@ -89,7 +90,10 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xFF10B981),
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

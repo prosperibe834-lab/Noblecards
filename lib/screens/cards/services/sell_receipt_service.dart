@@ -4,7 +4,7 @@ class SellReceiptService {
   Future<SellReceiptModel> fetchReceipt(String transactionId) async {
     // Simulating network delay
     await Future.delayed(const Duration(seconds: 1));
-    
+
     return SellReceiptModel(
       referenceId: 'NC-2026-92831',
       giftCardName: 'Amazon Gift Card',

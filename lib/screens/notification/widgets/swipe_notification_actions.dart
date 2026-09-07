@@ -30,7 +30,9 @@ class SwipeNotificationActions extends StatelessWidget {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text("Delete Notification"),
-            content: const Text("Are you sure you want to remove this notification?"),
+            content: const Text(
+              "Are you sure you want to remove this notification?",
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
@@ -41,7 +43,10 @@ class SwipeNotificationActions extends StatelessWidget {
                   backgroundColor: Colors.redAccent,
                 ),
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text("Delete", style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  "Delete",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -61,7 +66,13 @@ class SwipeNotificationActions extends StatelessWidget {
           children: [
             Icon(Boxicons.bx_trash, color: Colors.white, size: 22),
             SizedBox(width: 6),
-            Text("Delete", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text(
+              "Delete",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),

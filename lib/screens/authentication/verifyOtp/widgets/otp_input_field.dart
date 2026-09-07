@@ -81,7 +81,8 @@ class _OtpInputFieldState extends State<OtpInputField> {
   }
 
   void _onKeyEvent(RawKeyEvent event, int index) {
-    if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.backspace) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.backspace) {
       if (_controllers[index].text.isEmpty && index > 0) {
         _focusNodes[index - 1].requestFocus();
         _controllers[index - 1].text = '';
@@ -103,9 +104,13 @@ class _OtpInputFieldState extends State<OtpInputField> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(_length, (index) {
         final bool isFocused = _focusNodes[index].hasFocus;
-        
-        final Color bgColor = isDark ? AppColors.darkInput : AppColors.lightInput;
-        final Color defaultBorderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
+
+        final Color bgColor = isDark
+            ? AppColors.darkInput
+            : AppColors.lightInput;
+        final Color defaultBorderColor = isDark
+            ? AppColors.darkBorder
+            : AppColors.lightBorder;
         final Color activeBorderColor = AppColors.primary;
 
         return AnimatedContainer(
@@ -133,9 +138,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,

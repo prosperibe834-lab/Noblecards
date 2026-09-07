@@ -48,7 +48,9 @@ class CategoryChipList extends StatelessWidget {
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   color: isSelected
                       ? Colors.white
-                      : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
+                      : (isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText),
                 ),
               ),
             ),

@@ -21,7 +21,11 @@ class OfflineBanner extends StatelessWidget {
           SizedBox(width: 8),
           Text(
             "No connection. Displaying cached data.",
-            style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

@@ -44,7 +44,8 @@ class GiftCardRegionModel {
       currencySymbol: currencySymbol ?? this.currencySymbol,
       buyRate: buyRate ?? this.buyRate,
       sellRate: sellRate ?? this.sellRate,
-      availableDenominations: availableDenominations ?? this.availableDenominations,
+      availableDenominations:
+          availableDenominations ?? this.availableDenominations,
       isAvailable: isAvailable ?? this.isAvailable,
     );
   }

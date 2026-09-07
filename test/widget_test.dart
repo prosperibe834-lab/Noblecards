@@ -15,7 +15,9 @@ void main() {
     });
   });
 
-  testWidgets('Deposit screen renders and includes the local deposit state', (WidgetTester tester) async {
+  testWidgets('Deposit screen renders and includes the local deposit state', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: DepositScreen()));
 
     expect(find.text('Deposit Funds'), findsOneWidget);
@@ -25,33 +27,44 @@ void main() {
     expect(find.text('FX rate: 1 USD = NGN 1500.00'), findsOneWidget);
   });
 
-  testWidgets('Quick amount buttons exist and are clickable', (WidgetTester tester) async {
+  testWidgets('Quick amount buttons exist and are clickable', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: DepositScreen()));
 
     // Find quick amount buttons (should have 5 buttons: $50, $100, $200, $500, $1000)
     final quickAmountButtons = find.byType(InkWell).evaluate();
-    expect(quickAmountButtons.length, greaterThanOrEqualTo(5), reason: 'Should have at least 5 quick amount buttons');
+    expect(
+      quickAmountButtons.length,
+      greaterThanOrEqualTo(5),
+      reason: 'Should have at least 5 quick amount buttons',
+    );
   });
 
-  testWidgets('Currency selector includes only the Flutterwave-supported currencies', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: CurrencySelectorScreen()));
-
-    final currencies = {
-      'NGN': 'Nigerian Naira',
-      'GBP': 'British Pound',
-      'GHS': 'Ghanaian Cedi',
-    };
-
-    for (final entry in currencies.entries) {
-      await tester.scrollUntilVisible(
-        find.text(entry.value),
-        100,
-        scrollable: find.byType(Scrollable).last,
+  testWidgets(
+    'Currency selector includes only the Flutterwave-supported currencies',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(home: CurrencySelectorScreen()),
       );
-      expect(find.text(entry.value), findsOneWidget);
-    }
 
-    expect(find.text('Euro'), findsNothing);
-    expect(find.text('Canadian Dollar'), findsNothing);
-  });
+      final currencies = {
+        'NGN': 'Nigerian Naira',
+        'GBP': 'British Pound',
+        'GHS': 'Ghanaian Cedi',
+      };
+
+      for (final entry in currencies.entries) {
+        await tester.scrollUntilVisible(
+          find.text(entry.value),
+          100,
+          scrollable: find.byType(Scrollable).last,
+        );
+        expect(find.text(entry.value), findsOneWidget);
+      }
+
+      expect(find.text('Euro'), findsNothing);
+      expect(find.text('Canadian Dollar'), findsNothing);
+    },
+  );
 }

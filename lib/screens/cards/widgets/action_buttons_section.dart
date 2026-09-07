@@ -23,7 +23,9 @@ class ActionButtonsSection extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const SellReceiptScreen(transactionId: 'sale-submission-001'),
+                builder: (_) => const SellReceiptScreen(
+                  transactionId: 'sale-submission-001',
+                ),
               ),
             );
           },
@@ -50,14 +52,18 @@ class ActionButtonsSection extends StatelessWidget {
           showChevron: false,
           onTap: () {
             HapticFeedback.mediumImpact();
-            Navigator.popUntil(context, (route) => route.isFirst); // Returns to root
+            Navigator.popUntil(
+              context,
+              (route) => route.isFirst,
+            ); // Returns to root
           },
         ),
       ],
     );
   }
 
-  Widget _buildButton(BuildContext context, {
+  Widget _buildButton(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required bool isPrimary,
@@ -66,15 +72,27 @@ class ActionButtonsSection extends StatelessWidget {
     bool isGhost = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final bg = isPrimary ? AppColors.success : (isGhost ? Colors.transparent : (isDark ? AppColors.darkCard : AppColors.white));
-    final textColor = isPrimary ? Colors.white : (isDark ? Colors.white : Colors.black);
-    final borderColor = isPrimary ? Colors.transparent : (isGhost ? (isDark ? Colors.white24 : Colors.black12) : (isDark ? AppColors.darkBorder : AppColors.lightBorder));
+
+    final bg = isPrimary
+        ? AppColors.success
+        : (isGhost
+              ? Colors.transparent
+              : (isDark ? AppColors.darkCard : AppColors.white));
+    final textColor = isPrimary
+        ? Colors.white
+        : (isDark ? Colors.white : Colors.black);
+    final borderColor = isPrimary
+        ? Colors.transparent
+        : (isGhost
+              ? (isDark ? Colors.white24 : Colors.black12)
+              : (isDark ? AppColors.darkBorder : AppColors.lightBorder));
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.lg),
-      splashColor: isPrimary ? Colors.white24 : AppColors.success.withValues(alpha: 0.1),
+      splashColor: isPrimary
+          ? Colors.white24
+          : AppColors.success.withValues(alpha: 0.1),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         decoration: BoxDecoration(
@@ -90,12 +108,21 @@ class ActionButtonsSection extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
             ),
             if (showChevron) ...[
               const Spacer(),
-              Icon(Boxicons.bx_chevron_right, color: textColor.withValues(alpha: 0.7), size: 20),
-            ] else const Spacer(),
+              Icon(
+                Boxicons.bx_chevron_right,
+                color: textColor.withValues(alpha: 0.7),
+                size: 20,
+              ),
+            ] else
+              const Spacer(),
           ],
         ),
       ),

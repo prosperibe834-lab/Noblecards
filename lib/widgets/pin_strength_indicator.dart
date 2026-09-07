@@ -8,7 +8,8 @@ class PinStrengthIndicator extends StatelessWidget {
   String _getStrengthLabel() {
     if (pin.length < 4) return "Too weak";
     if (RegExp(r'^(.)\1{3}$').hasMatch(pin)) return "Weak"; // e.g. 1111
-    if ("0123456789".contains(pin) || "9876543210".contains(pin)) return "Fair"; // e.g. 1234
+    if ("0123456789".contains(pin) || "9876543210".contains(pin))
+      return "Fair"; // e.g. 1234
     return "Strong";
   }
 

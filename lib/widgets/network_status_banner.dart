@@ -48,7 +48,7 @@ class NetworkStatusBanner extends StatelessWidget {
                   decoration: TextDecoration.underline,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

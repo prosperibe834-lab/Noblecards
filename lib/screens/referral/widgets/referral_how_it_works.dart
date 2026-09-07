@@ -10,7 +10,9 @@ class ReferralHowItWorks extends StatelessWidget {
     final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
     final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
-    final iconBgColor = isDark ? const Color(0xFF233026) : const Color(0xFFE8F6ED);
+    final iconBgColor = isDark
+        ? const Color(0xFF233026)
+        : const Color(0xFFE8F6ED);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -63,7 +65,8 @@ class ReferralHowItWorks extends StatelessWidget {
                 number: '3',
                 icon: Boxicons.bx_gift,
                 title: 'You Earn',
-                desc: 'They buy a gift card worth at least 10% of their deposit. You earn 1.5%',
+                desc:
+                    'They buy a gift card worth at least 10% of their deposit. You earn 1.5%',
                 iconBgColor: iconBgColor,
               ),
             ],
@@ -82,7 +85,7 @@ class ReferralHowItWorks extends StatelessWidget {
     required Color iconBgColor,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Expanded(
       flex: 3,
       child: Column(

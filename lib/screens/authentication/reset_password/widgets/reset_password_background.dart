@@ -13,10 +13,8 @@ class ResetPasswordBackground extends StatelessWidget {
     return Stack(
       children: [
         // Base Background Color
-        Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        
+        Container(color: Theme.of(context).scaffoldBackgroundColor),
+
         // Top Right Dotted/Gradient Blob Overlay
         Positioned(
           top: -100,

@@ -7,10 +7,12 @@ class AnimatedSubmissionSuccess extends StatefulWidget {
   const AnimatedSubmissionSuccess({super.key});
 
   @override
-  State<AnimatedSubmissionSuccess> createState() => _AnimatedSubmissionSuccessState();
+  State<AnimatedSubmissionSuccess> createState() =>
+      _AnimatedSubmissionSuccessState();
 }
 
-class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess> with TickerProviderStateMixin {
+class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess>
+    with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
   late AnimationController _pulseController;
@@ -18,10 +20,19 @@ class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess> w
   @override
   void initState() {
     super.initState();
-    _scaleController = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _pulseController = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
 
-    _scaleAnimation = CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut);
+    _scaleAnimation = CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,
+    );
     _scaleController.forward();
   }
 
@@ -42,7 +53,7 @@ class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess> w
         children: [
           // Confetti/Sparkles
           ...List.generate(6, (index) => _buildSparkle(index)),
-          
+
           // Pulsing Background Glow
           AnimatedBuilder(
             animation: _pulseController,
@@ -60,7 +71,7 @@ class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess> w
               );
             },
           ),
-          
+
           // Main Checkmark Circle
           ScaleTransition(
             scale: _scaleAnimation,
@@ -71,10 +82,19 @@ class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess> w
                 shape: BoxShape.circle,
                 color: AppColors.success,
                 boxShadow: [
-                  BoxShadow(color: Color(0x4000C853), blurRadius: 20, spreadRadius: 2, offset: Offset(0, 8)),
+                  BoxShadow(
+                    color: Color(0x4000C853),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                    offset: Offset(0, 8),
+                  ),
                 ],
               ),
-              child: const Icon(Boxicons.bx_check, color: Colors.white, size: 55),
+              child: const Icon(
+                Boxicons.bx_check,
+                color: Colors.white,
+                size: 55,
+              ),
             ),
           ),
         ],
@@ -92,7 +112,9 @@ class _AnimatedSubmissionSuccessState extends State<AnimatedSubmissionSuccess> w
           width: 6,
           height: 6,
           decoration: BoxDecoration(
-            color: index % 2 == 0 ? AppColors.success : AppColors.success.withOpacity(0.4),
+            color: index % 2 == 0
+                ? AppColors.success
+                : AppColors.success.withOpacity(0.4),
             shape: BoxShape.circle,
           ),
         ),

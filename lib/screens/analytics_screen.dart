@@ -97,7 +97,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -163,7 +165,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: _filters.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.s),
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(width: AppSpacing.s),
                         itemBuilder: (context, index) {
                           final filter = _filters[index];
                           return AnalyticsFilterChip(
@@ -175,7 +178,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.l),
-                    _buildSectionHeader('Overview Metrics', Boxicons.bx_grid_alt),
+                    _buildSectionHeader(
+                      'Overview Metrics',
+                      Boxicons.bx_grid_alt,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     GridView.count(
                       shrinkWrap: true,
@@ -230,23 +236,38 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                    _buildSectionHeader('Income vs Expenses', Boxicons.bx_line_chart),
+                    _buildSectionHeader(
+                      'Income vs Expenses',
+                      Boxicons.bx_line_chart,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     const AnalyticsLineChartCard(),
                     const SizedBox(height: AppSpacing.xl),
-                    _buildSectionHeader('Cash Flow Overview', Boxicons.bx_bar_chart_alt_2),
+                    _buildSectionHeader(
+                      'Cash Flow Overview',
+                      Boxicons.bx_bar_chart_alt_2,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     const AnalyticsBarChartCard(),
                     const SizedBox(height: AppSpacing.xl),
-                    _buildSectionHeader('Gift Card Performance', Boxicons.bx_gift),
+                    _buildSectionHeader(
+                      'Gift Card Performance',
+                      Boxicons.bx_gift,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     const AnalyticsCardPerformanceSection(),
                     const SizedBox(height: AppSpacing.xl),
-                    _buildSectionHeader('Category Distribution', Boxicons.bx_pie_chart_alt_2),
+                    _buildSectionHeader(
+                      'Category Distribution',
+                      Boxicons.bx_pie_chart_alt_2,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     const AnalyticsDonutChartCard(),
                     const SizedBox(height: AppSpacing.xl),
-                    _buildSectionHeader('Top Trading Countries', Boxicons.bx_world),
+                    _buildSectionHeader(
+                      'Top Trading Countries',
+                      Boxicons.bx_world,
+                    ),
                     const SizedBox(height: AppSpacing.m),
                     const AnalyticsCountryList(),
                     const SizedBox(height: AppSpacing.xl),

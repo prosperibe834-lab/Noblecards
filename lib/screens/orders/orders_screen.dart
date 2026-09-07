@@ -20,7 +20,7 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   final TextEditingController _searchController = TextEditingController();
-  
+
   List<OrderModel> _allOrders = [];
   bool _isLoading = true;
   String _activeChip = 'All';
@@ -31,7 +31,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
   String? _filterGiftCard;
   String? _filterSortBy = 'Newest';
 
-  final List<String> _chips = ['All', 'Buy', 'Sell', 'Pending', 'Completed', 'Cancelled'];
+  final List<String> _chips = [
+    'All',
+    'Buy',
+    'Sell',
+    'Pending',
+    'Completed',
+    'Cancelled',
+  ];
 
   @override
   void initState() {
@@ -41,7 +48,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 800)); // Simulate API response
+    await Future.delayed(
+      const Duration(milliseconds: 800),
+    ); // Simulate API response
     setState(() {
       _allOrders = OrderModel.sampleOrders;
       _isLoading = false;
@@ -97,18 +106,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
     );
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _loadOrders,
           color: AppColors.success,
           child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
             slivers: [
               // Header Sliver
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -133,7 +149,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 'Track all your gift card transactions',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                                  color: isDark
+                                      ? AppColors.darkSubText
+                                      : AppColors.lightSubText,
                                 ),
                               ),
                             ],
@@ -143,19 +161,30 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             onTap: _openFilterBottomSheet,
                             borderRadius: BorderRadius.circular(AppRadius.full),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 8,
+                              ),
                               decoration: BoxDecoration(
-                                color: isDark ? AppColors.darkCard : AppColors.white,
-                                borderRadius: BorderRadius.circular(AppRadius.full),
+                                color: isDark
+                                    ? AppColors.darkCard
+                                    : AppColors.white,
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.full,
+                                ),
                                 border: Border.all(
-                                  color: isDark ? Colors.white10 : Colors.black.withOpacity(0.06),
+                                  color: isDark
+                                      ? Colors.white10
+                                      : Colors.black.withOpacity(0.06),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
+                                    color: Colors.black.withOpacity(
+                                      isDark ? 0.2 : 0.04,
+                                    ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
-                                  )
+                                  ),
                                 ],
                               ),
                               child: Row(
@@ -171,7 +200,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
-                                      color: isDark ? Colors.white : Colors.black,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                   ),
                                 ],
@@ -180,7 +211,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: 20),
 
                       // Animated Summary Cards
@@ -204,17 +235,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                   setState(() => _activeChip = chip);
                                 },
                                 selectedColor: AppColors.success,
-                                backgroundColor: isDark ? AppColors.darkCard : Colors.grey.shade100,
+                                backgroundColor: isDark
+                                    ? AppColors.darkCard
+                                    : Colors.grey.shade100,
                                 side: BorderSide.none,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppRadius.full),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.full,
+                                  ),
                                 ),
                                 labelStyle: TextStyle(
                                   fontSize: 13,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w500,
                                   color: isSelected
                                       ? Colors.white
-                                      : (isDark ? Colors.white70 : Colors.black87),
+                                      : (isDark
+                                            ? Colors.white70
+                                            : Colors.black87),
                                 ),
                               ),
                             );
@@ -258,12 +297,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return OrderCard(order: filteredOrders[index]);
-                      },
-                      childCount: filteredOrders.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return OrderCard(order: filteredOrders[index]);
+                    }, childCount: filteredOrders.length),
                   ),
                 ),
 
@@ -274,9 +310,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.success.withOpacity(0.08) : AppColors.success.withOpacity(0.05),
+                      color: isDark
+                          ? AppColors.success.withOpacity(0.08)
+                          : AppColors.success.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(AppRadius.lg),
-                      border: Border.all(color: AppColors.success.withOpacity(0.2)),
+                      border: Border.all(
+                        color: AppColors.success.withOpacity(0.2),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -286,7 +326,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             color: AppColors.success,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Boxicons.bx_shield_quarter, color: Colors.white, size: 20),
+                          child: const Icon(
+                            Boxicons.bx_shield_quarter,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -306,13 +350,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 'All transactions are encrypted and 100% secure.',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                                  color: isDark
+                                      ? AppColors.darkSubText
+                                      : AppColors.lightSubText,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(Boxicons.bx_gift, color: AppColors.success, size: 32),
+                        const Icon(
+                          Boxicons.bx_gift,
+                          color: AppColors.success,
+                          size: 32,
+                        ),
                       ],
                     ),
                   ),

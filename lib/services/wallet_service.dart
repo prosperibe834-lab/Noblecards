@@ -4,7 +4,7 @@ class WalletService {
   final AuthenticationService authenticationService;
 
   WalletService({AuthenticationService? authenticationService})
-      : authenticationService = authenticationService ?? AuthenticationService();
+    : authenticationService = authenticationService ?? AuthenticationService();
 
   Future<double> getUsdBalance() async {
     final data = await authenticationService.authenticatedGet('/wallet');
@@ -18,7 +18,10 @@ class WalletService {
 
       final rawBalance = item['availableBalance'];
       if (rawBalance is num) return rawBalance.toDouble();
-      return double.tryParse(rawBalance?.toString().replaceAll(',', '') ?? '') ?? 0;
+      return double.tryParse(
+            rawBalance?.toString().replaceAll(',', '') ?? '',
+          ) ??
+          0;
     }
 
     return 0;

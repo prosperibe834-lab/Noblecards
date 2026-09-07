@@ -25,11 +25,15 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? AppColors.darkBackground : AppColors.lightBackground;
+    final bgColor = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightBackground;
     final cardColor = isDark ? AppColors.darkCard : AppColors.white;
     final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final subTextColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.lightSubText;
 
     return Container(
       decoration: BoxDecoration(
@@ -76,7 +80,8 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
             const SizedBox(height: AppSpacing.sm),
             TextField(
               controller: _searchController,
-              onChanged: (value) => context.read<RegionProvider>().setSearchQuery(value),
+              onChanged: (value) =>
+                  context.read<RegionProvider>().setSearchQuery(value),
               decoration: InputDecoration(
                 hintText: 'Search country or currency',
                 prefixIcon: const Icon(Icons.search_rounded),
@@ -86,7 +91,10 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                   borderRadius: BorderRadius.circular(AppRadius.full),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -121,18 +129,24 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(AppRadius.md),
                             onTap: () {
-                              context.read<RegionProvider>().selectRegion(region);
+                              context.read<RegionProvider>().selectRegion(
+                                region,
+                              );
                               Navigator.pop(context, region);
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(AppSpacing.md),
                               child: Row(
                                 children: [
-                                  Text(region.flag, style: const TextStyle(fontSize: 22)),
+                                  Text(
+                                    region.flag,
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
                                   const SizedBox(width: AppSpacing.md),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           region.countryName,
@@ -145,7 +159,10 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                                         const SizedBox(height: 4),
                                         Text(
                                           '${region.currencyCode} (${region.currencySymbol})',
-                                          style: TextStyle(color: subTextColor, fontSize: 12),
+                                          style: TextStyle(
+                                            color: subTextColor,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -163,17 +180,30 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                                       ),
                                       const SizedBox(height: 4),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: region.isAvailable
-                                              ? AppColors.success.withOpacity(0.15)
-                                              : AppColors.error.withOpacity(0.15),
-                                          borderRadius: BorderRadius.circular(999),
+                                              ? AppColors.success.withOpacity(
+                                                  0.15,
+                                                )
+                                              : AppColors.error.withOpacity(
+                                                  0.15,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            999,
+                                          ),
                                         ),
                                         child: Text(
-                                          region.isAvailable ? 'Available' : 'Unavailable',
+                                          region.isAvailable
+                                              ? 'Available'
+                                              : 'Unavailable',
                                           style: TextStyle(
-                                            color: region.isAvailable ? AppColors.success : AppColors.error,
+                                            color: region.isAvailable
+                                                ? AppColors.success
+                                                : AppColors.error,
                                             fontSize: 11,
                                             fontWeight: FontWeight.w600,
                                           ),

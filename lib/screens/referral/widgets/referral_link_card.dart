@@ -30,7 +30,7 @@ class ReferralLinkCard extends StatelessWidget {
     final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
     final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
-    
+
     // Choose logo based on theme
     final logoPath = isDark
         ? 'lib/assets/logos/MainDarkLogo.png.png'
@@ -67,9 +67,14 @@ class ReferralLinkCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA),
+                    color: isDark
+                        ? const Color(0xFF121212)
+                        : const Color(0xFFF8F9FA),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: borderColor),
                   ),
@@ -157,7 +162,10 @@ class ReferralLinkCard extends StatelessWidget {
                   ),
                   onPressed: _shareLink,
                   icon: const Icon(Boxicons.bx_share_alt, size: 18),
-                  label: const Text('Share Link', style: TextStyle(fontWeight: FontWeight.w600)),
+                  label: const Text(
+                    'Share Link',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -173,7 +181,10 @@ class ReferralLinkCard extends StatelessWidget {
                   ),
                   onPressed: () => _copyLink(context),
                   icon: const Icon(Boxicons.bx_copy, size: 18),
-                  label: const Text('Copy Link', style: TextStyle(fontWeight: FontWeight.w600)),
+                  label: const Text(
+                    'Copy Link',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
             ],

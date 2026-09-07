@@ -33,7 +33,9 @@ class LanguageTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
               color: isSelected
-                  ? (isDark ? const Color(0xFF00C853).withOpacity(0.1) : const Color(0xFFE8F7ED))
+                  ? (isDark
+                        ? const Color(0xFF00C853).withOpacity(0.1)
+                        : const Color(0xFFE8F7ED))
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
@@ -53,15 +55,18 @@ class LanguageTile extends StatelessWidget {
                     style: TextStyle(
                       color: isDark ? Colors.white : Colors.black87,
                       fontSize: 16,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
                     ),
                   ),
                 ),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
-                  transitionBuilder: (Widget child, Animation<double> animation) {
-                    return ScaleTransition(scale: animation, child: child);
-                  },
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                        return ScaleTransition(scale: animation, child: child);
+                      },
                   child: isSelected
                       ? const Icon(
                           Boxicons.bxs_check_circle,

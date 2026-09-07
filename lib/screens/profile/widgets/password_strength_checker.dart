@@ -4,7 +4,8 @@ import 'package:boxicons/boxicons.dart';
 class PasswordStrengthChecker extends StatelessWidget {
   final String password;
 
-  const PasswordStrengthChecker({Key? key, required this.password}) : super(key: key);
+  const PasswordStrengthChecker({Key? key, required this.password})
+    : super(key: key);
 
   bool get _hasMinLength => password.length >= 8;
   bool get _hasNumber => password.contains(RegExp(r'[0-9]'));
@@ -23,17 +24,24 @@ class PasswordStrengthChecker extends StatelessWidget {
 
   String get _strengthLabel {
     switch (_strengthScore) {
-      case 0: return 'None';
-      case 1: return 'Weak';
-      case 2: return 'Fair';
-      case 3: return 'Good';
-      case 4: return 'Strong';
-      default: return 'None';
+      case 0:
+        return 'None';
+      case 1:
+        return 'Weak';
+      case 2:
+        return 'Fair';
+      case 3:
+        return 'Good';
+      case 4:
+        return 'Strong';
+      default:
+        return 'None';
     }
   }
 
   Color _getStrengthColor(int score, bool isDark) {
-    if (score == 0) return isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
+    if (score == 0)
+      return isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
     if (score <= 1) return Colors.redAccent;
     if (score == 2) return Colors.orangeAccent;
     if (score == 3) return const Color(0xFF34D399); // Lighter green
@@ -44,12 +52,14 @@ class PasswordStrengthChecker extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final secondaryTextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final secondaryTextColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
     final activeGreen = const Color(0xFF10B981);
-    
+
     final int score = _strengthScore;
     final Color currentColor = _getStrengthColor(score, isDark);
-    
+
     // 5 segments calculation based on the 4 criteria
     int activeSegments = score == 4 ? 5 : score;
 
@@ -90,7 +100,9 @@ class PasswordStrengthChecker extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: index < activeSegments
                       ? currentColor
-                      : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0)),
+                      : (isDark
+                            ? const Color(0xFF1E293B)
+                            : const Color(0xFFE2E8F0)),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

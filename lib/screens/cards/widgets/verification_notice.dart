@@ -9,14 +9,20 @@ class VerificationNotice extends StatelessWidget {
   final bool accepted;
   final ValueChanged<bool> onChanged;
 
-  const VerificationNotice({super.key, required this.accepted, required this.onChanged});
+  const VerificationNotice({
+    super.key,
+    required this.accepted,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF10B981), Color(0xFF059669)]),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF10B981), Color(0xFF059669)],
+        ),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: [
           BoxShadow(
@@ -36,16 +42,29 @@ class VerificationNotice extends StatelessWidget {
               shape: BoxShape.circle,
               color: Colors.white.withOpacity(0.2),
             ),
-            child: const Icon(Boxicons.bx_shield_alt_2, color: Colors.white, size: 28),
+            child: const Icon(
+              Boxicons.bx_shield_alt_2,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Text('I understand that every submitted gift card will be verified by NobleCards before approval.', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                Text(
+                  'I understand that every submitted gift card will be verified by NobleCards before approval.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 SizedBox(height: AppSpacing.xs),
-                Text('Processing time may vary depending on the verification result.', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                Text(
+                  'Processing time may vary depending on the verification result.',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -61,7 +80,9 @@ class VerificationNotice extends StatelessWidget {
                 color: accepted ? Colors.white : Colors.transparent,
                 border: Border.all(color: Colors.white, width: 1.5),
               ),
-              child: accepted ? const Icon(Icons.check, color: Color(0xFF059669), size: 18) : null,
+              child: accepted
+                  ? const Icon(Icons.check, color: Color(0xFF059669), size: 18)
+                  : null,
             ),
           ),
         ],

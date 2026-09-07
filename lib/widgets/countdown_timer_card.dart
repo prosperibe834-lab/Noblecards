@@ -78,10 +78,12 @@ class _CountdownTimerCardState extends State<CountdownTimerCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final total = widget.expiryTime != null && widget.expiryTime!.isNotEmpty
         ? _resolveRemainingSeconds() == 0
-            ? 1
-            : _resolveRemainingSeconds()
+              ? 1
+              : _resolveRemainingSeconds()
         : widget.totalSeconds;
-    final progress = total <= 0 ? 0.0 : (_remainingSeconds / total).clamp(0.0, 1.0);
+    final progress = total <= 0
+        ? 0.0
+        : (_remainingSeconds / total).clamp(0.0, 1.0);
     final color = _getTimerColor();
 
     return Container(

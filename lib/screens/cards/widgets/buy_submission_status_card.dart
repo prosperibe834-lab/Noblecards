@@ -13,13 +13,19 @@ class BuySubmissionStatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.success.withOpacity(0.08) : AppColors.success.withOpacity(0.05),
+        color: isDark
+            ? AppColors.success.withOpacity(0.08)
+            : AppColors.success.withOpacity(0.05),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.success.withOpacity(0.3)),
       ),
       child: Row(
         children: [
-          const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 28),
+          const Icon(
+            Boxicons.bx_check_shield,
+            color: AppColors.success,
+            size: 28,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -45,7 +51,11 @@ class BuySubmissionStatusCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Boxicons.bx_chevron_right, color: isDark ? Colors.white54 : Colors.black54, size: 24),
+          Icon(
+            Boxicons.bx_chevron_right,
+            color: isDark ? Colors.white54 : Colors.black54,
+            size: 24,
+          ),
         ],
       ),
     );

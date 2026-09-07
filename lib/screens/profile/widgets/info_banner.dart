@@ -16,18 +16,11 @@ class InfoBanner extends StatelessWidget {
             ? AppColors.success.withOpacity(0.1)
             : AppColors.success.withOpacity(0.06),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.success.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.success.withOpacity(0.2), width: 1),
       ),
       child: Row(
         children: [
-          Icon(
-            Boxicons.bx_shield_quarter,
-            color: AppColors.success,
-            size: 24,
-          ),
+          Icon(Boxicons.bx_shield_quarter, color: AppColors.success, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

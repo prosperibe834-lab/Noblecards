@@ -13,13 +13,19 @@ class ReceiptFooterCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.success.withOpacity(0.08) : AppColors.success.withOpacity(0.05),
+        color: isDark
+            ? AppColors.success.withOpacity(0.08)
+            : AppColors.success.withOpacity(0.05),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.success.withOpacity(0.2)),
       ),
       child: Row(
         children: [
-          const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 28),
+          const Icon(
+            Boxicons.bx_check_shield,
+            color: AppColors.success,
+            size: 28,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

@@ -26,14 +26,14 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final defaultBg = isDark 
-        ? Colors.white.withOpacity(0.06) 
+
+    final defaultBg = isDark
+        ? Colors.white.withOpacity(0.06)
         : Colors.white.withOpacity(0.70);
 
     final defaultBorder = Border.all(
-      color: isDark 
-          ? Colors.white.withOpacity(0.12) 
+      color: isDark
+          ? Colors.white.withOpacity(0.12)
           : Colors.black.withOpacity(0.06),
       width: 1.2,
     );

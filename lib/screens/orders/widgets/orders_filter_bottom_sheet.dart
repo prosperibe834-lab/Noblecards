@@ -23,7 +23,8 @@ class OrdersFilterBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<OrdersFilterBottomSheet> createState() => _OrdersFilterBottomSheetState();
+  State<OrdersFilterBottomSheet> createState() =>
+      _OrdersFilterBottomSheetState();
 }
 
 class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
@@ -33,11 +34,25 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
   String? _sortBy;
 
   final List<String> _brands = [
-    'All', 'Amazon', 'Apple', 'Steam', 'Netflix', 'Google Play',
-    'PlayStation', 'Xbox', 'Razer Gold', 'Binance'
+    'All',
+    'Amazon',
+    'Apple',
+    'Steam',
+    'Netflix',
+    'Google Play',
+    'PlayStation',
+    'Xbox',
+    'Razer Gold',
+    'Binance',
   ];
 
-  final List<String> _sortOptions = ['Newest', 'Oldest', 'Highest Amount', 'Lowest Amount', 'A-Z'];
+  final List<String> _sortOptions = [
+    'Newest',
+    'Oldest',
+    'Highest Amount',
+    'Lowest Amount',
+    'A-Z',
+  ];
 
   @override
   void initState() {
@@ -56,7 +71,9 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppRadius.xl),
+        ),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -88,9 +105,21 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
             Wrap(
               spacing: 8,
               children: [
-                _buildChoiceChip('All', _type == null, () => setState(() => _type = null)),
-                _buildChoiceChip('Buy', _type == TransactionType.buy, () => setState(() => _type = TransactionType.buy)),
-                _buildChoiceChip('Sell', _type == TransactionType.sell, () => setState(() => _type = TransactionType.sell)),
+                _buildChoiceChip(
+                  'All',
+                  _type == null,
+                  () => setState(() => _type = null),
+                ),
+                _buildChoiceChip(
+                  'Buy',
+                  _type == TransactionType.buy,
+                  () => setState(() => _type = TransactionType.buy),
+                ),
+                _buildChoiceChip(
+                  'Sell',
+                  _type == TransactionType.sell,
+                  () => setState(() => _type = TransactionType.sell),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -101,10 +130,26 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _buildChoiceChip('All', _status == null, () => setState(() => _status = null)),
-                _buildChoiceChip('Completed', _status == OrderStatus.completed, () => setState(() => _status = OrderStatus.completed)),
-                _buildChoiceChip('Pending', _status == OrderStatus.pending, () => setState(() => _status = OrderStatus.pending)),
-                _buildChoiceChip('Cancelled', _status == OrderStatus.cancelled, () => setState(() => _status = OrderStatus.cancelled)),
+                _buildChoiceChip(
+                  'All',
+                  _status == null,
+                  () => setState(() => _status = null),
+                ),
+                _buildChoiceChip(
+                  'Completed',
+                  _status == OrderStatus.completed,
+                  () => setState(() => _status = OrderStatus.completed),
+                ),
+                _buildChoiceChip(
+                  'Pending',
+                  _status == OrderStatus.pending,
+                  () => setState(() => _status = OrderStatus.pending),
+                ),
+                _buildChoiceChip(
+                  'Cancelled',
+                  _status == OrderStatus.cancelled,
+                  () => setState(() => _status = OrderStatus.cancelled),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -115,11 +160,13 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
               spacing: 8,
               runSpacing: 8,
               children: _brands.map((brand) {
-                final isSelected = (_giftCard == null && brand == 'All') || _giftCard == brand;
+                final isSelected =
+                    (_giftCard == null && brand == 'All') || _giftCard == brand;
                 return _buildChoiceChip(
                   brand,
                   isSelected,
-                  () => setState(() => _giftCard = brand == 'All' ? null : brand),
+                  () =>
+                      setState(() => _giftCard = brand == 'All' ? null : brand),
                 );
               }).toList(),
             ),
@@ -151,7 +198,9 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
                     ),
                     child: const Text('Reset'),
                   ),
@@ -167,7 +216,9 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
                       backgroundColor: AppColors.success,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
                     ),
                     child: const Text('Apply Filters'),
                   ),
@@ -186,7 +237,11 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.success),
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: AppColors.success,
+        ),
       ),
     );
   }
@@ -202,7 +257,9 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
       backgroundColor: isDark ? AppColors.darkCard : Colors.grey.shade100,
       labelStyle: TextStyle(
         fontSize: 12,
-        color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+        color: isSelected
+            ? Colors.white
+            : (isDark ? Colors.white70 : Colors.black87),
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );

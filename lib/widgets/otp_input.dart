@@ -40,7 +40,7 @@ class OtpInput extends StatelessWidget {
               children: List.generate(6, (index) {
                 final isFilled = text.length > index;
                 final isFocused = text.length == index;
-                
+
                 return Container(
                   width: 50,
                   height: 60,
@@ -51,8 +51,8 @@ class OtpInput extends StatelessWidget {
                       color: isFocused
                           ? const Color(0xFF00C853)
                           : isFilled
-                              ? (isDark ? Colors.white38 : Colors.black26)
-                              : (isDark ? Colors.white10 : Colors.black12),
+                          ? (isDark ? Colors.white38 : Colors.black26)
+                          : (isDark ? Colors.white10 : Colors.black12),
                       width: isFocused || isFilled ? 1.5 : 1,
                     ),
                   ),

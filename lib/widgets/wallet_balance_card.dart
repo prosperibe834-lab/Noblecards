@@ -353,4 +353,3 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
     );
   }
 }
-

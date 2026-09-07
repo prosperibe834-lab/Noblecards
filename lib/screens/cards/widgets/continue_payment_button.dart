@@ -7,7 +7,8 @@ import 'package:noble_cards/theme/app_radius.dart';
 class ContinuePaymentButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const ContinuePaymentButton({Key? key, required this.onPressed}) : super(key: key);
+  const ContinuePaymentButton({Key? key, required this.onPressed})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class ContinuePaymentButton extends StatelessWidget {
             color: AppColors.primary.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
-          )
+          ),
         ],
       ),
       child: Material(
@@ -40,7 +41,14 @@ class ContinuePaymentButton extends StatelessWidget {
             children: const [
               Icon(Boxicons.bx_lock_alt, color: Colors.white, size: 20),
               SizedBox(width: 8),
-              Text('Continue to Payment', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(
+                'Continue to Payment',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               SizedBox(width: 8),
               Icon(Boxicons.bx_right_arrow_alt, color: Colors.white, size: 20),
             ],

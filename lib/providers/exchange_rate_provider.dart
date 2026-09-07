@@ -11,8 +11,7 @@ class ExchangeRateProvider {
   static void setRates(Map<String, double> rates) {
     _rates.clear();
     _rates.addAll({
-      for (final entry in rates.entries)
-        entry.key.toUpperCase(): entry.value,
+      for (final entry in rates.entries) entry.key.toUpperCase(): entry.value,
     });
     _hasLoaded = _rates.isNotEmpty;
   }
@@ -25,7 +24,9 @@ class ExchangeRateProvider {
       );
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to load exchange rates: ${response.statusCode}');
+        throw Exception(
+          'Failed to load exchange rates: ${response.statusCode}',
+        );
       }
 
       final data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -43,7 +44,9 @@ class ExchangeRateProvider {
       }
 
       if (normalized.isEmpty) {
-        throw Exception('No valid exchange rates were returned by the backend.');
+        throw Exception(
+          'No valid exchange rates were returned by the backend.',
+        );
       }
 
       setRates(normalized);

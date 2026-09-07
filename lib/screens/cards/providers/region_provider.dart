@@ -4,7 +4,8 @@ import '../models/gift_card_region_model.dart';
 import '../services/region_service.dart';
 
 class RegionProvider extends ChangeNotifier {
-  RegionProvider({RegionService? service}) : _service = service ?? RegionService() {
+  RegionProvider({RegionService? service})
+    : _service = service ?? RegionService() {
     loadRegions();
   }
 
@@ -30,7 +31,9 @@ class RegionProvider extends ChangeNotifier {
       final name = region.countryName.toLowerCase();
       final code = region.countryCode.toLowerCase();
       final currency = region.currencyCode.toLowerCase();
-      return name.contains(query) || code.contains(query) || currency.contains(query);
+      return name.contains(query) ||
+          code.contains(query) ||
+          currency.contains(query);
     }).toList();
   }
 

@@ -12,7 +12,8 @@ class BiometricAuthService {
   Future<bool> canUseBiometrics() async {
     try {
       final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
-      return canAuthenticateWithBiometrics && (await _auth.getAvailableBiometrics()).isNotEmpty;
+      return canAuthenticateWithBiometrics &&
+          (await _auth.getAvailableBiometrics()).isNotEmpty;
     } on Object {
       return false;
     }
@@ -21,13 +22,13 @@ class BiometricAuthService {
   /// Determines the specific type of biometric available (Face vs Fingerprint)
   Future<BiometricSupportType> getAvailableBiometricType() async {
     try {
-      final List<BiometricType> availableBiometrics =
-          await _auth.getAvailableBiometrics();
+      final List<BiometricType> availableBiometrics = await _auth
+          .getAvailableBiometrics();
 
       if (availableBiometrics.contains(BiometricType.face)) {
         return BiometricSupportType.face;
       } else if (availableBiometrics.contains(BiometricType.fingerprint) ||
-                 availableBiometrics.contains(BiometricType.strong)) {
+          availableBiometrics.contains(BiometricType.strong)) {
         return BiometricSupportType.fingerprint;
       }
     } on Object {
@@ -59,10 +60,14 @@ class BiometricAuthService {
         await AuthenticationService().hasBiometricSession();
   }
 
-  Future<bool> restoreSession() => AuthenticationService().restoreBiometricSession();
+  Future<bool> restoreSession() =>
+      AuthenticationService().restoreBiometricSession();
 
   Future<void> recordAuthentication() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('biometric_last_authenticated_at', DateTime.now().millisecondsSinceEpoch);
+    await prefs.setInt(
+      'biometric_last_authenticated_at',
+      DateTime.now().millisecondsSinceEpoch,
+    );
   }
 }

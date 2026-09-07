@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_radius.dart';
@@ -19,10 +19,20 @@ class AmountInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Amount', style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.w600)),
+        Text(
+          'Amount',
+          style: TextStyle(
+            color: textColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -30,17 +40,34 @@ class AmountInput extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Text(provider.currencySymbol, style: TextStyle(color: textColor, fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                provider.currencySymbol,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: TextFormField(
                   initialValue: provider.amount.toStringAsFixed(0),
                   keyboardType: TextInputType.number,
-                  style: TextStyle(color: textColor, fontSize: 20, fontWeight: FontWeight.bold),
-                  decoration: const InputDecoration(border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
                   onChanged: (value) {
                     if (value.isNotEmpty) {
-                      provider.setAmount(double.tryParse(value) ?? provider.amount);
+                      provider.setAmount(
+                        double.tryParse(value) ?? provider.amount,
+                      );
                     }
                   },
                 ),

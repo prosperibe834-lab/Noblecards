@@ -17,7 +17,9 @@ class AddCardButton extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkCard : AppColors.lightInput,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.darkCard
+              : AppColors.lightInput,
           borderRadius: BorderRadius.circular(AppRadius.md),
           border: Border.all(color: AppColors.primary.withOpacity(0.12)),
         ),
@@ -26,7 +28,13 @@ class AddCardButton extends StatelessWidget {
           children: const [
             Icon(Boxicons.bx_plus, color: AppColors.primary, size: 18),
             SizedBox(width: AppSpacing.sm),
-            Text('Add Another Card', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700)),
+            Text(
+              'Add Another Card',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ),
       ),

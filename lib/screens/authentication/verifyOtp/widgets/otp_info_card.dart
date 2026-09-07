@@ -10,10 +10,10 @@ class OtpInfoCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Matching the soft card appearance from the reference image
-    final Color cardColor = isDark 
+    final Color cardColor = isDark
         ? AppColors.primary.withValues(alpha: 0.08)
         : const Color(0xFFF0FDF4); // Soft green
-    final Color borderColor = isDark 
+    final Color borderColor = isDark
         ? AppColors.primary.withValues(alpha: 0.15)
         : AppColors.successLight.withValues(alpha: 0.3);
 
@@ -49,7 +49,9 @@ class OtpInfoCard extends StatelessWidget {
                   'For your security, do not share this code with anyone.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 13,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                 ),
               ],

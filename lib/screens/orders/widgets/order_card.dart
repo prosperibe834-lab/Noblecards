@@ -13,7 +13,7 @@ class OrderCard extends StatelessWidget {
 
   Widget _buildBrandLogo(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     IconData icon;
     Color iconColor;
 
@@ -50,9 +50,7 @@ class OrderCard extends StatelessWidget {
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
-      child: Center(
-        child: Icon(icon, color: iconColor, size: 26),
-      ),
+      child: Center(child: Icon(icon, color: iconColor, size: 26)),
     );
   }
 
@@ -81,7 +79,7 @@ class OrderCard extends StatelessWidget {
                   color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
             ),
             child: Row(
@@ -115,7 +113,9 @@ class OrderCard extends StatelessWidget {
                         'Order ID: ${order.orderId}',
                         style: TextStyle(
                           fontSize: 11,
-                          color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                          color: isDark
+                              ? AppColors.darkSubText
+                              : AppColors.lightSubText,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -123,7 +123,9 @@ class OrderCard extends StatelessWidget {
                         order.date,
                         style: TextStyle(
                           fontSize: 11,
-                          color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                          color: isDark
+                              ? AppColors.darkSubText
+                              : AppColors.lightSubText,
                         ),
                       ),
                     ],

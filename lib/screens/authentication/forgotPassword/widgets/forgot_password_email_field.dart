@@ -17,7 +17,8 @@ class ForgotPasswordEmailField extends StatefulWidget {
   });
 
   @override
-  State<ForgotPasswordEmailField> createState() => _ForgotPasswordEmailFieldState();
+  State<ForgotPasswordEmailField> createState() =>
+      _ForgotPasswordEmailFieldState();
 }
 
 class _ForgotPasswordEmailFieldState extends State<ForgotPasswordEmailField> {
@@ -38,10 +39,13 @@ class _ForgotPasswordEmailFieldState extends State<ForgotPasswordEmailField> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
+    final bool hasError =
+        widget.errorText != null && widget.errorText!.isNotEmpty;
 
     final Color bgColor = isDark ? AppColors.darkInput : AppColors.lightInput;
-    final Color iconBgColor = AppColors.primary.withOpacity(isDark ? 0.15 : 0.08);
+    final Color iconBgColor = AppColors.primary.withOpacity(
+      isDark ? 0.15 : 0.08,
+    );
 
     BorderSide borderSide;
     if (hasError) {
@@ -96,16 +100,16 @@ class _ForgotPasswordEmailFieldState extends State<ForgotPasswordEmailField> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   onChanged: widget.onChanged,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
                     hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isDark
-                              ? AppColors.darkSubText.withOpacity(0.6)
-                              : AppColors.lightSubText.withOpacity(0.6),
-                        ),
+                      color: isDark
+                          ? AppColors.darkSubText.withOpacity(0.6)
+                          : AppColors.lightSubText.withOpacity(0.6),
+                    ),
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
@@ -124,15 +128,19 @@ class _ForgotPasswordEmailFieldState extends State<ForgotPasswordEmailField> {
             padding: const EdgeInsets.only(left: 8, top: 6),
             child: Row(
               children: [
-                const Icon(Boxicons.bx_error_circle, color: AppColors.error, size: 14),
+                const Icon(
+                  Boxicons.bx_error_circle,
+                  color: AppColors.error,
+                  size: 14,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   widget.errorText!,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.error,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: AppColors.error,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

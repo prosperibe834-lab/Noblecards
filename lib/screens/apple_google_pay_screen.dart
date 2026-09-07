@@ -83,8 +83,9 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
 
     // 1. Load Dummy Payment Configuration for UI Demo
     try {
-      final dummyJson =
-          _isIos ? AppleGooglePayScreen._dummyApplePayConfig : AppleGooglePayScreen._dummyGooglePayConfig;
+      final dummyJson = _isIos
+          ? AppleGooglePayScreen._dummyApplePayConfig
+          : AppleGooglePayScreen._dummyGooglePayConfig;
       _paymentConfiguration = PaymentConfiguration.fromJsonString(dummyJson);
     } catch (e) {
       _paymentConfigError = e.toString();
@@ -96,26 +97,15 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
       duration: const Duration(milliseconds: 800),
     );
 
-    _fadeAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOut,
-    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
 
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.08),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+        );
 
     _pulseAnim = Tween<double>(begin: 0.35, end: 0.85).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
     );
 
     // 3. Simulate quick network check / shimmer initialization
@@ -201,16 +191,23 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 12.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
                     child: _isInitializing
-                        ? _buildFintechShimmerSkeleton(theme, isDark, primaryColor)
+                        ? _buildFintechShimmerSkeleton(
+                            theme,
+                            isDark,
+                            primaryColor,
+                          )
                         : FadeTransition(
                             opacity: _fadeAnim,
                             child: SlideTransition(
@@ -220,7 +217,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
                                 child: Column(
                                   children: [
                                     const SizedBox(height: 16),
-                                    
+
                                     // Main Gradient Transaction Summary Card
                                     _buildTransactionCard(
                                       theme,
@@ -232,7 +229,11 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
                                     const SizedBox(height: 20),
 
                                     // Security & Trust Banner
-                                    _buildSecurityBadge(theme, isDark, primaryColor),
+                                    _buildSecurityBadge(
+                                      theme,
+                                      isDark,
+                                      primaryColor,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -271,11 +272,12 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
                                     : ApplePayButtonStyle.black,
                                 type: ApplePayButtonType.buy,
                                 margin: const EdgeInsets.only(bottom: 12.0),
-                                onPaymentResult: (result) => _handlePaymentResult(
-                                  context,
-                                  paymentProvider,
-                                  result,
-                                ),
+                                onPaymentResult: (result) =>
+                                    _handlePaymentResult(
+                                      context,
+                                      paymentProvider,
+                                      result,
+                                    ),
                                 loadingIndicator: Center(
                                   child: CircularProgressIndicator(
                                     color: primaryColor,
@@ -291,11 +293,12 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
                                     : GooglePayButtonTheme.light,
                                 type: GooglePayButtonType.pay,
                                 margin: const EdgeInsets.only(bottom: 12.0),
-                                onPaymentResult: (result) => _handlePaymentResult(
-                                  context,
-                                  paymentProvider,
-                                  result,
-                                ),
+                                onPaymentResult: (result) =>
+                                    _handlePaymentResult(
+                                      context,
+                                      paymentProvider,
+                                      result,
+                                    ),
                                 loadingIndicator: Center(
                                   child: CircularProgressIndicator(
                                     color: primaryColor,
@@ -347,10 +350,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
             secondaryColor.withOpacity(0.12),
             theme.cardColor,
           ]
-        : [
-            primaryColor.withOpacity(0.10),
-            theme.cardColor,
-          ];
+        : [primaryColor.withOpacity(0.10), theme.cardColor];
 
     return Container(
       width: double.infinity,
@@ -384,10 +384,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(0.75),
-                ],
+                colors: [primaryColor, primaryColor.withOpacity(0.75)],
               ),
               boxShadow: [
                 BoxShadow(
@@ -404,7 +401,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
             ),
           ),
           const SizedBox(height: 18),
-          
+
           Text(
             'Deposit Amount',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -413,7 +410,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
             ),
           ),
           const SizedBox(height: 6),
-          
+
           // Amount Heading
           Text(
             '${widget.currency} ${widget.amount.toStringAsFixed(2)}',
@@ -422,15 +419,15 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
               letterSpacing: -1.0,
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           Divider(
             color: isDark
                 ? Colors.white.withOpacity(0.1)
                 : Colors.black.withOpacity(0.08),
           ),
-          
+
           const SizedBox(height: 14),
 
           // Detail Rows
@@ -517,11 +514,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
       ),
       child: Row(
         children: [
-          Icon(
-            Boxicons.bx_shield_quarter,
-            color: primaryColor,
-            size: 22,
-          ),
+          Icon(Boxicons.bx_shield_quarter, color: primaryColor, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -689,10 +682,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
           color: theme.cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 30,
-            ),
+            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 30),
           ],
         ),
         child: Column(
@@ -743,10 +733,7 @@ class _AppleGooglePayScreenState extends State<AppleGooglePayScreen>
               },
               child: const Text(
                 'Back to Wallet',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               ),
             ),
           ],

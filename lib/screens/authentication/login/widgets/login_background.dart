@@ -13,10 +13,8 @@ class LoginBackground extends StatelessWidget {
     return Stack(
       children: [
         // Background Color
-        Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        
+        Container(color: Theme.of(context).scaffoldBackgroundColor),
+
         // Top Right Fintech Gradient Blob
         Positioned(
           top: -100,

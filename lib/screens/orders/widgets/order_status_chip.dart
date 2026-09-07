@@ -78,14 +78,11 @@ class OrderStatusBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: fg,
-        ),
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: fg),
       ),
     );
   }
 
-  bool isDark(BuildContext context) => Theme.of(context).brightness == Brightness.dark;
+  bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
 }

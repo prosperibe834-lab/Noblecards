@@ -47,7 +47,10 @@ class _HelpCenterShimmerState extends State<HelpCenterShimmer>
                 // Search Bar Shimmer
                 Container(
                   height: 50,
-                  decoration: BoxDecoration(color: baseColor, borderRadius: BorderRadius.circular(16)),
+                  decoration: BoxDecoration(
+                    color: baseColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 // Section Title Shimmer
@@ -71,7 +74,10 @@ class _HelpCenterShimmerState extends State<HelpCenterShimmer>
                     childAspectRatio: 0.8,
                   ),
                   itemBuilder: (_, __) => Container(
-                    decoration: BoxDecoration(color: baseColor, borderRadius: BorderRadius.circular(16)),
+                    decoration: BoxDecoration(
+                      color: baseColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -79,10 +85,17 @@ class _HelpCenterShimmerState extends State<HelpCenterShimmer>
                 Container(width: 180, height: 16, color: baseColor),
                 const SizedBox(height: 16),
                 // FAQs List Shimmer
-                ...List.generate(4, (index) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Container(width: double.infinity, height: 40, color: baseColor),
-                )),
+                ...List.generate(
+                  4,
+                  (index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 40,
+                      color: baseColor,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

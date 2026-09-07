@@ -64,7 +64,10 @@ class CategoryFilterDropdown extends StatelessWidget {
                 children: [
                   const Icon(Boxicons.bx_category, size: 16),
                   const SizedBox(width: 8),
-                  Text(_getCategoryName(cat), style: const TextStyle(fontSize: 13)),
+                  Text(
+                    _getCategoryName(cat),
+                    style: const TextStyle(fontSize: 13),
+                  ),
                 ],
               ),
             );

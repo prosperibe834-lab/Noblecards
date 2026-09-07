@@ -17,7 +17,9 @@ class DownloadReceiptButton extends StatelessWidget {
             content: const Text('Preparing receipt...'),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.success,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       },
@@ -33,7 +35,7 @@ class DownloadReceiptButton extends StatelessWidget {
               color: AppColors.success.withOpacity(0.3),
               blurRadius: 12,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: const Row(

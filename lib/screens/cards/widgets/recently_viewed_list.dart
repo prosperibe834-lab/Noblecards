@@ -47,7 +47,8 @@ class RecentlyViewedList extends StatelessWidget {
                     card.logoUrl,
                     width: 28,
                     height: 28,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, size: 28),
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.credit_card, size: 28),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -64,7 +65,10 @@ class RecentlyViewedList extends StatelessWidget {
                     card.country,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 9, color: AppColors.lightSubText),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: AppColors.lightSubText,
+                    ),
                   ),
                 ],
               ),

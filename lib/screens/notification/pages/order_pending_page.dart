@@ -18,7 +18,10 @@ class OrderPendingPage extends StatelessWidget {
           children: [
             const Icon(Boxicons.bx_time_five, size: 70, color: Colors.orange),
             const SizedBox(height: 16),
-            const Text("Order Pending Review", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              "Order Pending Review",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 24),
             Card(
               child: Padding(
@@ -53,7 +56,7 @@ class OrderPendingPage extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

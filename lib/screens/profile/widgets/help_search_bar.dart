@@ -50,14 +50,19 @@ class HelpSearchBar extends StatelessWidget {
               ? IconButton(
                   icon: Icon(
                     Boxicons.bx_x_circle,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                     size: 18,
                   ),
                   onPressed: onClear,
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );

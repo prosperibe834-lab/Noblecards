@@ -64,7 +64,7 @@ class FavoriteCurrencyChip extends StatelessWidget {
                 if (isSelected) ...[
                   const SizedBox(width: 4),
                   const Icon(Boxicons.bx_check, size: 16, color: Colors.white),
-                ]
+                ],
               ],
             ),
           ),

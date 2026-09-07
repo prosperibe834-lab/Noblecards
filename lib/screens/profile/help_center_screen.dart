@@ -112,11 +112,16 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
     // Filter FAQs based on Search Query
     final filteredFaqs = HelpCenterData.faqs
-        .where((faq) => faq.question.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where(
+          (faq) =>
+              faq.question.toLowerCase().contains(_searchQuery.toLowerCase()),
+        )
         .toList();
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -152,7 +157,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       'How can we help you today?',
                       style: TextStyle(
                         fontSize: 13,
-                        color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                        color: isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText,
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -179,12 +186,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: HelpCenterData.quickHelpItems.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 0.80,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.80,
+                            ),
                         itemBuilder: (context, index) {
                           return QuickHelpCard(
                             item: HelpCenterData.quickHelpItems[index],
@@ -201,14 +209,20 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                           color: isDark ? AppColors.darkCard : AppColors.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+                            color: isDark
+                                ? Colors.white10
+                                : Colors.black.withOpacity(0.04),
                           ),
                         ),
                         child: Column(
                           children: List.generate(
-                            _searchQuery.isEmpty ? HelpCenterData.faqs.length : filteredFaqs.length,
+                            _searchQuery.isEmpty
+                                ? HelpCenterData.faqs.length
+                                : filteredFaqs.length,
                             (index) {
-                              final data = _searchQuery.isEmpty ? HelpCenterData.faqs : filteredFaqs;
+                              final data = _searchQuery.isEmpty
+                                  ? HelpCenterData.faqs
+                                  : filteredFaqs;
                               return FAQTile(
                                 faq: data[index],
                                 isLast: index == data.length - 1,
@@ -238,18 +252,22 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       const SizedBox(height: 32),
 
                       // Contact Support
-                      _buildSectionHeader('Contact Support', showViewAll: false),
+                      _buildSectionHeader(
+                        'Contact Support',
+                        showViewAll: false,
+                      ),
                       const SizedBox(height: 16),
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: HelpCenterData.contactSupportItems.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                          childAspectRatio: 0.75,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio: 0.75,
+                            ),
                         itemBuilder: (context, index) {
                           return ContactSupportCard(
                             item: HelpCenterData.contactSupportItems[index],
@@ -285,7 +303,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                                 color: AppColors.success.withOpacity(0.3),
                                 blurRadius: 16,
                                 offset: const Offset(0, 6),
-                              )
+                              ),
                             ],
                           ),
                           child: Row(

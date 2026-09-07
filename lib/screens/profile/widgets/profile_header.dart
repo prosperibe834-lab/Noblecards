@@ -15,7 +15,8 @@ class ProfileHeader extends StatefulWidget {
   State<ProfileHeader> createState() => _ProfileHeaderState();
 }
 
-class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProviderStateMixin {
+class _ProfileHeaderState extends State<ProfileHeader>
+    with SingleTickerProviderStateMixin {
   late AnimationController _copyAnimController;
   late Animation<double> _copyScaleAnim;
   AuthUser? _user;
@@ -51,10 +52,15 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('User ID copied to clipboard.', style: TextStyle(color: Colors.white)),
+          content: const Text(
+            'User ID copied to clipboard.',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
         ),
       );
     }
@@ -84,13 +90,15 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkCard : AppColors.white,
           borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04)),
+          border: Border.all(
+            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -103,7 +111,15 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                 shape: BoxShape.circle,
                 color: isDark ? AppColors.darkBackground : Colors.grey[200],
                 image: DecorationImage(
-                  image: user?.profileImageUrl != null ? NetworkImage(user!.profileImageUrl!.startsWith('/') ? '${AuthenticationService.apiBaseUrl}${user.profileImageUrl}' : user.profileImageUrl!) : const NetworkImage('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'),
+                  image: user?.profileImageUrl != null
+                      ? NetworkImage(
+                          user!.profileImageUrl!.startsWith('/')
+                              ? '${AuthenticationService.apiBaseUrl}${user.profileImageUrl}'
+                              : user.profileImageUrl!,
+                        )
+                      : const NetworkImage(
+                          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+                        ),
                   fit: BoxFit.cover,
                 ),
                 border: Border.all(
@@ -121,7 +137,9 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                   Row(
                     children: [
                       Text(
-                        user?.displayName ?? '${user?.firstName ?? ''} ${user?.lastName ?? ''}'.trim(),
+                        user?.displayName ??
+                            '${user?.firstName ?? ''} ${user?.lastName ?? ''}'
+                                .trim(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -129,17 +147,33 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                         ),
                       ),
                       const SizedBox(width: 6),
-                      if (user?.isVerified == true) const Icon(Boxicons.bxs_check_circle, color: AppColors.success, size: 18),
+                      if (user?.isVerified == true)
+                        const Icon(
+                          Boxicons.bxs_check_circle,
+                          color: AppColors.success,
+                          size: 18,
+                        ),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      if (user?.isVerified == true) const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 14),
+                      if (user?.isVerified == true)
+                        const Icon(
+                          Boxicons.bx_check_shield,
+                          color: AppColors.success,
+                          size: 14,
+                        ),
                       const SizedBox(width: 4),
                       Text(
-                        user?.isVerified == true ? 'Noble Verified' : 'Profile incomplete',
-                        style: TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w600),
+                        user?.isVerified == true
+                            ? 'Noble Verified'
+                            : 'Profile incomplete',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.success,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -148,7 +182,9 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                     'Member since July 2026',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -180,7 +216,10 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                 ],
               ),
             ),
-            Icon(Boxicons.bx_chevron_right, color: isDark ? Colors.white54 : Colors.black54),
+            Icon(
+              Boxicons.bx_chevron_right,
+              color: isDark ? Colors.white54 : Colors.black54,
+            ),
           ],
         ),
       ),

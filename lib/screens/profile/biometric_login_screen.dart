@@ -46,7 +46,9 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
     final settings = provider.settings;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -71,7 +73,10 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
           ? const BiometricLoadingShimmer()
           : SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -114,7 +119,8 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
                   BiometricMethodCard(
                     icon: Boxicons.bx_mobile_alt,
                     title: 'Remember this device',
-                    subtitle: 'Skip biometric login on this device for faster access.',
+                    subtitle:
+                        'Skip biometric login on this device for faster access.',
                     isSupported: true,
                     isEnabled: settings.isRememberDeviceEnabled,
                     onToggle: provider.toggleRememberDevice,
@@ -141,14 +147,16 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
                       color: isDark ? AppColors.darkCard : AppColors.white,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+                        color: isDark
+                            ? Colors.white10
+                            : Colors.black.withOpacity(0.04),
                       ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
-                        )
+                        ),
                       ],
                     ),
                     child: Column(
@@ -158,7 +166,8 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
                           subtitle:
                               'Always verify biometric for payments, withdrawals and sensitive actions.',
                           switchValue: settings.isRequireForTransactionsEnabled,
-                          onSwitchChanged: provider.toggleRequireForTransactions,
+                          onSwitchChanged:
+                              provider.toggleRequireForTransactions,
                         ),
                         Divider(
                           height: 1,

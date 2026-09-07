@@ -24,7 +24,9 @@ class EmptyLanguageWidget extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                      color: isDark
+                          ? Colors.white10
+                          : Colors.black.withOpacity(0.05),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

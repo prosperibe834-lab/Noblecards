@@ -22,13 +22,11 @@ class CurrencyModel {
 class FavouriteCurrenciesScreen extends StatefulWidget {
   final Function(List<String>)? onFavoritesUpdated;
 
-  const FavouriteCurrenciesScreen({
-    super.key,
-    this.onFavoritesUpdated,
-  });
+  const FavouriteCurrenciesScreen({super.key, this.onFavoritesUpdated});
 
   @override
-  State<FavouriteCurrenciesScreen> createState() => _FavouriteCurrenciesScreenState();
+  State<FavouriteCurrenciesScreen> createState() =>
+      _FavouriteCurrenciesScreenState();
 }
 
 class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
@@ -37,19 +35,110 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
 
   // Initial Currencies Dataset
   final List<CurrencyModel> _allCurrencies = [
-    CurrencyModel(code: 'USD', name: 'United States Dollar', symbol: '\$', flag: '🇺🇸', rateToUsd: 1.0, isFavorite: true),
-    CurrencyModel(code: 'NGN', name: 'Nigerian Naira', symbol: '₦', flag: '🇳🇬', rateToUsd: 1550.0, isFavorite: true),
-    CurrencyModel(code: 'GBP', name: 'British Pound Sterling', symbol: '£', flag: '🇬🇧', rateToUsd: 0.78, isFavorite: true),
-    CurrencyModel(code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺', rateToUsd: 0.92, isFavorite: true),
-    CurrencyModel(code: 'CAD', name: 'Canadian Dollar', symbol: 'CA\$', flag: '🇨🇦', rateToUsd: 1.36, isFavorite: false),
-    CurrencyModel(code: 'AUD', name: 'Australian Dollar', symbol: 'A\$', flag: '🇦🇺', rateToUsd: 1.51, isFavorite: false),
-    CurrencyModel(code: 'GHS', name: 'Ghanaian Cedi', symbol: 'GH₵', flag: '🇬🇭', rateToUsd: 15.2, isFavorite: false),
-    CurrencyModel(code: 'KES', name: 'Kenyan Shilling', symbol: 'KSh', flag: '🇰🇪', rateToUsd: 129.5, isFavorite: false),
-    CurrencyModel(code: 'ZAR', name: 'South African Rand', symbol: 'R', flag: '🇿🇦', rateToUsd: 18.2, isFavorite: false),
-    CurrencyModel(code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵', rateToUsd: 156.4, isFavorite: false),
-    CurrencyModel(code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳', rateToUsd: 7.25, isFavorite: false),
-    CurrencyModel(code: 'INR', name: 'Indian Rupee', symbol: '₹', flag: '🇮🇳', rateToUsd: 83.5, isFavorite: false),
-    CurrencyModel(code: 'AED', name: 'UAE Dirham', symbol: 'AED', flag: '🇦🇪', rateToUsd: 3.67, isFavorite: false),
+    CurrencyModel(
+      code: 'USD',
+      name: 'United States Dollar',
+      symbol: '\$',
+      flag: '🇺🇸',
+      rateToUsd: 1.0,
+      isFavorite: true,
+    ),
+    CurrencyModel(
+      code: 'NGN',
+      name: 'Nigerian Naira',
+      symbol: '₦',
+      flag: '🇳🇬',
+      rateToUsd: 1550.0,
+      isFavorite: true,
+    ),
+    CurrencyModel(
+      code: 'GBP',
+      name: 'British Pound Sterling',
+      symbol: '£',
+      flag: '🇬🇧',
+      rateToUsd: 0.78,
+      isFavorite: true,
+    ),
+    CurrencyModel(
+      code: 'EUR',
+      name: 'Euro',
+      symbol: '€',
+      flag: '🇪🇺',
+      rateToUsd: 0.92,
+      isFavorite: true,
+    ),
+    CurrencyModel(
+      code: 'CAD',
+      name: 'Canadian Dollar',
+      symbol: 'CA\$',
+      flag: '🇨🇦',
+      rateToUsd: 1.36,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'AUD',
+      name: 'Australian Dollar',
+      symbol: 'A\$',
+      flag: '🇦🇺',
+      rateToUsd: 1.51,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'GHS',
+      name: 'Ghanaian Cedi',
+      symbol: 'GH₵',
+      flag: '🇬🇭',
+      rateToUsd: 15.2,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'KES',
+      name: 'Kenyan Shilling',
+      symbol: 'KSh',
+      flag: '🇰🇪',
+      rateToUsd: 129.5,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'ZAR',
+      name: 'South African Rand',
+      symbol: 'R',
+      flag: '🇿🇦',
+      rateToUsd: 18.2,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'JPY',
+      name: 'Japanese Yen',
+      symbol: '¥',
+      flag: '🇯🇵',
+      rateToUsd: 156.4,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'CNY',
+      name: 'Chinese Yuan',
+      symbol: '¥',
+      flag: '🇨🇳',
+      rateToUsd: 7.25,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'INR',
+      name: 'Indian Rupee',
+      symbol: '₹',
+      flag: '🇮🇳',
+      rateToUsd: 83.5,
+      isFavorite: false,
+    ),
+    CurrencyModel(
+      code: 'AED',
+      name: 'UAE Dirham',
+      symbol: 'AED',
+      flag: '🇦🇪',
+      rateToUsd: 3.67,
+      isFavorite: false,
+    ),
   ];
 
   @override
@@ -75,7 +164,9 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
     });
 
     if (widget.onFavoritesUpdated != null) {
-      widget.onFavoritesUpdated!(_favoriteCurrencies.map((e) => e.code).toList());
+      widget.onFavoritesUpdated!(
+        _favoriteCurrencies.map((e) => e.code).toList(),
+      );
     }
   }
 
@@ -104,13 +195,19 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
           children: [
             // Search Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 8.0,
+              ),
               child: TextField(
                 controller: _searchController,
                 onChanged: (val) => setState(() => _searchQuery = val.trim()),
                 decoration: InputDecoration(
                   hintText: 'Search currency by code or name...',
-                  prefixIcon: const Icon(Boxicons.bx_search, color: Colors.grey),
+                  prefixIcon: const Icon(
+                    Boxicons.bx_search,
+                    color: Colors.grey,
+                  ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Boxicons.bx_x, color: Colors.grey),
@@ -133,7 +230,10 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: theme.primaryColor, width: 1.8),
+                    borderSide: BorderSide(
+                      color: theme.primaryColor,
+                      width: 1.8,
+                    ),
                   ),
                 ),
               ),
@@ -178,7 +278,10 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
                   itemBuilder: (context, index) {
                     final item = _favoriteCurrencies[index];
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.primaryColor.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(25),
@@ -218,7 +321,9 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                _searchQuery.isEmpty ? 'ALL SUPPORTED CURRENCIES' : 'SEARCH RESULTS',
+                _searchQuery.isEmpty
+                    ? 'ALL SUPPORTED CURRENCIES'
+                    : 'SEARCH RESULTS',
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -236,7 +341,11 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Boxicons.bx_search_alt, size: 48, color: Colors.grey),
+                          const Icon(
+                            Boxicons.bx_search_alt,
+                            size: 48,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             'No currency found for "$_searchQuery"',
@@ -246,7 +355,10 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
                       ),
                     )
                   : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
                       itemCount: _filteredCurrencies.length,
                       itemBuilder: (context, index) {
                         final currency = _filteredCurrencies[index];
@@ -297,7 +409,10 @@ class _FavouriteCurrenciesScreenState extends State<FavouriteCurrenciesScreen> {
                             ),
                             subtitle: Text(
                               currency.name,
-                              style: const TextStyle(fontSize: 13, color: Colors.black54),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
                             ),
                             trailing: IconButton(
                               icon: Icon(

@@ -48,15 +48,19 @@ class ForgotPasswordHeader extends StatelessWidget {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Boxicons.bx_credit_card, color: Colors.white, size: 28),
+                  child: const Icon(
+                    Boxicons.bx_credit_card,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Text(
                   'NobleCards',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             );
@@ -69,9 +73,9 @@ class ForgotPasswordHeader extends StatelessWidget {
           'Forgot Password?',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -80,9 +84,9 @@ class ForgotPasswordHeader extends StatelessWidget {
           "No worries! Enter your email address and\nwe'll send you a link to reset your password.",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                height: 1.45,
-                color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
-              ),
+            height: 1.45,
+            color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+          ),
         ),
       ],
     );

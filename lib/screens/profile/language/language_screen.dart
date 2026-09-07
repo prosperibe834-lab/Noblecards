@@ -17,7 +17,7 @@ class LanguageScreen extends StatefulWidget {
 
 class _LanguageScreenState extends State<LanguageScreen> {
   final LanguageService _languageService = LanguageService();
-  
+
   List<LanguageModel> _allLanguages = [];
   List<LanguageModel> _filteredLanguages = [];
   LanguageModel? _selectedLanguage;
@@ -36,8 +36,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
         _allLanguages = languages;
         _filteredLanguages = languages;
         _selectedLanguage = languages.firstWhere(
-          (lang) => lang.isDefault, 
-          orElse: () => languages.first
+          (lang) => lang.isDefault,
+          orElse: () => languages.first,
         );
         _isLoading = false;
       });
@@ -50,7 +50,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
         _filteredLanguages = _allLanguages;
       } else {
         _filteredLanguages = _allLanguages
-            .where((lang) => lang.name.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (lang) => lang.name.toLowerCase().contains(query.toLowerCase()),
+            )
             .toList();
       }
     });
@@ -73,7 +75,11 @@ class _LanguageScreenState extends State<LanguageScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -110,7 +116,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
                       children: [
                         Hero(
                           tag: 'current_language_card',
-                          child: CurrentLanguageCard(language: _selectedLanguage!),
+                          child: CurrentLanguageCard(
+                            language: _selectedLanguage!,
+                          ),
                         ),
                         const SizedBox(height: 24),
                         LanguageSearchField(onChanged: _onSearch),
@@ -136,10 +144,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             itemCount: _filteredLanguages.length,
                             itemBuilder: (context, index) {
                               final language = _filteredLanguages[index];
-                              
+
                               // Staggered slide animation setup
                               return TweenAnimationBuilder(
-                                duration: Duration(milliseconds: 300 + (index * 50).clamp(0, 500)),
+                                duration: Duration(
+                                  milliseconds:
+                                      300 + (index * 50).clamp(0, 500),
+                                ),
                                 tween: Tween<double>(begin: 0, end: 1),
                                 builder: (context, double value, child) {
                                   return Opacity(
@@ -152,7 +163,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                 },
                                 child: LanguageTile(
                                   language: language,
-                                  isSelected: _selectedLanguage?.id == language.id,
+                                  isSelected:
+                                      _selectedLanguage?.id == language.id,
                                   onTap: () => _onLanguageSelected(language),
                                 ),
                               );

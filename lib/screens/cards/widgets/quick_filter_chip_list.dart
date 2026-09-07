@@ -44,21 +44,40 @@ class QuickFilterChipList extends StatelessWidget {
               child: Row(
                 children: [
                   if (filter == 'Trending')
-                    const Icon(Icons.show_chart_rounded, size: 14, color: AppColors.accent),
+                    const Icon(
+                      Icons.show_chart_rounded,
+                      size: 14,
+                      color: AppColors.accent,
+                    ),
                   if (filter == 'Highest Rate')
-                    const Icon(Icons.emoji_events_outlined, size: 14, color: AppColors.accent),
+                    const Icon(
+                      Icons.emoji_events_outlined,
+                      size: 14,
+                      color: AppColors.accent,
+                    ),
                   if (filter == 'Instant Delivery')
-                    const Icon(Icons.flash_on_rounded, size: 14, color: AppColors.primary),
-                  if (filter != 'All' && filter != 'Favorites' && filter != 'Available' && filter != 'Recently Added')
+                    const Icon(
+                      Icons.flash_on_rounded,
+                      size: 14,
+                      color: AppColors.primary,
+                    ),
+                  if (filter != 'All' &&
+                      filter != 'Favorites' &&
+                      filter != 'Available' &&
+                      filter != 'Recently Added')
                     const SizedBox(width: 4),
                   Text(
                     filter,
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                       color: isSelected
                           ? (isDark ? AppColors.darkText : AppColors.lightText)
-                          : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
+                          : (isDark
+                                ? AppColors.darkSubText
+                                : AppColors.lightSubText),
                     ),
                   ),
                 ],

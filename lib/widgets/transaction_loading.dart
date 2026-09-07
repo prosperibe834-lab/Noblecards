@@ -15,7 +15,9 @@ class TransactionLoading extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         height: 76,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B).withOpacity(0.5) : Colors.grey[200],
+          color: isDark
+              ? const Color(0xFF1E293B).withOpacity(0.5)
+              : Colors.grey[200],
           borderRadius: BorderRadius.circular(18),
         ),
       ),

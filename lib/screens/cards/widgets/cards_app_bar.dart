@@ -47,7 +47,9 @@ class CardsAppBar extends StatelessWidget implements PreferredSizeWidget {
             IconButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Notifications screen placeholder')),
+                  const SnackBar(
+                    content: Text('Notifications screen placeholder'),
+                  ),
                 );
               },
               icon: Icon(

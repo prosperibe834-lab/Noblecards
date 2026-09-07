@@ -22,8 +22,10 @@ class BiometricService {
       isFaceIdAvailable: available.contains(BiometricType.face),
       isFingerprintAvailable: available.contains(BiometricType.fingerprint),
       isFaceIdEnabled: hasSession && (prefs.getBool(_faceIdKey) ?? false),
-      isFingerprintEnabled: hasSession && (prefs.getBool(_fingerprintKey) ?? false),
-      isRememberDeviceEnabled: hasSession && (prefs.getBool(_rememberDeviceKey) ?? false),
+      isFingerprintEnabled:
+          hasSession && (prefs.getBool(_fingerprintKey) ?? false),
+      isRememberDeviceEnabled:
+          hasSession && (prefs.getBool(_rememberDeviceKey) ?? false),
       isRequireForTransactionsEnabled: prefs.getBool(_transactionsKey) ?? true,
       autoLockTime: prefs.getString(_autoLockKey) ?? '5 Minutes',
     );
@@ -52,9 +54,8 @@ class BiometricService {
     }
   }
 
-  Future<bool> authenticateForSensitiveAction() => authenticate(
-        reason: 'Verify your identity to continue securely.',
-      );
+  Future<bool> authenticateForSensitiveAction() =>
+      authenticate(reason: 'Verify your identity to continue securely.');
 
   Future<bool> hasSecureSession() => AuthenticationService().hasSecureSession();
 
@@ -65,16 +66,24 @@ class BiometricService {
     final setting = prefs.getString(_autoLockKey) ?? '5 Minutes';
     final timeout = _autoLockDuration(setting);
     return timeout != null &&
-        DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastAuthenticated)) >= timeout;
+        DateTime.now().difference(
+              DateTime.fromMillisecondsSinceEpoch(lastAuthenticated),
+            ) >=
+            timeout;
   }
 
-  Future<void> saveBiometricSession() => AuthenticationService().saveBiometricSession();
+  Future<void> saveBiometricSession() =>
+      AuthenticationService().saveBiometricSession();
 
-  Future<void> clearBiometricSession() => AuthenticationService().clearBiometricSession();
+  Future<void> clearBiometricSession() =>
+      AuthenticationService().clearBiometricSession();
 
   Future<void> _recordAuthentication() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('biometric_last_authenticated_at', DateTime.now().millisecondsSinceEpoch);
+    await prefs.setInt(
+      'biometric_last_authenticated_at',
+      DateTime.now().millisecondsSinceEpoch,
+    );
   }
 
   Duration? _autoLockDuration(String setting) {
@@ -135,12 +144,24 @@ class BiometricProvider extends ChangeNotifier {
 
   Future<void> toggleFaceId(bool value) async {
     HapticFeedback.lightImpact();
-    await _toggleBiometric(value, _settings.isFaceIdEnabled, 'biometric_face_id', true, 'Face ID');
+    await _toggleBiometric(
+      value,
+      _settings.isFaceIdEnabled,
+      'biometric_face_id',
+      true,
+      'Face ID',
+    );
   }
 
   Future<void> toggleFingerprint(bool value) async {
     HapticFeedback.lightImpact();
-    await _toggleBiometric(value, _settings.isFingerprintEnabled, 'biometric_fingerprint', false, 'Fingerprint');
+    await _toggleBiometric(
+      value,
+      _settings.isFingerprintEnabled,
+      'biometric_fingerprint',
+      false,
+      'Fingerprint',
+    );
   }
 
   Future<void> toggleRememberDevice(bool value) async {
@@ -182,7 +203,9 @@ class BiometricProvider extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      if (!await _service.authenticate(reason: 'Authenticate to enable $label.')) {
+      if (!await _service.authenticate(
+        reason: 'Authenticate to enable $label.',
+      )) {
         _errorMessage = '$label authentication was canceled or failed.';
         notifyListeners();
         return;
@@ -197,7 +220,8 @@ class BiometricProvider extends ChangeNotifier {
       await _service.saveSetting(key, value);
       if (value) {
         await _service.saveBiometricSession();
-      } else if (!_settings.isFaceIdEnabled && !_settings.isFingerprintEnabled) {
+      } else if (!_settings.isFaceIdEnabled &&
+          !_settings.isFingerprintEnabled) {
         await _service.clearBiometricSession();
       }
     } catch (_) {

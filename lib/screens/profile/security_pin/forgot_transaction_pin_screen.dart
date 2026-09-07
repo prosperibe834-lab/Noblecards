@@ -16,7 +16,11 @@ class ForgotTransactionPinScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -34,7 +38,11 @@ class ForgotTransactionPinScreen extends StatelessWidget {
                   color: const Color(0xFF00C853).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Boxicons.bx_shield_quarter, color: Color(0xFF00C853), size: 60),
+                child: const Icon(
+                  Boxicons.bx_shield_quarter,
+                  color: Color(0xFF00C853),
+                  size: 60,
+                ),
               ),
             ),
             const SizedBox(height: 32),
@@ -62,7 +70,9 @@ class ForgotTransactionPinScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const OtpVerificationScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const OtpVerificationScreen(),
+                  ),
                 );
               },
             ),

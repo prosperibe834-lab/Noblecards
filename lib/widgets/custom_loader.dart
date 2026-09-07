@@ -12,7 +12,8 @@ class CustomLoader extends StatefulWidget {
   State<CustomLoader> createState() => _CustomLoaderState();
 }
 
-class _CustomLoaderState extends State<CustomLoader> with SingleTickerProviderStateMixin {
+class _CustomLoaderState extends State<CustomLoader>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -25,13 +26,15 @@ class _CustomLoaderState extends State<CustomLoader> with SingleTickerProviderSt
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    _fadeAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.6,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -48,7 +51,9 @@ class _CustomLoaderState extends State<CustomLoader> with SingleTickerProviderSt
         : 'assets/logos/LightmodeLogo.png';
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,

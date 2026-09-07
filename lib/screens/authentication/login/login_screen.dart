@@ -82,11 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-          (route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } catch (error) {
         final message = error.toString().replaceFirst('Exception: ', '');
         _showErrorSnackBar(message);
@@ -98,13 +94,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleBiometricLogin() async {
     setState(() => _isBiometricLoading = true);
-    
+
     final authenticated = await _biometricService.authenticate();
-    
+
     if (authenticated) {
       final restored = await _biometricService.restoreSession();
       if (!restored) {
-        _showErrorSnackBar('Your secure session has expired. Please log in again.');
+        _showErrorSnackBar(
+          'Your secure session has expired. Please log in again.',
+        );
       } else if (mounted) {
         await _biometricService.recordAuthentication();
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
@@ -112,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       _showErrorSnackBar('Biometric authentication failed or was canceled.');
     }
-    
+
     if (mounted) setState(() => _isBiometricLoading = false);
   }
 
@@ -147,7 +145,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: LoginBackground(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 40.0,
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -157,13 +158,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Logo
                   Center(
                     child: Image.asset(
-                      isDark 
-                          ? 'lib/assets/logos/MainDarkLogo.png.png' 
+                      isDark
+                          ? 'lib/assets/logos/MainDarkLogo.png.png'
                           : 'lib/assets/logos/MainLightLogo.png.png',
                       height: 64,
                       errorBuilder: (context, error, stackTrace) => Icon(
-                        Boxicons.bx_wallet_alt, 
-                        size: 64, 
+                        Boxicons.bx_wallet_alt,
+                        size: 64,
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
@@ -195,14 +196,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     validator: (value) {
                       final email = value?.trim() ?? '';
                       if (email.isEmpty) return 'Please enter your email';
-                      if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email)) {
+                      if (!RegExp(
+                        r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
+                      ).hasMatch(email)) {
                         return 'Enter a valid email address';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
-                  
+
                   LoginTextField(
                     controller: _passwordController,
                     focusNode: _passwordFocus,
@@ -211,8 +214,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     isPassword: true,
                     textInputAction: TextInputAction.done,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Please enter your password';
-                      if (value.length < 6) return 'Password must be at least 6 characters';
+                      if (value == null || value.isEmpty)
+                        return 'Please enter your password';
+                      if (value.length < 6)
+                        return 'Password must be at least 6 characters';
                       return null;
                     },
                   ),
@@ -285,11 +290,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Biometric Section (Only visible if hardware supports it)
                   if (_biometricType != BiometricSupportType.none) ...[
                     const SizedBox(height: 32),
-                    
+
                     // Divider
                     Row(
                       children: [
-                        Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                        Expanded(
+                          child: Divider(color: Theme.of(context).dividerColor),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
@@ -297,7 +304,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
-                        Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                        Expanded(
+                          child: Divider(color: Theme.of(context).dividerColor),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -310,8 +319,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Theme.of(context).dividerColor),
-                          color: isDark ? AppColors.darkCard : AppColors.lightCard,
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          color: isDark
+                              ? AppColors.darkCard
+                              : AppColors.lightCard,
                         ),
                         child: _isBiometricLoading
                             ? const Center(
@@ -336,21 +349,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   const SizedBox(width: 12),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        _biometricType == BiometricSupportType.face
+                                        _biometricType ==
+                                                BiometricSupportType.face
                                             ? 'Login with Face ID'
                                             : 'Login with Fingerprint',
-                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
                                       Text(
                                         'Quick & secure',
-                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          fontSize: 12,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(fontSize: 12),
                                       ),
                                     ],
                                   ),
@@ -374,10 +393,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: _isLoading ? null : _handleSignUp,
                         child: Text(
                           'Sign up',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.secondary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: AppColors.secondary,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                       ),
                     ],
@@ -391,5 +411,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-

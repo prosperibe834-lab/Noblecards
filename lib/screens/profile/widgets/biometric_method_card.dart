@@ -41,7 +41,7 @@ class BiometricMethodCard extends StatelessWidget {
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -57,11 +57,7 @@ class BiometricMethodCard extends StatelessWidget {
                   color: AppColors.success.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: AppColors.success,
-                  size: 24,
-                ),
+                child: Icon(icon, color: AppColors.success, size: 24),
               ),
               const SizedBox(width: 14),
               // Titles
@@ -83,7 +79,9 @@ class BiometricMethodCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         height: 1.3,
-                        color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                        color: isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText,
                       ),
                     ),
                   ],

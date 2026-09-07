@@ -14,7 +14,8 @@ class QrScannerOverlay extends StatefulWidget {
   State<QrScannerOverlay> createState() => _QrScannerOverlayState();
 }
 
-class _QrScannerOverlayState extends State<QrScannerOverlay> with SingleTickerProviderStateMixin {
+class _QrScannerOverlayState extends State<QrScannerOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -27,7 +28,10 @@ class _QrScannerOverlayState extends State<QrScannerOverlay> with SingleTickerPr
     )..repeat(reverse: true);
 
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOutSine),
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOutSine,
+      ),
     );
   }
 
@@ -46,8 +50,8 @@ class _QrScannerOverlayState extends State<QrScannerOverlay> with SingleTickerPr
           size: Size.infinite,
           painter: _QrOverlayPainter(
             scanArea: widget.scanArea,
-            overlayColor: widget.isDark 
-                ? Colors.black.withOpacity(0.7) 
+            overlayColor: widget.isDark
+                ? Colors.black.withOpacity(0.7)
                 : Colors.white.withOpacity(0.85),
           ),
         ),
@@ -55,7 +59,9 @@ class _QrScannerOverlayState extends State<QrScannerOverlay> with SingleTickerPr
         AnimatedBuilder(
           animation: _animation,
           builder: (context, child) {
-            final lineY = widget.scanArea.top + (widget.scanArea.height * _animation.value);
+            final lineY =
+                widget.scanArea.top +
+                (widget.scanArea.height * _animation.value);
             return Positioned(
               top: lineY,
               left: widget.scanArea.left,
@@ -100,7 +106,9 @@ class _QrOverlayPainter extends CustomPainter {
         PathOperation.difference,
         Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
         Path()
-          ..addRRect(RRect.fromRectAndRadius(scanArea, Radius.circular(borderRadius)))
+          ..addRRect(
+            RRect.fromRectAndRadius(scanArea, Radius.circular(borderRadius)),
+          )
           ..close(),
       ),
       backgroundPaint,
@@ -160,6 +168,7 @@ class _QrOverlayPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _QrOverlayPainter oldDelegate) {
-    return oldDelegate.scanArea != scanArea || oldDelegate.overlayColor != overlayColor;
+    return oldDelegate.scanArea != scanArea ||
+        oldDelegate.overlayColor != overlayColor;
   }
 }

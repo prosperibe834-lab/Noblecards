@@ -11,10 +11,14 @@ class PasswordValidationState {
     this.hasMinLength = false,
     this.hasUpperAndLower = false,
     this.hasDigitAndSpecial = false,
-    this.avoidsPersonalInfo = true, // Defaults to true until we have personal info to check against
+    this.avoidsPersonalInfo =
+        true, // Defaults to true until we have personal info to check against
     this.strengthLevel = PasswordStrengthLevel.empty,
   });
 
-  bool get isFullyValid => 
-      hasMinLength && hasUpperAndLower && hasDigitAndSpecial && avoidsPersonalInfo;
+  bool get isFullyValid =>
+      hasMinLength &&
+      hasUpperAndLower &&
+      hasDigitAndSpecial &&
+      avoidsPersonalInfo;
 }

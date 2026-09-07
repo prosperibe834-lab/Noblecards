@@ -20,10 +20,7 @@ class AnimatedCounter extends StatelessWidget {
       curve: Curves.easeOutCubic,
       builder: (context, val, child) {
         final formatted = val.toStringAsFixed(2);
-        return Text(
-          '$prefix$formatted',
-          style: style,
-        );
+        return Text('$prefix$formatted', style: style);
       },
     );
   }

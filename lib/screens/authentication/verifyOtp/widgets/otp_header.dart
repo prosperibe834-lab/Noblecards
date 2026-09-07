@@ -11,7 +11,8 @@ class OtpHeader extends StatefulWidget {
   State<OtpHeader> createState() => _OtpHeaderState();
 }
 
-class _OtpHeaderState extends State<OtpHeader> with SingleTickerProviderStateMixin {
+class _OtpHeaderState extends State<OtpHeader>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
 
   @override
@@ -47,12 +48,14 @@ class _OtpHeaderState extends State<OtpHeader> with SingleTickerProviderStateMix
         // Logo Integration
         Center(
           child: Image.asset(
-            isDark 
-                ? 'lib/assets/logos/MainDarkLogo.png.png' 
+            isDark
+                ? 'lib/assets/logos/MainDarkLogo.png.png'
                 : 'lib/assets/logos/MainLightLogo.png.png',
             height: 48,
             errorBuilder: (context, error, stackTrace) => const Icon(
-              Boxicons.bx_wallet_alt, size: 48, color: AppColors.primary,
+              Boxicons.bx_wallet_alt,
+              size: 48,
+              color: AppColors.primary,
             ),
           ),
         ),
@@ -72,7 +75,7 @@ class _OtpHeaderState extends State<OtpHeader> with SingleTickerProviderStateMix
             height: 110,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark 
+              color: isDark
                   ? AppColors.primary.withValues(alpha: 0.1)
                   : AppColors.successLight.withValues(alpha: 0.15),
             ),
@@ -116,14 +119,14 @@ class _OtpHeaderState extends State<OtpHeader> with SingleTickerProviderStateMix
           ),
         ),
         const SizedBox(height: 24),
-        
+
         Text(
           'Verify OTP',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: 12),
-        
+
         Text(
           'Enter the 6-digit code we sent to\n${_maskEmail(widget.email)}',
           textAlign: TextAlign.center,

@@ -10,14 +10,12 @@ class AccountLevelCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-     onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const AccountLevelScreen(),
-    ),
-  );
-},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AccountLevelScreen()),
+        );
+      },
       borderRadius: BorderRadius.circular(AppRadius.lg),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -42,7 +40,11 @@ class AccountLevelCard extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Boxicons.bxs_medal, color: Color(0xFFFFD700), size: 32),
+                  child: const Icon(
+                    Boxicons.bxs_medal,
+                    color: Color(0xFFFFD700),
+                    size: 32,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Column(
@@ -50,12 +52,20 @@ class AccountLevelCard extends StatelessWidget {
                   children: const [
                     Text(
                       'Account Level',
-                      style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     SizedBox(height: 2),
                     Text(
                       'Gold',
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -66,22 +76,38 @@ class AccountLevelCard extends StatelessWidget {
               children: [
                 const Text(
                   'Daily Limit',
-                  style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 const Text(
                   '\$10,000',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: const [
                     Text(
                       'View Benefits',
-                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     SizedBox(width: 4),
-                    Icon(Boxicons.bx_chevron_right, color: Colors.white, size: 14),
+                    Icon(
+                      Boxicons.bx_chevron_right,
+                      color: Colors.white,
+                      size: 14,
+                    ),
                   ],
                 ),
               ],

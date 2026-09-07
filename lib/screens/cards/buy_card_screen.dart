@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
-import 'package:noble_cards/widgets/pin_auth_dialog.dart';
+import 'package:noble_cards/screens/TransactionPin/pin_auth_dialog.dart';
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
 
 import 'models/gift_card_model.dart';
@@ -60,16 +60,17 @@ class BuyCardScreen extends StatelessWidget {
     final buyProvider = context.read<BuyProvider>();
 
     final regionProvider = context.read<RegionProvider>();
-    final GiftCardRegionModel? pickedRegion = await showModalBottomSheet<GiftCardRegionModel>(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => ChangeNotifierProvider.value(
-        value: regionProvider,
-        child: const RegionBottomSheet(),
-      ),
-    );
+    final GiftCardRegionModel? pickedRegion =
+        await showModalBottomSheet<GiftCardRegionModel>(
+          context: context,
+          useRootNavigator: true,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => ChangeNotifierProvider.value(
+            value: regionProvider,
+            child: const RegionBottomSheet(),
+          ),
+        );
 
     if (pickedRegion != null) {
       buyProvider.setRegion(pickedRegion);

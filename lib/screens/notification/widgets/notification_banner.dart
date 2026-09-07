@@ -25,7 +25,9 @@ class NotificationBanner extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: Border.all(
-          color: isDark ? const Color(0xFF00C853).withOpacity(0.12) : Colors.black.withOpacity(0.04),
+          color: isDark
+              ? const Color(0xFF00C853).withOpacity(0.12)
+              : Colors.black.withOpacity(0.04),
         ),
       ),
       child: Row(
@@ -39,7 +41,11 @@ class NotificationBanner extends StatelessWidget {
               color: const Color(0xFF00C853).withOpacity(0.15),
             ),
             child: const Center(
-              child: Icon(Boxicons.bxs_bell_ring, color: Color(0xFF00C853), size: 24),
+              child: Icon(
+                Boxicons.bxs_bell_ring,
+                color: Color(0xFF00C853),
+                size: 24,
+              ),
             ),
           ),
           const SizedBox(width: 14),

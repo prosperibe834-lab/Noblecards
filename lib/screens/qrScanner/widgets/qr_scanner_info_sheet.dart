@@ -12,9 +12,15 @@ class QrScannerInfoSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.darkCard : AppColors.white;
     final textColor = isDark ? AppColors.darkText : AppColors.textPrimary;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.textSecondary;
-    final iconBgColor = isDark ? const Color(0xFF192025) : const Color(0xFFF3FBF7);
-    final highlightBgColor = isDark ? const Color(0xFF102E18) : const Color(0xFFEFF9F1);
+    final subTextColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.textSecondary;
+    final iconBgColor = isDark
+        ? const Color(0xFF192025)
+        : const Color(0xFFF3FBF7);
+    final highlightBgColor = isDark
+        ? const Color(0xFF102E18)
+        : const Color(0xFFEFF9F1);
 
     return Container(
       constraints: BoxConstraints(
@@ -27,7 +33,10 @@ class QrScannerInfoSheet extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l, vertical: AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.l,
+            vertical: AppSpacing.md,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,14 +71,12 @@ class QrScannerInfoSheet extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF111827) : const Color(0xFFF3F4F6),
+                        color: isDark
+                            ? const Color(0xFF111827)
+                            : const Color(0xFFF3F4F6),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        Boxicons.bx_x,
-                        size: 20,
-                        color: textColor,
-                      ),
+                      child: Icon(Boxicons.bx_x, size: 20, color: textColor),
                     ),
                   ),
                 ],

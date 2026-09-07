@@ -13,7 +13,7 @@ class PasswordBackground extends StatelessWidget {
     return Stack(
       children: [
         Container(color: Theme.of(context).scaffoldBackgroundColor),
-        
+
         // Top Right Glow matching "ChatGPT Image Aug 17, 2026, 03_46_46 PM.png"
         Positioned(
           top: -80,

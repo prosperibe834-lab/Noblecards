@@ -51,7 +51,9 @@ class BuyCardHeader extends StatelessWidget {
                   width: 36,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) => Text(
-                    card.name.isNotEmpty ? card.name.characters.first.toUpperCase() : 'A',
+                    card.name.isNotEmpty
+                        ? card.name.characters.first.toUpperCase()
+                        : 'A',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 36,
@@ -88,18 +90,27 @@ class BuyCardHeader extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text(countryFlag, style: const TextStyle(fontSize: 14)),
+                              Text(
+                                countryFlag,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                               const SizedBox(width: AppSpacing.xs),
                               Text(
                                 countryName,
-                                style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 12),
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  fontSize: 12,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: AppSpacing.xs),
                           Text(
                             'Buy Rate: ${buyProvider.currentRate.toStringAsFixed(2)}%',
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12),
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       );
@@ -110,7 +121,10 @@ class BuyCardHeader extends StatelessWidget {
                     children: [
                       _buildChip('Shopping'),
                       const SizedBox(width: AppSpacing.sm),
-                      _buildChip('? Instant Delivery', color: AppColors.success),
+                      _buildChip(
+                        '? Instant Delivery',
+                        color: AppColors.success,
+                      ),
                     ],
                   ),
                 ],
@@ -133,7 +147,11 @@ class BuyCardHeader extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

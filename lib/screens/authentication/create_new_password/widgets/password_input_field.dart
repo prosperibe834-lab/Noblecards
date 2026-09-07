@@ -49,8 +49,8 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color bgColor = isDark ? AppColors.darkInput : AppColors.lightInput;
-    final Color borderColor = _isFocused 
-        ? AppColors.primary 
+    final Color borderColor = _isFocused
+        ? AppColors.primary
         : (isDark ? AppColors.darkBorder : AppColors.lightBorder);
 
     return AnimatedContainer(
@@ -67,11 +67,13 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
           // Leading Icon
           Icon(
             Boxicons.bx_lock_alt,
-            color: _isFocused ? AppColors.primary : AppColors.primaryDark.withOpacity(0.7),
+            color: _isFocused
+                ? AppColors.primary
+                : AppColors.primaryDark.withOpacity(0.7),
             size: 24,
           ),
           const SizedBox(width: 16),
-          
+
           // Two-Line Input
           Expanded(
             child: Column(
@@ -95,10 +97,13 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
                     style: Theme.of(context).textTheme.bodyLarge,
                     decoration: InputDecoration(
                       hintText: widget.hintText,
-                      hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 12,
-                        color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
-                      ),
+                      hintStyle: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(
+                            fontSize: 12,
+                            color: isDark
+                                ? AppColors.darkSubText
+                                : AppColors.lightSubText,
+                          ),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,

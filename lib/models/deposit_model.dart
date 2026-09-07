@@ -62,45 +62,60 @@ class Deposit {
       amount: _safeString(json['amount'], fallback: '0.00'),
       fee: _safeString(json['fee'], fallback: '0.00'),
       netAmount: _safeString(json['netAmount'], fallback: '0.00'),
-      paymentMethod: json['paymentMethod'] == null ? null : _safeString(json['paymentMethod']),
-      paymentLink: json['paymentLink'] == null ? null : _safeString(json['paymentLink']),
-      authorizationUrl: (json['authorizationUrl'] ?? json['authorization_url']) == null
+      paymentMethod: json['paymentMethod'] == null
+          ? null
+          : _safeString(json['paymentMethod']),
+      paymentLink: json['paymentLink'] == null
+          ? null
+          : _safeString(json['paymentLink']),
+      authorizationUrl:
+          (json['authorizationUrl'] ?? json['authorization_url']) == null
           ? null
           : _safeString(json['authorizationUrl'] ?? json['authorization_url']),
-      bankTransfer: bankTransferJson != null && bankTransferJson is Map<String, dynamic>
+      bankTransfer:
+          bankTransferJson != null && bankTransferJson is Map<String, dynamic>
           ? BankTransferDetails.fromJson(bankTransferJson)
           : bankTransferJson is Map
-              ? BankTransferDetails.fromJson(Map<String, dynamic>.from(bankTransferJson))
-              : null,
-      providerReference: json['providerReference'] == null ? null : _safeString(json['providerReference']),
-      providerTransactionId: json['providerTransactionId'] == null ? null : _safeString(json['providerTransactionId']),
+          ? BankTransferDetails.fromJson(
+              Map<String, dynamic>.from(bankTransferJson),
+            )
+          : null,
+      providerReference: json['providerReference'] == null
+          ? null
+          : _safeString(json['providerReference']),
+      providerTransactionId: json['providerTransactionId'] == null
+          ? null
+          : _safeString(json['providerTransactionId']),
       walletId: _safeString(json['walletId']),
-      transaction: transactionJson != null && transactionJson is Map<String, dynamic>
+      transaction:
+          transactionJson != null && transactionJson is Map<String, dynamic>
           ? DepositTransaction.fromJson(transactionJson)
           : transactionJson is Map
-              ? DepositTransaction.fromJson(Map<String, dynamic>.from(transactionJson))
-              : null,
+          ? DepositTransaction.fromJson(
+              Map<String, dynamic>.from(transactionJson),
+            )
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'status': status,
-        'provider': provider,
-        'currency': currency,
-        'amount': amount,
-        'fee': fee,
-        'netAmount': netAmount,
-        'paymentMethod': paymentMethod,
-        'paymentLink': paymentLink,
-        'authorizationUrl': authorizationUrl,
-        'authorization_url': authorizationUrl,
-        'bankTransfer': bankTransfer?.toJson(),
-        'providerReference': providerReference,
-        'providerTransactionId': providerTransactionId,
-        'walletId': walletId,
-        'transaction': transaction?.toJson(),
-      };
+    'id': id,
+    'status': status,
+    'provider': provider,
+    'currency': currency,
+    'amount': amount,
+    'fee': fee,
+    'netAmount': netAmount,
+    'paymentMethod': paymentMethod,
+    'paymentLink': paymentLink,
+    'authorizationUrl': authorizationUrl,
+    'authorization_url': authorizationUrl,
+    'bankTransfer': bankTransfer?.toJson(),
+    'providerReference': providerReference,
+    'providerTransactionId': providerTransactionId,
+    'walletId': walletId,
+    'transaction': transaction?.toJson(),
+  };
 }
 
 class BankTransferDetails {
@@ -126,21 +141,25 @@ class BankTransferDetails {
     return BankTransferDetails(
       bankName: _safeString(json['bankName']),
       accountNumber: _safeString(json['accountNumber']),
-      accountName: rawAccountName.isEmpty ? 'Account name unavailable' : rawAccountName,
+      accountName: rawAccountName.isEmpty
+          ? 'Account name unavailable'
+          : rawAccountName,
       amount: _safeNum(json['amount']),
       currency: _safeString(json['currency']),
-      expiresAt: json['expiresAt'] == null ? null : _safeString(json['expiresAt']),
+      expiresAt: json['expiresAt'] == null
+          ? null
+          : _safeString(json['expiresAt']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'bankName': bankName,
-        'accountNumber': accountNumber,
-        'accountName': accountName,
-        'amount': amount,
-        'currency': currency,
-        'expiresAt': expiresAt,
-      };
+    'bankName': bankName,
+    'accountNumber': accountNumber,
+    'accountName': accountName,
+    'amount': amount,
+    'currency': currency,
+    'expiresAt': expiresAt,
+  };
 }
 
 class DepositTransaction {
@@ -163,8 +182,8 @@ class DepositTransaction {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'status': status,
-        'reference': reference,
-      };
+    'id': id,
+    'status': status,
+    'reference': reference,
+  };
 }

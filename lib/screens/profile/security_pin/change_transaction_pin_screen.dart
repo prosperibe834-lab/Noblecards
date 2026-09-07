@@ -12,10 +12,12 @@ class ChangeTransactionPinScreen extends StatefulWidget {
   const ChangeTransactionPinScreen({super.key});
 
   @override
-  State<ChangeTransactionPinScreen> createState() => _ChangeTransactionPinScreenState();
+  State<ChangeTransactionPinScreen> createState() =>
+      _ChangeTransactionPinScreenState();
 }
 
-class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen> with SingleTickerProviderStateMixin {
+class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _currentPinCtrl = TextEditingController();
   final TextEditingController _newPinCtrl = TextEditingController();
   final TextEditingController _confirmPinCtrl = TextEditingController();
@@ -88,7 +90,7 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
       _confirmPinFocus.requestFocus();
       return;
     }
-    
+
     // Simulate Network API Call
     TransactionPinSuccessDialog.show(context);
   }
@@ -104,7 +106,11 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -125,9 +131,13 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
             const SizedBox(height: 32),
             _buildStepIndicator(isDark),
             const SizedBox(height: 32),
-            
+
             // SECTION 1
-            _buildSectionHeader("1. Verify Current PIN", "Enter your current 4-digit transaction PIN.", isDark),
+            _buildSectionHeader(
+              "1. Verify Current PIN",
+              "Enter your current 4-digit transaction PIN.",
+              isDark,
+            ),
             const SizedBox(height: 16),
             TransactionPinInput(
               controller: _currentPinCtrl,
@@ -140,19 +150,28 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const ForgotTransactionPinScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => const ForgotTransactionPinScreen(),
+                    ),
                   );
                 },
                 child: const Text(
                   "Forgot PIN?",
-                  style: TextStyle(color: Color(0xFF00C853), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Color(0xFF00C853),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 24),
 
             // SECTION 2
-            _buildSectionHeader("2. Enter New PIN", "Choose a new 4-digit transaction PIN.", isDark),
+            _buildSectionHeader(
+              "2. Enter New PIN",
+              "Choose a new 4-digit transaction PIN.",
+              isDark,
+            ),
             const SizedBox(height: 16),
             TransactionPinInput(
               controller: _newPinCtrl,
@@ -162,12 +181,17 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
             const SizedBox(height: 16),
             AnimatedBuilder(
               animation: _newPinCtrl,
-              builder: (context, _) => PinStrengthIndicator(pin: _newPinCtrl.text),
+              builder: (context, _) =>
+                  PinStrengthIndicator(pin: _newPinCtrl.text),
             ),
             const SizedBox(height: 32),
 
             // SECTION 3
-            _buildSectionHeader("3. Confirm New PIN", "Re-enter your new 4-digit PIN.", isDark),
+            _buildSectionHeader(
+              "3. Confirm New PIN",
+              "Re-enter your new 4-digit PIN.",
+              isDark,
+            ),
             const SizedBox(height: 16),
             AnimatedBuilder(
               animation: _shakeController,
@@ -203,11 +227,18 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Boxicons.bx_shield_quarter, size: 16, color: isDark ? Colors.white54 : Colors.black54),
+                Icon(
+                  Boxicons.bx_shield_quarter,
+                  size: 16,
+                  color: isDark ? Colors.white54 : Colors.black54,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   "Your PIN is encrypted and secure",
-                  style: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 13),
+                  style: TextStyle(
+                    color: isDark ? Colors.white54 : Colors.black54,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -224,13 +255,15 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
-          colors: isDark 
-              ? [const Color(0xFF14231A), const Color(0xFF1A1F24)] 
+          colors: isDark
+              ? [const Color(0xFF14231A), const Color(0xFF1A1F24)]
               : [const Color(0xFFF4FBF7), Colors.white],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+        border: Border.all(
+          color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+        ),
       ),
       child: Row(
         children: [
@@ -241,12 +274,20 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
               children: [
                 const Text(
                   "Keep your account secure",
-                  style: TextStyle(color: Color(0xFF00C853), fontWeight: FontWeight.bold, fontSize: 14),
+                  style: TextStyle(
+                    color: Color(0xFF00C853),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "Your transaction PIN is used to confirm payments, withdrawals and sensitive actions.",
-                  style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 12, height: 1.5),
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black87,
+                    fontSize: 12,
+                    height: 1.5,
+                  ),
                 ),
               ],
             ),
@@ -263,17 +304,29 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
                     shape: BoxShape.circle,
                     color: const Color(0xFF00C853).withOpacity(0.1),
                     boxShadow: [
-                      BoxShadow(color: const Color(0xFF00C853).withOpacity(0.2), blurRadius: 20, spreadRadius: 5)
-                    ]
+                      BoxShadow(
+                        color: const Color(0xFF00C853).withOpacity(0.2),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      ),
+                    ],
                   ),
                 ),
-                const Icon(Boxicons.bx_shield_quarter, color: Color(0xFF00C853), size: 50),
+                const Icon(
+                  Boxicons.bx_shield_quarter,
+                  color: Color(0xFF00C853),
+                  size: 50,
+                ),
                 const Positioned(
-                  child: Icon(Boxicons.bx_lock_alt, color: Colors.white, size: 20),
-                )
+                  child: Icon(
+                    Boxicons.bx_lock_alt,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -300,15 +353,26 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: isActive ? const Color(0xFF00C853) : (isDark ? Colors.white10 : Colors.black12),
+            color: isActive
+                ? const Color(0xFF00C853)
+                : (isDark ? Colors.white10 : Colors.black12),
             shape: BoxShape.circle,
-            boxShadow: isActive ? [BoxShadow(color: const Color(0xFF00C853).withOpacity(0.3), blurRadius: 8)] : [],
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF00C853).withOpacity(0.3),
+                      blurRadius: 8,
+                    ),
+                  ]
+                : [],
           ),
           child: Center(
             child: Text(
               step.toString(),
               style: TextStyle(
-                color: isActive ? Colors.white : (isDark ? Colors.white54 : Colors.black54),
+                color: isActive
+                    ? Colors.white
+                    : (isDark ? Colors.white54 : Colors.black54),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -319,10 +383,12 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
           label,
           style: TextStyle(
             fontSize: 12,
-            color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white54 : Colors.black54),
+            color: isActive
+                ? (isDark ? Colors.white : Colors.black)
+                : (isDark ? Colors.white54 : Colors.black54),
             fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
           ),
-        )
+        ),
       ],
     );
   }
@@ -333,7 +399,9 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
       width: 40,
       height: 2,
       margin: const EdgeInsets.only(bottom: 24, left: 8, right: 8),
-      color: isActive ? const Color(0xFF00C853) : (isDark ? Colors.white10 : Colors.black12),
+      color: isActive
+          ? const Color(0xFF00C853)
+          : (isDark ? Colors.white10 : Colors.black12),
     );
   }
 
@@ -343,12 +411,19 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
       children: [
         Text(
           title,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 6),
         Text(
           subtitle,
-          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 13),
+          style: TextStyle(
+            color: isDark ? Colors.white70 : Colors.black54,
+            fontSize: 13,
+          ),
         ),
       ],
     );
@@ -372,10 +447,21 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
                   color: Color(0xFF00C853),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Boxicons.bx_lock_alt, color: Colors.white, size: 16),
+                child: const Icon(
+                  Boxicons.bx_lock_alt,
+                  color: Colors.white,
+                  size: 16,
+                ),
               ),
               const SizedBox(width: 12),
-              const Text("PIN Tips", style: TextStyle(color: Color(0xFF00C853), fontWeight: FontWeight.bold, fontSize: 16)),
+              const Text(
+                "PIN Tips",
+                style: TextStyle(
+                  color: Color(0xFF00C853),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -395,7 +481,13 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
         children: [
           const Icon(Boxicons.bx_check, color: Color(0xFF00C853), size: 18),
           const SizedBox(width: 8),
-          Text(text, style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 13)),
+          Text(
+            text,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black87,
+              fontSize: 13,
+            ),
+          ),
         ],
       ),
     );

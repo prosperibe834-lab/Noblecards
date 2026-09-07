@@ -8,7 +8,7 @@ class AppShadow {
       color: Colors.black.withOpacity(.06),
       blurRadius: 25,
       offset: const Offset(0, 10),
-    )
+    ),
   ];
 
   static List<BoxShadow> dark = [
@@ -16,6 +16,6 @@ class AppShadow {
       color: Colors.black.withOpacity(.35),
       blurRadius: 30,
       offset: const Offset(0, 10),
-    )
+    ),
   ];
 }

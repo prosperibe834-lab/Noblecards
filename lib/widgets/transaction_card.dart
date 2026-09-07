@@ -8,10 +8,8 @@ import 'transaction_status_chip.dart';
 class TransactionCard extends StatelessWidget {
   final TransactionModel transaction;
 
-  const TransactionCard({
-    Key? key,
-    required this.transaction,
-  }) : super(key: key);
+  const TransactionCard({Key? key, required this.transaction})
+    : super(key: key);
 
   IconData _getCategoryIcon() {
     switch (transaction.category) {
@@ -67,7 +65,8 @@ class TransactionCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => TransactionReceiptScreen(transaction: transaction),
+                builder: (_) =>
+                    TransactionReceiptScreen(transaction: transaction),
               ),
             );
           },

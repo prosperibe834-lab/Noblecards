@@ -98,13 +98,21 @@ class _LiveMarketMarqueeState extends State<LiveMarketMarquee> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.network(item.logoUrl, width: 14, height: 14, errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, size: 14)),
+                Image.network(
+                  item.logoUrl,
+                  width: 14,
+                  height: 14,
+                  errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.credit_card, size: 14),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   '${item.cardName} (${item.countryFlag}) ${item.actionType} ${item.timeAgo}',
                   style: TextStyle(
                     fontSize: 11,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                 ),
               ],

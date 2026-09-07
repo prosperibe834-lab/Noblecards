@@ -42,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
-    
+
     setState(() {
       _messages.add(
         ChatMessage(
@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
     });
-    
+
     _controller.clear();
     _scrollToBottom();
 
@@ -63,7 +63,8 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           _messages.add(
             ChatMessage(
-              text: 'Thanks for the information. An agent is reviewing your request.',
+              text:
+                  'Thanks for the information. An agent is reviewing your request.',
               isUser: false,
               timestamp: DateTime.now(),
             ),
@@ -99,12 +100,18 @@ class _ChatScreenState extends State<ChatScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1419) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F1419)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: isDark ? const Color(0xFF0F1419) : Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -116,7 +123,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: const Color(0xFF00B75F).withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Boxicons.bx_support, color: Color(0xFF00B75F), size: 20),
+              child: const Icon(
+                Boxicons.bx_support,
+                color: Color(0xFF00B75F),
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Column(
@@ -132,7 +143,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Row(
                   children: [
-                    Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF00B75F), shape: BoxShape.circle)),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF00B75F),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Online',
@@ -163,7 +181,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       margin: const EdgeInsets.only(left: 16, top: 8),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E252D) : Colors.grey.shade200,
+                        color: isDark
+                            ? const Color(0xFF1E252D)
+                            : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -181,10 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          ChatInput(
-            controller: _controller,
-            onSend: _sendMessage,
-          ),
+          ChatInput(controller: _controller, onSend: _sendMessage),
         ],
       ),
     );

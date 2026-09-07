@@ -5,10 +5,7 @@ import '../models/transaction_model.dart';
 class TransactionTimeline extends StatelessWidget {
   final List<TimelineStepModel> steps;
 
-  const TransactionTimeline({
-    Key? key,
-    required this.steps,
-  }) : super(key: key);
+  const TransactionTimeline({Key? key, required this.steps}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +52,9 @@ class TransactionTimeline extends StatelessWidget {
                               : (isDark ? Colors.grey[800] : Colors.grey[300]),
                         ),
                         child: Icon(
-                          step.isCompleted ? Boxicons.bx_check : Boxicons.bx_time,
+                          step.isCompleted
+                              ? Boxicons.bx_check
+                              : Boxicons.bx_time,
                           size: 14,
                           color: Colors.white,
                         ),

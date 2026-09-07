@@ -33,8 +33,10 @@ class _AnimatedCounterCardState extends State<AnimatedCounterCard>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _animation = Tween<double>(begin: 0, end: widget.targetCount.toDouble())
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _animation = Tween<double>(
+      begin: 0,
+      end: widget.targetCount.toDouble(),
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
   }
 
@@ -44,7 +46,9 @@ class _AnimatedCounterCardState extends State<AnimatedCounterCard>
 
     if (oldWidget.targetCount != widget.targetCount) {
       _animation = Tween<double>(begin: 0, end: widget.targetCount.toDouble())
-          .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+          .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+          );
       _controller
         ..reset()
         ..forward();

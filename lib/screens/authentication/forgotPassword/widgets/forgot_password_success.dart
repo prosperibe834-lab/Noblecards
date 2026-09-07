@@ -43,9 +43,9 @@ class ForgotPasswordSuccessView extends StatelessWidget {
           'Reset Link Sent!',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
 
@@ -55,9 +55,9 @@ class ForgotPasswordSuccessView extends StatelessWidget {
             'We have sent a password reset link to:\n$email\n\nPlease check your inbox and follow the instructions.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  height: 1.5,
-                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
-                ),
+              height: 1.5,
+              color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+            ),
           ),
         ),
         const SizedBox(height: 40),
@@ -68,13 +68,17 @@ class ForgotPasswordSuccessView extends StatelessWidget {
           height: 52,
           child: OutlinedButton.icon(
             onPressed: onBackToSignIn,
-            icon: const Icon(Boxicons.bx_arrow_back, color: AppColors.primary, size: 18),
+            icon: const Icon(
+              Boxicons.bx_arrow_back,
+              color: AppColors.primary,
+              size: 18,
+            ),
             label: Text(
               'Back to Sign In',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: AppColors.primary, width: 1.5),

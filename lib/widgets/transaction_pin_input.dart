@@ -44,7 +44,7 @@ class TransactionPinInput extends StatelessWidget {
                 children: List.generate(4, (index) {
                   final isFilled = text.length > index;
                   final isFocused = text.length == index && focusNode.hasFocus;
-                  
+
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: 70,
@@ -56,10 +56,10 @@ class TransactionPinInput extends StatelessWidget {
                         color: hasError
                             ? Colors.red
                             : isFocused
-                                ? const Color(0xFF00C853)
-                                : isFilled
-                                    ? (isDark ? Colors.white38 : Colors.black26)
-                                    : (isDark ? Colors.white10 : Colors.black12),
+                            ? const Color(0xFF00C853)
+                            : isFilled
+                            ? (isDark ? Colors.white38 : Colors.black26)
+                            : (isDark ? Colors.white10 : Colors.black12),
                         width: isFocused || isFilled ? 1.5 : 1,
                       ),
                       boxShadow: isFocused
@@ -68,7 +68,7 @@ class TransactionPinInput extends StatelessWidget {
                                 color: const Color(0xFF00C853).withOpacity(0.1),
                                 blurRadius: 8,
                                 spreadRadius: 2,
-                              )
+                              ),
                             ]
                           : [],
                     ),
@@ -80,7 +80,9 @@ class TransactionPinInput extends StatelessWidget {
                           width: 14,
                           height: 14,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : const Color(0xFF0D1630),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF0D1630),
                             shape: BoxShape.circle,
                           ),
                         ),

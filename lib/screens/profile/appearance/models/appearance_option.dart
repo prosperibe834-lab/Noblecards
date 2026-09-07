@@ -1,5 +1,1 @@
-enum ThemeOption {
-  light,
-  dark,
-  system,
-}
+enum ThemeOption { light, dark, system }

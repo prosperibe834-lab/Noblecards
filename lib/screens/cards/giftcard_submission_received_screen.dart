@@ -11,13 +11,18 @@ import './widgets/submission_summary_card.dart';
 class GiftcardSubmissionReceivedScreen extends StatefulWidget {
   final String transactionId;
 
-  const GiftcardSubmissionReceivedScreen({super.key, required this.transactionId});
+  const GiftcardSubmissionReceivedScreen({
+    super.key,
+    required this.transactionId,
+  });
 
   @override
-  State<GiftcardSubmissionReceivedScreen> createState() => _GiftcardSubmissionReceivedScreenState();
+  State<GiftcardSubmissionReceivedScreen> createState() =>
+      _GiftcardSubmissionReceivedScreenState();
 }
 
-class _GiftcardSubmissionReceivedScreenState extends State<GiftcardSubmissionReceivedScreen> {
+class _GiftcardSubmissionReceivedScreenState
+    extends State<GiftcardSubmissionReceivedScreen> {
   @override
   void initState() {
     super.initState();
@@ -31,13 +36,18 @@ class _GiftcardSubmissionReceivedScreenState extends State<GiftcardSubmissionRec
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -52,7 +62,9 @@ class _GiftcardSubmissionReceivedScreenState extends State<GiftcardSubmissionRec
       body: Consumer<SubmissionProvider>(
         builder: (context, provider, child) {
           if (provider.state == SubmissionState.loading) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.success));
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.success),
+            );
           }
 
           if (provider.state == SubmissionState.error) {
@@ -64,9 +76,10 @@ class _GiftcardSubmissionReceivedScreenState extends State<GiftcardSubmissionRec
                   const SizedBox(height: 16),
                   const Text('Failed to load submission details'),
                   TextButton(
-                    onPressed: () => provider.fetchDetails(widget.transactionId),
+                    onPressed: () =>
+                        provider.fetchDetails(widget.transactionId),
                     child: const Text('Retry'),
-                  )
+                  ),
                 ],
               ),
             );
@@ -97,7 +110,9 @@ class _GiftcardSubmissionReceivedScreenState extends State<GiftcardSubmissionRec
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
                   ),
                 ),
                 const SizedBox(height: 20),

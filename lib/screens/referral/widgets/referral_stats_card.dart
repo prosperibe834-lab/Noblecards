@@ -72,10 +72,7 @@ class ReferralStatsCard extends StatelessWidget {
           children: [
             Icon(icon, color: const Color(0xFF00B94A), size: 16),
             const SizedBox(width: 4),
-            Text(
-              title,
-              style: TextStyle(color: subTextColor, fontSize: 11),
-            ),
+            Text(title, style: TextStyle(color: subTextColor, fontSize: 11)),
           ],
         ),
         const SizedBox(height: 8),

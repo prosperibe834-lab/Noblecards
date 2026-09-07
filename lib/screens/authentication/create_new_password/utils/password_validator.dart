@@ -12,8 +12,10 @@ class PasswordValidator {
     final bool hasUpper = password.contains(RegExp(r'[A-Z]'));
     final bool hasLower = password.contains(RegExp(r'[a-z]'));
     final bool hasDigit = password.contains(RegExp(r'[0-9]'));
-    final bool hasSpecial = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
-    
+    final bool hasSpecial = password.contains(
+      RegExp(r'[!@#$%^&*(),.?":{}|<>]'),
+    );
+
     final bool hasUpperAndLower = hasUpper && hasLower;
     final bool hasDigitAndSpecial = hasDigit && hasSpecial;
 

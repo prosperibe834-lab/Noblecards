@@ -22,7 +22,9 @@ class WithdrawalSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final subTextColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.lightSubText;
 
     final double netAmountUsd = (amountUsd - feeUsd).clamp(0, double.infinity);
     final double payoutAmount = netAmountUsd * rate;
@@ -59,9 +61,24 @@ class WithdrawalSummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          _row(context, "You Withdraw", "\$${amountUsd.toStringAsFixed(2)} USD", subTextColor),
-          _row(context, "Exchange Rate", "1 USD = $currencyCode ${rate.toStringAsFixed(2)}", subTextColor),
-          _row(context, "Processing Fee", "\$${feeUsd.toStringAsFixed(2)} USD", subTextColor),
+          _row(
+            context,
+            "You Withdraw",
+            "\$${amountUsd.toStringAsFixed(2)} USD",
+            subTextColor,
+          ),
+          _row(
+            context,
+            "Exchange Rate",
+            "1 USD = $currencyCode ${rate.toStringAsFixed(2)}",
+            subTextColor,
+          ),
+          _row(
+            context,
+            "Processing Fee",
+            "\$${feeUsd.toStringAsFixed(2)} USD",
+            subTextColor,
+          ),
           const Divider(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,7 +108,12 @@ class WithdrawalSummaryCard extends StatelessWidget {
     );
   }
 
-  Widget _row(BuildContext context, String label, String value, Color subTextColor) {
+  Widget _row(
+    BuildContext context,
+    String label,
+    String value,
+    Color subTextColor,
+  ) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

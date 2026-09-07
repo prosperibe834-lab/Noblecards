@@ -17,7 +17,9 @@ class FilterBottomSheet extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppRadius.lg),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -51,9 +53,16 @@ class FilterBottomSheet extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.accentViolet,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.full),
+              ),
             ),
-            child: const Center(child: Text('Reset Filters', style: TextStyle(color: Colors.white))),
+            child: const Center(
+              child: Text(
+                'Reset Filters',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
         ],
       ),

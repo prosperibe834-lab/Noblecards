@@ -41,17 +41,17 @@ class EditableProfileModel {
   }
 
   Map<String, dynamic> toApiMap() => {
-        'firstName': fullName.split(' ').first,
-        'lastName': fullName.split(' ').skip(1).join(' '),
-        'username': username,
-        'email': email,
-        'phone': phone,
-        'country': country,
-        'countryCode': countryCode.isEmpty ? null : countryCode,
-        'gender': gender,
-        'dateOfBirth': dateOfBirth.isEmpty ? null : dateOfBirth,
-        'address': address,
-      };
+    'firstName': fullName.split(' ').first,
+    'lastName': fullName.split(' ').skip(1).join(' '),
+    'username': username,
+    'email': email,
+    'phone': phone,
+    'country': country,
+    'countryCode': countryCode.isEmpty ? null : countryCode,
+    'gender': gender,
+    'dateOfBirth': dateOfBirth.isEmpty ? null : dateOfBirth,
+    'address': address,
+  };
 
   EditableProfileModel copyWith({
     String? fullName,
@@ -95,7 +95,11 @@ class EditableProfileModel {
 
   factory EditableProfileModel.fromMap(Map<String, dynamic> map) {
     return EditableProfileModel(
-      fullName: map['fullName'] ?? [map['firstName'], map['lastName']].where((value) => value != null && value.toString().isNotEmpty).join(' '),
+      fullName:
+          map['fullName'] ??
+          [map['firstName'], map['lastName']]
+              .where((value) => value != null && value.toString().isNotEmpty)
+              .join(' '),
       username: map['username'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
@@ -111,6 +115,8 @@ class EditableProfileModel {
   static String? _imageUrl(Object? value) {
     if (value == null || value.toString().isEmpty) return null;
     final path = value.toString();
-    return path.startsWith('/') ? '${AuthenticationService.apiBaseUrl}$path' : path;
+    return path.startsWith('/')
+        ? '${AuthenticationService.apiBaseUrl}$path'
+        : path;
   }
 }

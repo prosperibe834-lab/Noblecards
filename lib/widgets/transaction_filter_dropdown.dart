@@ -56,7 +56,10 @@ class TransactionFilterDropdown<T> extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     itemLabelExtractor(item),
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

@@ -53,7 +53,10 @@ class ReportProblemCard extends StatelessWidget {
                       onTap: () {}, // Navigation placeholder
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.success,
                           borderRadius: BorderRadius.circular(8),
@@ -71,10 +74,13 @@ class ReportProblemCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Expanded(flex: 4, child: SizedBox()), // Space for illustration
+              const Expanded(
+                flex: 4,
+                child: SizedBox(),
+              ), // Space for illustration
             ],
           ),
-          
+
           // Custom Illustration using Boxicons and shapes to match design
           Positioned(
             right: -10,

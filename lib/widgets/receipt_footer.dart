@@ -21,7 +21,11 @@ class ReceiptFooter extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Boxicons.bx_lock_alt, size: 14, color: isDark ? Colors.grey[400] : Colors.grey[600]),
+            Icon(
+              Boxicons.bx_lock_alt,
+              size: 14,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
             const SizedBox(width: 6),
             Text(
               'Official Electronic Receipt • NobleCards Inc.',

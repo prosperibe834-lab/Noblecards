@@ -15,7 +15,9 @@ class RegionSelectorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final subTextColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.lightSubText;
 
     return Consumer<RegionProvider>(
       builder: (context, provider, child) {
@@ -27,7 +29,9 @@ class RegionSelectorCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkCard : AppColors.white,
             borderRadius: BorderRadius.circular(AppRadius.lg),
-            border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.primary.withOpacity(0.08),
@@ -79,13 +83,19 @@ class RegionSelectorCard extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     '${region.currencyCode} (${region.currencySymbol})',
-                                    style: TextStyle(color: subTextColor, fontSize: 12),
+                                    style: TextStyle(
+                                      color: subTextColor,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ],
                               ),
                       ),
                     ),
-                    Icon(Icons.keyboard_arrow_down_rounded, color: subTextColor),
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: subTextColor,
+                    ),
                   ],
                 ),
               ),
@@ -95,4 +105,4 @@ class RegionSelectorCard extends StatelessWidget {
       },
     );
   }
-} 
+}

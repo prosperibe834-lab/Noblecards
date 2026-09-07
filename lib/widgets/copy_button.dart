@@ -6,11 +6,7 @@ class CopyButton extends StatefulWidget {
   final String textToCopy;
   final String label;
 
-  const CopyButton({
-    super.key,
-    required this.textToCopy,
-    this.label = "Copy",
-  });
+  const CopyButton({super.key, required this.textToCopy, this.label = "Copy"});
 
   @override
   State<CopyButton> createState() => _CopyButtonState();
@@ -36,7 +32,9 @@ class _CopyButtonState extends State<CopyButton> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       child: Material(
-        color: _copied ? Colors.green.withOpacity(0.12) : primaryColor.withOpacity(0.1),
+        color: _copied
+            ? Colors.green.withOpacity(0.12)
+            : primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(30),
         child: InkWell(
           onTap: _handleCopy,

@@ -45,12 +45,18 @@ class _AccountLevelScreenState extends State<AccountLevelScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? AppColors.darkText : AppColors.lightText, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? AppColors.darkText : AppColors.lightText,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -60,7 +66,10 @@ class _AccountLevelScreenState extends State<AccountLevelScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Boxicons.bx_info_circle, color: isDark ? AppColors.darkText : AppColors.lightText),
+            icon: Icon(
+              Boxicons.bx_info_circle,
+              color: isDark ? AppColors.darkText : AppColors.lightText,
+            ),
             onPressed: () {},
           ),
         ],
@@ -101,7 +110,10 @@ class _AccountLevelScreenState extends State<AccountLevelScreen> {
           const SizedBox(height: 24),
           const TierBenefitsSection(),
           const SizedBox(height: 24),
-          AboutTiersSection(tiers: _accountData!.allTiers, currentTierName: _accountData!.currentTier),
+          AboutTiersSection(
+            tiers: _accountData!.allTiers,
+            currentTierName: _accountData!.currentTier,
+          ),
           const SizedBox(height: 24),
           const HowToLevelUpSection(),
           const SizedBox(height: 24),
@@ -142,7 +154,10 @@ class _AccountLevelScreenState extends State<AccountLevelScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AboutTiersSection(tiers: _accountData!.allTiers, currentTierName: _accountData!.currentTier),
+                AboutTiersSection(
+                  tiers: _accountData!.allTiers,
+                  currentTierName: _accountData!.currentTier,
+                ),
                 const SizedBox(height: 24),
                 const HowToLevelUpSection(),
                 const SizedBox(height: 24),
@@ -166,11 +181,29 @@ class _AccountLevelScreenState extends State<AccountLevelScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Container(height: 180, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20))),
+            Container(
+              height: 180,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             const SizedBox(height: 16),
-            Container(height: 100, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20))),
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             const SizedBox(height: 16),
-            Container(height: 160, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20))),
+            Container(
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
           ],
         ),
       ),

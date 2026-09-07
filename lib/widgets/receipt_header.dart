@@ -5,10 +5,7 @@ import 'custom_status_badge.dart';
 class ReceiptHeader extends StatelessWidget {
   final TransactionModel transaction;
 
-  const ReceiptHeader({
-    Key? key,
-    required this.transaction,
-  }) : super(key: key);
+  const ReceiptHeader({Key? key, required this.transaction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

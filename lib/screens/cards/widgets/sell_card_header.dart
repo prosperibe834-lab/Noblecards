@@ -59,7 +59,11 @@ class SellCardHeader extends StatelessWidget {
                       width: 36,
                       height: 36,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, color: Colors.white, size: 30),
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.credit_card,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
                   ),
                 ),
@@ -68,18 +72,31 @@ class SellCardHeader extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(card.name, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700)),
+                      Text(
+                        card.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       const SizedBox(height: AppSpacing.xs),
                       Consumer2<RegionProvider, BuyProvider>(
                         builder: (context, regionProvider, buyProvider, child) {
                           final selectedRegion = regionProvider.selectedRegion;
                           return Row(
                             children: [
-                              Text(selectedRegion?.flag ?? card.countryFlag, style: const TextStyle(fontSize: 14)),
+                              Text(
+                                selectedRegion?.flag ?? card.countryFlag,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                               const SizedBox(width: AppSpacing.xs),
                               Text(
                                 selectedRegion?.countryName ?? card.country,
-                                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
                               ),
                             ],
                           );
@@ -92,12 +109,21 @@ class SellCardHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppRadius.full),
                   onTap: onChange,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white24,
                       borderRadius: BorderRadius.circular(AppRadius.full),
                     ),
-                    child: const Text('Change', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                    child: const Text(
+                      'Change',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -109,11 +135,21 @@ class SellCardHeader extends StatelessWidget {
                   children: [
                     AvailabilityBadge(isAvailable: true),
                     const SizedBox(width: AppSpacing.sm),
-                    const Text('Instant Payment', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    const Text(
+                      'Instant Payment',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
                     const SizedBox(width: AppSpacing.sm),
-                    const Icon(Boxicons.bx_time, color: Colors.white70, size: 14),
+                    const Icon(
+                      Boxicons.bx_time,
+                      color: Colors.white70,
+                      size: 14,
+                    ),
                     const SizedBox(width: AppSpacing.xs),
-                    const Text('~5 Minutes', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    const Text(
+                      '~5 Minutes',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
                   ],
                 );
               },
@@ -126,12 +162,19 @@ class SellCardHeader extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Sell Rate', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    const Text(
+                      'Sell Rate',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
                     const SizedBox(height: AppSpacing.xs),
                     Consumer<BuyProvider>(
                       builder: (context, provider, child) => Text(
                         '${provider.currentRate.toStringAsFixed(2)}%',
-                        style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -139,9 +182,19 @@ class SellCardHeader extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: const [
-                    Text('Estimated processing', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(
+                      'Estimated processing',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
                     SizedBox(height: AppSpacing.xs),
-                    Text('~5 minutes', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                    Text(
+                      '~5 minutes',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ],

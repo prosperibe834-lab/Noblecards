@@ -1,137 +1,327 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import '../../models/transaction_model.dart';
-import '../../widgets/animated_success_widget.dart';
-import '../../widgets/glass_card.dart';
-import 'models/withdrawal_request_model.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_radius.dart';
+import 'models/withdrawal_transaction_model.dart';
+import 'widgets/withdraw_success_animation.dart';
+import 'widgets/withdraw_summary_card.dart';
+import 'widgets/withdraw_notification_card.dart';
 import 'withdrawal_receipt_screen.dart';
 
-class WithdrawSuccessScreen extends StatelessWidget {
-  final WithdrawalRequestModel request;
+class WithdrawSuccessScreen extends StatefulWidget {
+  final WithdrawalTransactionModel? transaction;
+  final bool isLoading;
+  final bool hasError;
+  final VoidCallback? onRetry;
 
   const WithdrawSuccessScreen({
-    super.key,
-    required this.request,
-  });
+    Key? key,
+    this.transaction,
+    this.isLoading = false,
+    this.hasError = false,
+    this.onRetry,
+  }) : super(key: key);
+
+  @override
+  State<WithdrawSuccessScreen> createState() => _WithdrawSuccessScreenState();
+}
+
+class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
+
+    if (!widget.isLoading && !widget.hasError) {
+      _fadeController.forward();
+    }
+  }
+
+  @override
+  void didUpdateWidget(WithdrawSuccessScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.isLoading && !widget.hasError && oldWidget.isLoading) {
+      _fadeController.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  void _onDone() {
+    // Safely pops back to DepositScreen if it exists in the stack.
+    // If it doesn't, you can replace this with a named route pushReplacement.
+    Navigator.of(context).popUntil((route) {
+      return route.settings.name == '/deposit' || route.isFirst;
+    });
+  }
+
+  void _onViewReceipt() {
+    final transaction = widget.transaction;
+    if (transaction == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WithdrawalReceiptScreen(transaction: transaction),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              const Spacer(),
-              const AnimatedSuccessWidget(size: 100),
-              const SizedBox(height: 24),
-              const Text(
-                "Withdrawal Requested!",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                "Your payout request is being processed.",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
+      body: SafeArea(child: _buildBody(isDark)),
+    );
+  }
 
-              GlassCard(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    _buildRow("Requested Amount", "${request.currency} ${request.amount.toStringAsFixed(2)}"),
-                    const Divider(height: 20),
-                    _buildRow("Payout Method", request.method.name),
-                    const Divider(height: 20),
-                    _buildRow("Destination Account", request.destinationAccount, isHighlight: true),
-                    const Divider(height: 20),
-                    _buildRow("Transaction Ref", request.referenceNumber, isBold: true),
-                  ],
-                ),
-              ),
+  Widget _buildBody(bool isDark) {
+    if (widget.hasError) {
+      return _buildErrorState(isDark);
+    }
 
-              const Spacer(),
+    if (widget.isLoading || widget.transaction == null) {
+      return _buildShimmerState(isDark);
+    }
 
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: OutlinedButton.icon(
-                  icon: const Icon(Boxicons.bx_receipt),
-                  label: const Text(
-                    "View Official Receipt",
-                    style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () {
-                    final transactionModel = TransactionModel(
-                      id: request.referenceNumber,
-                      receiptNumber: 'REC-${request.referenceNumber}',
-                      referenceNumber: request.referenceNumber,
-                      walletId: 'NC-WAL-USD',
-                      title: 'Wallet Withdrawal',
-                      category: TransactionCategory.withdrawals,
-                      amount: request.amount,
-                      currency: request.currency,
-                      amountSent: request.amount,
-                      currencySent: request.currency,
-                      amountReceived: request.netAmount,
-                      currencyReceived: request.currency,
-                      exchangeRate: '1:1',
-                      status: TransactionStatus.successful,
-                      date: DateTime.now(),
-                      fees: request.fee,
-                      processingFee: request.fee,
-                      networkFee: 0.00,
-                      previousBalance: 1000.00,
-                      currentBalance: 1000.00 - request.amount,
-                      sender: 'NobleCards USD Wallet',
-                      receiver: '${request.method.name} (${request.destinationAccount})',
-                      country: 'Nigeria',
-                      device: 'Mobile App',
-                      processingTime: 'Instant',
-                      completedBy: 'System',
-                    );
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => WithdrawalReceiptScreen(transaction: transactionModel),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-                  child: const Text("Done", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
-                ),
-              )
-            ],
-          ),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: AppSpacing.xl),
+            const WithdrawSuccessAnimation(),
+            const SizedBox(height: AppSpacing.lg),
+            _buildHeader(isDark),
+            const SizedBox(height: AppSpacing.xl),
+            WithdrawSummaryCard(transaction: widget.transaction!),
+            const SizedBox(height: AppSpacing.md),
+            WithdrawNotificationCard(
+              message: widget.transaction!.status.toLowerCase() == 'completed'
+                  ? 'Your funds have been successfully credited to your destination.'
+                  : 'Your withdrawal request has been received and is being processed.',
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            _buildActions(isDark),
+            const SizedBox(height: AppSpacing.md),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildRow(String label, String value, {bool isHighlight = false, bool isBold = false}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildHeader(bool isDark) {
+    return Column(
       children: [
-        Text(label, style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Colors.grey)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Boxicons.bx_hive,
+              color: AppColors.primary,
+              size: 28,
+            ), // NobleCards logo placeholder
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              'NobleCards',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
         Text(
-          value,
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: isHighlight ? 15 : 14,
-            fontWeight: (isHighlight || isBold) ? FontWeight.bold : FontWeight.w600,
-            color: isHighlight ? Colors.blue : null,
+          'Withdrawal Successful!',
+          textAlign: TextAlign.center,
+          style: Theme.of(
+            context,
+          ).textTheme.headlineLarge?.copyWith(fontSize: 26),
+        ),
+        const SizedBox(height: AppSpacing.s),
+        Text(
+          'Your withdrawal request has been\nreceived and is being processed.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+            height: 1.5,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildActions(bool isDark) {
+    return Column(
+      children: [
+        // View Receipt Button
+        Container(
+          width: double.infinity,
+          height: 56,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.primary, AppColors.success],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(AppRadius.full),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: ElevatedButton(
+            onPressed: _onViewReceipt,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.full),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Boxicons.bx_receipt, color: Colors.white, size: 20),
+                const SizedBox(width: AppSpacing.sm),
+                const Text(
+                  'View Receipt',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(
+                  Boxicons.bx_chevron_right,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        // Done Button
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: OutlinedButton(
+            onPressed: _onDone,
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                width: 1.5,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.full),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Boxicons.bx_check_circle,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  'Done',
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkText : AppColors.lightText,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildShimmerState(bool isDark) {
+    return Center(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.4, end: 1.0),
+        duration: const Duration(milliseconds: 1000),
+        curve: Curves.easeInOut,
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(color: AppColors.primary),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Finalizing details...',
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildErrorState(bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Boxicons.bx_error_circle, color: AppColors.error, size: 64),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'Unable to load details',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          ElevatedButton(
+            onPressed: widget.onRetry,
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            child: const Text(
+              'Try Again',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -13,12 +13,21 @@ class PaymentMethodCard extends StatelessWidget {
     final cardColor = isDark ? AppColors.darkCard : AppColors.lightCard;
     final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final subTextColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.lightSubText;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Payment Method', style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(
+          'Payment Method',
+          style: TextStyle(
+            color: textColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
         Container(
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -42,9 +51,18 @@ class PaymentMethodCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('NobleCards Wallet', style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+                    Text(
+                      'NobleCards Wallet',
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 2),
-                    Text('Available Balance: \$1,250.00', style: TextStyle(color: subTextColor, fontSize: 12)),
+                    Text(
+                      'Available Balance: \$1,250.00',
+                      style: TextStyle(color: subTextColor, fontSize: 12),
+                    ),
                   ],
                 ),
               ),

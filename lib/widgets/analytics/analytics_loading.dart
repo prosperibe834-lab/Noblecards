@@ -54,7 +54,7 @@ class AnalyticsLoadingShimmer extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

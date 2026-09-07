@@ -57,7 +57,7 @@ class AppearanceFooter extends StatelessWidget {
               const SizedBox(width: 30), // Spacing for absolute stars
             ],
           ),
-          
+
           // Decorative Sparkles
           Positioned(
             right: 10,

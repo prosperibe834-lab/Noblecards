@@ -7,11 +7,7 @@ class HotTodayList extends StatelessWidget {
   final List<GiftCardModel> cards;
   final Function(GiftCardModel) onCardTap;
 
-  const HotTodayList({
-    super.key,
-    required this.cards,
-    required this.onCardTap,
-  });
+  const HotTodayList({super.key, required this.cards, required this.onCardTap});
 
   @override
   Widget build(BuildContext context) {

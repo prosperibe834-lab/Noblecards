@@ -6,7 +6,7 @@ enum BuyReceiptState { loading, success, error }
 
 class BuyReceiptProvider extends ChangeNotifier {
   final BuyReceiptService _service = BuyReceiptService();
-  
+
   BuyReceiptState _state = BuyReceiptState.loading;
   PurchasedGiftCard? _receipt;
   String _errorMessage = '';

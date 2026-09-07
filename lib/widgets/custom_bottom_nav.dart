@@ -24,7 +24,7 @@ class CustomBottomNav extends StatelessWidget {
             color: Colors.black.withOpacity(0.06),
             blurRadius: 20,
             offset: const Offset(0, -4),
-          )
+          ),
         ],
       ),
       child: Row(

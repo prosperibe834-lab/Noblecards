@@ -11,7 +11,7 @@ class PurchasedGiftCard {
   final String paymentMethod;
   final String purchaseDate;
   final PurchaseStatus status;
-  
+
   // Card Details for the View Screen
   final String cardCode;
   final String? pin;

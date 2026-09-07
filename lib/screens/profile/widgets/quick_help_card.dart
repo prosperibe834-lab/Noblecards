@@ -23,7 +23,7 @@ class QuickHelpCard extends StatelessWidget {
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
-          )
+          ),
         ],
       ),
       child: Material(
@@ -45,11 +45,7 @@ class QuickHelpCard extends StatelessWidget {
                     color: AppColors.success.withOpacity(isDark ? 0.15 : 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    item.icon,
-                    color: AppColors.success,
-                    size: 22,
-                  ),
+                  child: Icon(item.icon, color: AppColors.success, size: 22),
                 ),
                 const SizedBox(height: 12),
                 Text(

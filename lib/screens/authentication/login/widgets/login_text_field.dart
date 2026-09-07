@@ -33,9 +33,15 @@ class _LoginTextFieldState extends State<LoginTextField> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color inputBgColor = isDark ? AppColors.darkInput : AppColors.lightInput;
-    final Color borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
-    final Color iconColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final Color inputBgColor = isDark
+        ? AppColors.darkInput
+        : AppColors.lightInput;
+    final Color borderColor = isDark
+        ? AppColors.darkBorder
+        : AppColors.lightBorder;
+    final Color iconColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.lightSubText;
 
     return TextFormField(
       controller: widget.controller,
@@ -47,14 +53,18 @@ class _LoginTextFieldState extends State<LoginTextField> {
       validator: widget.validator,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: iconColor),
+        hintStyle: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: iconColor),
         filled: true,
         fillColor: inputBgColor,
         prefixIcon: Icon(widget.prefixIcon, color: iconColor, size: 22),
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
-                  _obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  _obscureText
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
                   color: iconColor,
                   size: 22,
                 ),
@@ -81,7 +91,10 @@ class _LoginTextFieldState extends State<LoginTextField> {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 16,
+        ),
       ),
     );
   }

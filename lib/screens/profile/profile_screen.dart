@@ -30,7 +30,9 @@ class ProfileScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -43,34 +45,37 @@ class ProfileScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Boxicons.bx_qr_scan, color: isDark ? Colors.white : Colors.black),
+            icon: Icon(
+              Boxicons.bx_qr_scan,
+              color: isDark ? Colors.white : Colors.black,
+            ),
             onPressed: () {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const QrScannerScreen(),
-    );
-  },
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const QrScannerScreen(),
+              );
+            },
           ),
           Stack(
             alignment: Alignment.center,
             children: [
               IconButton(
-  icon: Icon(
-    Boxicons.bx_bell,
-    color: isDark ? Colors.white : Colors.black,
-  ),
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const NotificationScreen(),
-      ),
-    );
-  },
-),
+                icon: Icon(
+                  Boxicons.bx_bell,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationScreen(),
+                    ),
+                  );
+                },
+              ),
               Positioned(
                 top: 12,
                 right: 12,
@@ -92,7 +97,10 @@ class ProfileScreen extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 const ProfileHeader(),
@@ -106,30 +114,32 @@ class ProfileScreen extends StatelessWidget {
                 ProfileSection(
                   title: 'My Account',
                   children: [
-                  ProfileTile(
-  icon: Boxicons.bx_user,
-  title: 'Personal Information',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const PersonalInformationScreen(),
-      ),
-    );
-  },
-),
-                   ProfileTile(
-  icon: Boxicons.bx_check_shield,
-  title: 'Security & PIN',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ChangeTransactionPinScreen(),
-      ),
-    );
-  },
-),
+                    ProfileTile(
+                      icon: Boxicons.bx_user,
+                      title: 'Personal Information',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const PersonalInformationScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ProfileTile(
+                      icon: Boxicons.bx_check_shield,
+                      title: 'Security & PIN',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const ChangeTransactionPinScreen(),
+                          ),
+                        );
+                      },
+                    ),
                     ProfileTile(
                       icon: Boxicons.bxs_bank,
                       title: 'Bank Accounts',
@@ -140,35 +150,35 @@ class ProfileScreen extends StatelessWidget {
                       title: 'Payment Methods',
                       onTap: () {},
                     ),
-                      ProfileTile(
-                        icon: Boxicons.bx_fingerprint,
-                        title: 'Biometric Login',
-                        trailingText: 'Enabled',
-                        trailingTextColor: AppColors.success,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChangeNotifierProvider(
-                                create: (_) => BiometricProvider(),
-                                child: const BiometricLoginScreen(),
-                              ),
+                    ProfileTile(
+                      icon: Boxicons.bx_fingerprint,
+                      title: 'Biometric Login',
+                      trailingText: 'Enabled',
+                      trailingTextColor: AppColors.success,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChangeNotifierProvider(
+                              create: (_) => BiometricProvider(),
+                              child: const BiometricLoginScreen(),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    ),
                     ProfileTile(
                       icon: Boxicons.bx_lock_alt,
                       title: 'Change Password',
                       showBorder: false,
-                     onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ChangePasswordScreen(),
-      ),
-    );
-  },
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChangePasswordScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -240,30 +250,31 @@ class ProfileScreen extends StatelessWidget {
                 ProfileSection(
                   title: 'Preferences',
                   children: [
-                   ProfileTile(
-  icon: Boxicons.bx_palette,
-  title: 'Appearance',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AppearanceScreen(),
-      ),
-    );
-  },
-),
                     ProfileTile(
-  icon: Boxicons.bx_globe,
-  title: 'Language',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LanguageScreen(), // Replace with your Language Screen widget
-      ),
-    );
-  },
-),
+                      icon: Boxicons.bx_palette,
+                      title: 'Appearance',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AppearanceScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ProfileTile(
+                      icon: Boxicons.bx_globe,
+                      title: 'Language',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const LanguageScreen(), // Replace with your Language Screen widget
+                          ),
+                        );
+                      },
+                    ),
                     ProfileTile(
                       icon: Boxicons.bx_money,
                       title: 'Currency',
@@ -277,41 +288,41 @@ class ProfileScreen extends StatelessWidget {
                 ProfileSection(
                   title: 'Support',
                   children: [
-                   ProfileTile(
-  icon: Boxicons.bx_help_circle,
-  title: 'Help Center',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HelpCenterScreen(),
-      ),
-    );
-  },
-),
                     ProfileTile(
-  icon: Boxicons.bx_message_dots,
-  title: 'Live Chat',
-  onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LiveChatScreen(),
-      ),
-    );
-  },
-),
+                      icon: Boxicons.bx_help_circle,
+                      title: 'Help Center',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HelpCenterScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    ProfileTile(
+                      icon: Boxicons.bx_message_dots,
+                      title: 'Live Chat',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LiveChatScreen(),
+                          ),
+                        );
+                      },
+                    ),
                     ProfileTile(
                       icon: Boxicons.bx_error_circle,
                       title: 'Report a Problem',
                       showBorder: false,
                       onTap: () {
                         Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LiveChatScreen(),
-      ),
-    );
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LiveChatScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -347,7 +358,10 @@ class ProfileScreen extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  error.toString().replaceFirst('Exception: ', ''),
+                                  error.toString().replaceFirst(
+                                    'Exception: ',
+                                    '',
+                                  ),
                                   style: const TextStyle(color: Colors.white),
                                 ),
                                 backgroundColor: AppColors.error,
@@ -368,7 +382,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 40), // Bottom padding
               ]),
             ),
@@ -405,14 +419,19 @@ class _ReferralPromoCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 'Invite Friends',
-                style: AppTextStyles.h3.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                style: AppTextStyles.h3.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             'Earn rewards when friends join NobleCards using your link.',
-            style: AppTextStyles.bodyText2.copyWith(color: Colors.white.withValues(alpha: 0.9)),
+            style: AppTextStyles.bodyText2.copyWith(
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -420,11 +439,16 @@ class _ReferralPromoCard extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: const Color(0xFF2575FC),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               elevation: 0,
             ),
-            child: const Text('Invite Friends', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text(
+              'Invite Friends',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

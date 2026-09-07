@@ -9,7 +9,8 @@ class PasswordHeader extends StatefulWidget {
   State<PasswordHeader> createState() => _PasswordHeaderState();
 }
 
-class _PasswordHeaderState extends State<PasswordHeader> with SingleTickerProviderStateMixin {
+class _PasswordHeaderState extends State<PasswordHeader>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
 
   @override
@@ -36,30 +37,34 @@ class _PasswordHeaderState extends State<PasswordHeader> with SingleTickerProvid
         // Logo Integration
         Center(
           child: Image.asset(
-            isDark 
-                ? 'lib/assets/logos/MainDarkLogo.png.png' 
+            isDark
+                ? 'lib/assets/logos/MainDarkLogo.png.png'
                 : 'lib/assets/logos/MainLightLogo.png.png',
             height: 48,
             errorBuilder: (context, error, stackTrace) => const Icon(
-              Boxicons.bx_wallet_alt, size: 48, color: AppColors.primary,
+              Boxicons.bx_wallet_alt,
+              size: 48,
+              color: AppColors.primary,
             ),
           ),
         ),
         const SizedBox(height: 24),
-        
+
         Text(
           'Create New Password',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: 12),
-        
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: Text(
             'Your new password must be different\nfrom previous used passwords.',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(height: 1.5),
           ),
         ),
         const SizedBox(height: 32),
@@ -78,8 +83,8 @@ class _PasswordHeaderState extends State<PasswordHeader> with SingleTickerProvid
             height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark 
-                  ? AppColors.primary.withOpacity(0.1) 
+              color: isDark
+                  ? AppColors.primary.withOpacity(0.1)
                   : AppColors.successLight.withOpacity(0.15),
             ),
             child: Stack(

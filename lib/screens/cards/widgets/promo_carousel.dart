@@ -18,27 +18,27 @@ class _PromoCarouselState extends State<PromoCarousel> {
     {
       'title': 'Trade Gift Cards\nSecurely & Instantly',
       'sub': 'Best rates • Instant payments\n24/7 Support • 120+ Countries',
-      'btn': 'Explore Now →'
+      'btn': 'Explore Now →',
     },
     {
       'title': 'Highest Rates Today',
       'sub': 'Updated every few seconds for top value',
-      'btn': 'View Rates →'
+      'btn': 'View Rates →',
     },
     {
       'title': 'Instant Verification',
       'sub': 'Fast secure processing within minutes',
-      'btn': 'Sell Now →'
+      'btn': 'Sell Now →',
     },
     {
       'title': '24/7 Customer Support',
       'sub': 'Always online to help your trades',
-      'btn': 'Contact Support →'
+      'btn': 'Contact Support →',
     },
     {
       'title': 'Global Marketplace',
       'sub': 'Thousands of cards active right now',
-      'btn': 'Start Trading →'
+      'btn': 'Start Trading →',
     },
   ];
 
@@ -88,7 +88,9 @@ class _PromoCarouselState extends State<PromoCarousel> {
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: isDark ? Colors.white : AppColors.lightText,
+                              color: isDark
+                                  ? Colors.white
+                                  : AppColors.lightText,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -98,15 +100,22 @@ class _PromoCarouselState extends State<PromoCarousel> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 11,
-                              color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                              color: isDark
+                                  ? AppColors.darkSubText
+                                  : AppColors.lightSubText,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.accentViolet,
-                              borderRadius: BorderRadius.circular(AppRadius.full),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.full,
+                              ),
                             ),
                             child: Text(
                               slide['btn']!,
@@ -125,7 +134,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
                       Icons.account_balance_wallet_rounded,
                       size: 56,
                       color: AppColors.accentViolet.withOpacity(0.8),
-                    )
+                    ),
                   ],
                 ),
               );

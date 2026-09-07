@@ -42,11 +42,7 @@ class EmptyStateWidget extends StatelessWidget {
                 color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
               ),
             ),
-            child: Icon(
-              icon,
-              size: 48,
-              color: AppColors.primary,
-            ),
+            child: Icon(icon, size: 48, color: AppColors.primary),
           ),
           const SizedBox(height: AppSpacing.md),
           Text(

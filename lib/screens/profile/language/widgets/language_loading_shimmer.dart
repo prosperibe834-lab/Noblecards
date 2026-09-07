@@ -37,22 +37,28 @@ class LanguageLoadingShimmer extends StatelessWidget {
           Container(height: 20, width: 100, color: baseColor),
           const SizedBox(height: 16),
           // List Shimmer
-          ...List.generate(6, (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Row(
-              children: [
-                Container(height: 30, width: 40, color: baseColor),
-                const SizedBox(width: 16),
-                Container(height: 20, width: 150, color: baseColor),
-                const Spacer(),
-                Container(
-                  height: 24,
-                  width: 24,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: baseColor),
-                ),
-              ],
+          ...List.generate(
+            6,
+            (index) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                children: [
+                  Container(height: 30, width: 40, color: baseColor),
+                  const SizedBox(width: 16),
+                  Container(height: 20, width: 150, color: baseColor),
+                  const Spacer(),
+                  Container(
+                    height: 24,
+                    width: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: baseColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );

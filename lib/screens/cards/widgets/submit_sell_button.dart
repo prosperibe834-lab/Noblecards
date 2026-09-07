@@ -8,7 +8,11 @@ class SubmitSellButton extends StatelessWidget {
   final bool enabled;
   final VoidCallback onTap;
 
-  const SubmitSellButton({super.key, required this.enabled, required this.onTap});
+  const SubmitSellButton({
+    super.key,
+    required this.enabled,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +26,28 @@ class SubmitSellButton extends StatelessWidget {
           height: 58,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.md),
-            gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryDark]),
+            gradient: const LinearGradient(
+              colors: [AppColors.primary, AppColors.primaryDark],
+            ),
             boxShadow: [
               BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.25),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
+                color: AppColors.primary.withValues(alpha: 0.25),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
             ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              Text('Submit Cards for Verification', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+              Text(
+                'Submit Cards for Verification',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               SizedBox(width: AppSpacing.sm),
               Icon(Icons.arrow_forward, color: Colors.white, size: 20),
             ],

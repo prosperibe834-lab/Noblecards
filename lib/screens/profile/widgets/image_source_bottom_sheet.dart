@@ -51,7 +51,10 @@ class ImageSourceBottomSheet extends StatelessWidget {
             const SizedBox(height: 16),
             ListTile(
               leading: const Icon(Boxicons.bx_camera, color: AppColors.success),
-              title: Text('Take Photo', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+              title: Text(
+                'Take Photo',
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onCameraTap();
@@ -59,7 +62,10 @@ class ImageSourceBottomSheet extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Boxicons.bx_image, color: AppColors.success),
-              title: Text('Choose from Gallery', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+              title: Text(
+                'Choose from Gallery',
+                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onGalleryTap();
@@ -67,7 +73,10 @@ class ImageSourceBottomSheet extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Boxicons.bx_trash, color: AppColors.error),
-              title: const Text('Remove Photo', style: TextStyle(color: AppColors.error)),
+              title: const Text(
+                'Remove Photo',
+                style: TextStyle(color: AppColors.error),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 onRemoveTap();

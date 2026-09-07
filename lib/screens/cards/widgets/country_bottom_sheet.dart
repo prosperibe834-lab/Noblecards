@@ -29,7 +29,9 @@ class _CountryBottomSheetState extends State<CountryBottomSheet> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(AppRadius.lg),
+        ),
       ),
       child: Column(
         children: [
@@ -72,15 +74,20 @@ class _CountryBottomSheetState extends State<CountryBottomSheet> {
               itemBuilder: (context, index) {
                 final country = filtered[index];
                 return ListTile(
-                  leading: Text(country.flag, style: const TextStyle(fontSize: 20)),
+                  leading: Text(
+                    country.flag,
+                    style: const TextStyle(fontSize: 20),
+                  ),
                   title: Text(
                     country.name,
-                    style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText),
+                    style: TextStyle(
+                      color: isDark ? AppColors.darkText : AppColors.lightText,
+                    ),
                   ),
                   onTap: () {
-                      countryProvider.selectCountry(country);
-                      Navigator.pop(context, country);
-                    },
+                    countryProvider.selectCountry(country);
+                    Navigator.pop(context, country);
+                  },
                 );
               },
             ),

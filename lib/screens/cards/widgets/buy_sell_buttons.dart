@@ -6,11 +6,7 @@ class BuySellButtons extends StatelessWidget {
   final VoidCallback onBuy;
   final VoidCallback onSell;
 
-  const BuySellButtons({
-    super.key,
-    required this.onBuy,
-    required this.onSell,
-  });
+  const BuySellButtons({super.key, required this.onBuy, required this.onSell});
 
   @override
   Widget build(BuildContext context) {

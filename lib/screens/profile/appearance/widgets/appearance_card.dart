@@ -42,8 +42,8 @@ class AppearanceCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? (isDark
-                  ? AppColors.success.withOpacity(0.08)
-                  : AppColors.success.withOpacity(0.05))
+                    ? AppColors.success.withOpacity(0.08)
+                    : AppColors.success.withOpacity(0.05))
               : (isDark ? AppColors.darkCard : AppColors.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -58,14 +58,14 @@ class AppearanceCard extends StatelessWidget {
                     color: AppColors.success.withOpacity(0.1),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
-                  )
+                  ),
                 ]
               : [
                   BoxShadow(
                     color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
                     blurRadius: 10,
                     offset: const Offset(0, 3),
-                  )
+                  ),
                 ],
         ),
         child: Row(
@@ -118,7 +118,9 @@ class AppearanceCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       height: 1.3,
-                      color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                      color: isDark
+                          ? AppColors.darkSubText
+                          : AppColors.lightSubText,
                     ),
                   ),
                 ],

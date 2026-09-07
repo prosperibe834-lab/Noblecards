@@ -23,12 +23,15 @@ class _CurrencySelectorScreenState extends State<CurrencySelectorScreen> {
     final filtered = _allCurrencies.where((item) {
       final q = _query.toLowerCase();
       return item["code"]!.toLowerCase().contains(q) ||
-             item["name"]!.toLowerCase().contains(q);
+          item["name"]!.toLowerCase().contains(q);
     }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select Deposit Currency", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Select Deposit Currency",
+          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
@@ -55,15 +58,27 @@ class _CurrencySelectorScreenState extends State<CurrencySelectorScreen> {
               itemBuilder: (context, index) {
                 final curr = filtered[index];
                 return ListTile(
-                  leading: Text(curr["flag"]!, style: const TextStyle(fontSize: 26)),
-                  title: Text(curr["code"]!, style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
-                  subtitle: Text(curr["name"]!, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12)),
+                  leading: Text(
+                    curr["flag"]!,
+                    style: const TextStyle(fontSize: 26),
+                  ),
+                  title: Text(
+                    curr["code"]!,
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(
+                    curr["name"]!,
+                    style: const TextStyle(fontFamily: 'Poppins', fontSize: 12),
+                  ),
                   trailing: const Icon(Boxicons.bx_chevron_right),
                   onTap: () => Navigator.pop(context, curr),
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );

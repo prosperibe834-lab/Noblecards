@@ -29,12 +29,20 @@ class DepositSuccessScreen extends StatelessWidget {
               const SizedBox(height: 24),
               const Text(
                 "Deposit Successful!",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 6),
               const Text(
                 "Your wallet has been updated immediately.",
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Colors.grey),
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 13,
+                  color: Colors.grey,
+                ),
               ),
               const SizedBox(height: 32),
 
@@ -42,9 +50,16 @@ class DepositSuccessScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    _buildRow("Amount Paid", "$currency ${amount.toStringAsFixed(2)}"),
+                    _buildRow(
+                      "Amount Paid",
+                      "$currency ${amount.toStringAsFixed(2)}",
+                    ),
                     const Divider(height: 20),
-                    _buildRow("USD Credited", "\$${convertedUsd.toStringAsFixed(2)}", isHighlight: true),
+                    _buildRow(
+                      "USD Credited",
+                      "\$${convertedUsd.toStringAsFixed(2)}",
+                      isHighlight: true,
+                    ),
                     const Divider(height: 20),
                     _buildRow("Transaction Ref", "NC-89201948", isBold: true),
                   ],
@@ -58,7 +73,13 @@ class DepositSuccessScreen extends StatelessWidget {
                 height: 52,
                 child: OutlinedButton.icon(
                   icon: const Icon(Boxicons.bx_receipt),
-                  label: const Text("View Official Receipt", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+                  label: const Text(
+                    "View Official Receipt",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -78,10 +99,17 @@ class DepositSuccessScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-                  child: const Text("Done", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+                  onPressed: () =>
+                      Navigator.popUntil(context, (route) => route.isFirst),
+                  child: const Text(
+                    "Done",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -89,17 +117,31 @@ class DepositSuccessScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(String label, String value, {bool isHighlight = false, bool isBold = false}) {
+  Widget _buildRow(
+    String label,
+    String value, {
+    bool isHighlight = false,
+    bool isBold = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Colors.grey)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 13,
+            color: Colors.grey,
+          ),
+        ),
         Text(
           value,
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: isHighlight ? 16 : 14,
-            fontWeight: (isHighlight || isBold) ? FontWeight.bold : FontWeight.w600,
+            fontWeight: (isHighlight || isBold)
+                ? FontWeight.bold
+                : FontWeight.w600,
             color: isHighlight ? Colors.green : null,
           ),
         ),
@@ -107,3 +149,4 @@ class DepositSuccessScreen extends StatelessWidget {
     );
   }
 }
+

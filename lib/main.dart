@@ -36,7 +36,6 @@ Future<void> main() async {
     ),
   );
 
-
   runApp(
     MultiProvider(
       providers: [
@@ -70,7 +69,9 @@ class NobleCardsApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
 
       // Initial screen route based on the locally persisted API session.
-      home: hasActiveSession ? const MainNavigationScreen() : const OnboardingScreen(),
+      home: hasActiveSession
+          ? const MainNavigationScreen()
+          : const OnboardingScreen(),
 
       // <--- 2. ADDED THIS: Handles dynamic routes (/favourite-currencies, /exchange-rate)
       onGenerateRoute: AppRouter.generateRoute,

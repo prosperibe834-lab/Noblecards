@@ -4,9 +4,9 @@ import '../../../../theme/app_colors.dart';
 
 class ReceiptHeader extends StatelessWidget {
   final String subtitle;
-  
+
   const ReceiptHeader({
-    super.key, 
+    super.key,
     this.subtitle = 'GIFT CARD SUBMISSION RECEIPT',
   });
 
@@ -29,7 +29,11 @@ class ReceiptHeader extends StatelessWidget {
                     color: AppColors.success,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Boxicons.bx_credit_card_front, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Boxicons.bx_credit_card_front,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Text(

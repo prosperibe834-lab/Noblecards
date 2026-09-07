@@ -48,7 +48,8 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
       if (_authToken.isEmpty) {
         if (!mounted) return;
         setState(() {
-          _errorMessage = 'Your login session has expired. Please log in again.';
+          _errorMessage =
+              'Your login session has expired. Please log in again.';
           _isLoading = false;
         });
         return;
@@ -65,7 +66,8 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
         paymentMethod: 'BANK_TRANSFER',
         country: 'Nigeria',
         countryCode: 'NG',
-        idempotencyKey: '${widget.currency}-${widget.amount}-${DateTime.now().millisecondsSinceEpoch}',
+        idempotencyKey:
+            '${widget.currency}-${widget.amount}-${DateTime.now().millisecondsSinceEpoch}',
       );
 
       if (mounted) {
@@ -119,18 +121,28 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Pay via Bank Transfer", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+          title: const Text(
+            "Pay via Bank Transfer",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_errorMessage != null || _deposit == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Pay via Bank Transfer", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+          title: const Text(
+            "Pay via Bank Transfer",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         body: Center(
           child: Padding(
@@ -138,7 +150,11 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Boxicons.bx_error_circle, size: 48, color: Colors.red),
+                const Icon(
+                  Boxicons.bx_error_circle,
+                  size: 48,
+                  color: Colors.red,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'Error: ${_errorMessage ?? 'Failed to create virtual account'}',
@@ -161,17 +177,24 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
     if (bankDetails == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Pay via Bank Transfer", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+          title: const Text(
+            "Pay via Bank Transfer",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-        body: const Center(
-          child: Text('No bank details available'),
-        ),
+        body: const Center(child: Text('No bank details available')),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Pay via Bank Transfer", style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Pay via Bank Transfer",
+          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -182,7 +205,11 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
               expiryTime: bankDetails.expiresAt,
               onExpired: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Virtual Account Expired. Please generate a new one.")),
+                  const SnackBar(
+                    content: Text(
+                      "Virtual Account Expired. Please generate a new one.",
+                    ),
+                  ),
                 );
               },
             ),
@@ -196,11 +223,25 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                 children: [
                   _buildDetailRow(context, "Bank Name", bankDetails.bankName),
                   const Divider(height: 24),
-                  _buildDetailRow(context, "Account Number", bankDetails.accountNumber, isCopyable: true),
+                  _buildDetailRow(
+                    context,
+                    "Account Number",
+                    bankDetails.accountNumber,
+                    isCopyable: true,
+                  ),
                   const Divider(height: 24),
-                  _buildDetailRow(context, "Account Name", bankDetails.accountName),
+                  _buildDetailRow(
+                    context,
+                    "Account Name",
+                    bankDetails.accountName,
+                  ),
                   const Divider(height: 24),
-                  _buildDetailRow(context, "Amount", "${bankDetails.currency} ${bankDetails.amount.toStringAsFixed(2)}", isBold: true),
+                  _buildDetailRow(
+                    context,
+                    "Amount",
+                    "${bankDetails.currency} ${bankDetails.amount.toStringAsFixed(2)}",
+                    isBold: true,
+                  ),
                 ],
               ),
             ),
@@ -222,7 +263,11 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                   Expanded(
                     child: Text(
                       "Transfer the EXACT amount above. Deposit is credited automatically within 60 seconds.",
-                      style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: Colors.amber),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 11,
+                        color: Colors.amber,
+                      ),
                     ),
                   ),
                 ],
@@ -237,7 +282,9 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
               height: 56,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 onPressed: _isVerifying ? null : _onPaymentConfirmed,
                 child: _isVerifying
@@ -248,17 +295,27 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
                       )
                     : const Text(
                         "I Have Made The Transfer",
-                        style: TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, String label, String value, {bool isCopyable = false, bool isBold = false}) {
+  Widget _buildDetailRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isCopyable = false,
+    bool isBold = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -284,9 +341,9 @@ class _BankTransferScreenState extends State<BankTransferScreen> {
             if (isCopyable) ...[
               const SizedBox(width: 8),
               CopyButton(textToCopy: value),
-            ]
+            ],
           ],
-        )
+        ),
       ],
     );
   }

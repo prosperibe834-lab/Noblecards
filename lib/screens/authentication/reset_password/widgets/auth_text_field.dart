@@ -51,9 +51,15 @@ class _AuthTextFieldState extends State<AuthTextField> {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color inputBgColor = isDark ? AppColors.darkBackground : AppColors.lightInput;
-    final Color borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
-    final Color iconColor = _isFocused ? AppColors.primary : (isDark ? AppColors.darkSubText : AppColors.lightSubText);
+    final Color inputBgColor = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightInput;
+    final Color borderColor = isDark
+        ? AppColors.darkBorder
+        : AppColors.lightBorder;
+    final Color iconColor = _isFocused
+        ? AppColors.primary
+        : (isDark ? AppColors.darkSubText : AppColors.lightSubText);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +83,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
           decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isDark ? AppColors.darkBorder : AppColors.lightSubText.withOpacity(0.5),
+              color: isDark
+                  ? AppColors.darkBorder
+                  : AppColors.lightSubText.withOpacity(0.5),
             ),
             filled: true,
             fillColor: inputBgColor,
@@ -92,13 +100,19 @@ class _AuthTextFieldState extends State<AuthTextField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              borderSide: const BorderSide(
+                color: AppColors.primary,
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.error),
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 18,
+              horizontal: 16,
+            ),
           ),
         ),
       ],

@@ -8,13 +8,15 @@ class ChatDemoService {
         title: 'Buy Gift Card',
         subtitle: 'Issues with purchased gift cards',
         icon: Boxicons.bx_shopping_bag,
-        autoMessage: 'Hello 👋\n\nThanks for contacting NobleCards Support.\nPlease provide:\n• Order ID\n• Gift Card Name\n• Amount\n• Explain the issue\n\nYou can also attach screenshots below.',
+        autoMessage:
+            'Hello 👋\n\nThanks for contacting NobleCards Support.\nPlease provide:\n• Order ID\n• Gift Card Name\n• Amount\n• Explain the issue\n\nYou can also attach screenshots below.',
       ),
       QuickAction(
         title: 'Sell Gift Card',
         subtitle: 'Issues with selling gift cards',
         icon: Boxicons.bx_credit_card,
-        autoMessage: 'Hello 👋\n\nPlease send:\n• Submission ID\n• Gift Card Name\n• Card Value\n• Describe the issue',
+        autoMessage:
+            'Hello 👋\n\nPlease send:\n• Submission ID\n• Gift Card Name\n• Card Value\n• Describe the issue',
       ),
       QuickAction(
         title: 'Wallet & Deposit',
@@ -32,13 +34,15 @@ class ChatDemoService {
         title: 'Payments',
         subtitle: 'Payment failures or deductions',
         icon: Boxicons.bx_credit_card_front,
-        autoMessage: 'Please provide your transaction ID and details of the payment failure.',
+        autoMessage:
+            'Please provide your transaction ID and details of the payment failure.',
       ),
       QuickAction(
         title: 'Verification (KYC)',
         subtitle: 'Verification or KYC issues',
         icon: Boxicons.bx_check_shield,
-        autoMessage: 'Please send your Submission ID.\nWe\'ll check the verification progress.',
+        autoMessage:
+            'Please send your Submission ID.\nWe\'ll check the verification progress.',
       ),
       QuickAction(
         title: 'Security',
@@ -50,7 +54,8 @@ class ChatDemoService {
         title: 'Report Scam',
         subtitle: 'Report scam or suspicious activity',
         icon: Boxicons.bx_error,
-        autoMessage: 'Please provide details of the suspicious activity, including usernames or transaction IDs.',
+        autoMessage:
+            'Please provide details of the suspicious activity, including usernames or transaction IDs.',
       ),
       QuickAction(
         title: 'Other Issues',

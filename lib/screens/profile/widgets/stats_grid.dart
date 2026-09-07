@@ -19,15 +19,50 @@ class StatsGrid extends StatelessWidget {
       mainAxisSpacing: 12,
       childAspectRatio: 2.2,
       children: [
-        _buildStatCard(context, Boxicons.bxs_star, AppColors.warning, "Total Points", stats.totalPoints.toString(), "Lifetime points"),
-        _buildStatCard(context, Boxicons.bx_calendar, AppColors.info, "Member Since", stats.memberSince, "1 year, 2 months"),
-        _buildStatCard(context, Boxicons.bx_bar_chart_alt_2, AppColors.success, "Successful Transactions", stats.successfulTransactions.toString(), "This month"),
-        _buildStatCard(context, Boxicons.bx_wallet, AppColors.accentViolet, "Total Volume", "\$${stats.totalVolume.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')}", "This month"),
+        _buildStatCard(
+          context,
+          Boxicons.bxs_star,
+          AppColors.warning,
+          "Total Points",
+          stats.totalPoints.toString(),
+          "Lifetime points",
+        ),
+        _buildStatCard(
+          context,
+          Boxicons.bx_calendar,
+          AppColors.info,
+          "Member Since",
+          stats.memberSince,
+          "1 year, 2 months",
+        ),
+        _buildStatCard(
+          context,
+          Boxicons.bx_bar_chart_alt_2,
+          AppColors.success,
+          "Successful Transactions",
+          stats.successfulTransactions.toString(),
+          "This month",
+        ),
+        _buildStatCard(
+          context,
+          Boxicons.bx_wallet,
+          AppColors.accentViolet,
+          "Total Volume",
+          "\$${stats.totalVolume.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')}",
+          "This month",
+        ),
       ],
     );
   }
 
-  Widget _buildStatCard(BuildContext context, IconData icon, Color color, String title, String value, String subtitle) {
+  Widget _buildStatCard(
+    BuildContext context,
+    IconData icon,
+    Color color,
+    String title,
+    String value,
+    String subtitle,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -35,7 +70,9 @@ class StatsGrid extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkCard : AppColors.lightCard,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: isDark ? AppShadow.dark : AppShadow.light,
       ),
       child: Row(
@@ -55,11 +92,28 @@ class StatsGrid extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(
+                  title,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 10),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(height: 2),
-                Text(value, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 16)),
+                Text(
+                  value,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontSize: 16),
+                ),
                 const SizedBox(height: 2),
-                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 9)),
+                Text(
+                  subtitle,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 9),
+                ),
               ],
             ),
           ),

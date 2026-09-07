@@ -15,11 +15,19 @@ class NetworkErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.wifi_off_rounded, size: 64, color: AppColors.error),
+            const Icon(
+              Icons.wifi_off_rounded,
+              size: 64,
+              color: AppColors.error,
+            ),
             const SizedBox(height: 16),
             const Text(
               'Connection Error',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -32,7 +40,9 @@ class NetworkErrorWidget extends StatelessWidget {
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accentViolet,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                ),
               ),
               child: const Text('Retry', style: TextStyle(color: Colors.white)),
             ),

@@ -13,7 +13,7 @@ class OtpBackground extends StatelessWidget {
     return Stack(
       children: [
         Container(color: Theme.of(context).scaffoldBackgroundColor),
-        
+
         // Top Right Glow matching the reference
         Positioned(
           top: -100,
@@ -55,17 +55,9 @@ class OtpBackground extends StatelessWidget {
         ),
 
         // Small decorative dots pattern placeholder
-        Positioned(
-          top: 80,
-          right: 20,
-          child: _buildDotPattern(isDark),
-        ),
-        
-        Positioned(
-          bottom: 40,
-          left: 20,
-          child: _buildDotPattern(isDark),
-        ),
+        Positioned(top: 80, right: 20, child: _buildDotPattern(isDark)),
+
+        Positioned(bottom: 40, left: 20, child: _buildDotPattern(isDark)),
 
         // Content
         SafeArea(child: child),

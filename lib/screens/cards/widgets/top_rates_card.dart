@@ -46,7 +46,8 @@ class TopRatesCard extends StatelessWidget {
                     card.logoUrl,
                     width: 24,
                     height: 24,
-                    errorBuilder: (_, __, ___) => const Icon(Icons.credit_card, size: 24),
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.credit_card, size: 24),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -62,17 +63,22 @@ class TopRatesCard extends StatelessWidget {
                     children: [
                       const Text(
                         'Sell Rate',
-                        style: TextStyle(fontSize: 9, color: AppColors.lightSubText),
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: AppColors.lightSubText,
+                        ),
                       ),
                       Text(
                         '${card.sellRate}%',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.darkText : AppColors.lightText,
+                          color: isDark
+                              ? AppColors.darkText
+                              : AppColors.lightText,
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             );
@@ -82,4 +88,3 @@ class TopRatesCard extends StatelessWidget {
     );
   }
 }
-

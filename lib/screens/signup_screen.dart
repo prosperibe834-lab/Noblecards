@@ -124,7 +124,8 @@ class _SignupScreenState extends State<SignupScreen>
       return;
     }
 
-    if (_selectedCountry['name'] == null || _selectedCountry['name']!.trim().isEmpty) {
+    if (_selectedCountry['name'] == null ||
+        _selectedCountry['name']!.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please select your country."),
@@ -172,7 +173,9 @@ class _SignupScreenState extends State<SignupScreen>
         if (response.session == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Account created. Please verify your email to continue."),
+              content: Text(
+                "Account created. Please verify your email to continue.",
+              ),
               backgroundColor: AppColors.success,
             ),
           );
@@ -200,7 +203,9 @@ class _SignupScreenState extends State<SignupScreen>
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Unable to create account right now. Please try again."),
+              content: Text(
+                "Unable to create account right now. Please try again.",
+              ),
               backgroundColor: AppColors.error,
             ),
           );
@@ -209,10 +214,7 @@ class _SignupScreenState extends State<SignupScreen>
         final message = error.toString().replaceFirst('Exception: ', '');
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text(message), backgroundColor: AppColors.error),
         );
       } finally {
         if (mounted) setState(() => _isLoading = false);

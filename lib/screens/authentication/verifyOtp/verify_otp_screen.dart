@@ -81,7 +81,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('OTP sent successfully!', style: TextStyle(color: Colors.white)),
+            content: Text(
+              'OTP sent successfully!',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
@@ -107,7 +110,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     if (!OtpValidator.isFullyValid(_currentOtp)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter a valid 6-digit OTP', style: TextStyle(color: Colors.white)),
+          content: Text(
+            'Please enter a valid 6-digit OTP',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -121,13 +127,13 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     try {
       final response = switch (widget.flow) {
         OtpVerificationFlow.signup => await _authService.verifyEmailOtp(
-            email: widget.email,
-            token: _currentOtp,
-          ),
+          email: widget.email,
+          token: _currentOtp,
+        ),
         OtpVerificationFlow.signIn => await _authService.verifySignInOtp(
-            email: widget.email,
-            token: _currentOtp,
-          ),
+          email: widget.email,
+          token: _currentOtp,
+        ),
         OtpVerificationFlow.passwordRecovery =>
           await _authService.verifyPasswordResetOtp(
             email: widget.email,
@@ -146,7 +152,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         if (widget.flow == OtpVerificationFlow.signup) {
           final verifiedUser = response.user ?? _authService.currentUser;
           if (verifiedUser == null) {
-            throw Exception('OTP verification did not create an authenticated session.');
+            throw Exception(
+              'OTP verification did not create an authenticated session.',
+            );
           }
 
           await _authService.saveUserProfile(
@@ -158,7 +166,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Verification successful!', style: TextStyle(color: Colors.white)),
+            content: Text(
+              'Verification successful!',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
@@ -167,15 +178,14 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
 
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-          (route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Verification failed. Please try again.', style: TextStyle(color: Colors.white)),
+            content: Text(
+              'Verification failed. Please try again.',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -207,7 +217,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           children: [
             // Top Navigation Bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -217,7 +230,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                   ),
                   onPressed: _isLoading ? null : onBack,
                   style: IconButton.styleFrom(
-                    backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
+                    backgroundColor: isDark
+                        ? AppColors.darkCard
+                        : AppColors.lightCard,
                     shape: const CircleBorder(),
                   ),
                 ),
@@ -228,7 +243,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 8.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -242,7 +260,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       },
                       onCompleted: () {
                         // Auto-verify if fully typed
-                        if (OtpValidator.isFullyValid(_currentOtp) && !_isLoading) {
+                        if (OtpValidator.isFullyValid(_currentOtp) &&
+                            !_isLoading) {
                           onVerifyOtp();
                         }
                       },
@@ -274,7 +293,9 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                         boxShadow: isDark ? AppShadow.dark : AppShadow.light,
                       ),
                       child: ElevatedButton(
-                        onPressed: (_isLoading || !OtpValidator.isFullyValid(_currentOtp))
+                        onPressed:
+                            (_isLoading ||
+                                !OtpValidator.isFullyValid(_currentOtp))
                             ? null
                             : onVerifyOtp,
                         style: ElevatedButton.styleFrom(
@@ -303,16 +324,18 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                                       fontFamily: 'Poppins',
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: OtpValidator.isFullyValid(_currentOtp) 
-                                          ? Colors.white 
+                                      color:
+                                          OtpValidator.isFullyValid(_currentOtp)
+                                          ? Colors.white
                                           : Colors.white70,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Icon(
                                     Boxicons.bx_right_arrow_alt,
-                                    color: OtpValidator.isFullyValid(_currentOtp) 
-                                        ? Colors.white 
+                                    color:
+                                        OtpValidator.isFullyValid(_currentOtp)
+                                        ? Colors.white
                                         : Colors.white70,
                                     size: 24,
                                   ),
@@ -325,12 +348,19 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     // Footer Divider
                     Row(
                       children: [
-                        Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                        Expanded(
+                          child: Divider(color: Theme.of(context).dividerColor),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text('or', style: Theme.of(context).textTheme.bodyMedium),
+                          child: Text(
+                            'or',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
-                        Expanded(child: Divider(color: Theme.of(context).dividerColor)),
+                        Expanded(
+                          child: Divider(color: Theme.of(context).dividerColor),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -339,13 +369,18 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                     Center(
                       child: TextButton.icon(
                         onPressed: _isLoading ? null : onBackToLogin,
-                        icon: const Icon(Boxicons.bx_arrow_back, color: AppColors.primary, size: 18),
+                        icon: const Icon(
+                          Boxicons.bx_arrow_back,
+                          color: AppColors.primary,
+                          size: 18,
+                        ),
                         label: Text(
                           'Back to Sign In',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                       ),
                     ),
@@ -360,4 +395,3 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     );
   }
 }
-

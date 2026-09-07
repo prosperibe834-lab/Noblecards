@@ -16,10 +16,20 @@ class CardCodeInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Card Code', style: TextStyle(color: textColor, fontSize: 14, fontWeight: FontWeight.w600)),
+        Text(
+          'Card Code',
+          style: TextStyle(
+            color: textColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(AppRadius.md),
@@ -29,7 +39,9 @@ class CardCodeInput extends StatelessWidget {
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: 'Enter card code',
-              hintStyle: TextStyle(color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
+              hintStyle: TextStyle(
+                color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+              ),
             ),
           ),
         ),

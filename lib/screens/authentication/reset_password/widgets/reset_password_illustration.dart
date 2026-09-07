@@ -6,10 +6,12 @@ class ResetPasswordIllustration extends StatefulWidget {
   const ResetPasswordIllustration({super.key});
 
   @override
-  State<ResetPasswordIllustration> createState() => _ResetPasswordIllustrationState();
+  State<ResetPasswordIllustration> createState() =>
+      _ResetPasswordIllustrationState();
 }
 
-class _ResetPasswordIllustrationState extends State<ResetPasswordIllustration> with SingleTickerProviderStateMixin {
+class _ResetPasswordIllustrationState extends State<ResetPasswordIllustration>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -49,8 +51,8 @@ class _ResetPasswordIllustrationState extends State<ResetPasswordIllustration> w
               height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isDark 
-                    ? AppColors.primary.withOpacity(0.1) 
+                color: isDark
+                    ? AppColors.primary.withOpacity(0.1)
                     : AppColors.primary.withOpacity(0.05),
               ),
             ),
@@ -74,14 +76,16 @@ class _ResetPasswordIllustrationState extends State<ResetPasswordIllustration> w
                       width: 60,
                       height: 70,
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.lightBackground : Colors.white,
+                        color: isDark
+                            ? AppColors.lightBackground
+                            : Colors.white,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
-                          )
+                          ),
                         ],
                       ),
                       child: const Center(
@@ -105,7 +109,7 @@ class _ResetPasswordIllustrationState extends State<ResetPasswordIllustration> w
                           color: AppColors.primary.withOpacity(0.3),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -146,7 +150,9 @@ class _ResetPasswordIllustrationState extends State<ResetPasswordIllustration> w
         width: 6,
         height: 6,
         decoration: BoxDecoration(
-          color: isDark ? AppColors.primaryDark : AppColors.successLight.withOpacity(0.5),
+          color: isDark
+              ? AppColors.primaryDark
+              : AppColors.successLight.withOpacity(0.5),
         ),
       ),
     );

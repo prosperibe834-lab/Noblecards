@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 
 import 'referral/referral_screen.dart';
+import 'rate/market_rates_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToCards;
@@ -23,7 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final bgColor = isDark ? const Color(0xFF0B0E14) : const Color(0xFFF4F6F9);
     final cardBgColor = isDark ? const Color(0xFF161922) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF1E293B);
-    final subTextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final subTextColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -77,7 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 onViewAll: widget.onNavigateToCards ?? () {},
               ),
               const SizedBox(height: 12),
-              _buildTodaysMarketList(isDark, cardBgColor, textColor, subTextColor),
+              _buildTodaysMarketList(
+                isDark,
+                cardBgColor,
+                textColor,
+                subTextColor,
+              ),
               const SizedBox(height: 24),
             ],
           ),
@@ -164,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -194,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -228,13 +236,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Text(
               "Welcome back to NobleCards",
-              style: TextStyle(
-                color: subTextColor,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: subTextColor, fontSize: 13),
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -247,11 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0F5132),
-            Color(0xFF0D6B3F),
-            Color(0xFF10B981),
-          ],
+          colors: [Color(0xFF0F5132), Color(0xFF0D6B3F), Color(0xFF10B981)],
         ),
         boxShadow: [
           BoxShadow(
@@ -298,7 +299,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                           },
                           child: Icon(
-                            _isBalanceHidden ? Boxicons.bx_hide : Boxicons.bx_show,
+                            _isBalanceHidden
+                                ? Boxicons.bx_hide
+                                : Boxicons.bx_show,
                             color: Colors.white70,
                             size: 18,
                           ),
@@ -319,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           size: 20,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -335,7 +338,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 6),
                 Row(
                   children: const [
-                    Icon(Boxicons.bx_up_arrow_alt, color: Color(0xFF6EE7B7), size: 16),
+                    Icon(
+                      Boxicons.bx_up_arrow_alt,
+                      color: Color(0xFF6EE7B7),
+                      size: 16,
+                    ),
                     SizedBox(width: 2),
                     Text(
                       "12.5%",
@@ -353,10 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 18),
-                Container(
-                  height: 1,
-                  color: Colors.white.withOpacity(0.15),
-                ),
+                Container(height: 1, color: Colors.white.withOpacity(0.15)),
                 const SizedBox(height: 14),
                 if (!_isBalanceHidden)
                   Row(
@@ -406,7 +410,11 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: ElevatedButton.icon(
             onPressed: widget.onNavigateToCards ?? () {},
-            icon: const Icon(Boxicons.bx_shopping_bag, size: 18, color: Colors.white),
+            icon: const Icon(
+              Boxicons.bx_shopping_bag,
+              size: 18,
+              color: Colors.white,
+            ),
             label: const Text(
               "Buy Gift Cards",
               style: TextStyle(
@@ -548,13 +556,15 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: cardColor,
                 borderRadius: BorderRadius.circular(18),
-                border: isLightCard ? Border.all(color: Colors.grey.shade300) : null,
+                border: isLightCard
+                    ? Border.all(color: Colors.grey.shade300)
+                    : null,
                 boxShadow: [
                   if (isLightCard && !isDark)
                     BoxShadow(
                       color: Colors.black.withOpacity(0.04),
                       blurRadius: 8,
-                    )
+                    ),
                 ],
               ),
               child: Column(
@@ -588,7 +598,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Text(item['flag'] as String, style: const TextStyle(fontSize: 11)),
+                      Text(
+                        item['flag'] as String,
+                        style: const TextStyle(fontSize: 11),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -616,8 +629,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildQuickActionsGrid(
-      bool isDark, Color cardBg, Color textColor) {
+  Widget _buildQuickActionsGrid(bool isDark, Color cardBg, Color textColor) {
     final actions = [
       {'label': 'Buy Gift\nCards', 'icon': Boxicons.bx_shopping_bag},
       {'label': 'Sell\nCards', 'icon': Boxicons.bx_refresh},
@@ -646,9 +658,12 @@ class _HomeScreenState extends State<HomeScreen> {
             if (item['label'] == 'Referral\nProgram') {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const ReferralScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const ReferralScreen()),
+              );
+            } else if (item['label'] == 'Exchange\nRates') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MarketRatesScreen()),
               );
             } else {
               widget.onNavigateToCards?.call();
@@ -703,7 +718,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTodaysMarketList(
-      bool isDark, Color cardBg, Color textColor, Color subTextColor) {
+    bool isDark,
+    Color cardBg,
+    Color textColor,
+    Color subTextColor,
+  ) {
     final marketData = [
       {
         'tag': 'Highest Paying',
@@ -797,9 +816,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ],
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -809,3 +828,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+

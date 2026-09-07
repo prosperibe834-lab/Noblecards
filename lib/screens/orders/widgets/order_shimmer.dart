@@ -9,7 +9,8 @@ class OrderShimmer extends StatefulWidget {
   State<OrderShimmer> createState() => _OrderShimmerState();
 }
 
-class _OrderShimmerState extends State<OrderShimmer> with SingleTickerProviderStateMixin {
+class _OrderShimmerState extends State<OrderShimmer>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -30,7 +31,9 @@ class _OrderShimmerState extends State<OrderShimmer> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200;
+    final baseColor = isDark
+        ? Colors.white.withOpacity(0.05)
+        : Colors.grey.shade200;
 
     return AnimatedBuilder(
       animation: _controller,

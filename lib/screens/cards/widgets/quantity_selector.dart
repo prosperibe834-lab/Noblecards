@@ -14,7 +14,9 @@ class QuantitySelector extends StatelessWidget {
     final provider = context.watch<BuyProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
-    final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
+    final subTextColor = isDark
+        ? AppColors.darkSubText
+        : AppColors.lightSubText;
     final btnBg = isDark ? AppColors.darkBorder : AppColors.lightBorder;
 
     return Row(
@@ -23,8 +25,18 @@ class QuantitySelector extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Quantity', style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.w600)),
-            Text('Number of cards', style: TextStyle(color: subTextColor, fontSize: 12)),
+            Text(
+              'Quantity',
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              'Number of cards',
+              style: TextStyle(color: subTextColor, fontSize: 12),
+            ),
           ],
         ),
         Container(
@@ -32,7 +44,9 @@ class QuantitySelector extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkInput : AppColors.lightInput,
             borderRadius: BorderRadius.circular(AppRadius.full),
-            border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            ),
           ),
           child: Row(
             children: [
@@ -40,7 +54,10 @@ class QuantitySelector extends StatelessWidget {
                 onTap: provider.decrementQuantity,
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: btnBg),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: btnBg,
+                  ),
                   child: Icon(Boxicons.bx_minus, size: 16, color: textColor),
                 ),
               ),
@@ -50,7 +67,11 @@ class QuantitySelector extends StatelessWidget {
                 child: Text(
                   '${provider.quantity}',
                   key: ValueKey(provider.quantity),
-                  style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -58,8 +79,15 @@ class QuantitySelector extends StatelessWidget {
                 onTap: provider.incrementQuantity,
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.primary),
-                  child: const Icon(Boxicons.bx_plus, size: 16, color: Colors.white),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary,
+                  ),
+                  child: const Icon(
+                    Boxicons.bx_plus,
+                    size: 16,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],

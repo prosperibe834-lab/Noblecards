@@ -12,10 +12,12 @@ class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({Key? key}) : super(key: key);
 
   @override
-  State<PersonalInformationScreen> createState() => _PersonalInformationScreenState();
+  State<PersonalInformationScreen> createState() =>
+      _PersonalInformationScreenState();
 }
 
-class _PersonalInformationScreenState extends State<PersonalInformationScreen> with SingleTickerProviderStateMixin {
+class _PersonalInformationScreenState extends State<PersonalInformationScreen>
+    with SingleTickerProviderStateMixin {
   final AuthenticationService _auth = AuthenticationService();
   AuthUser? _user;
   bool _isLoading = true;
@@ -78,9 +80,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
   void _showErrorSnackBar() {
     final message = _errorMessage;
     if (message == null || message.isEmpty) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _value(String? value) => value?.trim() ?? '';
@@ -88,9 +90,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
   String get _fullName {
     final user = _user;
     if (user == null) return '';
-    return [user.firstName, user.lastName]
-        .where((value) => value.trim().isNotEmpty)
-        .join(' ');
+    return [
+      user.firstName,
+      user.lastName,
+    ].where((value) => value.trim().isNotEmpty).join(' ');
   }
 
   String _formatDateOfBirth(String? value) {
@@ -98,8 +101,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
     final parsed = DateTime.tryParse(value);
     if (parsed == null) return value;
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${parsed.day} ${months[parsed.month - 1]} ${parsed.year}';
   }
@@ -120,7 +133,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
       SnackBar(
         content: Row(
           children: [
-            const Icon(Boxicons.bx_check_circle, color: Color(0xFF00C853), size: 20),
+            const Icon(
+              Boxicons.bx_check_circle,
+              color: Color(0xFF00C853),
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Text(
               'User ID copied to clipboard',
@@ -163,9 +180,13 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
     // Theme Color Tokens
     final bgColor = isDark ? const Color(0xFF0B0E14) : const Color(0xFFF8FAF9);
     final cardBg = isDark ? const Color(0xFF141C28) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFEEF2F6);
+    final borderColor = isDark
+        ? const Color(0xFF1E293B)
+        : const Color(0xFFEEF2F6);
     final primaryTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final secondaryTextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final secondaryTextColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
     const primaryGreen = Color(0xFF10B981);
 
     return Scaffold(
@@ -203,7 +224,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
               : FadeTransition(
                   opacity: _fadeAnimation,
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     physics: const AlwaysScrollableScrollPhysics(
                       parent: BouncingScrollPhysics(),
                     ),
@@ -224,7 +248,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                         isDark: isDark,
                         icon: Boxicons.bx_shield_quarter,
                         title: 'Keep your information up to date',
-                        subtitle: 'This helps us provide you with a secure and seamless experience.',
+                        subtitle:
+                            'This helps us provide you with a secure and seamless experience.',
                         graphicWidget: _buildShieldGraphic(primaryGreen),
                       ),
                       const SizedBox(height: 24),
@@ -339,7 +364,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                         isDark: isDark,
                         icon: Boxicons.bx_lock_alt,
                         title: 'Your information is private and secure',
-                        subtitle: 'We use bank-level encryption to protect your personal data.',
+                        subtitle:
+                            'We use bank-level encryption to protect your personal data.',
                         graphicWidget: _buildLockGraphic(primaryGreen),
                       ),
                       const SizedBox(height: 24),
@@ -451,7 +477,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                         Text(
                           'Noble Verified',
                           style: TextStyle(
-                            color: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
+                            color: isDark
+                                ? const Color(0xFF34D399)
+                                : const Color(0xFF059669),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -473,7 +501,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                       ),
                       const SizedBox(width: 6),
                       InkWell(
-                        onTap: _user == null ? null : () => _copyToClipboard(_user!.id),
+                        onTap: _user == null
+                            ? null
+                            : () => _copyToClipboard(_user!.id),
                         borderRadius: BorderRadius.circular(4),
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
@@ -501,16 +531,22 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF064E3B).withOpacity(0.5) : const Color(0xFFECFDF5),
+                  color: isDark
+                      ? const Color(0xFF064E3B).withOpacity(0.5)
+                      : const Color(0xFFECFDF5),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: isDark ? const Color(0xFF047857) : const Color(0xFFA7F3D0),
+                    color: isDark
+                        ? const Color(0xFF047857)
+                        : const Color(0xFFA7F3D0),
                     width: 1,
                   ),
                 ),
                 child: Icon(
                   Boxicons.bx_pencil,
-                  color: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
+                  color: isDark
+                      ? const Color(0xFF34D399)
+                      : const Color(0xFF059669),
                   size: 18,
                 ),
               ),
@@ -529,12 +565,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
     required String subtitle,
     required Widget graphicWidget,
   }) {
-    final bannerBg = isDark
-        ? const Color(0xFF082218)
-        : const Color(0xFFF0FDF4);
-    final border = isDark
-        ? const Color(0xFF0F4732)
-        : const Color(0xFFDCFCE7);
+    final bannerBg = isDark ? const Color(0xFF082218) : const Color(0xFFF0FDF4);
+    final border = isDark ? const Color(0xFF0F4732) : const Color(0xFFDCFCE7);
     final titleColor = isDark
         ? const Color(0xFF34D399)
         : const Color(0xFF059669);
@@ -559,11 +591,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
               shape: BoxShape.circle,
               border: Border.all(color: titleColor.withOpacity(0.4), width: 1),
             ),
-            child: Icon(
-              icon,
-              color: titleColor,
-              size: 20,
-            ),
+            child: Icon(icon, color: titleColor, size: 20),
           ),
           const SizedBox(width: 12),
 
@@ -642,11 +670,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
               children: [
                 // Icon
                 leadingWidget ??
-                    Icon(
-                      icon,
-                      color: const Color(0xFF10B981),
-                      size: 20,
-                    ),
+                    Icon(icon, color: const Color(0xFF10B981), size: 20),
                 const SizedBox(width: 12),
 
                 // Label
@@ -694,12 +718,17 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
   // DECORATIVE: Flag Widget for Country Row
   Widget _buildCountryFlag(String? country) {
     final countryCode = _user?.countryCode?.toUpperCase();
-    if (countryCode == null || countryCode.length != 2 || country == null || country.trim().isEmpty) {
+    if (countryCode == null ||
+        countryCode.length != 2 ||
+        country == null ||
+        country.trim().isEmpty) {
       return const SizedBox(width: 20, height: 14);
     }
 
     final firstLetter = String.fromCharCode(countryCode.codeUnitAt(0) + 127397);
-    final secondLetter = String.fromCharCode(countryCode.codeUnitAt(1) + 127397);
+    final secondLetter = String.fromCharCode(
+      countryCode.codeUnitAt(1) + 127397,
+    );
     return Container(
       width: 20,
       height: 14,
@@ -726,11 +755,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
         color: color.withOpacity(0.15),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        Boxicons.bxs_shield,
-        color: color,
-        size: 24,
-      ),
+      child: Icon(Boxicons.bxs_shield, color: color, size: 24),
     );
   }
 
@@ -743,18 +768,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> w
         color: color.withOpacity(0.15),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        Boxicons.bxs_lock_alt,
-        color: color,
-        size: 24,
-      ),
+      child: Icon(Boxicons.bxs_lock_alt, color: color, size: 24),
     );
   }
 
   // WIDGET: Shimmer Skeleton Loader
   Widget _buildShimmerLoading(bool isDark, Color cardBg, Color borderColor) {
-    final baseColor = isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0);
-    final highlightColor = isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9);
+    final baseColor = isDark
+        ? const Color(0xFF1E293B)
+        : const Color(0xFFE2E8F0);
+    final highlightColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFF1F5F9);
 
     return Shimmer.fromColors(
       baseColor: baseColor,

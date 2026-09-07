@@ -15,9 +15,16 @@ class SellNetworkError extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.wifi_off_rounded, size: 64, color: AppColors.error),
+            const Icon(
+              Icons.wifi_off_rounded,
+              size: 64,
+              color: AppColors.error,
+            ),
             const SizedBox(height: 16),
-            const Text('Network unavailable', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              'Network unavailable',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             const Text(
               'No internet connection. Please try again later.',
@@ -29,7 +36,9 @@ class SellNetworkError extends StatelessWidget {
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.full)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                ),
               ),
               child: const Text('Retry', style: TextStyle(color: Colors.white)),
             ),

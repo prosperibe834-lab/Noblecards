@@ -16,15 +16,20 @@ class WelcomeBonusPage extends StatelessWidget {
           children: [
             const Icon(Boxicons.bx_gift, size: 70, color: Colors.purple),
             const SizedBox(height: 16),
-            const Text("\$5.00 Welcome Bonus", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              "\$5.00 Welcome Bonus",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             const Text("Credited to your wallet"),
             const Spacer(),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+              ),
               onPressed: () => Navigator.pop(context),
               child: const Text("View Wallet"),
-            )
+            ),
           ],
         ),
       ),

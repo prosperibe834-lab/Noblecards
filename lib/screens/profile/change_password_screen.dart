@@ -12,7 +12,7 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -44,7 +44,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final hasSpecial = pwd.contains(RegExp(r'[!@#\$&*~%,.?;:\-_+]'));
 
     if (!hasMinLength || !hasNumber || !hasUppercase || !hasSpecial) {
-      _showErrorSnackBar('Please ensure your new password meets all strength requirements.');
+      _showErrorSnackBar(
+        'Please ensure your new password meets all strength requirements.',
+      );
       return;
     }
 
@@ -53,13 +55,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     try {
       await Future.delayed(const Duration(seconds: 2)); // Simulating API Call
-      
+
       // Reset loading state
       if (mounted) setState(() => _isLoading = false);
-      
+
       // Show Success Modal
       if (mounted) _showSuccessModal();
-
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
       _showErrorSnackBar('An error occurred. Please try again.');
@@ -74,7 +75,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           children: [
             const Icon(Boxicons.bx_error_circle, color: Colors.white, size: 20),
             const SizedBox(width: 10),
-            Expanded(child: Text(message, style: const TextStyle(color: Colors.white))),
+            Expanded(
+              child: Text(message, style: const TextStyle(color: Colors.white)),
+            ),
           ],
         ),
         backgroundColor: Colors.redAccent,
@@ -88,7 +91,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF141C28) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final secondaryTextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final secondaryTextColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
 
     showDialog(
       context: context,
@@ -96,7 +101,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: bgColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
@@ -172,11 +179,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Theme Colors
     final bgColor = isDark ? const Color(0xFF0B0E14) : const Color(0xFFF8FAF9);
     final primaryTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final secondaryTextColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final secondaryTextColor = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
     const primaryGreen = Color(0xFF10B981);
 
     return Scaffold(
@@ -186,7 +195,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: primaryTextColor, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: primaryTextColor,
+            size: 28,
+          ),
           onPressed: () => Navigator.maybePop(context),
         ),
         centerTitle: true,
@@ -244,20 +257,32 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     color: primaryGreen.withOpacity(0.3),
                                     blurRadius: 20,
                                     offset: const Offset(0, 10),
-                                  )
+                                  ),
                                 ],
                               ),
-                              child: const Icon(Boxicons.bxs_lock, color: Colors.white, size: 30),
+                              child: const Icon(
+                                Boxicons.bxs_lock,
+                                color: Colors.white,
+                                size: 30,
+                              ),
                             ),
                             Positioned(
                               top: 5,
                               right: 0,
-                              child: Icon(Boxicons.bxs_star, color: primaryGreen.withOpacity(0.8), size: 12),
+                              child: Icon(
+                                Boxicons.bxs_star,
+                                color: primaryGreen.withOpacity(0.8),
+                                size: 12,
+                              ),
                             ),
                             Positioned(
                               bottom: 10,
                               left: 0,
-                              child: Icon(Boxicons.bx_star, color: primaryGreen.withOpacity(0.5), size: 10),
+                              child: Icon(
+                                Boxicons.bx_star,
+                                color: primaryGreen.withOpacity(0.5),
+                                size: 10,
+                              ),
                             ),
                           ],
                         ),
@@ -271,7 +296,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 _buildSecurityBanner(
                   isDark: isDark,
                   icon: Boxicons.bx_shield_quarter,
-                  text: "For your security, choose a strong password that you don't use on other websites.",
+                  text:
+                      "For your security, choose a strong password that you don't use on other websites.",
                 ),
                 const SizedBox(height: 24),
 
@@ -294,12 +320,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   label: 'New Password',
                   hint: 'Enter your new password',
                   controller: _newPasswordController,
-                  onChanged: (val) => setState(() {}), // Trigger rebuild for strength indicator
+                  onChanged: (val) =>
+                      setState(() {}), // Trigger rebuild for strength indicator
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'New password is required';
                     }
-                    if (value == _currentPasswordController.text && value.isNotEmpty) {
+                    if (value == _currentPasswordController.text &&
+                        value.isNotEmpty) {
                       return 'New password cannot be the same as current';
                     }
                     return null;
@@ -308,9 +336,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 const SizedBox(height: 16),
 
                 // STRENGTH CHECKER
-                PasswordStrengthChecker(
-                  password: _newPasswordController.text,
-                ),
+                PasswordStrengthChecker(password: _newPasswordController.text),
                 const SizedBox(height: 24),
 
                 // CONFIRM PASSWORD FIELD
@@ -334,7 +360,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 _buildSecurityBanner(
                   isDark: isDark,
                   icon: Boxicons.bx_check_shield,
-                  text: "You'll be logged out of all devices except this one after password change.",
+                  text:
+                      "You'll be logged out of all devices except this one after password change.",
                   trailingIcon: Boxicons.bxs_lock_alt,
                 ),
                 const SizedBox(height: 32),
@@ -390,7 +417,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }) {
     final bannerBg = isDark ? const Color(0xFF082218) : const Color(0xFFF0FDF4);
     final border = isDark ? const Color(0xFF0F4732) : const Color(0xFFDCFCE7);
-    final contentColor = isDark ? const Color(0xFF34D399) : const Color(0xFF059669);
+    final contentColor = isDark
+        ? const Color(0xFF34D399)
+        : const Color(0xFF059669);
 
     return Container(
       width: double.infinity,

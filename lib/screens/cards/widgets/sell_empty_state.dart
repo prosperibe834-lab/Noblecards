@@ -15,7 +15,10 @@ class SellEmptyState extends StatelessWidget {
           children: const [
             Icon(Icons.card_giftcard, size: 64, color: AppColors.primary),
             SizedBox(height: AppSpacing.md),
-            Text('No cards added yet', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'No cards added yet',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: AppSpacing.sm),
             Text(
               'Add a card to start your sell order. You can submit multiple cards in one batch.',

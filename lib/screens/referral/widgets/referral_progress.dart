@@ -17,7 +17,7 @@ class ReferralProgress extends StatelessWidget {
     final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
     final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
-    
+
     final progress = (current / target).clamp(0.0, 1.0);
     final remaining = target - current;
 
@@ -59,7 +59,9 @@ class ReferralProgress extends StatelessWidget {
               value: progress,
               minHeight: 6,
               backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00B94A)),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFF00B94A),
+              ),
             ),
           ),
           const SizedBox(height: 12),

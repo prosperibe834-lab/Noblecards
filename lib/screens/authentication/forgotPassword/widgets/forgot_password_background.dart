@@ -56,18 +56,10 @@ class ForgotPasswordBackground extends StatelessWidget {
         ),
 
         // Top-Right Dotted Pattern Matrix
-        Positioned(
-          top: 70,
-          right: 16,
-          child: _buildDotGrid(isDark),
-        ),
+        Positioned(top: 70, right: 16, child: _buildDotGrid(isDark)),
 
         // Bottom-Left Dotted Pattern Matrix
-        Positioned(
-          bottom: 30,
-          left: 16,
-          child: _buildDotGrid(isDark),
-        ),
+        Positioned(bottom: 30, left: 16, child: _buildDotGrid(isDark)),
 
         // Foreground Content
         SafeArea(child: child),
@@ -90,10 +82,7 @@ class ForgotPasswordBackground extends StatelessWidget {
         itemCount: 25,
         itemBuilder: (context, index) {
           return Container(
-            decoration: BoxDecoration(
-              color: dotColor,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
           );
         },
       ),

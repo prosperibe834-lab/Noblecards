@@ -48,7 +48,8 @@ class MarketplaceCard extends StatelessWidget {
                   card.logoUrl,
                   height: 36,
                   width: 36,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.credit_card, size: 36),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.credit_card, size: 36),
                 ),
                 FavoriteButton(cardId: card.id),
               ],
@@ -84,7 +85,13 @@ class MarketplaceCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Buy Rate', style: TextStyle(fontSize: 9, color: AppColors.lightSubText)),
+                    const Text(
+                      'Buy Rate',
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: AppColors.lightSubText,
+                      ),
+                    ),
                     Text(
                       '${card.buyRate}%',
                       style: const TextStyle(
@@ -98,7 +105,13 @@ class MarketplaceCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text('Sell Rate', style: TextStyle(fontSize: 9, color: AppColors.lightSubText)),
+                    const Text(
+                      'Sell Rate',
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: AppColors.lightSubText,
+                      ),
+                    ),
                     Text(
                       '${card.sellRate}%',
                       style: const TextStyle(

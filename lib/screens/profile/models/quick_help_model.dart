@@ -4,8 +4,5 @@ class QuickHelpModel {
   final String title;
   final IconData icon;
 
-  const QuickHelpModel({
-    required this.title,
-    required this.icon,
-  });
+  const QuickHelpModel({required this.title, required this.icon});
 }

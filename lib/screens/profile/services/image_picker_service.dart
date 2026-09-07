@@ -26,7 +26,9 @@ class ImagePickerService {
     final extension = image.name.split('.').last.toLowerCase();
     final mimeType = image.mimeType?.toLowerCase();
     final validExtension = ['jpg', 'jpeg', 'png', 'webp'].contains(extension);
-    final validMimeType = mimeType == null || ['image/jpeg', 'image/png', 'image/webp'].contains(mimeType);
+    final validMimeType =
+        mimeType == null ||
+        ['image/jpeg', 'image/png', 'image/webp'].contains(mimeType);
     if (!validExtension || !validMimeType) {
       throw Exception('Please select a JPG, PNG, or WEBP image.');
     }

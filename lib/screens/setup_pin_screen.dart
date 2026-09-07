@@ -38,7 +38,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
   void _onDelete() {
     if (_isConfirming) {
       if (_confirmPin.isNotEmpty) {
-        setState(() => _confirmPin = _confirmPin.substring(0, _confirmPin.length - 1));
+        setState(
+          () => _confirmPin = _confirmPin.substring(0, _confirmPin.length - 1),
+        );
       } else {
         setState(() => _isConfirming = false);
       }
@@ -53,7 +55,8 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final currentPin = _isConfirming ? _confirmPin : _pin;
-    final isMatch = _isConfirming && _pin == _confirmPin && _confirmPin.length == 4;
+    final isMatch =
+        _isConfirming && _pin == _confirmPin && _confirmPin.length == 4;
 
     return Scaffold(
       appBar: AppBar(
@@ -100,7 +103,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                       shape: BoxShape.circle,
                       color: isFilled ? AppColors.primary : Colors.transparent,
                       border: Border.all(
-                        color: isFilled ? AppColors.primary : AppColors.lightSubText,
+                        color: isFilled
+                            ? AppColors.primary
+                            : AppColors.lightSubText,
                         width: 2,
                       ),
                     ),
@@ -109,7 +114,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                         isFilled ? '●' : '○',
                         style: TextStyle(
                           fontSize: 10,
-                          color: isFilled ? Colors.white : AppColors.lightSubText,
+                          color: isFilled
+                              ? Colors.white
+                              : AppColors.lightSubText,
                         ),
                       ),
                     ),
@@ -127,16 +134,24 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const BiometricSetupScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const BiometricSetupScreen(),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
                     ),
                     child: const Text(
                       'Continue',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -188,7 +203,11 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
           alignment: Alignment.center,
           child: Text(
             val,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, fontFamily: 'Poppins'),
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+            ),
           ),
         ),
       ),

@@ -12,7 +12,9 @@ class NotificationService {
   }
 
   List<NotificationModel> filterByCategory(
-      List<NotificationModel> items, NotificationCategory category) {
+    List<NotificationModel> items,
+    NotificationCategory category,
+  ) {
     if (category == NotificationCategory.all) return items;
     return items.where((item) => item.category == category).toList();
   }

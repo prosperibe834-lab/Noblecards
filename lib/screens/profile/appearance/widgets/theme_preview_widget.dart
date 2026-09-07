@@ -72,7 +72,7 @@ class ThemePreviewWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          
+
           // Mini Balance
           Text(
             'Wallet Balance',
@@ -88,7 +88,7 @@ class ThemePreviewWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          
+
           // Mini Quick Actions
           Text(
             'Quick Actions',
@@ -98,8 +98,20 @@ class ThemePreviewWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildMiniActionCard(AppColors.success, Boxicons.bx_credit_card, 'Buy Card', cardColor, textColor),
-              _buildMiniActionCard(Colors.orange, Boxicons.bx_refresh, 'Sell Card', cardColor, textColor),
+              _buildMiniActionCard(
+                AppColors.success,
+                Boxicons.bx_credit_card,
+                'Buy Card',
+                cardColor,
+                textColor,
+              ),
+              _buildMiniActionCard(
+                Colors.orange,
+                Boxicons.bx_refresh,
+                'Sell Card',
+                cardColor,
+                textColor,
+              ),
             ],
           ),
         ],
@@ -107,7 +119,13 @@ class ThemePreviewWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMiniActionCard(Color iconColor, IconData icon, String text, Color bgColor, Color textColor) {
+  Widget _buildMiniActionCard(
+    Color iconColor,
+    IconData icon,
+    String text,
+    Color bgColor,
+    Color textColor,
+  ) {
     return Container(
       width: 28,
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -129,7 +147,11 @@ class ThemePreviewWidget extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             text,
-            style: TextStyle(fontSize: 4, fontWeight: FontWeight.bold, color: textColor),
+            style: TextStyle(
+              fontSize: 4,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
         ],
       ),

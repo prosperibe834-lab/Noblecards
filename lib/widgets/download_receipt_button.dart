@@ -4,10 +4,8 @@ import 'package:boxicons/boxicons.dart';
 class DownloadReceiptButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const DownloadReceiptButton({
-    Key? key,
-    required this.onPressed,
-  }) : super(key: key);
+  const DownloadReceiptButton({Key? key, required this.onPressed})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +16,10 @@ class DownloadReceiptButton extends StatelessWidget {
       ),
       onPressed: onPressed,
       icon: const Icon(Boxicons.bx_download, size: 20),
-      label: const Text('Download PDF', style: TextStyle(fontWeight: FontWeight.bold)),
+      label: const Text(
+        'Download PDF',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 }

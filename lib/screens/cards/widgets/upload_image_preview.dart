@@ -12,7 +12,12 @@ class UploadImagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.md),
-      child: Image.file(imageFile, fit: BoxFit.cover, width: double.infinity, height: 140),
+      child: Image.file(
+        imageFile,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 140,
+      ),
     );
   }
 }

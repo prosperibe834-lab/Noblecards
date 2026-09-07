@@ -15,10 +15,7 @@ import 'widgets/forgot_password_success.dart';
 class ForgotPasswordScreen extends StatefulWidget {
   final BasePasswordResetService? passwordResetService;
 
-  const ForgotPasswordScreen({
-    super.key,
-    this.passwordResetService,
-  });
+  const ForgotPasswordScreen({super.key, this.passwordResetService});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -54,7 +51,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(email.trim())) {
       setState(() {
-        _state = _state.copyWith(errorMessage: 'Please enter a valid email address.');
+        _state = _state.copyWith(
+          errorMessage: 'Please enter a valid email address.',
+        );
       });
       return false;
     }
@@ -138,9 +137,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       const SizedBox(height: 12),
 
                       // Header
-                      ForgotPasswordHeader(
-                        onBackTap: _onBackNavigation,
-                      ),
+                      ForgotPasswordHeader(onBackTap: _onBackNavigation),
                       const SizedBox(height: 36),
 
                       // Email Field
@@ -162,7 +159,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                       // Submit Button
                       ForgotPasswordButton(
-                        isLoading: _state.status == ForgotPasswordStatus.loading,
+                        isLoading:
+                            _state.status == ForgotPasswordStatus.loading,
                         onPressed: _state.status == ForgotPasswordStatus.loading
                             ? null
                             : _handleSendResetOtp,
@@ -174,15 +172,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         children: [
                           Expanded(
                             child: Divider(
-                              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                              color: isDark
+                                  ? AppColors.darkBorder
+                                  : AppColors.lightBorder,
                               thickness: 1,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0,
+                            ),
                             child: Text(
                               'Remember your password?',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
                                     fontSize: 13,
                                     color: isDark
                                         ? AppColors.darkSubText
@@ -192,7 +195,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           Expanded(
                             child: Divider(
-                              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                              color: isDark
+                                  ? AppColors.darkBorder
+                                  : AppColors.lightBorder,
                               thickness: 1,
                             ),
                           ),
@@ -209,10 +214,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           child: Container(
                             height: 52,
                             decoration: BoxDecoration(
-                              color: isDark ? AppColors.darkCard : AppColors.lightCard,
+                              color: isDark
+                                  ? AppColors.darkCard
+                                  : AppColors.lightCard,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                                color: isDark
+                                    ? AppColors.darkBorder
+                                    : AppColors.lightBorder,
                               ),
                               boxShadow: isDark ? [] : AppShadow.light,
                             ),
@@ -227,7 +236,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'Back to Sign In',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
                                         color: AppColors.primary,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15,
@@ -247,5 +257,3 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 }
-
-

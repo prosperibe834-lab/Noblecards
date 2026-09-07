@@ -57,15 +57,17 @@ class _NotificationSettingsBottomSheetState
             ),
           ),
           const SizedBox(height: 16),
-          ..._sounds.map((sound) => NotificationSoundTile(
-                soundName: sound,
-                isSelected: _selectedSound == sound,
-                onSelect: () {
-                  setState(() {
-                    _selectedSound = sound;
-                  });
-                },
-              )),
+          ..._sounds.map(
+            (sound) => NotificationSoundTile(
+              soundName: sound,
+              isSelected: _selectedSound == sound,
+              onSelect: () {
+                setState(() {
+                  _selectedSound = sound;
+                });
+              },
+            ),
+          ),
           const SizedBox(height: 16),
         ],
       ),

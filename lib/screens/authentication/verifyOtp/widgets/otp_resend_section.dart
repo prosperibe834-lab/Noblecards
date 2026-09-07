@@ -50,8 +50,8 @@ class OtpResendSection extends StatelessWidget {
             children: [
               Icon(
                 Boxicons.bx_refresh,
-                color: isExpired 
-                    ? AppColors.primary 
+                color: isExpired
+                    ? AppColors.primary
                     : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
                 size: 20,
               ),
@@ -59,15 +59,19 @@ class OtpResendSection extends StatelessWidget {
               Text(
                 "Didn't receive the code? ",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                  color: isDark
+                      ? AppColors.darkSubText
+                      : AppColors.lightSubText,
                 ),
               ),
               Text(
                 'Resend OTP',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isExpired 
-                      ? AppColors.primary 
-                      : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
+                  color: isExpired
+                      ? AppColors.primary
+                      : (isDark
+                            ? AppColors.darkSubText
+                            : AppColors.lightSubText),
                   fontWeight: FontWeight.w600,
                 ),
               ),

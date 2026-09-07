@@ -11,7 +11,8 @@ class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({Key? key}) : super(key: key);
 
   @override
-  State<TransactionHistoryScreen> createState() => _TransactionHistoryScreenState();
+  State<TransactionHistoryScreen> createState() =>
+      _TransactionHistoryScreenState();
 }
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
@@ -122,12 +123,15 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     return _mockTransactions.where((txn) {
       final query = _searchController.text.toLowerCase();
       if (query.isNotEmpty) {
-        final matchesQuery = txn.title.toLowerCase().contains(query) ||
+        final matchesQuery =
+            txn.title.toLowerCase().contains(query) ||
             txn.id.toLowerCase().contains(query) ||
-            (txn.giftCardName != null && txn.giftCardName!.toLowerCase().contains(query));
+            (txn.giftCardName != null &&
+                txn.giftCardName!.toLowerCase().contains(query));
         if (!matchesQuery) return false;
       }
-      if (_selectedCategory != TransactionCategory.all && txn.category != _selectedCategory) {
+      if (_selectedCategory != TransactionCategory.all &&
+          txn.category != _selectedCategory) {
         return false;
       }
       if (_selectedStatus != null && txn.status != _selectedStatus) {
@@ -147,12 +151,12 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           icon: const Icon(Boxicons.bx_arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Transaction History', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Transaction History',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Boxicons.bx_bell),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Boxicons.bx_bell), onPressed: () {}),
         ],
       ),
       body: RefreshIndicator(
@@ -186,7 +190,10 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         value: _selectedCategory,
                         items: TransactionCategory.values,
                         itemLabelExtractor: (cat) => cat.name,
-                        onChanged: (val) => setState(() => _selectedCategory = val ?? TransactionCategory.all),
+                        onChanged: (val) => setState(
+                          () => _selectedCategory =
+                              val ?? TransactionCategory.all,
+                        ),
                         icon: Boxicons.bx_category,
                       ),
                     ),
@@ -196,9 +203,16 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       child: TransactionFilterDropdown<String>(
                         label: 'Date',
                         value: _selectedDateFilter,
-                        items: const ['All Time', 'Today', 'This Month', 'This Year'],
+                        items: const [
+                          'All Time',
+                          'Today',
+                          'This Month',
+                          'This Year',
+                        ],
                         itemLabelExtractor: (val) => val,
-                        onChanged: (val) => setState(() => _selectedDateFilter = val ?? 'All Time'),
+                        onChanged: (val) => setState(
+                          () => _selectedDateFilter = val ?? 'All Time',
+                        ),
                         icon: Boxicons.bx_calendar,
                       ),
                     ),
@@ -210,23 +224,23 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 child: _isLoading
                     ? const TransactionLoading()
                     : _filteredTransactions.isEmpty
-                        ? TransactionEmptyState(
-                            onResetFilters: () {
-                              setState(() {
-                                _searchController.clear();
-                                _selectedCategory = TransactionCategory.all;
-                                _selectedStatus = null;
-                              });
-                            },
-                          )
-                        : ListView.builder(
-                            itemCount: _filteredTransactions.length,
-                            itemBuilder: (context, index) {
-                              return TransactionCard(
-                                transaction: _filteredTransactions[index],
-                              );
-                            },
-                          ),
+                    ? TransactionEmptyState(
+                        onResetFilters: () {
+                          setState(() {
+                            _searchController.clear();
+                            _selectedCategory = TransactionCategory.all;
+                            _selectedStatus = null;
+                          });
+                        },
+                      )
+                    : ListView.builder(
+                        itemCount: _filteredTransactions.length,
+                        itemBuilder: (context, index) {
+                          return TransactionCard(
+                            transaction: _filteredTransactions[index],
+                          );
+                        },
+                      ),
               ),
             ],
           ),

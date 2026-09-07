@@ -47,11 +47,11 @@ class ForgotPasswordInfoCard extends StatelessWidget {
             child: Text(
               "We'll send a secure password reset link to your email address.",
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 13.5,
-                    height: 1.35,
-                    fontWeight: FontWeight.w500,
-                    color: isDark ? AppColors.darkSubText : AppColors.lightText,
-                  ),
+                fontSize: 13.5,
+                height: 1.35,
+                fontWeight: FontWeight.w500,
+                color: isDark ? AppColors.darkSubText : AppColors.lightText,
+              ),
             ),
           ),
         ],

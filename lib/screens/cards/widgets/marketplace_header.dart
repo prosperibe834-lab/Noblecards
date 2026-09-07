@@ -32,12 +32,13 @@ class MarketplaceHeader extends StatelessWidget {
                 'Showing $count Cards',
                 style: TextStyle(
                   fontSize: 12,
-                  color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                  color: isDark
+                      ? AppColors.darkSubText
+                      : AppColors.lightSubText,
                 ),
               ),
             ],
           ),
-          
         ],
       ),
     );

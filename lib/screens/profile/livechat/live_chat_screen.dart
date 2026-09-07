@@ -14,17 +14,25 @@ class LiveChatScreen extends StatelessWidget {
     final issues = ChatDemoService.getPopularIssues();
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1419) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F1419)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? Colors.white : Colors.black, size: 28),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? Colors.white : Colors.black,
+            size: 28,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Image.asset(
-          isDark ? 'assets/logos/DarkModeLogo.png' : 'assets/logos/LightModeLogo.png',
+          isDark
+              ? 'assets/logos/DarkModeLogo.png'
+              : 'assets/logos/LightModeLogo.png',
           height: 24,
           errorBuilder: (context, error, stackTrace) => Text(
             'NobleCards',
@@ -37,7 +45,10 @@ class LiveChatScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: Icon(Boxicons.bx_dots_horizontal_rounded, color: isDark ? Colors.white : Colors.black),
+            icon: Icon(
+              Boxicons.bx_dots_horizontal_rounded,
+              color: isDark ? Colors.white : Colors.black,
+            ),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
@@ -97,7 +108,7 @@ class LiveChatScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   // Headset illustration placeholder using Boxicons & styling
                   SizedBox(
                     height: 60,
@@ -128,10 +139,10 @@ class LiveChatScreen extends StatelessWidget {
                               size: 16,
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
@@ -146,7 +157,9 @@ class LiveChatScreen extends StatelessWidget {
                   color: isDark ? const Color(0xFF141A1F) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.black.withOpacity(0.05),
                   ),
                 ),
                 child: TextField(
@@ -162,7 +175,10 @@ class LiveChatScreen extends StatelessWidget {
                       color: isDark ? Colors.white54 : Colors.black54,
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                   ),
                 ),
               ),
@@ -197,9 +213,8 @@ class LiveChatScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatScreen(
-                            initialAction: issues[index],
-                          ),
+                          builder: (context) =>
+                              ChatScreen(initialAction: issues[index]),
                         ),
                       );
                     },
@@ -214,7 +229,7 @@ class LiveChatScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   gradient: LinearGradient(
-                    colors: isDark 
+                    colors: isDark
                         ? [const Color(0xFF0A2E1A), const Color(0xFF06180E)]
                         : [const Color(0xFFE8F8F0), const Color(0xFFCFF1DF)],
                     begin: Alignment.centerLeft,
@@ -228,9 +243,16 @@ class LiveChatScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFF00B75F).withOpacity(0.5), width: 1.5),
+                        border: Border.all(
+                          color: const Color(0xFF00B75F).withOpacity(0.5),
+                          width: 1.5,
+                        ),
                       ),
-                      child: const Icon(Boxicons.bx_check_shield, color: Color(0xFF00B75F), size: 24),
+                      child: const Icon(
+                        Boxicons.bx_check_shield,
+                        color: Color(0xFF00B75F),
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -256,7 +278,11 @@ class LiveChatScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Icon(Boxicons.bx_shield_quarter, color: Color(0xFF00B75F), size: 40),
+                    const Icon(
+                      Boxicons.bx_shield_quarter,
+                      color: Color(0xFF00B75F),
+                      size: 40,
+                    ),
                   ],
                 ),
               ),

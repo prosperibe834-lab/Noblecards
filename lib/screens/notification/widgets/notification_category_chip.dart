@@ -35,8 +35,8 @@ class NotificationCategoryChip extends StatelessWidget {
           label,
           style: TextStyle(
             color: isSelected
-              ? Colors.white
-              : (isDark ? Colors.white60 : Colors.black54),
+                ? Colors.white
+                : (isDark ? Colors.white60 : Colors.black54),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             fontSize: 13,
           ),

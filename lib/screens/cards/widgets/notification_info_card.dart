@@ -13,13 +13,19 @@ class NotificationInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.success.withOpacity(0.1) : AppColors.success.withOpacity(0.08),
+        color: isDark
+            ? AppColors.success.withOpacity(0.1)
+            : AppColors.success.withOpacity(0.08),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.success.withOpacity(0.3)),
       ),
       child: Row(
         children: [
-          const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 28),
+          const Icon(
+            Boxicons.bx_check_shield,
+            color: AppColors.success,
+            size: 28,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -31,7 +37,11 @@ class NotificationInfoCard extends StatelessWidget {
               ),
             ),
           ),
-          Icon(Boxicons.bx_bell, color: AppColors.success.withOpacity(0.6), size: 24),
+          Icon(
+            Boxicons.bx_bell,
+            color: AppColors.success.withOpacity(0.6),
+            size: 24,
+          ),
         ],
       ),
     );

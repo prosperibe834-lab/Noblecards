@@ -46,18 +46,21 @@ class _AppearanceShimmerState extends State<AppearanceShimmer>
               const SizedBox(height: 8),
               Container(width: 220, height: 14, color: baseColor),
               const SizedBox(height: 24),
-              
-              ...List.generate(3, (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Container(
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : AppColors.white,
-                    borderRadius: BorderRadius.circular(16),
+
+              ...List.generate(
+                3,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkCard : AppColors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                 ),
-              )),
-              
+              ),
+
               const SizedBox(height: 8),
               Container(
                 height: 80,
