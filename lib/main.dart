@@ -13,6 +13,7 @@ import 'screens/biometric_setup_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
 import 'widgets/main_navigation_screen.dart';
 import 'navigation/app_router.dart';
+import 'navigation/authenticated_entry.dart';
 
 import 'providers/exchange_rate_provider.dart';
 import 'providers/payment_provider.dart';
@@ -70,14 +71,18 @@ class NobleCardsApp extends StatelessWidget {
 
       // Initial screen route based on the locally persisted API session.
       home: hasActiveSession
-          ? const MainNavigationScreen()
+          ? AuthenticatedEntryScreen(
+              destinationBuilder: (_) => const MainNavigationScreen(),
+            )
           : const OnboardingScreen(),
 
       // <--- 2. ADDED THIS: Handles dynamic routes (/favourite-currencies, /exchange-rate)
       onGenerateRoute: AppRouter.generateRoute,
 
       routes: {
-        '/home': (context) => const MainNavigationScreen(),
+        '/home': (context) => AuthenticatedEntryScreen(
+          destinationBuilder: (_) => const MainNavigationScreen(),
+        ),
         '/signup': (context) => const SignupScreen(),
 
         '/login': (context) => const LoginScreen(),

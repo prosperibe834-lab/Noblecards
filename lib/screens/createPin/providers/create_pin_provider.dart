@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../authentication/services/authentication_service.dart';
 
 class CreatePinProvider extends ChangeNotifier {
+  final AuthenticationService _authService;
   String _pin = '';
   bool _isLoading = false;
+  String? _errorMessage;
+
+  CreatePinProvider({AuthenticationService? authService})
+    : _authService = authService ?? AuthenticationService();
 
   String get pin => _pin;
   bool get isLoading => _isLoading;
   bool get isComplete => _pin.length == 4;
+  String? get errorMessage => _errorMessage;
 
   void addDigit(String digit) {
     if (_pin.length < 4 && !_isLoading) {
@@ -31,15 +38,18 @@ class CreatePinProvider extends ChangeNotifier {
     if (!isComplete) return false;
 
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
-    // Simulate network/security processing delay
-    // DO NOT print or log the PIN here in production.
-    await Future.delayed(const Duration(seconds: 2));
-
-    _isLoading = false;
-    notifyListeners();
-
-    return true; // Return true on success to trigger the modal
+    try {
+      await _authService.createTransactionPin(_pin);
+      return true;
+    } catch (error) {
+      _errorMessage = error.toString().replaceFirst('Exception: ', '');
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

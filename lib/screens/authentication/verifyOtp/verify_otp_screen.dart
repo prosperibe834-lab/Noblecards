@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
+import '../../../navigation/authenticated_entry.dart';
+import '../../../widgets/main_navigation_screen.dart';
 import '../services/authentication_service.dart';
 import 'models/otp_timer_model.dart';
 import 'utils/otp_validator.dart';
@@ -178,7 +180,10 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
         await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
 
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        await navigateAfterAuthentication(
+          context,
+          destinationBuilder: (_) => const MainNavigationScreen(),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_animation.dart';
 

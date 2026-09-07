@@ -24,6 +24,7 @@ class AuthUser {
   final bool isEmailVerified;
   final bool isProfileComplete;
   final bool isVerified;
+  final bool hasTransactionPin;
 
   const AuthUser({
     required this.id,
@@ -43,7 +44,29 @@ class AuthUser {
     this.isEmailVerified = false,
     this.isProfileComplete = false,
     this.isVerified = false,
+    this.hasTransactionPin = false,
   });
+
+  AuthUser copyWith({bool? hasTransactionPin}) => AuthUser(
+    id: id,
+    email: email,
+    firstName: firstName,
+    lastName: lastName,
+    username: username,
+    displayName: displayName,
+    phone: phone,
+    country: country,
+    countryCode: countryCode,
+    gender: gender,
+    dateOfBirth: dateOfBirth,
+    bio: bio,
+    address: address,
+    profileImageUrl: profileImageUrl,
+    isEmailVerified: isEmailVerified,
+    isProfileComplete: isProfileComplete,
+    isVerified: isVerified,
+    hasTransactionPin: hasTransactionPin ?? this.hasTransactionPin,
+  );
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => AuthUser(
     id: json['id'] as String,
@@ -63,6 +86,7 @@ class AuthUser {
     isEmailVerified: json['isEmailVerified'] as bool? ?? false,
     isProfileComplete: json['isProfileComplete'] as bool? ?? false,
     isVerified: json['isVerified'] as bool? ?? false,
+    hasTransactionPin: json['hasTransactionPin'] as bool? ?? false,
   );
 }
 
@@ -193,6 +217,33 @@ class AuthenticationService {
 
   Future<Map<String, dynamic>> authenticatedGet(String path) {
     return _request('GET', path, authenticated: true);
+  }
+
+  Future<bool> hasTransactionPin() async {
+    final current = _currentUser;
+    if (current != null) return current.hasTransactionPin;
+
+    final data = await _request(
+      'GET',
+      '/users/me/transaction-pin',
+      authenticated: true,
+    );
+    return data['hasTransactionPin'] as bool? ?? false;
+  }
+
+  Future<void> createTransactionPin(String pin) async {
+    if (!RegExp(r'^\d{4}$').hasMatch(pin)) {
+      throw Exception('Transaction PIN must be exactly 4 digits.');
+    }
+    await _request(
+      'POST',
+      '/users/me/transaction-pin',
+      body: {'pin': pin},
+      authenticated: true,
+    );
+    if (_currentUser != null) {
+      _currentUser = _currentUser!.copyWith(hasTransactionPin: true);
+    }
   }
 
   Future<AuthResponse> signUpWithEmail({
@@ -586,6 +637,10 @@ class AuthenticationService {
       return 'Too many attempts. Please wait and try again.';
     if (text.contains('code'))
       return 'The verification code is invalid or expired. Please request a new one.';
+    if (text.contains('transaction pin already exists'))
+      return 'A transaction PIN already exists for this account.';
+    if (text.contains('transaction pin must'))
+      return 'Transaction PIN must be exactly 4 digits.';
     return message.toString();
   }
 }

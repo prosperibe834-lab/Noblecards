@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_shadow.dart';
+import '../../../../navigation/authenticated_entry.dart';
+import '../../../../widgets/main_navigation_screen.dart';
 import '../services/authentication_service.dart';
 import '../services/biometric_auth_service.dart';
 import '../forgotPassword/forgot_password_screen.dart';
@@ -82,7 +84,10 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        await navigateAfterAuthentication(
+          context,
+          destinationBuilder: (_) => const MainNavigationScreen(),
+        );
       } catch (error) {
         final message = error.toString().replaceFirst('Exception: ', '');
         _showErrorSnackBar(message);
@@ -105,7 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else if (mounted) {
         await _biometricService.recordAuthentication();
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        await navigateAfterAuthentication(
+          context,
+          destinationBuilder: (_) => const MainNavigationScreen(),
+        );
       }
     } else {
       _showErrorSnackBar('Biometric authentication failed or was canceled.');

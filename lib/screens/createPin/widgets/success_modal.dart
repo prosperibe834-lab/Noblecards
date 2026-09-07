@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_animation.dart';
 
 class SuccessModal extends StatefulWidget {
-  const SuccessModal({super.key});
+  final VoidCallback? onDone;
+
+  const SuccessModal({super.key, this.onDone});
 
   @override
   State<SuccessModal> createState() => _SuccessModalState();
 }
 
-class _SuccessModalState extends State<SuccessModal> with SingleTickerProviderStateMixin {
+class _SuccessModalState extends State<SuccessModal>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
@@ -21,13 +24,17 @@ class _SuccessModalState extends State<SuccessModal> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: AppAnimation.slow);
-    
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
-    
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.5, 1.0, curve: Curves.easeIn)),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.5, 1.0, curve: Curves.easeIn),
+      ),
     );
 
     _controller.forward();
@@ -44,7 +51,9 @@ class _SuccessModalState extends State<SuccessModal> with SingleTickerProviderSt
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.xl)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+      ),
       backgroundColor: isDarkMode ? AppColors.darkCard : AppColors.lightCard,
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -61,7 +70,11 @@ class _SuccessModalState extends State<SuccessModal> with SingleTickerProviderSt
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Boxicons.bx_check, size: 48, color: AppColors.success),
+                  child: Icon(
+                    Boxicons.bx_check,
+                    size: 48,
+                    color: AppColors.success,
+                  ),
                 ),
               ),
             ),
@@ -87,9 +100,12 @@ class _SuccessModalState extends State<SuccessModal> with SingleTickerProviderSt
                     height: 54,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigate to the next secure step
-                        Navigator.of(context).pop(); 
-                        Navigator.of(context).pop(); 
+                        Navigator.of(context).pop();
+                        if (widget.onDone != null) {
+                          widget.onDone!();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
