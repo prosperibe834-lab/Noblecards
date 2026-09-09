@@ -11,10 +11,7 @@ class ProfileStorageService {
     return EditableProfileModel.fromMap(user);
   }
 
-  Future<EditableProfileModel> saveProfile(
-    EditableProfileModel profile, {
-    XFile? image,
-  }) async {
+  Future<EditableProfileModel> saveProfile(EditableProfileModel profile, {XFile? image}) async {
     final result = await _auth.saveUserProfile(
       userId: _auth.currentUser?.id ?? 'current',
       profileData: profile.toApiMap(),

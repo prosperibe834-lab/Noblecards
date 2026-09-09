@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../authentication/services/authentication_service.dart';
 import '../models/withdraw_bank_models.dart';
 
 class WithdrawBankProvider extends ChangeNotifier {
+  final AuthenticationService _authService;
+
+  WithdrawBankProvider({AuthenticationService? authService})
+      : _authService = authService ?? AuthenticationService() {
+    loadBanks();
+  }
+
   // Existing state that should come from WithdrawScreen
   WithdrawalDestination _destination = WithdrawalDestination(
     countryCode: 'NG',
@@ -28,6 +36,9 @@ class WithdrawBankProvider extends ChangeNotifier {
   bool _isVerified = false;
   bool _saveAccount = true;
   String? _verificationError;
+  List<WithdrawalBank> _banks = [];
+  String? _beneficiaryId;
+  bool _isLoadingBanks = true;
 
   // Getters
   WithdrawalDestination get destination => _destination;
@@ -44,6 +55,9 @@ class WithdrawBankProvider extends ChangeNotifier {
   bool get isVerified => _isVerified;
   bool get saveAccount => _saveAccount;
   String? get verificationError => _verificationError;
+  List<WithdrawalBank> get banks => List.unmodifiable(_banks);
+  bool get isLoadingBanks => _isLoadingBanks;
+  String? get beneficiaryId => _beneficiaryId;
 
   double get amountToSend => _amountToSend;
   double get convertedAmount => _destination.countryCode == 'US' 
@@ -125,7 +139,27 @@ class WithdrawBankProvider extends ChangeNotifier {
     return false;
   }
 
-  // Verification Mock Service Interface
+  Future<void> loadBanks() async {
+    try {
+      final data = await _authService.authenticatedGet(
+        '/withdrawals/banks?countryCode=NG&currencyCode=NGN',
+      );
+      final rawBanks = data['banks'] as List<dynamic>? ?? [];
+      _banks = rawBanks.whereType<Map<String, dynamic>>().map((bank) {
+        return WithdrawalBank(
+          id: bank['id']?.toString() ?? bank['code'].toString(),
+          name: bank['name']?.toString() ?? '',
+          code: bank['code']?.toString() ?? '',
+        );
+      }).where((bank) => bank.name.isNotEmpty && bank.code.isNotEmpty).toList();
+    } catch (error) {
+      _verificationError = 'Unable to load banks. Please try again.';
+    } finally {
+      _isLoadingBanks = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> verifyAccount() async {
     if (!isFormValid) return;
     
@@ -133,12 +167,20 @@ class WithdrawBankProvider extends ChangeNotifier {
     _verificationError = null;
     notifyListeners();
 
-    // Simulate API Network call to your resolution endpoint
-    await Future.delayed(const Duration(seconds: 2));
-
     try {
-      // Mocking successful verification using actual context data
-      _accountName = "Prosper Ibe"; // Replace with actual API response
+      final data = await _authService.authenticatedPost(
+        '/withdrawals/beneficiaries/verify',
+        body: {
+          'countryCode': _destination.countryCode,
+          'currencyCode': _destination.currency,
+          'method': 'BANK_TRANSFER',
+          'institutionCode': _selectedBank!.code,
+          'institutionName': _selectedBank!.name,
+          'accountNumber': _accountNumber,
+        },
+      );
+      _accountName = data['accountHolderName']?.toString() ?? '';
+      if (_accountName.isEmpty) throw Exception('Account holder name was not returned.');
       _isVerified = true;
       _isVerifying = false;
     } catch (e) {
@@ -148,6 +190,26 @@ class WithdrawBankProvider extends ChangeNotifier {
     }
     
     notifyListeners();
+  }
+
+  Future<void> saveBeneficiary() async {
+    if (!_isVerified || _selectedBank == null) {
+      throw Exception('Verify the account before saving it.');
+    }
+    final data = await _authService.authenticatedPost(
+      '/withdrawals/beneficiaries',
+      body: {
+        'countryCode': _destination.countryCode,
+        'currencyCode': _destination.currency,
+        'method': 'BANK_TRANSFER',
+        'type': 'BANK_ACCOUNT',
+        'institutionCode': _selectedBank!.code,
+        'institutionName': _selectedBank!.name,
+        'accountHolderName': _accountName,
+        'accountNumber': _accountNumber,
+      },
+    );
+    _beneficiaryId = data['id']?.toString();
   }
 
   // Masking utility for Review Screen

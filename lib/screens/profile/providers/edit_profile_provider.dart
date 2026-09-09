@@ -27,9 +27,7 @@ class EditProfileProvider extends ChangeNotifier {
   bool get isFormValid {
     if (_currentProfile.fullName.trim().length < 2) return false;
     if (_currentProfile.username.trim().length < 3) return false;
-    if (!_currentProfile.email.contains('@') ||
-        !_currentProfile.email.contains('.'))
-      return false;
+    if (!_currentProfile.email.contains('@') || !_currentProfile.email.contains('.')) return false;
     if (_currentProfile.phone.trim().length < 7) return false;
     return true;
   }
@@ -84,11 +82,8 @@ class EditProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCountry(String value, {String? countryCode}) {
-    _currentProfile = _currentProfile.copyWith(
-      country: value,
-      countryCode: countryCode,
-    );
+  void updateCountry(String value) {
+    _currentProfile = _currentProfile.copyWith(country: value);
     notifyListeners();
   }
 
@@ -162,10 +157,7 @@ class EditProfileProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _currentProfile = await _storageService.saveProfile(
-        _currentProfile,
-        image: _selectedImage,
-      );
+      _currentProfile = await _storageService.saveProfile(_currentProfile, image: _selectedImage);
       _selectedImage = null;
       _selectedImageBytes = null;
       _initialProfile = _currentProfile;
@@ -184,19 +176,11 @@ class EditProfileProvider extends ChangeNotifier {
   String _friendlyImageError(Object error) {
     final message = error.toString().toLowerCase();
     if (message.contains('cancel') || message.contains('pickedfile')) return '';
-    if (message.contains('permission'))
-      return 'Please allow photo access to continue.';
-    if (message.contains('camera'))
-      return 'The camera is unavailable on this device.';
-    if (message.contains('unsupported operation') ||
-        message.contains('_namespace'))
-      return 'Photo selection is unavailable on this device.';
-    if (message.contains('5mb'))
-      return 'Selected image exceeds the 5MB size limit.';
-    if (message.contains('jpg') ||
-        message.contains('png') ||
-        message.contains('webp'))
-      return 'Please select a JPG, PNG, or WEBP image.';
+    if (message.contains('permission')) return 'Please allow photo access to continue.';
+    if (message.contains('camera')) return 'The camera is unavailable on this device.';
+    if (message.contains('unsupported operation') || message.contains('_namespace')) return 'Photo selection is unavailable on this device.';
+    if (message.contains('5mb')) return 'Selected image exceeds the 5MB size limit.';
+    if (message.contains('jpg') || message.contains('png') || message.contains('webp')) return 'Please select a JPG, PNG, or WEBP image.';
     return 'Unable to select that image. Please try again.';
   }
 }

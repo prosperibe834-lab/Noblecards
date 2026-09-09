@@ -6,7 +6,6 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
 import 'providers/withdraw_bank_provider.dart';
-import 'models/withdraw_bank_models.dart';
 import 'widgets/withdraw_stepper.dart';
 import 'widgets/withdraw_bank_selector_sheet.dart';
 import 'withdraw_review_screen.dart';
@@ -46,21 +45,12 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
   }
 
   void _showBankSelector(BuildContext context, WithdrawBankProvider provider) {
-    // Mock banks list from existing provider architecture
-    final mockBanks = [
-      WithdrawalBank(id: '1', name: 'GTBank', code: '058'),
-      WithdrawalBank(id: '2', name: 'Access Bank', code: '044'),
-      WithdrawalBank(id: '3', name: 'First Bank', code: '011'),
-      WithdrawalBank(id: '4', name: 'Zenith Bank', code: '057'),
-      WithdrawalBank(id: '5', name: 'UBA', code: '033'),
-    ];
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => WithdrawBankSelectorSheet(
-        banks: mockBanks,
+        banks: provider.banks,
         selectedBank: provider.selectedBank,
         onBankSelected: (bank) => provider.selectBank(bank),
       ),
@@ -404,12 +394,7 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                   if (!provider.isVerified) {
                     provider.verifyAccount();
                   } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => WithdrawReviewScreen(provider: provider),
-                      ),
-                    );
+                    _saveAndContinue(provider, context);
                   }
                 }
               : null,
@@ -445,5 +430,21 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _saveAndContinue(WithdrawBankProvider provider, BuildContext context) async {
+    try {
+      await provider.saveBeneficiary();
+      if (!context.mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => WithdrawReviewScreen(provider: provider)),
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
   }
 }

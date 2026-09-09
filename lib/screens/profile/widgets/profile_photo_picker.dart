@@ -41,7 +41,10 @@ class ProfilePhotoPicker extends StatelessWidget {
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.success, width: 2.5),
+                  border: Border.all(
+                    color: AppColors.success,
+                    width: 2.5,
+                  ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -67,9 +70,7 @@ class ProfilePhotoPicker extends StatelessWidget {
                     color: AppColors.success,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isDark
-                          ? AppColors.darkBackground
-                          : AppColors.white,
+                      color: isDark ? AppColors.darkBackground : AppColors.white,
                       width: 2,
                     ),
                     boxShadow: [
@@ -77,7 +78,7 @@ class ProfilePhotoPicker extends StatelessWidget {
                         color: Colors.black.withOpacity(0.15),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
-                      ),
+                      )
                     ],
                   ),
                   child: const Icon(

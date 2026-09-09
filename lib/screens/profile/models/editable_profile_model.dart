@@ -6,7 +6,6 @@ class EditableProfileModel {
   final String email;
   final String phone;
   final String country;
-  final String countryCode;
   final String dateOfBirth;
   final String gender;
   final String address;
@@ -18,7 +17,6 @@ class EditableProfileModel {
     required this.email,
     required this.phone,
     required this.country,
-    required this.countryCode,
     required this.dateOfBirth,
     required this.gender,
     required this.address,
@@ -27,31 +25,28 @@ class EditableProfileModel {
 
   factory EditableProfileModel.initial() {
     return const EditableProfileModel(
-      fullName: '',
-      username: '',
-      email: '',
-      phone: '',
-      country: '',
-      countryCode: '',
-      dateOfBirth: '',
-      gender: '',
-      address: '',
+      fullName: 'Prosper Ibe',
+      username: 'prosperibe',
+      email: 'prosperibe@gmail.com',
+      phone: '+234 810 234 5678',
+      country: 'Nigeria',
+      dateOfBirth: '12 July 2001',
+      gender: 'Male',
+      address: 'Lagos, Nigeria',
       photoPath: null,
     );
   }
 
   Map<String, dynamic> toApiMap() => {
-    'firstName': fullName.split(' ').first,
-    'lastName': fullName.split(' ').skip(1).join(' '),
-    'username': username,
-    'email': email,
-    'phone': phone,
-    'country': country,
-    'countryCode': countryCode.isEmpty ? null : countryCode,
-    'gender': gender,
-    'dateOfBirth': dateOfBirth.isEmpty ? null : dateOfBirth,
-    'address': address,
-  };
+        'firstName': fullName.split(' ').first,
+        'lastName': fullName.split(' ').skip(1).join(' '),
+        'username': username,
+        'phone': phone,
+        'country': country,
+        'gender': gender,
+        'dateOfBirth': dateOfBirth.isEmpty ? null : dateOfBirth,
+        'address': address,
+      };
 
   EditableProfileModel copyWith({
     String? fullName,
@@ -59,7 +54,6 @@ class EditableProfileModel {
     String? email,
     String? phone,
     String? country,
-    String? countryCode,
     String? dateOfBirth,
     String? gender,
     String? address,
@@ -71,7 +65,6 @@ class EditableProfileModel {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       country: country ?? this.country,
-      countryCode: countryCode ?? this.countryCode,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,
       address: address ?? this.address,
@@ -95,16 +88,11 @@ class EditableProfileModel {
 
   factory EditableProfileModel.fromMap(Map<String, dynamic> map) {
     return EditableProfileModel(
-      fullName:
-          map['fullName'] ??
-          [map['firstName'], map['lastName']]
-              .where((value) => value != null && value.toString().isNotEmpty)
-              .join(' '),
+      fullName: map['fullName'] ?? [map['firstName'], map['lastName']].where((value) => value != null && value.toString().isNotEmpty).join(' '),
       username: map['username'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
       country: map['country'] ?? '',
-      countryCode: map['countryCode'] ?? '',
       dateOfBirth: map['dateOfBirth'] ?? '',
       gender: map['gender'] ?? '',
       address: map['address'] ?? '',
@@ -115,8 +103,6 @@ class EditableProfileModel {
   static String? _imageUrl(Object? value) {
     if (value == null || value.toString().isEmpty) return null;
     final path = value.toString();
-    return path.startsWith('/')
-        ? '${AuthenticationService.apiBaseUrl}$path'
-        : path;
+    return path.startsWith('/') ? '${AuthenticationService.apiBaseUrl}$path' : path;
   }
 }
