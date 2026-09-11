@@ -93,6 +93,21 @@ class AuthenticationService {
     return data['hasTransactionPin'] as bool? ?? false;
   }
 
+  Future<bool> verifyTransactionPin(String pin) async {
+    if (!RegExp(r'^\d{4}$').hasMatch(pin)) {
+      throw Exception('Transaction PIN must be exactly 4 digits.');
+    }
+
+    final data = await _request(
+      'POST',
+      '/users/me/transaction-pin/verify',
+      body: {'pin': pin},
+      authenticated: true,
+    );
+
+    return data['verified'] == true;
+  }
+
   Future<void> createTransactionPin(String pin) async {
     if (!RegExp(r'^\d{4}$').hasMatch(pin)) {
       throw Exception('Transaction PIN must be exactly 4 digits.');
@@ -284,7 +299,13 @@ class AuthenticationService {
 
   Future<Map<String, dynamic>> _request(String method, String path, {Map<String, dynamic>? body, bool authenticated = false}) async {
     final headers = {'Content-Type': 'application/json'};
-    if (authenticated) headers['Authorization'] = 'Bearer ${await _storage?.read(key: _accessKey)}';
+    if (authenticated) {
+      final accessToken = await _storage?.read(key: _accessKey);
+      if (accessToken == null || accessToken.isEmpty) {
+        throw Exception('Your login session has expired. Please log in again.');
+      }
+      headers['Authorization'] = 'Bearer $accessToken';
+    }
     final response = method == 'POST'
         ? await http.post(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
       : method == 'PATCH' ? await http.patch(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
@@ -331,7 +352,7 @@ class AuthenticationService {
 
   String _friendlyMessage(Object message) {
     final text = message.toString().toLowerCase();
-    if (text.contains('already exists')) return 'An account with this email already exists. Please log in or use a different email.';
+    if (text.contains('email') && text.contains('already exists')) return 'An account with this email already exists. Please log in or use a different email.';
     if (text.contains('invalid email')) return 'Please enter a valid email address.';
     if (text.contains('invalid email or password')) return 'Invalid email or password. Please try again.';
     if (text.contains('verify your email')) return 'Please verify your email before signing in.';

@@ -8,6 +8,7 @@ import 'package:noble_cards/theme/app_radius.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
 import 'package:noble_cards/theme/app_animation.dart';
 import 'package:noble_cards/screens/TransactionPin/pin_auth_dialog.dart';
+import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_model.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_region_model.dart';
@@ -95,6 +96,7 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
     final success = await showDialog<bool>(
       context: context,
       builder: (_) => PinAuthDialog(
+        onValidatePin: (pin) => AuthenticationService().verifyTransactionPin(pin),
         onSuccess: (pin) {
           navigator.pop(true);
         },

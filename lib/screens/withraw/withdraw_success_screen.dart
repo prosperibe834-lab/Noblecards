@@ -13,6 +13,7 @@ class WithdrawSuccessScreen extends StatefulWidget {
   final WithdrawalTransactionModel? transaction;
   final bool isLoading;
   final bool hasError;
+  final String? errorMessage;
   final VoidCallback? onRetry;
 
   const WithdrawSuccessScreen({
@@ -20,6 +21,7 @@ class WithdrawSuccessScreen extends StatefulWidget {
     this.transaction,
     this.isLoading = false,
     this.hasError = false,
+    this.errorMessage,
     this.onRetry,
   }) : super(key: key);
 
@@ -63,6 +65,54 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
     super.dispose();
   }
 
+  String get _normalizedStatus => widget.transaction?.status.trim().toLowerCase() ?? '';
+
+  bool get _isSuccessful => const {'successful', 'success', 'completed'}.contains(_normalizedStatus);
+
+  bool get _isPendingLike => const {'processing', 'pending', 'new', 'under_review'}.contains(_normalizedStatus);
+
+  bool get _isFailed => _normalizedStatus == 'failed';
+
+  bool get _canViewReceipt =>
+      _isSuccessful && !widget.hasError && !widget.isLoading && widget.transaction != null;
+
+  String get _statusTitle {
+    if (_isSuccessful) return 'Withdrawal Successful!';
+    if (_normalizedStatus == 'under_review') return 'Withdrawal Under Review';
+    if (_isPendingLike || _normalizedStatus == 'processing') return 'Withdrawal Pending';
+    if (_isFailed) return 'Withdrawal Failed';
+    return 'Withdrawal Pending';
+  }
+
+  String get _statusDescription {
+    if (_isSuccessful) {
+      return 'Your withdrawal has been successfully completed.';
+    }
+    if (_normalizedStatus == 'under_review') {
+      return 'Your withdrawal is being reviewed. Your funds remain protected while we confirm the provider result.';
+    }
+    if (_normalizedStatus == 'pending' || _normalizedStatus == 'new') {
+      return 'Your withdrawal is being processed. Your funds remain protected while we confirm the provider result.';
+    }
+    return 'Your withdrawal request has been received and is being processed. Your funds remain protected while we confirm the provider result.';
+  }
+
+  String get _notificationMessage {
+    if (_isSuccessful) {
+      return 'Your funds have been successfully credited to your destination.';
+    }
+    if (_normalizedStatus == 'under_review') {
+      return 'Your withdrawal is under review. Your funds remain protected while we confirm the provider result.';
+    }
+    if (_isPendingLike) {
+      return 'Your withdrawal request has been received and is being processed.';
+    }
+    if (widget.errorMessage != null && widget.errorMessage!.isNotEmpty) {
+      return widget.errorMessage!;
+    }
+    return 'Your withdrawal request has been received and is being processed.';
+  }
+
   void _onDone() {
     // Safely pops back to DepositScreen if it exists in the stack.
     // If it doesn't, you can replace this with a named route pushReplacement.
@@ -73,7 +123,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
 
   void _onViewReceipt() {
     final transaction = widget.transaction;
-    if (transaction == null) return;
+    if (!_canViewReceipt || transaction == null) return;
 
     Navigator.push(
       context,
@@ -119,11 +169,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
             const SizedBox(height: AppSpacing.xl),
             WithdrawSummaryCard(transaction: widget.transaction!),
             const SizedBox(height: AppSpacing.md),
-            WithdrawNotificationCard(
-              message: widget.transaction!.status.toLowerCase() == 'completed'
-                  ? 'Your funds have been successfully credited to your destination.'
-                  : 'Your withdrawal request has been received and is being processed.',
-            ),
+            WithdrawNotificationCard(message: _notificationMessage),
             const SizedBox(height: AppSpacing.xl),
             _buildActions(isDark),
             const SizedBox(height: AppSpacing.md),
@@ -156,7 +202,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Withdrawal Successful!',
+          _statusTitle,
           textAlign: TextAlign.center,
           style: Theme.of(
             context,
@@ -164,7 +210,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
         ),
         const SizedBox(height: AppSpacing.s),
         Text(
-          'Your withdrawal request has been\nreceived and is being processed.',
+          _statusDescription,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
@@ -198,7 +244,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
             ],
           ),
           child: ElevatedButton(
-            onPressed: _onViewReceipt,
+            onPressed: _canViewReceipt ? _onViewReceipt : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
@@ -308,7 +354,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
           Icon(Boxicons.bx_error_circle, color: AppColors.error, size: 64),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Unable to load details',
+            widget.errorMessage ?? 'Unable to load details',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: AppSpacing.sm),

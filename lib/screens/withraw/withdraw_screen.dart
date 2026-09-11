@@ -3,6 +3,7 @@ import 'package:boxicons/boxicons.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_radius.dart';
+import 'models/withdraw_bank_models.dart';
 import 'providers/withdraw_provider.dart';
 import 'widgets/withdraw_balance_card.dart';
 import 'widgets/withdraw_amount_section.dart';
@@ -123,10 +124,23 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       return;
     }
 
+    final methodId = _provider.selectedMethod?.id ?? 'bank';
+    final paymentMethod = methodId == 'bank' ? 'BANK_TRANSFER' : 'MOBILE_MONEY';
+    final destination = WithdrawalDestination(
+      countryCode: _provider.selectedCountry.id,
+      countryName: _provider.selectedCountry.name,
+      currency: _provider.selectedCountry.currency,
+      flag: _provider.selectedCountry.flagInitials,
+    );
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const WithdrawBankDetailsScreen(),
+        builder: (_) => WithdrawBankDetailsScreen(
+          destination: destination,
+          paymentMethod: paymentMethod,
+          sourceAmount: _provider.parsedAmount,
+        ),
       ),
     );
   }

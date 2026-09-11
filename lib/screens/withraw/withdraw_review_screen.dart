@@ -20,42 +20,63 @@ class WithdrawReviewScreen extends StatelessWidget {
   const WithdrawReviewScreen({super.key, required this.provider});
 
   Future<void> _showPinDialog(BuildContext context) async {
+    String? enteredPin;
     final authorized = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => PinAuthDialog(onSuccess: (_) {}),
+      builder: (_) => PinAuthDialog(
+        onValidatePin: (pin) async {
+          enteredPin = pin;
+          return provider.authService.verifyTransactionPin(pin);
+        },
+        onSuccess: (_) {},
+      ),
     );
 
     if (!context.mounted || authorized != true) return;
 
-    final transaction = WithdrawalTransactionModel(
-      amount: provider.amountToReceive,
-      sourceAmount: provider.amountToSend,
-      sourceCurrency: 'USD',
-      destinationAmount: provider.convertedAmount,
-      destinationCurrency: provider.destination.currency,
-      amountToSend: provider.amountToSend,
-      exchangeRate: provider.exchangeRate,
-      convertedAmount: provider.convertedAmount,
-      fee: provider.fee,
-      amountToReceive: provider.amountToReceive,
-      currency: provider.destination.currency,
-      method: 'Bank Transfer',
-      destinationCountry: provider.destination.countryName,
-      countryFlag: provider.destination.flag,
-      destinationBank: provider.selectedBank?.name ?? 'Bank Transfer',
-      destinationAccountMasked: provider.maskedAccountNumber,
-      referenceId: 'WD-${DateTime.now().millisecondsSinceEpoch}',
-      timestamp: DateTime.now(),
-      status: 'completed',
-    );
+    if (enteredPin == null) return;
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => WithdrawProcessingScreen(transaction: transaction),
-      ),
-    );
+    try {
+      final withdrawal = await provider.createWithdrawal(enteredPin!);
+      final transaction = WithdrawalTransactionModel(
+        amount: provider.amountToReceive,
+        sourceAmount: provider.amountToSend,
+        sourceCurrency: 'USD',
+        destinationAmount: provider.convertedAmount,
+        destinationCurrency: provider.destination.currency,
+        amountToSend: provider.amountToSend,
+        exchangeRate: provider.exchangeRate,
+        convertedAmount: provider.convertedAmount,
+        fee: provider.fee,
+        amountToReceive: provider.amountToReceive,
+        currency: provider.destination.currency,
+        method: 'Bank Transfer',
+        destinationCountry: provider.destination.countryName,
+        countryFlag: provider.destination.flag,
+        destinationBank: provider.selectedBank?.name ?? 'Bank Transfer',
+        destinationAccountMasked: provider.maskedAccountNumber,
+        referenceId: withdrawal['reference']?.toString() ?? 'WD-${DateTime.now().millisecondsSinceEpoch}',
+        timestamp: DateTime.now(),
+        status: withdrawal['status']?.toString() ?? 'pending',
+      );
+
+      if (!context.mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => WithdrawProcessingScreen(
+            transaction: transaction,
+            withdrawalId: withdrawal['id']?.toString() ?? '',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
   }
 
   @override

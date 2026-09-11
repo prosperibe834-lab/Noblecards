@@ -105,14 +105,12 @@ class _PinInputWidgetState extends State<PinInputWidget>
     });
 
     try {
-      bool success = false;
-      if (widget.onValidatePin != null) {
-        success = await widget.onValidatePin!(pin);
-      } else {
-        // Fallback default simulation delay if no validator passed
-        await Future.delayed(const Duration(milliseconds: 600));
-        success = true; // Replace with actual backend integration if needed
+      if (widget.onValidatePin == null) {
+        _triggerErrorState('PIN verification is not configured.');
+        return;
       }
+
+      final bool success = await widget.onValidatePin!(pin);
 
       if (!mounted) return;
 
@@ -123,7 +121,8 @@ class _PinInputWidgetState extends State<PinInputWidget>
         _triggerErrorState('Incorrect PIN. Please try again.');
       }
     } catch (e) {
-      _triggerErrorState('Authentication failed. Please try again.');
+      final errorMessage = e.toString().replaceFirst('Exception: ', '').trim();
+      _triggerErrorState(errorMessage.isNotEmpty ? errorMessage : 'Authentication failed. Please try again.');
     } finally {
       if (mounted) {
         setState(() {
@@ -143,13 +142,12 @@ class _PinInputWidgetState extends State<PinInputWidget>
     });
 
     try {
-      bool success = false;
-      if (widget.onAuthenticateBiometric != null) {
-        success = await widget.onAuthenticateBiometric!();
-      } else {
-        await Future.delayed(const Duration(milliseconds: 500));
-        success = true;
+      if (widget.onAuthenticateBiometric == null) {
+        _triggerErrorState('Biometric authentication is not configured.');
+        return;
       }
+
+      final bool success = await widget.onAuthenticateBiometric!();
 
       if (!mounted) return;
 
@@ -160,7 +158,8 @@ class _PinInputWidgetState extends State<PinInputWidget>
         _triggerErrorState('Biometric authentication failed.');
       }
     } catch (e) {
-      _triggerErrorState('Biometrics unavailable.');
+      final errorMessage = e.toString().replaceFirst('Exception: ', '').trim();
+      _triggerErrorState(errorMessage.isNotEmpty ? errorMessage : 'Biometrics unavailable.');
     } finally {
       if (mounted) {
         setState(() {

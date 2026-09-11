@@ -5,6 +5,7 @@ import 'package:boxicons/boxicons.dart';
 import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
 import 'package:noble_cards/screens/TransactionPin/pin_auth_dialog.dart';
+import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
 
 import 'models/gift_card_model.dart';
@@ -32,6 +33,7 @@ class BuyCardScreen extends StatelessWidget {
     final success = await showDialog<bool>(
       context: context,
       builder: (_) => PinAuthDialog(
+        onValidatePin: (pin) => AuthenticationService().verifyTransactionPin(pin),
         onSuccess: (pin) {
           navigator.pop(true);
         },

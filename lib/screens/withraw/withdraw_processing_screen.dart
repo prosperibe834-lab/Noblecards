@@ -1,13 +1,38 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../authentication/services/authentication_service.dart';
 import 'models/withdrawal_transaction_model.dart';
 import 'withdraw_success_screen.dart';
 
+enum WithdrawalStatusRoute { success, pending, failed }
+
+WithdrawalStatusRoute routeForWithdrawalStatus(String? rawStatus) {
+  switch (rawStatus?.trim().toUpperCase()) {
+    case 'SUCCESSFUL':
+    case 'SUCCESS':
+    case 'COMPLETED':
+      return WithdrawalStatusRoute.success;
+    case 'FAILED':
+      return WithdrawalStatusRoute.failed;
+    case 'PROCESSING':
+    case 'PENDING':
+    case 'NEW':
+    case 'UNDER_REVIEW':
+    default:
+      return WithdrawalStatusRoute.pending;
+  }
+}
+
 class WithdrawProcessingScreen extends StatefulWidget {
   final WithdrawalTransactionModel transaction;
+  final String withdrawalId;
 
-  const WithdrawProcessingScreen({super.key, required this.transaction});
+  const WithdrawProcessingScreen({
+    super.key,
+    required this.transaction,
+    required this.withdrawalId,
+  });
 
   @override
   State<WithdrawProcessingScreen> createState() =>
@@ -29,7 +54,81 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
     _startSequence();
   }
 
-  void _startSequence() {
+  Future<Map<String, dynamic>> _executeWithdrawal() async {
+    return AuthenticationService().authenticatedPost(
+      '/withdrawals/${widget.withdrawalId}/execute',
+    );
+  }
+
+  Future<void> _startSequence() async {
+    try {
+      final result = await _executeWithdrawal();
+      final status = result['status']?.toString().toUpperCase() ?? 'UNKNOWN';
+      final route = routeForWithdrawalStatus(status);
+      if (route == WithdrawalStatusRoute.pending) {
+        if (!mounted) return;
+        final statusAwareTransaction = WithdrawalTransactionModel(
+          amount: widget.transaction.amount,
+          sourceAmount: widget.transaction.sourceAmount,
+          sourceCurrency: widget.transaction.sourceCurrency,
+          destinationAmount: widget.transaction.destinationAmount,
+          destinationCurrency: widget.transaction.destinationCurrency,
+          amountToSend: widget.transaction.amountToSend,
+          exchangeRate: widget.transaction.exchangeRate,
+          convertedAmount: widget.transaction.convertedAmount,
+          fee: widget.transaction.fee,
+          amountToReceive: widget.transaction.amountToReceive,
+          currency: widget.transaction.currency,
+          method: widget.transaction.method,
+          destinationCountry: widget.transaction.destinationCountry,
+          countryFlag: widget.transaction.countryFlag,
+          destinationBank: widget.transaction.destinationBank,
+          destinationAccountMasked: widget.transaction.destinationAccountMasked,
+          referenceId: widget.transaction.referenceId,
+          timestamp: widget.transaction.timestamp,
+          status: status,
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WithdrawSuccessScreen(
+              transaction: statusAwareTransaction,
+            ),
+          ),
+        );
+        return;
+      }
+      if (route == WithdrawalStatusRoute.failed) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WithdrawSuccessScreen(
+              transaction: widget.transaction,
+              hasError: true,
+              errorMessage: 'Your withdrawal could not be completed.',
+            ),
+          ),
+        );
+        return;
+      }
+    } catch (error) {
+      if (!mounted) return;
+      final message = error.toString().replaceFirst('Exception: ', '').trim();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => WithdrawSuccessScreen(
+            transaction: widget.transaction,
+            hasError: true,
+            errorMessage: message.isEmpty ? null : message,
+            onRetry: _startSequence,
+          ),
+        ),
+      );
+      return;
+    }
+
     Timer.periodic(const Duration(milliseconds: 1300), (timer) {
       if (_currentStage < _stages.length - 1) {
         if (mounted) setState(() => _currentStage++);

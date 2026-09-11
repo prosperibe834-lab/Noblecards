@@ -4,19 +4,28 @@ import '../models/withdraw_bank_models.dart';
 
 class WithdrawBankProvider extends ChangeNotifier {
   final AuthenticationService _authService;
+  AuthenticationService get authService => _authService;
+  String _paymentMethod;
 
-  WithdrawBankProvider({AuthenticationService? authService})
-      : _authService = authService ?? AuthenticationService() {
+  WithdrawBankProvider({
+    AuthenticationService? authService,
+    WithdrawalDestination? destination,
+    double sourceAmount = 100.00,
+    String paymentMethod = 'BANK_TRANSFER',
+  })  : _authService = authService ?? AuthenticationService(),
+        _destination = destination ?? WithdrawalDestination(
+          countryCode: 'NG',
+          countryName: 'Nigeria',
+          currency: 'NGN',
+          flag: '🇳🇬',
+        ),
+        _paymentMethod = paymentMethod,
+        _amountToSend = sourceAmount {
     loadBanks();
   }
 
   // Existing state that should come from WithdrawScreen
-  WithdrawalDestination _destination = WithdrawalDestination(
-    countryCode: 'NG',
-    countryName: 'Nigeria',
-    currency: 'NGN',
-    flag: '🇳🇬',
-  );
+  WithdrawalDestination _destination;
 
   double _amountToSend = 100.00;
   double _exchangeRate = 1650.00;
@@ -38,6 +47,11 @@ class WithdrawBankProvider extends ChangeNotifier {
   String? _verificationError;
   List<WithdrawalBank> _banks = [];
   String? _beneficiaryId;
+  String? _quoteId;
+  double? _quotedDestinationAmount;
+  double? _quotedRecipientAmount;
+  double? _quotedExchangeRate;
+  double? _quotedFee;
   bool _isLoadingBanks = true;
 
   // Getters
@@ -58,20 +72,25 @@ class WithdrawBankProvider extends ChangeNotifier {
   List<WithdrawalBank> get banks => List.unmodifiable(_banks);
   bool get isLoadingBanks => _isLoadingBanks;
   String? get beneficiaryId => _beneficiaryId;
+  String? get quoteId => _quoteId;
 
   double get amountToSend => _amountToSend;
-  double get convertedAmount => _destination.countryCode == 'US' 
-      ? _amountToSend 
-      : _amountToSend * _exchangeRate;
-  double get amountToReceive => convertedAmount - _fee;
-  double get exchangeRate => _exchangeRate;
-  double get fee => _fee;
+    double get convertedAmount => _quotedDestinationAmount ?? (_destination.countryCode == 'US'
+      ? _amountToSend
+      : _amountToSend * _exchangeRate);
+    double get amountToReceive => _quotedRecipientAmount ?? (convertedAmount - _fee);
+    double get exchangeRate => _quotedExchangeRate ?? _exchangeRate;
+    double get fee => _quotedFee ?? _fee;
 
   // Setters
-  void setDestination(WithdrawalDestination dest) {
+  void setDestination(WithdrawalDestination dest, {String paymentMethod = 'BANK_TRANSFER'}) {
     _destination = dest;
+    _paymentMethod = paymentMethod;
+    _clearIncompatibleState();
     _resetVerification();
+    _isLoadingBanks = true;
     notifyListeners();
+    loadBanks();
   }
 
   void selectBank(WithdrawalBank bank) {
@@ -121,6 +140,25 @@ class WithdrawBankProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _clearIncompatibleState() {
+    _selectedBank = null;
+    _banks = [];
+    _accountNumber = '';
+    _accountName = '';
+    _sortCode = '';
+    _routingNumber = '';
+    _institutionNumber = '';
+    _transitNumber = '';
+    _isVerified = false;
+    _verificationError = null;
+    _beneficiaryId = null;
+    _quoteId = null;
+    _quotedDestinationAmount = null;
+    _quotedRecipientAmount = null;
+    _quotedExchangeRate = null;
+    _quotedFee = null;
+  }
+
   void _resetVerification() {
     _isVerified = false;
     _verificationError = null;
@@ -140,7 +178,22 @@ class WithdrawBankProvider extends ChangeNotifier {
   }
 
   Future<void> loadBanks() async {
+    _isLoadingBanks = true;
+    _banks = [];
+    _selectedBank = null;
+    notifyListeners();
+
     try {
+      final isNigeriaBankRoute = _paymentMethod == 'BANK_TRANSFER'
+          && _destination.countryCode.toUpperCase() == 'NG'
+          && _destination.currency.toUpperCase() == 'NGN';
+
+      if (!isNigeriaBankRoute) {
+        _banks = [];
+        _selectedBank = null;
+        return;
+      }
+
       final data = await _authService.authenticatedGet(
         '/withdrawals/banks?countryCode=NG&currencyCode=NGN',
       );
@@ -162,7 +215,7 @@ class WithdrawBankProvider extends ChangeNotifier {
 
   Future<void> verifyAccount() async {
     if (!isFormValid) return;
-    
+
     _isVerifying = true;
     _verificationError = null;
     notifyListeners();
@@ -179,17 +232,27 @@ class WithdrawBankProvider extends ChangeNotifier {
           'accountNumber': _accountNumber,
         },
       );
-      _accountName = data['accountHolderName']?.toString() ?? '';
-      if (_accountName.isEmpty) throw Exception('Account holder name was not returned.');
+      final accountName = data['accountHolderName']?.toString() ?? '';
+      if (accountName.isEmpty) {
+        throw Exception('Account holder name was not returned.');
+      }
+
+      _accountName = accountName;
       _isVerified = true;
-      _isVerifying = false;
+      _verificationError = null;
     } catch (e) {
       _isVerified = false;
+      _verificationError = e.toString().replaceFirst('Exception: ', '').replaceFirst('BadRequestException: ', '').trim();
+      if (_verificationError == null || _verificationError!.isEmpty) {
+        _verificationError = 'Unable to verify account details. Please check and try again.';
+      }
       _isVerifying = false;
-      _verificationError = "Unable to verify account details. Please check and try again.";
+      notifyListeners();
+      throw Exception(_verificationError);
+    } finally {
+      _isVerifying = false;
+      notifyListeners();
     }
-    
-    notifyListeners();
   }
 
   Future<void> saveBeneficiary() async {
@@ -210,6 +273,50 @@ class WithdrawBankProvider extends ChangeNotifier {
       },
     );
     _beneficiaryId = data['id']?.toString();
+  }
+
+  Future<void> createQuote() async {
+    if (!_isVerified || _beneficiaryId == null) {
+      throw Exception('Verify and save the withdrawal account first.');
+    }
+
+    final quote = await _authService.authenticatedPost(
+      '/withdrawals/quotes',
+      body: {
+        'sourceAmount': _amountToSend.toStringAsFixed(2),
+        'countryCode': _destination.countryCode,
+        'destinationCurrencyCode': _destination.currency,
+        'paymentMethod': 'BANK_TRANSFER',
+        'idempotencyKey': 'quote-${DateTime.now().millisecondsSinceEpoch}',
+      },
+    );
+    final id = quote['id']?.toString();
+    if (id == null || id.isEmpty || quote['status']?.toString() != 'ACTIVE' || quote['usable'] != true) {
+      throw Exception('A usable withdrawal quote was not created.');
+    }
+
+    _quoteId = id;
+    _quotedDestinationAmount = double.tryParse(quote['grossDestinationAmount']?.toString() ?? '');
+    _quotedRecipientAmount = double.tryParse(quote['recipientAmount']?.toString() ?? '');
+    _quotedExchangeRate = double.tryParse(quote['fxRate']?.toString() ?? '');
+    _quotedFee = double.tryParse(quote['totalFee']?.toString() ?? '');
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>> createWithdrawal(String pin) async {
+    if (!_isVerified || _beneficiaryId == null || _quoteId == null) {
+      throw Exception('Verify, save the withdrawal account, and create a quote first.');
+    }
+
+    return _authService.authenticatedPost(
+      '/withdrawals',
+      body: {
+        'quoteId': _quoteId,
+        'beneficiaryId': _beneficiaryId,
+        'idempotencyKey': 'withdrawal-${DateTime.now().millisecondsSinceEpoch}',
+        'pin': pin,
+      },
+    );
   }
 
   // Masking utility for Review Screen

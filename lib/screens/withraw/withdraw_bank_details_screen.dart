@@ -5,13 +5,23 @@ import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
+import 'models/withdraw_bank_models.dart';
 import 'providers/withdraw_bank_provider.dart';
 import 'widgets/withdraw_stepper.dart';
 import 'widgets/withdraw_bank_selector_sheet.dart';
 import 'withdraw_review_screen.dart';
 
 class WithdrawBankDetailsScreen extends StatefulWidget {
-  const WithdrawBankDetailsScreen({super.key});
+  final WithdrawalDestination destination;
+  final String paymentMethod;
+  final double sourceAmount;
+
+  const WithdrawBankDetailsScreen({
+    super.key,
+    required this.destination,
+    required this.paymentMethod,
+    required this.sourceAmount,
+  });
 
   @override
   State<WithdrawBankDetailsScreen> createState() => _WithdrawBankDetailsScreenState();
@@ -60,7 +70,11 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => WithdrawBankProvider(),
+      create: (_) => WithdrawBankProvider(
+        destination: widget.destination,
+        paymentMethod: widget.paymentMethod,
+        sourceAmount: widget.sourceAmount,
+      ),
       child: Consumer<WithdrawBankProvider>(
         builder: (context, provider, child) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -175,7 +189,7 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (country == 'NG' || country == 'GH' || country == 'GB' || country == 'CA') ...[
+        if (country == 'NG') ...[
           _buildFormLabel("1. Select Bank"),
           GestureDetector(
             onTap: () => _showBankSelector(context, provider),
@@ -192,8 +206,8 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                     provider.selectedBank?.name ?? "Tap to select your bank",
                     style: TextStyle(
                       fontFamily: "Inter",
-                      color: provider.selectedBank != null 
-                        ? (isDark ? AppColors.darkText : AppColors.lightText) 
+                      color: provider.selectedBank != null
+                        ? (isDark ? AppColors.darkText : AppColors.lightText)
                         : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
                     ),
                   ),
@@ -390,11 +404,19 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
         height: 56,
         child: ElevatedButton(
           onPressed: (provider.isFormValid && !provider.isVerifying)
-              ? () {
-                  if (!provider.isVerified) {
-                    provider.verifyAccount();
-                  } else {
-                    _saveAndContinue(provider, context);
+              ? () async {
+                  try {
+                    if (!provider.isVerified) {
+                      await provider.verifyAccount();
+                    } else {
+                      await _saveAndContinue(provider, context);
+                    }
+                  } catch (error) {
+                    if (!context.mounted) return;
+                    final friendly = error.toString().replaceFirst('Exception: ', '');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(friendly)),
+                    );
                   }
                 }
               : null,
@@ -435,6 +457,7 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
   Future<void> _saveAndContinue(WithdrawBankProvider provider, BuildContext context) async {
     try {
       await provider.saveBeneficiary();
+      await provider.createQuote();
       if (!context.mounted) return;
       Navigator.push(
         context,

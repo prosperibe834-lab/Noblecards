@@ -26,7 +26,7 @@ class WithdrawProvider extends ChangeNotifier {
       currency: 'GHS',
       exchangeRate: 12.50,
       flagInitials: 'GH',
-      supportedMethodIds: ['momo'],
+      supportedMethodIds: ['bank', 'momo'],
     ),
     WithdrawCountry(
       id: 'GB',
