@@ -65,21 +65,38 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
     super.dispose();
   }
 
-  String get _normalizedStatus => widget.transaction?.status.trim().toLowerCase() ?? '';
+  String get _normalizedStatus =>
+      widget.transaction?.status.trim().toLowerCase() ?? '';
 
-  bool get _isSuccessful => const {'successful', 'success', 'completed'}.contains(_normalizedStatus);
+  bool get _isSuccessful => const {
+    'successful',
+    'success',
+    'completed',
+    'succeeded',
+    'paid',
+    'settled',
+  }.contains(_normalizedStatus);
 
-  bool get _isPendingLike => const {'processing', 'pending', 'new', 'under_review'}.contains(_normalizedStatus);
+  bool get _isPendingLike => const {
+    'processing',
+    'pending',
+    'new',
+    'under_review',
+  }.contains(_normalizedStatus);
 
   bool get _isFailed => _normalizedStatus == 'failed';
 
   bool get _canViewReceipt =>
-      _isSuccessful && !widget.hasError && !widget.isLoading && widget.transaction != null;
+      _isSuccessful &&
+      !widget.hasError &&
+      !widget.isLoading &&
+      widget.transaction != null;
 
   String get _statusTitle {
     if (_isSuccessful) return 'Withdrawal Successful!';
     if (_normalizedStatus == 'under_review') return 'Withdrawal Under Review';
-    if (_isPendingLike || _normalizedStatus == 'processing') return 'Withdrawal Pending';
+    if (_isPendingLike || _normalizedStatus == 'processing')
+      return 'Withdrawal Pending';
     if (_isFailed) return 'Withdrawal Failed';
     return 'Withdrawal Pending';
   }
@@ -123,7 +140,15 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
 
   void _onViewReceipt() {
     final transaction = widget.transaction;
-    if (!_canViewReceipt || transaction == null) return;
+
+    if (transaction == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receipt details are unavailable.')),
+        );
+      }
+      return;
+    }
 
     Navigator.push(
       context,
@@ -244,7 +269,7 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
             ],
           ),
           child: ElevatedButton(
-            onPressed: _canViewReceipt ? _onViewReceipt : null,
+            onPressed: widget.transaction == null ? null : _onViewReceipt,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,

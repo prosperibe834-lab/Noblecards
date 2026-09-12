@@ -1,0 +1,15 @@
+[33ma1201de[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m i did withrawal backend for nigerian banks and flutterwave
+[33mc8b177c[m i did create transaction pin backend
+[33m7851732[m i did create transaction pin backend
+[33m5f4f8aa[m i redesigned confirm transaction pin
+[33m8b129b0[m chore: save latest NobleCards app changes
+[33m9ecd04f[m feat: complete deposit and wallet integration
+[33m5c2e5be[m chore: update NobleCards frontend
+[33m0152cfc[m Fix NGN bank transfer deposit flow
+[33mb1062c7[m Complete personal information and profile management
+[33m905fc1b[m Implement biometric authentication and device security
+[33md1c94fc[m Complete authentication and OTP verification
+[33m7595eb1[m i did signup otp stuff
+[33mf362f4a[m i fixed forgotten password otp
+[33m0d989ac[m i did authentidation but its not sending otp
+[33mb36b60d[m i connected superbase

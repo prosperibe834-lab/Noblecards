@@ -60,34 +60,55 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
     );
   }
 
+  WithdrawalTransactionModel _withStatus(
+    WithdrawalTransactionModel baseTransaction,
+    String status,
+  ) {
+    return WithdrawalTransactionModel(
+      amount: baseTransaction.amount,
+      sourceAmount: baseTransaction.sourceAmount,
+      sourceCurrency: baseTransaction.sourceCurrency,
+      destinationAmount: baseTransaction.destinationAmount,
+      destinationCurrency: baseTransaction.destinationCurrency,
+      amountToSend: baseTransaction.amountToSend,
+      exchangeRate: baseTransaction.exchangeRate,
+      convertedAmount: baseTransaction.convertedAmount,
+      fee: baseTransaction.fee,
+      amountToReceive: baseTransaction.amountToReceive,
+      currency: baseTransaction.currency,
+      method: baseTransaction.method,
+      destinationCountry: baseTransaction.destinationCountry,
+      countryFlag: baseTransaction.countryFlag,
+      destinationBank: baseTransaction.destinationBank,
+      destinationAccountMasked: baseTransaction.destinationAccountMasked,
+      referenceId: baseTransaction.referenceId,
+      timestamp: baseTransaction.timestamp,
+      status: status,
+    );
+  }
+
   Future<void> _startSequence() async {
     try {
       final result = await _executeWithdrawal();
       final status = result['status']?.toString().toUpperCase() ?? 'UNKNOWN';
       final route = routeForWithdrawalStatus(status);
+      final statusAwareTransaction = _withStatus(widget.transaction, status);
+
+      if (route == WithdrawalStatusRoute.success) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WithdrawSuccessScreen(
+              transaction: statusAwareTransaction,
+            ),
+          ),
+        );
+        return;
+      }
+
       if (route == WithdrawalStatusRoute.pending) {
         if (!mounted) return;
-        final statusAwareTransaction = WithdrawalTransactionModel(
-          amount: widget.transaction.amount,
-          sourceAmount: widget.transaction.sourceAmount,
-          sourceCurrency: widget.transaction.sourceCurrency,
-          destinationAmount: widget.transaction.destinationAmount,
-          destinationCurrency: widget.transaction.destinationCurrency,
-          amountToSend: widget.transaction.amountToSend,
-          exchangeRate: widget.transaction.exchangeRate,
-          convertedAmount: widget.transaction.convertedAmount,
-          fee: widget.transaction.fee,
-          amountToReceive: widget.transaction.amountToReceive,
-          currency: widget.transaction.currency,
-          method: widget.transaction.method,
-          destinationCountry: widget.transaction.destinationCountry,
-          countryFlag: widget.transaction.countryFlag,
-          destinationBank: widget.transaction.destinationBank,
-          destinationAccountMasked: widget.transaction.destinationAccountMasked,
-          referenceId: widget.transaction.referenceId,
-          timestamp: widget.transaction.timestamp,
-          status: status,
-        );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -104,7 +125,7 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
           context,
           MaterialPageRoute(
             builder: (_) => WithdrawSuccessScreen(
-              transaction: widget.transaction,
+              transaction: _withStatus(widget.transaction, 'failed'),
               hasError: true,
               errorMessage: 'Your withdrawal could not be completed.',
             ),

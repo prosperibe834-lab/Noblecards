@@ -5,8 +5,11 @@ import 'package:noble_cards/providers/exchange_rate_provider.dart';
 import 'package:noble_cards/screens/currency_selector_screen.dart';
 import 'package:noble_cards/screens/deposit_screen.dart';
 import 'package:noble_cards/screens/withraw/models/withdraw_bank_models.dart';
+import 'package:noble_cards/screens/withraw/models/withdrawal_transaction_model.dart';
 import 'package:noble_cards/screens/withraw/providers/withdraw_bank_provider.dart';
 import 'package:noble_cards/screens/withraw/providers/withdraw_provider.dart';
+import 'package:noble_cards/screens/withraw/withdraw_success_screen.dart';
+import 'package:noble_cards/screens/withraw/withdrawal_receipt_screen.dart';
 import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 
 class FakeAuthService extends AuthenticationService {
@@ -211,4 +214,56 @@ void main() {
       expect(find.text('Canadian Dollar'), findsNothing);
     },
   );
+
+  testWidgets('Successful withdrawal can open the real receipt screen', (
+    WidgetTester tester,
+  ) async {
+    final transaction = WithdrawalTransactionModel(
+      amount: 250,
+      sourceAmount: 250,
+      sourceCurrency: 'USD',
+      destinationAmount: 1000,
+      destinationCurrency: 'NGN',
+      amountToSend: 250,
+      exchangeRate: 4.0,
+      convertedAmount: 1000,
+      fee: 0,
+      amountToReceive: 1000,
+      currency: 'NGN',
+      method: 'Bank Transfer',
+      destinationCountry: 'Nigeria',
+      countryFlag: '🇳🇬',
+      destinationBank: 'Access Bank',
+      destinationAccountMasked: '1234',
+      referenceId: 'WD-123',
+      timestamp: DateTime(2025, 1, 10, 12, 30),
+      status: 'successful',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(home: WithdrawSuccessScreen(transaction: transaction)),
+    );
+
+    expect(find.text('View Receipt'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('View Receipt'));
+    await tester.tap(find.text('View Receipt'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(WithdrawalReceiptScreen), findsOneWidget);
+    final receipt = tester.widget<WithdrawalReceiptScreen>(
+      find.byType(WithdrawalReceiptScreen),
+    );
+    expect(receipt.transaction.referenceId, 'WD-123');
+    expect(receipt.transaction.status, 'successful');
+  });
+
+  testWidgets('Null successful withdrawal state remains safe', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: WithdrawSuccessScreen()));
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('View Receipt'), findsNothing);
+  });
 }
