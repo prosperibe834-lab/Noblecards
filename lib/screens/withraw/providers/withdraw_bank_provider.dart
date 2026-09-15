@@ -12,15 +12,17 @@ class WithdrawBankProvider extends ChangeNotifier {
     WithdrawalDestination? destination,
     double sourceAmount = 100.00,
     String paymentMethod = 'BANK_TRANSFER',
-  })  : _authService = authService ?? AuthenticationService(),
-        _destination = destination ?? WithdrawalDestination(
-          countryCode: 'NG',
-          countryName: 'Nigeria',
-          currency: 'NGN',
-          flag: '🇳🇬',
-        ),
-        _paymentMethod = paymentMethod,
-        _amountToSend = sourceAmount {
+  }) : _authService = authService ?? AuthenticationService(),
+       _destination =
+           destination ??
+           WithdrawalDestination(
+             countryCode: 'NG',
+             countryName: 'Nigeria',
+             currency: 'NGN',
+             flag: '🇳🇬',
+           ),
+       _paymentMethod = paymentMethod,
+       _amountToSend = sourceAmount {
     loadBanks();
   }
 
@@ -40,7 +42,7 @@ class WithdrawBankProvider extends ChangeNotifier {
   String _institutionNumber = '';
   String _transitNumber = '';
   String _accountType = 'Checking';
-  
+
   bool _isVerifying = false;
   bool _isVerified = false;
   bool _saveAccount = true;
@@ -64,7 +66,7 @@ class WithdrawBankProvider extends ChangeNotifier {
   String get institutionNumber => _institutionNumber;
   String get transitNumber => _transitNumber;
   String get accountType => _accountType;
-  
+
   bool get isVerifying => _isVerifying;
   bool get isVerified => _isVerified;
   bool get saveAccount => _saveAccount;
@@ -75,15 +77,21 @@ class WithdrawBankProvider extends ChangeNotifier {
   String? get quoteId => _quoteId;
 
   double get amountToSend => _amountToSend;
-    double get convertedAmount => _quotedDestinationAmount ?? (_destination.countryCode == 'US'
-      ? _amountToSend
-      : _amountToSend * _exchangeRate);
-    double get amountToReceive => _quotedRecipientAmount ?? (convertedAmount - _fee);
-    double get exchangeRate => _quotedExchangeRate ?? _exchangeRate;
-    double get fee => _quotedFee ?? _fee;
+  double get convertedAmount =>
+      _quotedDestinationAmount ??
+      (_destination.countryCode == 'US'
+          ? _amountToSend
+          : _amountToSend * _exchangeRate);
+  double get amountToReceive =>
+      _quotedRecipientAmount ?? (convertedAmount - _fee);
+  double get exchangeRate => _quotedExchangeRate ?? _exchangeRate;
+  double get fee => _quotedFee ?? _fee;
 
   // Setters
-  void setDestination(WithdrawalDestination dest, {String paymentMethod = 'BANK_TRANSFER'}) {
+  void setDestination(
+    WithdrawalDestination dest, {
+    String paymentMethod = 'BANK_TRANSFER',
+  }) {
     _destination = dest;
     _paymentMethod = paymentMethod;
     _clearIncompatibleState();
@@ -168,11 +176,20 @@ class WithdrawBankProvider extends ChangeNotifier {
     if (_destination.countryCode == 'NG' || _destination.countryCode == 'GH') {
       return _selectedBank != null && _accountNumber.length >= 10;
     } else if (_destination.countryCode == 'GB') {
-      return _selectedBank != null && _accountName.isNotEmpty && _sortCode.isNotEmpty && _accountNumber.isNotEmpty;
+      return _selectedBank != null &&
+          _accountName.isNotEmpty &&
+          _sortCode.isNotEmpty &&
+          _accountNumber.isNotEmpty;
     } else if (_destination.countryCode == 'US') {
-      return _accountName.isNotEmpty && _routingNumber.isNotEmpty && _accountNumber.isNotEmpty;
+      return _accountName.isNotEmpty &&
+          _routingNumber.isNotEmpty &&
+          _accountNumber.isNotEmpty;
     } else if (_destination.countryCode == 'CA') {
-      return _selectedBank != null && _accountName.isNotEmpty && _institutionNumber.isNotEmpty && _transitNumber.isNotEmpty && _accountNumber.isNotEmpty;
+      return _selectedBank != null &&
+          _accountName.isNotEmpty &&
+          _institutionNumber.isNotEmpty &&
+          _transitNumber.isNotEmpty &&
+          _accountNumber.isNotEmpty;
     }
     return false;
   }
@@ -184,27 +201,34 @@ class WithdrawBankProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final isNigeriaBankRoute = _paymentMethod == 'BANK_TRANSFER'
-          && _destination.countryCode.toUpperCase() == 'NG'
-          && _destination.currency.toUpperCase() == 'NGN';
+      final countryCode = _destination.countryCode.toUpperCase();
+      final currencyCode = _destination.currency.toUpperCase();
+      final isSupportedBankRoute =
+          _paymentMethod == 'BANK_TRANSFER' &&
+          ((countryCode == 'NG' && currencyCode == 'NGN') ||
+              (countryCode == 'GH' && currencyCode == 'GHS'));
 
-      if (!isNigeriaBankRoute) {
+      if (!isSupportedBankRoute) {
         _banks = [];
         _selectedBank = null;
         return;
       }
 
       final data = await _authService.authenticatedGet(
-        '/withdrawals/banks?countryCode=NG&currencyCode=NGN',
+        '/withdrawals/banks?countryCode=$countryCode&currencyCode=$currencyCode&method=$_paymentMethod',
       );
       final rawBanks = data['banks'] as List<dynamic>? ?? [];
-      _banks = rawBanks.whereType<Map<String, dynamic>>().map((bank) {
-        return WithdrawalBank(
-          id: bank['id']?.toString() ?? bank['code'].toString(),
-          name: bank['name']?.toString() ?? '',
-          code: bank['code']?.toString() ?? '',
-        );
-      }).where((bank) => bank.name.isNotEmpty && bank.code.isNotEmpty).toList();
+      _banks = rawBanks
+          .whereType<Map<String, dynamic>>()
+          .map((bank) {
+            return WithdrawalBank(
+              id: bank['id']?.toString() ?? bank['code'].toString(),
+              name: bank['name']?.toString() ?? '',
+              code: bank['code']?.toString() ?? '',
+            );
+          })
+          .where((bank) => bank.name.isNotEmpty && bank.code.isNotEmpty)
+          .toList();
     } catch (error) {
       _verificationError = 'Unable to load banks. Please try again.';
     } finally {
@@ -242,9 +266,14 @@ class WithdrawBankProvider extends ChangeNotifier {
       _verificationError = null;
     } catch (e) {
       _isVerified = false;
-      _verificationError = e.toString().replaceFirst('Exception: ', '').replaceFirst('BadRequestException: ', '').trim();
+      _verificationError = e
+          .toString()
+          .replaceFirst('Exception: ', '')
+          .replaceFirst('BadRequestException: ', '')
+          .trim();
       if (_verificationError == null || _verificationError!.isEmpty) {
-        _verificationError = 'Unable to verify account details. Please check and try again.';
+        _verificationError =
+            'Unable to verify account details. Please check and try again.';
       }
       _isVerifying = false;
       notifyListeners();
@@ -291,13 +320,20 @@ class WithdrawBankProvider extends ChangeNotifier {
       },
     );
     final id = quote['id']?.toString();
-    if (id == null || id.isEmpty || quote['status']?.toString() != 'ACTIVE' || quote['usable'] != true) {
+    if (id == null ||
+        id.isEmpty ||
+        quote['status']?.toString() != 'ACTIVE' ||
+        quote['usable'] != true) {
       throw Exception('A usable withdrawal quote was not created.');
     }
 
     _quoteId = id;
-    _quotedDestinationAmount = double.tryParse(quote['grossDestinationAmount']?.toString() ?? '');
-    _quotedRecipientAmount = double.tryParse(quote['recipientAmount']?.toString() ?? '');
+    _quotedDestinationAmount = double.tryParse(
+      quote['grossDestinationAmount']?.toString() ?? '',
+    );
+    _quotedRecipientAmount = double.tryParse(
+      quote['recipientAmount']?.toString() ?? '',
+    );
     _quotedExchangeRate = double.tryParse(quote['fxRate']?.toString() ?? '');
     _quotedFee = double.tryParse(quote['totalFee']?.toString() ?? '');
     notifyListeners();
@@ -305,7 +341,9 @@ class WithdrawBankProvider extends ChangeNotifier {
 
   Future<Map<String, dynamic>> createWithdrawal(String pin) async {
     if (!_isVerified || _beneficiaryId == null || _quoteId == null) {
-      throw Exception('Verify, save the withdrawal account, and create a quote first.');
+      throw Exception(
+        'Verify, save the withdrawal account, and create a quote first.',
+      );
     }
 
     return _authService.authenticatedPost(

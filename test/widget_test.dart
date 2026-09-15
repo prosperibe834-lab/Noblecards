@@ -15,11 +15,20 @@ import 'package:noble_cards/screens/authentication/services/authentication_servi
 class FakeAuthService extends AuthenticationService {
   @override
   Future<Map<String, dynamic>> authenticatedGet(String path) async {
-    if (path == '/withdrawals/banks?countryCode=NG&currencyCode=NGN') {
+    if (path ==
+        '/withdrawals/banks?countryCode=NG&currencyCode=NGN&method=BANK_TRANSFER') {
       return {
         'banks': [
           {'id': '1', 'code': '044', 'name': 'Access Bank'},
           {'id': '2', 'code': '056', 'name': 'GTBank'},
+        ],
+      };
+    }
+    if (path ==
+        '/withdrawals/banks?countryCode=GH&currencyCode=GHS&method=BANK_TRANSFER') {
+      return {
+        'banks': [
+          {'id': 'gh-1', 'code': 'GH001', 'name': 'Ghana Bank'},
         ],
       };
     }
@@ -132,61 +141,69 @@ void main() {
     expect(ghana.supportedMethodIds, contains('momo'));
   });
 
-  test('Switching Nigeria to UK clears Nigerian bank selection state', () async {
-    final provider = WithdrawBankProvider(
-      authService: FakeAuthService(),
-      destination: WithdrawalDestination(
-        countryCode: 'NG',
-        countryName: 'Nigeria',
-        currency: 'NGN',
-        flag: '🇳🇬',
-      ),
-      paymentMethod: 'BANK_TRANSFER',
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 10));
-    expect(provider.banks.length, 2);
+  test(
+    'Switching Nigeria to UK clears Nigerian bank selection state',
+    () async {
+      final provider = WithdrawBankProvider(
+        authService: FakeAuthService(),
+        destination: WithdrawalDestination(
+          countryCode: 'NG',
+          countryName: 'Nigeria',
+          currency: 'NGN',
+          flag: '🇳🇬',
+        ),
+        paymentMethod: 'BANK_TRANSFER',
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      expect(provider.banks.length, 2);
 
-    provider.setDestination(
-      WithdrawalDestination(
-        countryCode: 'GB',
-        countryName: 'United Kingdom',
-        currency: 'GBP',
-        flag: '🇬🇧',
-      ),
-      paymentMethod: 'BANK_TRANSFER',
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 10));
-    expect(provider.selectedBank, isNull);
-    expect(provider.banks, isEmpty);
-  });
+      provider.setDestination(
+        WithdrawalDestination(
+          countryCode: 'GB',
+          countryName: 'United Kingdom',
+          currency: 'GBP',
+          flag: '🇬🇧',
+        ),
+        paymentMethod: 'BANK_TRANSFER',
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      expect(provider.selectedBank, isNull);
+      expect(provider.banks, isEmpty);
+    },
+  );
 
-  test('Switching country never carries incompatible bank data into a new route', () async {
-    final provider = WithdrawBankProvider(
-      authService: FakeAuthService(),
-      destination: WithdrawalDestination(
-        countryCode: 'NG',
-        countryName: 'Nigeria',
-        currency: 'NGN',
-        flag: '🇳🇬',
-      ),
-      paymentMethod: 'BANK_TRANSFER',
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 10));
-    expect(provider.banks.length, 2);
+  test(
+    'Switching country never carries incompatible bank data into a new route',
+    () async {
+      final provider = WithdrawBankProvider(
+        authService: FakeAuthService(),
+        destination: WithdrawalDestination(
+          countryCode: 'NG',
+          countryName: 'Nigeria',
+          currency: 'NGN',
+          flag: '🇳🇬',
+        ),
+        paymentMethod: 'BANK_TRANSFER',
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      expect(provider.banks.length, 2);
 
-    provider.setDestination(
-      WithdrawalDestination(
-        countryCode: 'GH',
-        countryName: 'Ghana',
-        currency: 'GHS',
-        flag: '🇬🇭',
-      ),
-      paymentMethod: 'BANK_TRANSFER',
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 10));
-    expect(provider.selectedBank, isNull);
-    expect(provider.banks, isEmpty);
-  });
+      provider.setDestination(
+        WithdrawalDestination(
+          countryCode: 'GH',
+          countryName: 'Ghana',
+          currency: 'GHS',
+          flag: '🇬🇭',
+        ),
+        paymentMethod: 'BANK_TRANSFER',
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      expect(provider.selectedBank, isNull);
+      expect(provider.banks.length, 1);
+      expect(provider.banks.first.name, 'Ghana Bank');
+      expect(provider.banks.any((bank) => bank.name == 'Access Bank'), isFalse);
+    },
+  );
 
   testWidgets(
     'Currency selector includes only the Flutterwave-supported currencies',

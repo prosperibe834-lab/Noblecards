@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_spacing.dart';
+import '../authentication/services/authentication_service.dart';
 import 'models/withdraw_bank_models.dart';
 import 'providers/withdraw_bank_provider.dart';
 import 'widgets/withdraw_stepper.dart';
@@ -15,16 +16,19 @@ class WithdrawBankDetailsScreen extends StatefulWidget {
   final WithdrawalDestination destination;
   final String paymentMethod;
   final double sourceAmount;
+  final AuthenticationService? authService;
 
   const WithdrawBankDetailsScreen({
     super.key,
     required this.destination,
     required this.paymentMethod,
     required this.sourceAmount,
+    this.authService,
   });
 
   @override
-  State<WithdrawBankDetailsScreen> createState() => _WithdrawBankDetailsScreenState();
+  State<WithdrawBankDetailsScreen> createState() =>
+      _WithdrawBankDetailsScreenState();
 }
 
 class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
@@ -71,6 +75,7 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => WithdrawBankProvider(
+        authService: widget.authService,
         destination: widget.destination,
         paymentMethod: widget.paymentMethod,
         sourceAmount: widget.sourceAmount,
@@ -80,15 +85,23 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
           final isDark = Theme.of(context).brightness == Brightness.dark;
           final textColor = isDark ? AppColors.darkText : AppColors.lightText;
           final cardColor = isDark ? AppColors.darkCard : AppColors.lightCard;
-          final inputColor = isDark ? AppColors.darkInput : AppColors.lightBackground;
-          final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
+          final inputColor = isDark
+              ? AppColors.darkInput
+              : AppColors.lightBackground;
+          final borderColor = isDark
+              ? AppColors.darkBorder
+              : AppColors.lightBorder;
 
           return Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(Boxicons.bx_chevron_left, color: textColor, size: 28),
+                icon: Icon(
+                  Boxicons.bx_chevron_left,
+                  color: textColor,
+                  size: 28,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
               title: Text(
@@ -105,7 +118,7 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                 IconButton(
                   icon: Icon(Boxicons.bx_help_circle, color: textColor),
                   onPressed: _showHelpDialog,
-                )
+                ),
               ],
             ),
             body: SafeArea(
@@ -118,9 +131,13 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildDestinationCard(provider, cardColor, borderColor),
+                          _buildDestinationCard(
+                            provider,
+                            cardColor,
+                            borderColor,
+                          ),
                           const SizedBox(height: AppSpacing.lg),
-                          
+
                           if (provider.isVerified)
                             _buildVerifiedCard(provider, cardColor)
                           else
@@ -144,7 +161,11 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
     );
   }
 
-  Widget _buildDestinationCard(WithdrawBankProvider provider, Color cardColor, Color borderColor) {
+  Widget _buildDestinationCard(
+    WithdrawBankProvider provider,
+    Color cardColor,
+    Color borderColor,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -162,7 +183,9 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
               children: [
                 Text(
                   provider.destination.countryName,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
                   "Bank Transfer",
@@ -175,26 +198,37 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
             onPressed: () => Navigator.pop(context),
             child: const Text(
               "Change",
-              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontFamily: "Inter"),
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+                fontFamily: "Inter",
+              ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildDynamicForms(WithdrawBankProvider provider, bool isDark, Color inputColor) {
+  Widget _buildDynamicForms(
+    WithdrawBankProvider provider,
+    bool isDark,
+    Color inputColor,
+  ) {
     final country = provider.destination.countryCode;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (country == 'NG') ...[
-          _buildFormLabel("1. Select Bank"),
+        if (country == 'NG' || country == 'GH') ...[
+          _buildFormLabel("1. Bank"),
           GestureDetector(
             onTap: () => _showBankSelector(context, provider),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
               decoration: BoxDecoration(
                 color: inputColor,
                 borderRadius: BorderRadius.circular(AppRadius.md),
@@ -203,15 +237,22 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    provider.selectedBank?.name ?? "Tap to select your bank",
+                    provider.selectedBank?.name ?? "Select Bank",
                     style: TextStyle(
                       fontFamily: "Inter",
                       color: provider.selectedBank != null
-                        ? (isDark ? AppColors.darkText : AppColors.lightText)
-                        : (isDark ? AppColors.darkSubText : AppColors.lightSubText),
+                          ? (isDark ? AppColors.darkText : AppColors.lightText)
+                          : (isDark
+                                ? AppColors.darkSubText
+                                : AppColors.lightSubText),
                     ),
                   ),
-                  Icon(Boxicons.bx_chevron_down, color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
+                  Icon(
+                    Boxicons.bx_chevron_down,
+                    color: isDark
+                        ? AppColors.darkSubText
+                        : AppColors.lightSubText,
+                  ),
                 ],
               ),
             ),
@@ -220,64 +261,74 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
         ],
 
         if (country == 'GB' || country == 'US' || country == 'CA') ...[
-           _buildFormLabel("Account Name"),
-           _buildTextField(
-             hint: "John Doe",
-             onChanged: provider.updateAccountName,
-             inputColor: inputColor,
-           ),
-           const SizedBox(height: AppSpacing.md),
+          _buildFormLabel("Account Name"),
+          _buildTextField(
+            hint: "John Doe",
+            onChanged: provider.updateAccountName,
+            inputColor: inputColor,
+          ),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (country == 'GB') ...[
-           _buildFormLabel("Sort Code"),
-           _buildTextField(
-             hint: "00-00-00",
-             onChanged: provider.updateSortCode,
-             inputColor: inputColor,
-           ),
-           const SizedBox(height: AppSpacing.md),
+          _buildFormLabel("Sort Code"),
+          _buildTextField(
+            hint: "00-00-00",
+            onChanged: provider.updateSortCode,
+            inputColor: inputColor,
+          ),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (country == 'US') ...[
-           _buildFormLabel("Routing Number"),
-           _buildTextField(
-             hint: "012345678",
-             onChanged: provider.updateRoutingNumber,
-             inputColor: inputColor,
-             keyboardType: TextInputType.number,
-           ),
-           const SizedBox(height: AppSpacing.md),
+          _buildFormLabel("Routing Number"),
+          _buildTextField(
+            hint: "012345678",
+            onChanged: provider.updateRoutingNumber,
+            inputColor: inputColor,
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: AppSpacing.md),
         ],
 
         if (country == 'CA') ...[
-           Row(
-             children: [
-               Expanded(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     _buildFormLabel("Institution Number"),
-                     _buildTextField(hint: "000", onChanged: provider.updateInstitutionNumber, inputColor: inputColor),
-                   ],
-                 ),
-               ),
-               const SizedBox(width: AppSpacing.md),
-               Expanded(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     _buildFormLabel("Transit Number"),
-                     _buildTextField(hint: "00000", onChanged: provider.updateTransitNumber, inputColor: inputColor),
-                   ],
-                 ),
-               ),
-             ],
-           ),
-           const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFormLabel("Institution Number"),
+                    _buildTextField(
+                      hint: "000",
+                      onChanged: provider.updateInstitutionNumber,
+                      inputColor: inputColor,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildFormLabel("Transit Number"),
+                    _buildTextField(
+                      hint: "00000",
+                      onChanged: provider.updateTransitNumber,
+                      inputColor: inputColor,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
         ],
 
-        _buildFormLabel("${country == 'NG' || country == 'GH' ? '2. ' : ''}Account Number"),
+        _buildFormLabel(
+          "${country == 'NG' || country == 'GH' ? '2. ' : ''}Account Number",
+        ),
         _buildTextField(
           hint: "0123456789",
           onChanged: provider.updateAccountNumber,
@@ -294,14 +345,16 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
       padding: const EdgeInsets.only(bottom: AppSpacing.xs),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
 
   Widget _buildTextField({
-    required String hint, 
-    required Function(String) onChanged, 
+    required String hint,
+    required Function(String) onChanged,
     required Color inputColor,
     TextInputType keyboardType = TextInputType.text,
     IconData? icon,
@@ -310,18 +363,31 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
     return TextField(
       onChanged: onChanged,
       keyboardType: keyboardType,
-      style: TextStyle(color: isDark ? AppColors.darkText : AppColors.lightText, fontFamily: "Inter"),
+      style: TextStyle(
+        color: isDark ? AppColors.darkText : AppColors.lightText,
+        fontFamily: "Inter",
+      ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
+        hintStyle: TextStyle(
+          color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+        ),
         filled: true,
         fillColor: inputColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.md),
           borderSide: BorderSide.none,
         ),
-        suffixIcon: icon != null ? Icon(icon, color: isDark ? AppColors.darkSubText : AppColors.lightSubText) : null,
-        contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+        suffixIcon: icon != null
+            ? Icon(
+                icon,
+                color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+              )
+            : null,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
       ),
     );
   }
@@ -370,21 +436,34 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
         Text(label, style: Theme.of(context).textTheme.bodyMedium),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
     );
   }
 
-  Widget _buildSaveAccountSwitch(WithdrawBankProvider provider, Color cardColor) {
+  Widget _buildSaveAccountSwitch(
+    WithdrawBankProvider provider,
+    Color cardColor,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Save this withdrawal account", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600)),
-            Text("Save for faster withdrawals in the future", style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              "Save this withdrawal account",
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            Text(
+              "Save for faster withdrawals in the future",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ],
         ),
         Switch(
@@ -396,7 +475,10 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
     );
   }
 
-  Widget _buildBottomButton(WithdrawBankProvider provider, BuildContext context) {
+  Widget _buildBottomButton(
+    WithdrawBankProvider provider,
+    BuildContext context,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: SizedBox(
@@ -413,10 +495,13 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                     }
                   } catch (error) {
                     if (!context.mounted) return;
-                    final friendly = error.toString().replaceFirst('Exception: ', '');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(friendly)),
+                    final friendly = error.toString().replaceFirst(
+                      'Exception: ',
+                      '',
                     );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(friendly)));
                   }
                 }
               : null,
@@ -430,14 +515,20 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
           ),
           child: provider.isVerifying
               ? const SizedBox(
-                  width: 24, height: 24,
-                  child: CircularProgressIndicator(color: AppColors.white, strokeWidth: 2),
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    color: AppColors.white,
+                    strokeWidth: 2,
+                  ),
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      provider.isVerified ? "Continue to Review" : "Verify Account",
+                      provider.isVerified
+                          ? "Continue to Review"
+                          : "Verify Account",
                       style: const TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 16,
@@ -446,7 +537,10 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    const Icon(Boxicons.bx_right_arrow_alt, color: AppColors.white),
+                    const Icon(
+                      Boxicons.bx_right_arrow_alt,
+                      color: AppColors.white,
+                    ),
                   ],
                 ),
         ),
@@ -454,19 +548,26 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
     );
   }
 
-  Future<void> _saveAndContinue(WithdrawBankProvider provider, BuildContext context) async {
+  Future<void> _saveAndContinue(
+    WithdrawBankProvider provider,
+    BuildContext context,
+  ) async {
     try {
       await provider.saveBeneficiary();
       await provider.createQuote();
       if (!context.mounted) return;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => WithdrawReviewScreen(provider: provider)),
+        MaterialPageRoute(
+          builder: (_) => WithdrawReviewScreen(provider: provider),
+        ),
       );
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+        ),
       );
     }
   }

@@ -14,55 +14,66 @@ import 'withdraw_processing_screen.dart';
 // IMPORTANT: Import your existing PinAuthDialog here.
 // import '../../widgets/pin_auth_dialog.dart';
 
-class WithdrawReviewScreen extends StatelessWidget {
+class WithdrawReviewScreen extends StatefulWidget {
   final WithdrawBankProvider provider;
 
   const WithdrawReviewScreen({super.key, required this.provider});
 
+  State<WithdrawReviewScreen> createState() => _WithdrawReviewScreenState();
+}
+
+class _WithdrawReviewScreenState extends State<WithdrawReviewScreen> {
+  bool _isSubmitting = false;
+  bool _hasNavigatedToProcessing = false;
+
   Future<void> _showPinDialog(BuildContext context) async {
+    if (_isSubmitting || _hasNavigatedToProcessing) return;
+    setState(() => _isSubmitting = true);
+
     String? enteredPin;
-    final authorized = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => PinAuthDialog(
-        onValidatePin: (pin) async {
-          enteredPin = pin;
-          return provider.authService.verifyTransactionPin(pin);
-        },
-        onSuccess: (_) {},
-      ),
-    );
-
-    if (!context.mounted || authorized != true) return;
-
-    if (enteredPin == null) return;
-
     try {
-      final withdrawal = await provider.createWithdrawal(enteredPin!);
+      final authorized = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => PinAuthDialog(
+          onValidatePin: (pin) async {
+            enteredPin = pin;
+            return widget.provider.authService.verifyTransactionPin(pin);
+          },
+          onSuccess: (_) {},
+        ),
+      );
+
+      if (!context.mounted || authorized != true || enteredPin == null) return;
+
+      final withdrawal = await widget.provider.createWithdrawal(enteredPin!);
       final transaction = WithdrawalTransactionModel(
-        amount: provider.amountToReceive,
-        sourceAmount: provider.amountToSend,
+        amount: widget.provider.amountToReceive,
+        sourceAmount: widget.provider.amountToSend,
         sourceCurrency: 'USD',
-        destinationAmount: provider.convertedAmount,
-        destinationCurrency: provider.destination.currency,
-        amountToSend: provider.amountToSend,
-        exchangeRate: provider.exchangeRate,
-        convertedAmount: provider.convertedAmount,
-        fee: provider.fee,
-        amountToReceive: provider.amountToReceive,
-        currency: provider.destination.currency,
+        destinationAmount: widget.provider.convertedAmount,
+        destinationCurrency: widget.provider.destination.currency,
+        amountToSend: widget.provider.amountToSend,
+        exchangeRate: widget.provider.exchangeRate,
+        convertedAmount: widget.provider.convertedAmount,
+        fee: widget.provider.fee,
+        amountToReceive: widget.provider.amountToReceive,
+        currency: widget.provider.destination.currency,
         method: 'Bank Transfer',
-        destinationCountry: provider.destination.countryName,
-        countryFlag: provider.destination.flag,
-        destinationBank: provider.selectedBank?.name ?? 'Bank Transfer',
-        destinationAccountMasked: provider.maskedAccountNumber,
-        referenceId: withdrawal['reference']?.toString() ?? 'WD-${DateTime.now().millisecondsSinceEpoch}',
+        destinationCountry: widget.provider.destination.countryName,
+        countryFlag: widget.provider.destination.flag,
+        destinationBank: widget.provider.selectedBank?.name ?? 'Bank Transfer',
+        destinationAccountMasked: widget.provider.maskedAccountNumber,
+        referenceId:
+            withdrawal['reference']?.toString() ??
+            'WD-${DateTime.now().millisecondsSinceEpoch}',
         timestamp: DateTime.now(),
         status: withdrawal['status']?.toString() ?? 'pending',
       );
 
       if (!context.mounted) return;
-      Navigator.push(
+      _hasNavigatedToProcessing = true;
+      await Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (_) => WithdrawProcessingScreen(
@@ -70,12 +81,19 @@ class WithdrawReviewScreen extends StatelessWidget {
             withdrawalId: withdrawal['id']?.toString() ?? '',
           ),
         ),
+        (route) => false,
       );
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+        ),
       );
+    } finally {
+      if (mounted && !_hasNavigatedToProcessing) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
@@ -132,25 +150,25 @@ class WithdrawReviewScreen extends StatelessWidget {
                       _buildReviewRow(
                         context,
                         "You send",
-                        "\$${formatCurrency.format(provider.amountToSend)} USD",
+                        "\$${formatCurrency.format(widget.provider.amountToSend)} USD",
                       ),
                       _buildDivider(borderColor),
 
                       _buildReviewRow(
                         context,
                         "Destination",
-                        "${provider.destination.countryName} ${provider.destination.flag}",
+                        "${widget.provider.destination.countryName} ${widget.provider.destination.flag}",
                       ),
                       _buildDivider(borderColor),
 
                       _buildReviewRow(context, "Method", "Bank Transfer"),
                       _buildDivider(borderColor),
 
-                      if (provider.selectedBank != null) ...[
+                      if (widget.provider.selectedBank != null) ...[
                         _buildReviewRow(
                           context,
                           "Bank",
-                          provider.selectedBank!.name,
+                          widget.provider.selectedBank!.name,
                         ),
                         _buildDivider(borderColor),
                       ],
@@ -158,15 +176,15 @@ class WithdrawReviewScreen extends StatelessWidget {
                       _buildReviewRow(
                         context,
                         "Account",
-                        provider.maskedAccountNumber,
+                        widget.provider.maskedAccountNumber,
                       ),
                       _buildDivider(borderColor),
 
-                      if (provider.destination.countryCode != 'US') ...[
+                      if (widget.provider.destination.countryCode != 'US') ...[
                         _buildReviewRow(
                           context,
                           "Exchange rate",
-                          "1 USD = ${provider.destination.currency}${formatCurrency.format(provider.exchangeRate)}",
+                          "1 USD = ${widget.provider.destination.currency}${formatCurrency.format(widget.provider.exchangeRate)}",
                         ),
                         _buildDivider(borderColor),
                       ],
@@ -174,14 +192,14 @@ class WithdrawReviewScreen extends StatelessWidget {
                       _buildReviewRow(
                         context,
                         "Converted amount",
-                        "${provider.destination.currency} ${formatCurrency.format(provider.convertedAmount)}",
+                        "${widget.provider.destination.currency} ${formatCurrency.format(widget.provider.convertedAmount)}",
                       ),
                       _buildDivider(borderColor),
 
                       _buildReviewRow(
                         context,
                         "Withdrawal fee",
-                        "${provider.destination.currency} ${formatCurrency.format(provider.fee)}",
+                        "${widget.provider.destination.currency} ${formatCurrency.format(widget.provider.fee)}",
                       ),
                       _buildDivider(borderColor),
 
@@ -196,7 +214,7 @@ class WithdrawReviewScreen extends StatelessWidget {
                             ).textTheme.titleLarge?.copyWith(fontSize: 16),
                           ),
                           Text(
-                            "${provider.destination.currency} ${formatCurrency.format(provider.amountToReceive)}",
+                            "${widget.provider.destination.currency} ${formatCurrency.format(widget.provider.amountToReceive)}",
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
                                   fontSize: 18,
@@ -238,7 +256,9 @@ class WithdrawReviewScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () => _showPinDialog(context),
+                  onPressed: _isSubmitting
+                      ? null
+                      : () => _showPinDialog(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
