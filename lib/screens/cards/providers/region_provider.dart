@@ -4,9 +4,9 @@ import '../models/gift_card_region_model.dart';
 import '../services/region_service.dart';
 
 class RegionProvider extends ChangeNotifier {
-  RegionProvider({RegionService? service})
+  RegionProvider({RegionService? service, bool loadInitialRegions = true})
     : _service = service ?? RegionService() {
-    loadRegions();
+    if (loadInitialRegions) loadRegions();
   }
 
   final RegionService _service;
@@ -59,6 +59,12 @@ class RegionProvider extends ChangeNotifier {
   void selectRegion(GiftCardRegionModel region) {
     _selectedRegion = region;
     HapticFeedback.lightImpact();
+    notifyListeners();
+  }
+
+  void replaceRegions(List<GiftCardRegionModel> regions) {
+    _regions = regions;
+    _selectedRegion = regions.isEmpty ? null : regions.first;
     notifyListeners();
   }
 }

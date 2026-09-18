@@ -171,7 +171,7 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        'Buy ${region.buyRate.toStringAsFixed(2)}%',
+                                        'Sale ${region.sellRate.toStringAsFixed(2)}%',
                                         style: const TextStyle(
                                           color: AppColors.primary,
                                           fontSize: 12,

@@ -13,6 +13,7 @@ class DepositProcessingScreen extends StatefulWidget {
   final bool navigateToSubmissionReceived;
   final bool navigateToBuySubmissionReceived;
   final String transactionId;
+  final Future<String> Function()? onProcess;
 
   const DepositProcessingScreen({
     super.key,
@@ -23,6 +24,7 @@ class DepositProcessingScreen extends StatefulWidget {
     this.navigateToSubmissionReceived = false,
     this.navigateToBuySubmissionReceived = false,
     this.transactionId = '',
+    this.onProcess,
   });
 
   @override
@@ -46,6 +48,22 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
   }
 
   void _startSequence() {
+    _runProcess();
+  }
+
+  Future<void> _runProcess() async {
+    var transactionId = widget.transactionId;
+    if (widget.onProcess != null) {
+      try {
+        transactionId = await widget.onProcess!();
+      } catch (error) {
+        if (mounted && Navigator.canPop(context)) {
+          Navigator.pop(context, error);
+        }
+        return;
+      }
+    }
+
     Timer.periodic(const Duration(milliseconds: 1200), (timer) {
       if (_currentStage < _stages.length - 1) {
         if (mounted) setState(() => _currentStage++);
@@ -61,9 +79,11 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
           return;
         }
         if (widget.navigateToSubmissionReceived) {
-          final transactionId = widget.transactionId.isNotEmpty
-              ? widget.transactionId
-              : 'sale-${DateTime.now().millisecondsSinceEpoch}';
+          if (transactionId.isEmpty) {
+            timer.cancel();
+            if (Navigator.canPop(context)) Navigator.pop(context);
+            return;
+          }
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

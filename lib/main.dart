@@ -21,6 +21,7 @@ import 'providers/wallet_provider.dart';
 import 'screens/cards/providers/submission_provider.dart';
 import 'screens/cards/providers/sell_receipt_provider.dart';
 import 'screens/cards/providers/buy_receipt_provider.dart';
+import 'screens/cards/providers/region_provider.dart';
 import 'screens/authentication/services/authentication_service.dart';
 
 Future<void> main() async {
@@ -46,6 +47,9 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SubmissionProvider()),
         ChangeNotifierProvider(create: (_) => SellReceiptProvider()),
         ChangeNotifierProvider(create: (_) => BuyReceiptProvider()),
+        ChangeNotifierProvider(
+          create: (_) => RegionProvider(loadInitialRegions: false),
+        ),
       ],
       child: const NobleCardsApp(),
     ),

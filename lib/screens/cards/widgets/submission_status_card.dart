@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
+import '../models/submission_model.dart';
 
 class SubmissionStatusCard extends StatelessWidget {
-  const SubmissionStatusCard({super.key});
+  final SubmissionModel data;
+
+  const SubmissionStatusCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class SubmissionStatusCard extends StatelessWidget {
           const Icon(Boxicons.bx_time_five, color: AppColors.success, size: 16),
           const SizedBox(width: 8),
           Text(
-            'Status: Pending Verification',
+            'Status: ${_statusLabel(data.status)}',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -37,5 +40,23 @@ class SubmissionStatusCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _statusLabel(String status) {
+    switch (status.toUpperCase()) {
+      case 'APPROVED':
+      case 'PAID':
+      case 'SUCCESSFUL':
+        return 'Successful';
+      case 'FAILED':
+      case 'REJECTED':
+        return 'Failed';
+      case 'UNDER_REVIEW':
+        return 'Under Review';
+      case 'PROCESSING':
+        return 'Processing';
+      default:
+        return 'Pending Verification';
+    }
   }
 }

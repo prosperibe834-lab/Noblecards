@@ -33,7 +33,8 @@ class BuyCardScreen extends StatelessWidget {
     final success = await showDialog<bool>(
       context: context,
       builder: (_) => PinAuthDialog(
-        onValidatePin: (pin) => AuthenticationService().verifyTransactionPin(pin),
+        onValidatePin: (pin) =>
+            AuthenticationService().verifyTransactionPin(pin),
         onSuccess: (pin) {
           navigator.pop(true);
         },

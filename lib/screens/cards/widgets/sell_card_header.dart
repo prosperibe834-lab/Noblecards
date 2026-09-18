@@ -12,8 +12,14 @@ import 'availability_badge.dart';
 class SellCardHeader extends StatelessWidget {
   final GiftCardModel card;
   final VoidCallback onChange;
+  final String? rateText;
 
-  const SellCardHeader({super.key, required this.card, required this.onChange});
+  const SellCardHeader({
+    super.key,
+    required this.card,
+    required this.onChange,
+    this.rateText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +175,8 @@ class SellCardHeader extends StatelessWidget {
                     const SizedBox(height: AppSpacing.xs),
                     Consumer<BuyProvider>(
                       builder: (context, provider, child) => Text(
-                        '${provider.currentRate.toStringAsFixed(2)}%',
+                        rateText ??
+                            '${provider.currentRate.toStringAsFixed(2)}%',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,

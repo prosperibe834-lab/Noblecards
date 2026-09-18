@@ -6,7 +6,9 @@ import '../../../../theme/app_radius.dart';
 import '../sell_receipt_screen.dart';
 
 class ActionButtonsSection extends StatelessWidget {
-  const ActionButtonsSection({super.key});
+  final String transactionId;
+
+  const ActionButtonsSection({super.key, required this.transactionId});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,7 @@ class ActionButtonsSection extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const SellReceiptScreen(
-                  transactionId: 'sale-submission-001',
-                ),
+                builder: (_) => SellReceiptScreen(transactionId: transactionId),
               ),
             );
           },

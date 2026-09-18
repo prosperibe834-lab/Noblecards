@@ -1,5 +1,7 @@
 class SubmissionModel {
   final String referenceId;
+  final String status;
+  final String? providerMessage;
   final int cardsSubmitted;
   final double totalFaceValue;
   final double sellRate;
@@ -10,6 +12,8 @@ class SubmissionModel {
 
   SubmissionModel({
     required this.referenceId,
+    required this.status,
+    this.providerMessage,
     required this.cardsSubmitted,
     required this.totalFaceValue,
     required this.sellRate,

@@ -4,7 +4,10 @@ import 'package:noble_cards/theme/app_radius.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
 
 class CardCodeInput extends StatelessWidget {
-  const CardCodeInput({super.key});
+  final String? initialValue;
+  final ValueChanged<String>? onChanged;
+
+  const CardCodeInput({super.key, this.initialValue, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,8 @@ class CardCodeInput extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.md),
             border: Border.all(color: borderColor),
           ),
-          child: TextField(
+          child: TextFormField(
+            initialValue: initialValue,
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: 'Enter card code',
@@ -43,6 +47,7 @@ class CardCodeInput extends StatelessWidget {
                 color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
               ),
             ),
+            onChanged: onChanged,
           ),
         ),
       ],

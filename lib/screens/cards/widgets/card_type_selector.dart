@@ -7,11 +7,15 @@ import 'package:noble_cards/theme/app_animation.dart';
 class CardTypeSelector extends StatelessWidget {
   final bool isPhysical;
   final ValueChanged<bool> onChanged;
+  final List<String> availableCardTypes;
+  final ValueChanged<String>? onUnavailable;
 
   const CardTypeSelector({
     super.key,
     required this.isPhysical,
     required this.onChanged,
+    this.availableCardTypes = const ['ecode', 'physical'],
+    this.onUnavailable,
   });
 
   @override
@@ -47,7 +51,14 @@ class CardTypeSelector extends StatelessWidget {
     final isSelected = value == isPhysical;
     return Expanded(
       child: GestureDetector(
-        onTap: () => onChanged(value),
+        onTap: () {
+          final cardType = value ? 'physical' : 'ecode';
+          if (!availableCardTypes.contains(cardType)) {
+            onUnavailable?.call(cardType);
+            return;
+          }
+          onChanged(value);
+        },
         child: AnimatedContainer(
           duration: AppAnimation.fast,
           padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),

@@ -6,7 +6,10 @@ import 'package:noble_cards/theme/app_spacing.dart';
 import '../providers/buy_provider.dart';
 
 class AmountInput extends StatelessWidget {
-  const AmountInput({super.key});
+  final String? initialValue;
+  final ValueChanged<String>? onChanged;
+
+  const AmountInput({super.key, this.initialValue, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,9 @@ class AmountInput extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: TextFormField(
-                  initialValue: provider.amount.toStringAsFixed(0),
+                  initialValue: initialValue?.isNotEmpty == true
+                      ? initialValue
+                      : provider.amount.toStringAsFixed(0),
                   keyboardType: TextInputType.number,
                   style: TextStyle(
                     color: textColor,
@@ -64,6 +69,7 @@ class AmountInput extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                   ),
                   onChanged: (value) {
+                    onChanged?.call(value);
                     if (value.isNotEmpty) {
                       provider.setAmount(
                         double.tryParse(value) ?? provider.amount,

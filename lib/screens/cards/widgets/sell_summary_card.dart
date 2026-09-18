@@ -2,16 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_radius.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
-import 'package:noble_cards/theme/app_animation.dart';
 
 class SellSummaryCard extends StatelessWidget {
   final int cardCount;
   final double totalAmount;
+  final String cardCurrency;
+  final String payoutCurrency;
+  final double sellRate;
+  final double estimatedPayout;
+  final String? sellRateText;
+  final String? estimatedPayoutText;
 
   const SellSummaryCard({
     super.key,
     required this.cardCount,
     required this.totalAmount,
+    this.cardCurrency = 'USD',
+    this.payoutCurrency = 'NGN',
+    this.sellRate = 0,
+    this.estimatedPayout = 0,
+    this.sellRateText,
+    this.estimatedPayoutText,
   });
 
   @override
@@ -50,21 +61,25 @@ class SellSummaryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           _buildRow(
             'Total Amount',
-            '\$${totalAmount.toStringAsFixed(2)}',
+            '$cardCurrency ${totalAmount.toStringAsFixed(2)}',
             labelColor: labelColor,
             valueColor: valueColor,
           ),
           const SizedBox(height: AppSpacing.sm),
           _buildRow(
             'Sell Rate',
-            '93.20%',
+            sellRateText ??
+                (sellRate == 0 ? 'Loading...' : sellRate.toStringAsFixed(2)),
             labelColor: labelColor,
             valueColor: valueColor,
           ),
           const SizedBox(height: AppSpacing.sm),
           _buildRow(
             'Estimated You Receive',
-            '\$${(totalAmount * 0.932).toStringAsFixed(2)}',
+            estimatedPayoutText ??
+                (estimatedPayout == 0
+                    ? 'Loading...'
+                    : '$payoutCurrency ${estimatedPayout.toStringAsFixed(2)}'),
             labelColor: labelColor,
             valueColor: valueColor,
           ),

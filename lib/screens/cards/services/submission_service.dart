@@ -1,19 +1,28 @@
 import '../models/submission_model.dart';
+import '../../authentication/services/authentication_service.dart';
+import '../../../providers/exchange_rate_provider.dart';
 
 class SubmissionService {
-  // Simulates an API call to get the submission receipt details
   Future<SubmissionModel> fetchSubmissionDetails(String transactionId) async {
-    await Future.delayed(const Duration(seconds: 2)); // Mock network delay
+    final response = await AuthenticationService().authenticatedGet(
+      '/gift-cards/sell/$transactionId',
+    );
+    final amount = double.tryParse(response['cardAmount']?.toString() ?? '') ?? 0;
+    final rate = double.tryParse(response['quotedRate']?.toString() ?? '') ?? 0;
+    final providerPayout = double.tryParse(response['quotedPayoutAmount']?.toString() ?? '') ?? 0;
+    final payoutCurrency = response['payoutCurrency']?.toString() ?? 'USD';
+    final payout = ExchangeRateProvider.convertToUSD(providerPayout, payoutCurrency);
 
-    // Mock response matching the design exactly
     return SubmissionModel(
-      referenceId: 'NC-2026-92831',
-      cardsSubmitted: 10,
-      totalFaceValue: 850.00,
-      sellRate: 93.20,
-      estimatedReceive: 792.20,
+      referenceId: response['id']?.toString() ?? transactionId,
+      status: response['status']?.toString() ?? 'SUBMITTED',
+      providerMessage: response['providerMessage']?.toString(),
+      cardsSubmitted: 1,
+      totalFaceValue: amount,
+      sellRate: rate,
+      estimatedReceive: payout,
       verificationTime: '5 - 30 Minutes',
-      submittedOn: '29 Jul 2026, 10:42 AM',
+      submittedOn: response['createdAt']?.toString() ?? '',
       paymentMethod: 'USD Wallet',
     );
   }

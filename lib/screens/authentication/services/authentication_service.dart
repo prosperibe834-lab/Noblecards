@@ -271,7 +271,7 @@ class AuthenticationService {
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception(_friendlyMessage(_responseMessage(responseBody, 'Profile image upload failed.')));
+        throw Exception(_friendlyMessage(_responseMessage(responseBody, 'Profile image upload failed.'), path: '/users/me/image'));
       }
       final uploadData = jsonDecode(responseBody) as Map<String, dynamic>;
       final uploadedUser = uploadData['user'] as Map<String, dynamic>?;
@@ -311,7 +311,9 @@ class AuthenticationService {
       : method == 'PATCH' ? await http.patch(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
       : method == 'DELETE' ? await http.delete(Uri.parse('$_baseUrl$path'), headers: headers) : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
     final data = response.body.isEmpty ? <String, dynamic>{} : jsonDecode(response.body) as Map<String, dynamic>;
-    if (response.statusCode < 200 || response.statusCode >= 300) throw Exception(_friendlyMessage(data['message'] ?? 'Something went wrong. Please try again.'));
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(_friendlyMessage(data['message'] ?? 'Something went wrong. Please try again.', path: path));
+    }
     return data;
   }
 
@@ -350,14 +352,20 @@ class AuthenticationService {
     await _preferences?.remove(key);
   }
 
-  String _friendlyMessage(Object message) {
+  String mapErrorMessage(Object message, {required String path}) =>
+      _friendlyMessage(message, path: path);
+
+  String _friendlyMessage(Object message, {required String path}) {
     final text = message.toString().toLowerCase();
     if (text.contains('email') && text.contains('already exists')) return 'An account with this email already exists. Please log in or use a different email.';
     if (text.contains('invalid email')) return 'Please enter a valid email address.';
     if (text.contains('invalid email or password')) return 'Invalid email or password. Please try again.';
     if (text.contains('verify your email')) return 'Please verify your email before signing in.';
     if (text.contains('wait') || text.contains('too many')) return 'Too many attempts. Please wait and try again.';
-    if (text.contains('code')) return 'The verification code is invalid or expired. Please request a new one.';
+    final isVerificationCodeEndpoint = path == '/auth/verify-email' || path == '/auth/reset-password';
+    if (isVerificationCodeEndpoint && text.contains('code')) {
+      return 'The verification code is invalid or expired. Please request a new one.';
+    }
     return message.toString();
   }
 }
