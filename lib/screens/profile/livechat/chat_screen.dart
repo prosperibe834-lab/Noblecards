@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import 'models/chat_message.dart';
 import 'models/quick_action.dart';
+import 'models/support_ticket.dart';
+import 'services/support_service.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/chat_input.dart';
 
 class ChatScreen extends StatefulWidget {
   final QuickAction initialAction;
+  final String? ticketId;
 
-  const ChatScreen({super.key, required this.initialAction});
+  const ChatScreen({super.key, required this.initialAction, this.ticketId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -18,66 +21,80 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   final ScrollController _scrollController = ScrollController();
-  bool _isTyping = true;
+  final SupportService _supportService = SupportService();
+  SupportTicket? _ticket;
+  String? _errorMessage;
+  bool _isLoading = true;
+  bool _isSending = false;
 
   @override
   void initState() {
     super.initState();
-    // Simulate initial support response
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          _messages.add(
-            ChatMessage(
-              text: widget.initialAction.autoMessage,
-              isUser: false,
-              timestamp: DateTime.now(),
-            ),
-          );
-          _isTyping = false;
-        });
-      }
-    });
+    _loadTicket();
   }
 
   void _sendMessage() {
-    if (_controller.text.trim().isEmpty) return;
-
-    setState(() {
-      _messages.add(
-        ChatMessage(
-          text: _controller.text,
-          isUser: true,
-          timestamp: DateTime.now(),
-        ),
-      );
-    });
-
+    final text = _controller.text.trim();
+    if (text.isEmpty || _ticket == null || _isSending) return;
     _controller.clear();
-    _scrollToBottom();
+    _sendMessageToServer(text);
+  }
 
-    // Simulate agent reply
-    setState(() => _isTyping = true);
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _messages.add(
-            ChatMessage(
-              text:
-                  'Thanks for the information. An agent is reviewing your request.',
-              isUser: false,
-              timestamp: DateTime.now(),
-            ),
-          );
-          _isTyping = false;
-        });
-        _scrollToBottom();
-      }
+  Future<void> _loadTicket() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
     });
+
+    try {
+      final ticket = widget.ticketId == null
+          ? await _supportService.openOrCreateTicket(widget.initialAction)
+          : await _supportService.getTicket(widget.ticketId!);
+      if (!mounted) return;
+
+      setState(() {
+        _ticket = ticket;
+        _messages
+          ..clear()
+          ..addAll(ticket.messages);
+        _isLoading = false;
+      });
+      _scrollToBottom();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = error.toString();
+      });
+    }
+  }
+
+  Future<void> _sendMessageToServer(String text) async {
+    setState(() => _isSending = true);
+
+    try {
+      final message = await _supportService.sendMessage(
+        ticketId: _ticket!.id,
+        message: text,
+      );
+      if (!mounted) return;
+
+      setState(() {
+        _messages.add(message);
+        _isSending = false;
+      });
+      _scrollToBottom();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSending = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    }
   }
 
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -169,41 +186,46 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              itemCount: _messages.length + (_isTyping ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _messages.length && _isTyping) {
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 16, top: 8),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1E252D)
-                            : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        'Agent is typing...',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                          color: isDark ? Colors.white54 : Colors.black54,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return ChatBubble(message: _messages[index]);
-              },
-            ),
+            child: _buildMessageArea(isDark),
           ),
           ChatInput(controller: _controller, onSend: _sendMessage),
         ],
       ),
+    );
+  }
+
+  Widget _buildMessageArea(bool isDark) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextButton(onPressed: _loadTicket, child: const Text('Retry')),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      itemCount: _messages.length,
+      itemBuilder: (context, index) => ChatBubble(message: _messages[index]),
     );
   }
 }
