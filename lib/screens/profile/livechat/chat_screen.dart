@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'models/chat_message.dart';
 import 'models/quick_action.dart';
 import 'models/support_ticket.dart';
@@ -22,10 +27,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<ChatMessage> _messages = [];
   final ScrollController _scrollController = ScrollController();
   final SupportService _supportService = SupportService();
+  final ImagePicker _imagePicker = ImagePicker();
   SupportTicket? _ticket;
   String? _errorMessage;
   bool _isLoading = true;
   bool _isSending = false;
+  Timer? _messagePollTimer;
+  bool _messagePollInFlight = false;
 
   @override
   void initState() {
@@ -59,6 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ..addAll(ticket.messages);
         _isLoading = false;
       });
+      _startMessagePolling();
       _scrollToBottom();
     } catch (error) {
       if (!mounted) return;
@@ -66,6 +75,33 @@ class _ChatScreenState extends State<ChatScreen> {
         _isLoading = false;
         _errorMessage = error.toString();
       });
+    }
+  }
+
+  void _startMessagePolling() {
+    _messagePollTimer?.cancel();
+    _messagePollTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _refreshTicketMessages(),
+    );
+  }
+
+  Future<void> _refreshTicketMessages() async {
+    if (!mounted || _ticket == null || _isLoading || _messagePollInFlight) return;
+    _messagePollInFlight = true;
+    try {
+      final ticket = await _supportService.getTicket(_ticket!.id);
+      if (!mounted) return;
+      setState(() {
+        _ticket = ticket;
+        _messages
+          ..clear()
+          ..addAll(ticket.messages);
+      });
+    } catch (_) {
+      // Keep the current conversation visible; the next poll or reopen retries.
+    } finally {
+      _messagePollInFlight = false;
     }
   }
 
@@ -93,6 +129,147 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<void> _uploadImage(ImageSource source) async {
+    try {
+      final file = await _imagePicker.pickImage(source: source);
+      if (file != null) await _uploadFile(file);
+    } catch (error) {
+      _showError(error);
+    }
+  }
+
+  Future<void> _pickDocument() async {
+    try {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'txt'],
+      );
+      if (result.isEmpty) return;
+      await _uploadPlatformFile(result.first);
+    } catch (error) {
+      _showError(error);
+    }
+  }
+
+  Future<void> _pickAudio() async {
+    try {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['mp3', 'wav', 'ogg', 'webm'],
+      );
+      if (result.isEmpty) return;
+      await _uploadPlatformFile(result.first);
+    } catch (error) {
+      _showError(error);
+    }
+  }
+
+  Future<void> _uploadPlatformFile(PlatformFile file) async {
+    final upload = XFile.fromData(await file.readAsBytes(), name: file.name);
+    await _uploadFile(upload);
+  }
+
+  Future<void> _uploadFile(XFile file) async {
+    if (_ticket == null) return;
+    setState(() => _isSending = true);
+    try {
+      final message = await _supportService.uploadAttachment(
+        ticketId: _ticket!.id,
+        file: file,
+      );
+      if (!mounted) return;
+      setState(() {
+        _messages.add(message);
+        _isSending = false;
+      });
+      _scrollToBottom();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSending = false);
+      _showError(error);
+    }
+  }
+
+  Future<void> _sendLocation() async {
+    if (_ticket == null) return;
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        throw Exception('Location services are disabled.');
+      }
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        throw Exception('Location permission was denied.');
+      }
+      final position = await Geolocator.getCurrentPosition();
+      setState(() => _isSending = true);
+      final message = await _supportService.sendLocation(
+        ticketId: _ticket!.id,
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+      if (!mounted) return;
+      setState(() {
+        _messages.add(message);
+        _isSending = false;
+      });
+      _scrollToBottom();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSending = false);
+      _showError(error);
+    }
+  }
+
+  void _showError(Object error) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.toString())));
+  }
+
+  Future<void> _showChatMenu() async {
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.delete_outline),
+              title: const Text('Clear Chat'),
+              onTap: () => Navigator.pop(context, 'clear'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Cancel'),
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (action != 'clear' || !mounted) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clear Chat?'),
+        content: const Text('Your messages will be hidden from this chat. Support history will be preserved.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Clear Chat')),
+        ],
+      ),
+    );
+    if (confirmed != true || _ticket == null) return;
+    try {
+      await _supportService.clearTicket(_ticket!.id);
+      await _loadTicket();
+    } catch (error) {
+      _showError(error);
+    }
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -107,6 +284,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _messagePollTimer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -182,13 +360,31 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Boxicons.bx_dots_horizontal_rounded,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+            onPressed: _showChatMenu,
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: _buildMessageArea(isDark),
           ),
-          ChatInput(controller: _controller, onSend: _sendMessage),
+          ChatInput(
+            controller: _controller,
+            onSend: _sendMessage,
+            onGallery: () => _uploadImage(ImageSource.gallery),
+            onCamera: () => _uploadImage(ImageSource.camera),
+            onDocument: _pickDocument,
+            onAudio: _pickAudio,
+            onLocation: _sendLocation,
+          ),
         ],
       ),
     );

@@ -2,16 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 
 class MessageAttachment extends StatelessWidget {
-  const MessageAttachment({super.key});
+  final Future<void> Function()? onGallery;
+  final Future<void> Function()? onCamera;
+  final Future<void> Function()? onDocument;
+  final Future<void> Function()? onAudio;
+  final Future<void> Function()? onLocation;
+
+  const MessageAttachment({
+    super.key,
+    this.onGallery,
+    this.onCamera,
+    this.onDocument,
+    this.onAudio,
+    this.onLocation,
+  });
 
   Widget _buildOption(
     BuildContext context,
     IconData icon,
     String label,
     Color color,
+    Future<void> Function()? onTap,
   ) {
     return InkWell(
-      onTap: () => Navigator.pop(context), // Placeholder action
+      onTap: onTap == null ? null : () async {
+        Navigator.pop(context);
+        await onTap();
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -54,16 +71,17 @@ class MessageAttachment extends StatelessWidget {
           spacing: MediaQuery.of(context).size.width * 0.1,
           alignment: WrapAlignment.center,
           children: [
-            _buildOption(context, Boxicons.bx_image, 'Gallery', Colors.purple),
-            _buildOption(context, Boxicons.bx_camera, 'Camera', Colors.pink),
-            _buildOption(context, Boxicons.bx_file, 'Document', Colors.blue),
+            _buildOption(context, Boxicons.bx_image, 'Gallery', Colors.purple, onGallery),
+            _buildOption(context, Boxicons.bx_camera, 'Camera', Colors.pink, onCamera),
+            _buildOption(context, Boxicons.bx_file, 'Document', Colors.blue, onDocument),
             _buildOption(
               context,
               Boxicons.bx_microphone,
               'Audio',
               Colors.orange,
+              onAudio,
             ),
-            _buildOption(context, Boxicons.bx_map, 'Location', Colors.green),
+            _buildOption(context, Boxicons.bx_map, 'Location', Colors.green, onLocation),
           ],
         ),
       ),

@@ -1,8 +1,15 @@
-// Where to paste: lib/screens/notification/models/notification_model.dart
+// Where to paste:
+// lib/screens/notification/models/notification_model.dart
 
 import 'package:flutter/material.dart';
 
-enum NotificationCategory { all, transactions, promotions, updates, security }
+enum NotificationCategory {
+  all,
+  transactions,
+  promotions,
+  updates,
+  security,
+}
 
 enum NotificationType {
   purchase,
@@ -11,9 +18,21 @@ enum NotificationType {
   welcomeBonus,
   securityAlert,
   priceUpdate,
-  deposit,
   promotion,
   kycVerified,
+  adminAnnouncement,
+}
+
+class NotificationDetail {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const NotificationDetail({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
 }
 
 class NotificationModel {
@@ -21,12 +40,22 @@ class NotificationModel {
   final String title;
   final String description;
   final String time;
-  final String group; // "Today", "Yesterday", "This Week"
+  final String group;
   final NotificationType type;
   final NotificationCategory category;
+
   final IconData icon;
   final Color iconBgColor;
   final Color iconColor;
+
+  /// Used when the notification is opened.
+  /// Example:
+  /// kyc, purchase, withdrawal, order, price, promotion, security, announcement
+  final String? actionKey;
+
+  /// Dynamic information shown on the Notification Details screen.
+  final List<NotificationDetail> details;
+
   bool isRead;
   bool isPinned;
 
@@ -41,6 +70,8 @@ class NotificationModel {
     required this.icon,
     required this.iconBgColor,
     required this.iconColor,
+    this.actionKey,
+    this.details = const [],
     this.isRead = false,
     this.isPinned = false,
   });

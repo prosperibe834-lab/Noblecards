@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../authentication/services/authentication_service.dart';
 import '../models/chat_message.dart';
@@ -115,6 +117,71 @@ class SupportService {
     return ChatMessage.fromJson(data, currentUserId: currentUserId);
   }
 
+  Future<ChatMessage> sendLocation({
+    required String ticketId,
+    required double latitude,
+    required double longitude,
+  }) async {
+    final currentUserId = await _currentUserId();
+    final data = await _request(
+      'POST',
+      '/support/tickets/$ticketId/messages',
+      body: {'latitude': latitude, 'longitude': longitude},
+    );
+    if (data is! Map<String, dynamic>) {
+      throw const SupportApiException(500, 'Location could not be sent.');
+    }
+    return ChatMessage.fromJson(data, currentUserId: currentUserId);
+  }
+
+  Future<ChatMessage> uploadAttachment({
+    required String ticketId,
+    required XFile file,
+  }) async {
+    final token = await authenticationService.getAccessToken();
+    if (token == null || token.isEmpty) {
+      throw const SupportApiException(401, 'Your login session has expired. Please log in again.');
+    }
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('${AuthenticationService.apiBaseUrl}/support/tickets/$ticketId/attachments'),
+    );
+    request.headers['Authorization'] = 'Bearer $token';
+    final bytes = await file.readAsBytes();
+    request.files.add(http.MultipartFile.fromBytes(
+      'file',
+      bytes,
+      filename: file.name,
+      contentType: _contentTypeFor(file.name),
+    ));
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+    dynamic data;
+    try {
+      data = responseBody.isEmpty ? <String, dynamic>{} : jsonDecode(responseBody);
+    } catch (_) {
+      data = null;
+    }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw SupportApiException(
+        response.statusCode,
+        data is Map<String, dynamic> && data['message'] != null
+            ? data['message'].toString()
+            : 'Attachment upload failed. Please try again.',
+      );
+    }
+    if (data is! Map<String, dynamic>) {
+      throw const SupportApiException(500, 'Attachment upload returned an invalid response.');
+    }
+    return ChatMessage.fromJson(data, currentUserId: await _currentUserId());
+  }
+
+  Future<void> clearTicket(String ticketId) async {
+    await _request('PATCH', '/support/tickets/$ticketId/clear');
+  }
+
   Future<String> _currentUserId() async {
     final currentUser = authenticationService.currentUser;
     if (currentUser != null) return currentUser.id;
@@ -144,6 +211,8 @@ class SupportService {
     final uri = Uri.parse('${AuthenticationService.apiBaseUrl}$path');
     final response = method == 'POST'
         ? await httpClient.post(uri, headers: headers, body: jsonEncode(body ?? {}))
+      : method == 'PATCH'
+      ? await httpClient.patch(uri, headers: headers, body: jsonEncode(body ?? {}))
         : await httpClient.get(uri, headers: headers);
 
     dynamic data;
@@ -164,6 +233,19 @@ class SupportService {
     }
 
     return data;
+  }
+
+  MediaType? _contentTypeFor(String fileName) {
+    final extension = fileName.split('.').last.toLowerCase();
+    const types = {
+      'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'webp': 'image/webp',
+      'pdf': 'application/pdf', 'txt': 'text/plain',
+      'mp3': 'audio/mpeg', 'wav': 'audio/wav', 'ogg': 'audio/ogg', 'webm': 'audio/webm',
+    };
+    final value = types[extension];
+    if (value == null) return null;
+    final parts = value.split('/');
+    return MediaType(parts[0], parts[1]);
   }
 
   String _categoryFor(QuickAction action) {

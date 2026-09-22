@@ -5,14 +5,34 @@ import 'message_attachment.dart';
 class ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
+  final Future<void> Function()? onGallery;
+  final Future<void> Function()? onCamera;
+  final Future<void> Function()? onDocument;
+  final Future<void> Function()? onAudio;
+  final Future<void> Function()? onLocation;
 
-  const ChatInput({super.key, required this.controller, required this.onSend});
+  const ChatInput({
+    super.key,
+    required this.controller,
+    required this.onSend,
+    this.onGallery,
+    this.onCamera,
+    this.onDocument,
+    this.onAudio,
+    this.onLocation,
+  });
 
   void _showAttachmentOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => const MessageAttachment(),
+      builder: (context) => MessageAttachment(
+        onGallery: onGallery,
+        onCamera: onCamera,
+        onDocument: onDocument,
+        onAudio: onAudio,
+        onLocation: onLocation,
+      ),
     );
   }
 

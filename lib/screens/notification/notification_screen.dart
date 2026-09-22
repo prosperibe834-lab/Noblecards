@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import 'models/notification_model.dart';
 import 'services/notification_service.dart';
+import 'notification_details_screen.dart';
 import 'widgets/notification_banner.dart';
 import 'widgets/notification_card.dart';
 import 'widgets/notification_category_chip.dart';
@@ -11,14 +12,6 @@ import 'widgets/notification_loading_shimmer.dart';
 import 'widgets/notification_empty_widget.dart';
 import 'widgets/notification_settings_bottom_sheet.dart';
 import 'widgets/swipe_notification_actions.dart';
-
-// Import detail pages
-import 'pages/order_pending_page.dart';
-import 'pages/security_alert_page.dart';
-import 'pages/welcome_bonus_page.dart';
-import 'pages/promotion_details_page.dart';
-import 'pages/kyc_verified_page.dart';
-import 'pages/price_update_page.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -78,34 +71,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
       item.isRead = true;
     });
 
-    Widget targetPage;
-    switch (item.type) {
-      case NotificationType.orderPending:
-        targetPage = const OrderPendingPage();
-        break;
-      case NotificationType.securityAlert:
-        targetPage = const SecurityAlertPage();
-        break;
-      case NotificationType.welcomeBonus:
-        targetPage = const WelcomeBonusPage();
-        break;
-      case NotificationType.promotion:
-        targetPage = const PromotionDetailsPage();
-        break;
-      case NotificationType.kycVerified:
-        targetPage = const KycVerifiedPage();
-        break;
-      case NotificationType.priceUpdate:
-        targetPage = const PriceUpdatePage();
-        break;
-      default:
-        targetPage = const OrderPendingPage();
-        break;
-    }
-
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => targetPage),
+      MaterialPageRoute(
+        builder: (_) => NotificationDetailsScreen(notification: item),
+      ),
     );
   }
 

@@ -33,6 +33,8 @@
 	<string>Noble Cards needs camera access to let you take a profile photo.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Noble Cards needs access to your photo library to choose a profile photo.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Noble Cards uses your location only when you choose to send it to Support.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
