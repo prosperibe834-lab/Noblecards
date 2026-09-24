@@ -97,14 +97,7 @@ class AuthenticationService {
     if (!RegExp(r'^\d{4}$').hasMatch(pin)) {
       throw Exception('Transaction PIN must be exactly 4 digits.');
     }
-
-    final data = await _request(
-      'POST',
-      '/users/me/transaction-pin/verify',
-      body: {'pin': pin},
-      authenticated: true,
-    );
-
+    final data = await authenticatedPost('/users/me/transaction-pin/verify', body: {'pin': pin});
     return data['verified'] == true;
   }
 
@@ -112,12 +105,7 @@ class AuthenticationService {
     if (!RegExp(r'^\d{4}$').hasMatch(pin)) {
       throw Exception('Transaction PIN must be exactly 4 digits.');
     }
-    await _request(
-      'POST',
-      '/users/me/transaction-pin',
-      body: {'pin': pin},
-      authenticated: true,
-    );
+    await authenticatedPost('/users/me/transaction-pin', body: {'pin': pin});
   }
 
   Future<AuthResponse> signUpWithEmail({
@@ -271,7 +259,7 @@ class AuthenticationService {
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception(_friendlyMessage(_responseMessage(responseBody, 'Profile image upload failed.'), path: '/users/me/image'));
+        throw Exception(_friendlyMessage(_responseMessage(responseBody, 'Profile image upload failed.')));
       }
       final uploadData = jsonDecode(responseBody) as Map<String, dynamic>;
       final uploadedUser = uploadData['user'] as Map<String, dynamic>?;
@@ -299,21 +287,13 @@ class AuthenticationService {
 
   Future<Map<String, dynamic>> _request(String method, String path, {Map<String, dynamic>? body, bool authenticated = false}) async {
     final headers = {'Content-Type': 'application/json'};
-    if (authenticated) {
-      final accessToken = await _storage?.read(key: _accessKey);
-      if (accessToken == null || accessToken.isEmpty) {
-        throw Exception('Your login session has expired. Please log in again.');
-      }
-      headers['Authorization'] = 'Bearer $accessToken';
-    }
+    if (authenticated) headers['Authorization'] = 'Bearer ${await _storage?.read(key: _accessKey)}';
     final response = method == 'POST'
         ? await http.post(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
       : method == 'PATCH' ? await http.patch(Uri.parse('$_baseUrl$path'), headers: headers, body: jsonEncode(body ?? {}))
       : method == 'DELETE' ? await http.delete(Uri.parse('$_baseUrl$path'), headers: headers) : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
     final data = response.body.isEmpty ? <String, dynamic>{} : jsonDecode(response.body) as Map<String, dynamic>;
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception(_friendlyMessage(data['message'] ?? 'Something went wrong. Please try again.', path: path));
-    }
+    if (response.statusCode < 200 || response.statusCode >= 300) throw Exception(mapErrorMessage(data['message'] ?? 'Something went wrong. Please try again.', path: path));
     return data;
   }
 
@@ -352,18 +332,18 @@ class AuthenticationService {
     await _preferences?.remove(key);
   }
 
-  String mapErrorMessage(Object message, {required String path}) =>
-      _friendlyMessage(message, path: path);
+  String mapErrorMessage(Object message, {required String path}) {
+    return _friendlyMessage(message, path: path);
+  }
 
-  String _friendlyMessage(Object message, {required String path}) {
+  String _friendlyMessage(Object message, {String? path}) {
     final text = message.toString().toLowerCase();
-    if (text.contains('email') && text.contains('already exists')) return 'An account with this email already exists. Please log in or use a different email.';
+    if (text.contains('already exists')) return 'An account with this email already exists. Please log in or use a different email.';
     if (text.contains('invalid email')) return 'Please enter a valid email address.';
     if (text.contains('invalid email or password')) return 'Invalid email or password. Please try again.';
     if (text.contains('verify your email')) return 'Please verify your email before signing in.';
     if (text.contains('wait') || text.contains('too many')) return 'Too many attempts. Please wait and try again.';
-    final isVerificationCodeEndpoint = path == '/auth/verify-email' || path == '/auth/reset-password';
-    if (isVerificationCodeEndpoint && text.contains('code')) {
+    if ((path == '/auth/verify-email' || path == '/auth/reset-password') && text.contains('code')) {
       return 'The verification code is invalid or expired. Please request a new one.';
     }
     return message.toString();
