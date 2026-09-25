@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
+import 'buy_card_screen.dart';
 import 'models/gift_card_model.dart';
 import 'providers/cards_provider.dart';
 import 'providers/country_provider.dart';
@@ -36,7 +37,10 @@ class CardsScreen extends StatelessWidget {
   const CardsScreen({super.key});
 
   void _onBuyTap(BuildContext context, GiftCardModel card) {
-    showFloatingSnackbar(context, 'Buy Screen Placeholder for ${card.name}');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BuyCardScreen(card: card)),
+    );
   }
 
   void _onSellTap(BuildContext context, GiftCardModel card) {
@@ -58,7 +62,9 @@ class CardsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CardsProvider()),
+        ChangeNotifierProvider(
+          create: (_) => CardsProvider(initialCountryCode: 'US'),
+        ),
         ChangeNotifierProvider(create: (_) => CountryProvider()),
         ChangeNotifierProvider(create: (_) => FilterProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
@@ -116,6 +122,13 @@ class CardsScreen extends StatelessWidget {
             filteredCards.sort((a, b) => b.sellRate.compareTo(a.sellRate));
           }
 
+          Widget section(Widget child) => SliverToBoxAdapter(child: child);
+
+          String? catalogCountryCode(String code) {
+            if (code == 'ALL') return null;
+            return code == 'UK' ? 'GB' : code;
+          }
+
           return Scaffold(
             backgroundColor: isDark
                 ? AppColors.darkBackground
@@ -124,14 +137,18 @@ class CardsScreen extends StatelessWidget {
             body: RefreshIndicator(
               color: AppColors.accentViolet,
               onRefresh: () async {
-                await cardsProvider.fetchCards();
+                await cardsProvider.fetchCards(
+                  countryCode: catalogCountryCode(
+                    countryProvider.selectedCountry.code,
+                  ),
+                  forceRefresh: true,
+                );
               },
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: AppSpacing.sm),
+                slivers: [
+                  section(const SizedBox(height: AppSpacing.sm)),
+                  section(
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.m,
@@ -151,14 +168,16 @@ class CardsScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
+                  section(const SizedBox(height: 12)),
+                  section(
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.m,
                       ),
                       child: CountrySelector(
-                        onTap: () {
-                          showModalBottomSheet(
+                        onTap: () async {
+                          final selected = await showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
@@ -168,62 +187,78 @@ class CardsScreen extends StatelessWidget {
                                   child: const CountryBottomSheet(),
                                 ),
                           );
+                          if (!context.mounted || selected == null) return;
+                          await cardsProvider.fetchCards(
+                            countryCode: catalogCountryCode(selected.code),
+                          );
                         },
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const CategoryChipList(),
-                    const SizedBox(height: 12),
-                    const QuickFilterChipList(),
-                    const SizedBox(height: 20),
-                    const PromoCarousel(),
-                    const SizedBox(height: 20),
-                    const LiveMarketMarquee(),
-                    const SizedBox(height: 24),
+                  ),
+                  section(const SizedBox(height: 16)),
+                  section(const CategoryChipList()),
+                  section(const SizedBox(height: 12)),
+                  section(const QuickFilterChipList()),
+                  section(const SizedBox(height: 20)),
+                  section(const PromoCarousel()),
+                  section(const SizedBox(height: 20)),
+                  section(const LiveMarketMarquee()),
+                  section(const SizedBox(height: 24)),
+                  section(
                     SectionHeader(title: 'Hot Today 🔥', onViewAll: () {}),
-                    const SizedBox(height: 12),
+                  ),
+                  section(const SizedBox(height: 12)),
+                  section(
                     HotTodayList(
                       cards: cardsProvider.allCards
                           .where((c) => c.isTrending)
                           .toList(),
                       onCardTap: (card) => _onCardDetailsTap(context, card),
                     ),
-                    const SizedBox(height: 24),
+                  ),
+                  section(const SizedBox(height: 24)),
+                  section(
                     SectionHeader(
                       title: 'Top Rates Today',
                       subtitle: '• Live',
                       onViewAll: () {},
                     ),
-                    const SizedBox(height: 12),
-                    TopRatesCard(cards: cardsProvider.allCards),
-                    const SizedBox(height: 24),
-                    if (cardsProvider.recentlyViewed.isNotEmpty) ...[
+                  ),
+                  section(const SizedBox(height: 12)),
+                  section(TopRatesCard(cards: cardsProvider.allCards)),
+                  section(const SizedBox(height: 24)),
+                  if (cardsProvider.recentlyViewed.isNotEmpty) ...[
+                    section(
                       SectionHeader(title: 'Recently Viewed', onViewAll: () {}),
-                      const SizedBox(height: 12),
+                    ),
+                    section(const SizedBox(height: 12)),
+                    section(
                       RecentlyViewedList(
                         cards: cardsProvider.recentlyViewed,
                         onTap: (card) => _onCardDetailsTap(context, card),
                       ),
-                      const SizedBox(height: 24),
-                    ],
-                    MarketplaceHeader(count: filteredCards.length),
-                    const SizedBox(height: 16),
-                    if (cardsProvider.state == CardsState.loading)
-                      const ShimmerMarketplace()
-                    else if (cardsProvider.state == CardsState.error)
-                      NetworkErrorWidget(onRetry: cardsProvider.fetchCards)
-                    else if (filteredCards.isEmpty)
-                      const EmptyMarketWidget()
-                    else
-                      MarketplaceGrid(
-                        cards: filteredCards,
-                        onCardTap: (card) => _onCardDetailsTap(context, card),
-                        onBuyTap: (card) => _onBuyTap(context, card),
-                        onSellTap: (card) => _onSellTap(context, card),
-                      ),
-                    const SizedBox(height: 40),
+                    ),
+                    section(const SizedBox(height: 24)),
                   ],
-                ),
+                  section(MarketplaceHeader(count: filteredCards.length)),
+                  section(const SizedBox(height: 16)),
+                  if (cardsProvider.state == CardsState.loading)
+                    section(const ShimmerMarketplace())
+                  else if (cardsProvider.state == CardsState.error)
+                    section(
+                      NetworkErrorWidget(onRetry: cardsProvider.fetchCards),
+                    )
+                  else if (filteredCards.isEmpty)
+                    section(const EmptyMarketWidget())
+                  else
+                    MarketplaceGrid(
+                      cards: filteredCards,
+                      onCardTap: (card) => _onCardDetailsTap(context, card),
+                      onBuyTap: (card) => _onBuyTap(context, card),
+                      onSellTap: (card) => _onSellTap(context, card),
+                    ),
+                  section(const SizedBox(height: 40)),
+                ],
               ),
             ),
           );

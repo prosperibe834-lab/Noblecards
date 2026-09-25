@@ -4,6 +4,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import 'models/order_model.dart';
 import 'services/order_filter_service.dart';
+import 'services/orders_service.dart';
 import 'widgets/order_card.dart';
 import 'widgets/order_empty_widget.dart';
 import 'widgets/order_search_bar.dart';
@@ -48,13 +49,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate API response
-    setState(() {
-      _allOrders = OrderModel.sampleOrders;
-      _isLoading = false;
-    });
+    try {
+      _allOrders = await OrdersService().fetchOrders();
+    } catch (_) {
+      _allOrders = const [];
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   void _resetFilters() {
@@ -175,12 +178,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                 border: Border.all(
                                   color: isDark
                                       ? Colors.white10
-                                      : Colors.black.withOpacity(0.06),
+                                      : Colors.black.withValues(alpha: 0.06),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(
-                                      isDark ? 0.2 : 0.04,
+                                    color: Colors.black.withValues(
+                                      alpha: isDark ? 0.2 : 0.04,
                                     ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
@@ -311,11 +314,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? AppColors.success.withOpacity(0.08)
-                          : AppColors.success.withOpacity(0.05),
+                          ? AppColors.success.withValues(alpha: 0.08)
+                          : AppColors.success.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(AppRadius.lg),
                       border: Border.all(
-                        color: AppColors.success.withOpacity(0.2),
+                        color: AppColors.success.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Row(

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class SearchProvider extends ChangeNotifier {
+  Timer? _debounce;
   String _query = '';
   List<String> _recentSearches = ['Apple', 'Amazon', 'Steam'];
 
@@ -8,8 +11,11 @@ class SearchProvider extends ChangeNotifier {
   List<String> get recentSearches => _recentSearches;
 
   void setQuery(String value) {
-    _query = value;
-    notifyListeners();
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      _query = value;
+      notifyListeners();
+    });
   }
 
   void addRecentSearch(String value) {
@@ -20,7 +26,14 @@ class SearchProvider extends ChangeNotifier {
   }
 
   void clearQuery() {
+    _debounce?.cancel();
     _query = '';
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 }

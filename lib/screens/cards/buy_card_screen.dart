@@ -29,6 +29,7 @@ class BuyCardScreen extends StatelessWidget {
 
   Future<void> _handlePayment(BuildContext context) async {
     final navigator = Navigator.of(context);
+    final buyProvider = context.read<BuyProvider>();
 
     final success = await showDialog<bool>(
       context: context,
@@ -43,20 +44,48 @@ class BuyCardScreen extends StatelessWidget {
 
     if (!context.mounted || success != true) return;
 
-    HapticFeedback.mediumImpact();
-    if (!context.mounted) return;
+    try {
+      HapticFeedback.mediumImpact();
+      final response = await AuthenticationService().authenticatedPost(
+        '/gift-cards/buy',
+        body: {
+          'productId': card.id,
+          'amount': buyProvider.amount,
+          'quantity': buyProvider.quantity,
+          'deliveryEmail': null,
+        },
+      );
 
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const DepositProcessingScreen(
-          amount: 0,
-          currency: 'USD',
-          convertedUsd: 0,
-          navigateToBuySubmissionReceived: true,
+      final purchaseId =
+          response['id']?.toString() ?? response['reference']?.toString() ?? '';
+
+      if (!context.mounted) return;
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DepositProcessingScreen(
+            amount: buyProvider.totalToPay,
+            currency: buyProvider.currencyCode,
+            convertedUsd: buyProvider.totalToPay,
+            navigateToBuySubmissionReceived: true,
+            onProcess: () async => purchaseId,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            error is Exception
+                ? error.toString()
+                : 'Unable to place your purchase right now.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   Future<void> _openRegionSelector(BuildContext context) async {
