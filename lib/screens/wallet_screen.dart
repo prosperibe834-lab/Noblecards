@@ -6,9 +6,9 @@ import '../widgets/wallet_action_button.dart';
 import '../widgets/wallet_transaction_tile.dart';
 import 'deposit_screen.dart';
 import 'withraw/withdraw_screen.dart';
-import 'transaction_history_screen.dart';
+import 'TransactionHistory/widgets/transaction_history_screen.dart';
 import 'transaction_details_screen.dart';
-import 'analytics_screen.dart';
+import 'Analytics/analytics_screen.dart';
 import 'favorite_currencies_screen.dart';
 import '../theme/app_colors.dart';
 
@@ -344,3 +344,6 @@ class WalletScreen extends StatelessWidget {
     );
   }
 }
+
+
+

@@ -11,7 +11,7 @@ import 'screens/authentication/create_new_password/create_new_password_screen.da
 import 'screens/setup_pin_screen.dart';
 import 'screens/biometric_setup_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
-import 'widgets/main_navigation_screen.dart';
+import 'screens/BottomNavigation/main_navigation_screen.dart';
 import 'navigation/app_router.dart';
 import 'navigation/authenticated_entry.dart';
 

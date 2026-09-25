@@ -3,7 +3,7 @@ import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
 import '../../../navigation/authenticated_entry.dart';
-import '../../../widgets/main_navigation_screen.dart';
+import 'package:noble_cards/screens/BottomNavigation/main_navigation_screen.dart';
 import '../services/authentication_service.dart';
 import 'models/otp_timer_model.dart';
 import 'utils/otp_validator.dart';
