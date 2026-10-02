@@ -21,6 +21,21 @@ class TransactionHistoryService {
     return transactions;
   }
 
+  Future<Map<String, dynamic>> fetchDepositDetails(String depositId) {
+    return _fetchDetails('/deposits', depositId);
+  }
+
+  Future<Map<String, dynamic>> fetchWithdrawalDetails(String withdrawalId) {
+    return _fetchDetails('/withdrawals', withdrawalId);
+  }
+
+  Future<Map<String, dynamic>> _fetchDetails(String endpoint, String id) async {
+    if (id.trim().isEmpty) {
+      throw const FormatException('Transaction record has no ID.');
+    }
+    return _authentication.authenticatedGet('$endpoint/${Uri.encodeComponent(id)}');
+  }
+
   static List<TransactionHistoryModel> mapBackendTransactions(List<dynamic> rawItems) {
     final mapped = <TransactionHistoryModel>[];
 
@@ -55,7 +70,7 @@ class TransactionHistoryService {
     final date = _parseDate(item['createdAt'] ?? item['updatedAt']);
 
     return TransactionHistoryModel(
-      id: (item['id'] ?? item['transaction']?['id'] ?? '').toString(),
+      id: (item['id'] ?? '').toString(),
       type: TransactionType.deposit,
       method: method,
       date: date,
@@ -73,7 +88,7 @@ class TransactionHistoryService {
     final date = _parseDate(item['createdAt'] ?? item['updatedAt']);
 
     return TransactionHistoryModel(
-      id: (item['id'] ?? item['reference'] ?? item['transaction']?['id'] ?? '').toString(),
+      id: (item['id'] ?? '').toString(),
       type: TransactionType.withdrawal,
       method: method,
       date: date,

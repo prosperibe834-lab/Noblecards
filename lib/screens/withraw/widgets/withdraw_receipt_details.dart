@@ -36,6 +36,8 @@ class WithdrawReceiptDetails extends StatelessWidget {
         _buildRow(context, Boxicons.bx_globe, 'Country', '${transaction.countryFlag} ${transaction.destinationCountry}', isDark: isDark),
         _buildRow(context, Boxicons.bx_buildings, 'Bank', transaction.destinationBank, isDark: isDark),
         _buildRow(context, Boxicons.bx_credit_card_front, 'Account Number', transaction.destinationAccountMasked, isDark: isDark),
+        if (transaction.failureReason != null)
+          _buildRow(context, Boxicons.bx_error_circle, 'Failure Reason', transaction.failureReason!, isDark: isDark),
         
         const Padding(
           padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -50,7 +52,7 @@ class WithdrawReceiptDetails extends StatelessWidget {
           child: Divider(height: 1, thickness: 1),
         ),
 
-        _buildRow(context, Boxicons.bx_wallet, 'Amount Received', '$destSymbol${numFormat.format(transaction.destinationAmount)}', isDark: isDark, isHighlight: true),
+        _buildRow(context, Boxicons.bx_wallet, 'Amount Received', '$destSymbol${numFormat.format(transaction.amountToReceive ?? transaction.destinationAmount)}', isDark: isDark, isHighlight: true),
       ],
     );
   }

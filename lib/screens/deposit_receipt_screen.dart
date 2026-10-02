@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:intl/intl.dart';
 import '../widgets/glass_card.dart';
 
 class DepositReceiptScreen extends StatelessWidget {
   final double amount;
   final String currency;
   final double convertedUsd;
+  final String? transactionReference;
+  final String? status;
+  final double? fee;
+  final String? paymentMethod;
+  final DateTime? transactionDate;
 
   const DepositReceiptScreen({
     super.key,
     required this.amount,
     required this.currency,
     required this.convertedUsd,
+    this.transactionReference,
+    this.status,
+    this.fee,
+    this.paymentMethod,
+    this.transactionDate,
   });
 
   @override
@@ -73,16 +84,21 @@ class DepositReceiptScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const Divider(),
-              _item("Transaction ID", "TXN-2026-081920"),
-              _item("Status", "COMPLETED", color: Colors.green),
+              _item("Transaction ID", transactionReference ?? "TXN-2026-081920"),
+              _item("Status", (status ?? "COMPLETED").toUpperCase(), color: Colors.green),
               _item("Deposit Amount", "$currency ${amount.toStringAsFixed(2)}"),
               _item(
                 "Exchange Rate",
                 "1 USD = $currency ${(amount / convertedUsd).toStringAsFixed(2)}",
               ),
-              _item("Fee", "$currency 0.00"),
-              _item("Payment Method", "Flutterwave Virtual Account"),
-              _item("Date & Time", "July 28, 2026 • 03:02 PM"),
+              _item("Fee", "$currency ${(fee ?? 0).toStringAsFixed(2)}"),
+              _item("Payment Method", paymentMethod ?? "Flutterwave Virtual Account"),
+              _item(
+                "Date & Time",
+                transactionDate == null
+                    ? "July 28, 2026 • 03:02 PM"
+                    : DateFormat('MMMM d, yyyy • hh:mm a').format(transactionDate!.toLocal()),
+              ),
               const Divider(height: 32),
               const Text(
                 "NobleCards Financial Services Ltd.",

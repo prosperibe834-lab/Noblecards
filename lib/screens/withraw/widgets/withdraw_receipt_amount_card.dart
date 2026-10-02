@@ -30,6 +30,14 @@ class WithdrawReceiptAmountCard extends StatelessWidget {
     }
 
     final destSymbol = getCurrencySymbol(transaction.destinationCurrency);
+    final statusMessage = switch (transaction.status.toUpperCase()) {
+      'SUCCESSFUL' || 'COMPLETED' => 'Successfully sent to your bank',
+      'PENDING' => 'Withdrawal is pending',
+      'PROCESSING' => 'Withdrawal is being processed',
+      'FAILED' || 'REJECTED' => 'Withdrawal failed',
+      'CANCELLED' || 'CANCELED' => 'Withdrawal was cancelled',
+      _ => 'Withdrawal status: ${transaction.status}',
+    };
 
     return Container(
       width: double.infinity,
@@ -92,7 +100,7 @@ class WithdrawReceiptAmountCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '$destSymbol${destFormat.format(transaction.destinationAmount)}',
+                  '$destSymbol${destFormat.format(transaction.amountToReceive ?? transaction.destinationAmount)}',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontSize: 28, 
                     color: AppColors.primary,
@@ -113,7 +121,7 @@ class WithdrawReceiptAmountCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Successfully sent to your bank',
+              statusMessage,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
               ),

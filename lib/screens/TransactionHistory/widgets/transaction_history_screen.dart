@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../services/wallet_service.dart';
+import '../../deposit_receipt_screen.dart';
+import '../../withraw/models/withdrawal_transaction_model.dart';
+import '../../withraw/withdrawal_receipt_screen.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -142,6 +145,89 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     return filtered;
   }
 
+  Future<void> _openTransaction(TransactionHistoryModel transaction) async {
+    if (transaction.id.trim().isEmpty) {
+      _showReceiptError('This transaction has no receipt ID.');
+      return;
+    }
+
+    try {
+      if (transaction.type == TransactionType.deposit) {
+        final details = await _service.fetchDepositDetails(transaction.id);
+        final date = DateTime.tryParse(
+          (details['createdAt'] ?? details['updatedAt'] ?? '').toString(),
+        );
+        final amount = _requiredAmount(details, 'amount');
+        final convertedUsd = _requiredAmount(details, 'netAmount');
+        final currency = (details['currencyCode'] ?? details['currency'] ?? '')
+            .toString();
+        final reference = (details['transactionReference'] ??
+                details['transactionId'] ??
+                details['id'] ??
+                '')
+            .toString();
+        final status = (details['transactionStatus'] ?? details['status'] ?? '')
+            .toString();
+        final paymentMethod =
+            (details['paymentMethod'] ?? details['provider'] ?? '').toString();
+        if (date == null || currency.isEmpty || reference.isEmpty || status.isEmpty || paymentMethod.isEmpty) {
+          throw const FormatException('Deposit details are incomplete.');
+        }
+        if (!mounted) return;
+        await Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) => DepositReceiptScreen(
+              amount: amount,
+              currency: currency,
+              convertedUsd: convertedUsd,
+              transactionReference: reference,
+              status: status,
+              fee: _requiredAmount(details, 'fee'),
+              paymentMethod: _formatLabel(paymentMethod),
+              transactionDate: date,
+            ),
+          ),
+        );
+        return;
+      }
+
+      final details = await _service.fetchWithdrawalDetails(transaction.id);
+      final receipt = WithdrawalTransactionModel.fromBackendJson(details);
+      if (!mounted) return;
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => WithdrawalReceiptScreen(
+            transaction: receipt,
+            returnToPreviousScreen: true,
+          ),
+        ),
+      );
+    } catch (_) {
+      _showReceiptError('Unable to load this transaction receipt.');
+    }
+  }
+
+  double _requiredAmount(Map<String, dynamic> details, String key) {
+    final value = details[key];
+    final amount = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '');
+    if (amount == null || !amount.isFinite) {
+      throw FormatException('Transaction details have an invalid $key.');
+    }
+    return amount;
+  }
+
+  String _formatLabel(String value) => value
+      .split('_')
+      .map((part) => part.isEmpty ? part : '${part[0]}${part.substring(1).toLowerCase()}')
+      .join(' ');
+
+  void _showReceiptError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -274,10 +360,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         (context, index) {
           return TransactionListItem(
             transaction: data[index],
-            onTap: () {
-              // Stub for Transaction Details routing. 
-              // Reusing existing architecture if available.
-            },
+            onTap: () => _openTransaction(data[index]),
           );
         },
         childCount: data.length,

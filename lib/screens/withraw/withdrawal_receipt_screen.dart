@@ -13,9 +13,13 @@ import 'widgets/withdraw_receipt_details.dart';
 
 class WithdrawalReceiptScreen extends StatefulWidget {
   final WithdrawalTransactionModel transaction;
+  final bool returnToPreviousScreen;
 
-  const WithdrawalReceiptScreen({Key? key, required this.transaction})
-    : super(key: key);
+  const WithdrawalReceiptScreen({
+    Key? key,
+    required this.transaction,
+    this.returnToPreviousScreen = false,
+  }) : super(key: key);
 
   @override
   State<WithdrawalReceiptScreen> createState() =>
@@ -57,6 +61,10 @@ class _WithdrawalReceiptScreenState extends State<WithdrawalReceiptScreen>
   }
 
   void _onDone() {
+    if (widget.returnToPreviousScreen) {
+      Navigator.of(context).pop();
+      return;
+    }
     Navigator.of(
       context,
     ).popUntil((route) => route.settings.name == '/deposit' || route.isFirst);
@@ -260,7 +268,7 @@ class _WithdrawalReceiptScreenState extends State<WithdrawalReceiptScreen>
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Completed',
+                    _formatStatus(widget.transaction.status),
                     style: TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
@@ -295,6 +303,11 @@ class _WithdrawalReceiptScreenState extends State<WithdrawalReceiptScreen>
       ],
     );
   }
+
+  String _formatStatus(String status) => status
+      .split('_')
+      .map((part) => part.isEmpty ? part : '${part[0]}${part.substring(1).toLowerCase()}')
+      .join(' ');
 
   Widget _buildActionButtons(bool isDark) {
     return Column(

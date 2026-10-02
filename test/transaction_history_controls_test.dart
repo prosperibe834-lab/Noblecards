@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:noble_cards/screens/TransactionHistory/widgets/transaction_balance_card.dart';
 import 'package:noble_cards/screens/TransactionHistory/widgets/transaction_filter_sheet.dart';
 import 'package:noble_cards/screens/TransactionHistory/widgets/transaction_filter_tabs.dart';
+import 'package:noble_cards/screens/TransactionHistory/models/transaction_history_model.dart';
+import 'package:noble_cards/screens/TransactionHistory/widgets/transaction_list_item.dart';
 
 void main() {
   testWidgets('balance eye toggles between visible and masked values', (tester) async {
@@ -49,6 +51,40 @@ void main() {
       await tester.tap(find.text(tab));
       expect(selectedTabs.last, tab);
     }
+  });
+
+  testWidgets('each transaction row invokes its own selected callback', (tester) async {
+    final selectedIds = <String>[];
+    final now = DateTime.now();
+    final transactions = [
+      TransactionHistoryModel(
+        id: 'deposit-a', type: TransactionType.deposit, method: 'Bank Transfer',
+        date: now, amount: 100, status: TransactionStatus.completed,
+      ),
+      TransactionHistoryModel(
+        id: 'deposit-b', type: TransactionType.deposit, method: 'Card',
+        date: now, amount: 200, status: TransactionStatus.pending,
+      ),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListView(
+            children: transactions
+                .map((transaction) => TransactionListItem(
+                      transaction: transaction,
+                      onTap: () => selectedIds.add(transaction.id),
+                    ))
+                .toList(),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(TransactionListItem).at(0));
+    await tester.tap(find.byType(TransactionListItem).at(1));
+    expect(selectedIds, ['deposit-a', 'deposit-b']);
   });
 
   testWidgets('filter sheet applies selected filters and reset restores defaults', (tester) async {
