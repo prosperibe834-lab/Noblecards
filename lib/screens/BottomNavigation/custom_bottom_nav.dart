@@ -96,6 +96,7 @@ class CustomBottomNav extends StatelessWidget {
           children: [
             // Outer Dock Bar
             Container(
+              width: double.infinity,
               height: 68,
               decoration: BoxDecoration(
                 color: navBgColor,
@@ -256,10 +257,17 @@ class _WalletNavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
+      child: LayoutBuilder(
+        builder: (context, constraints) => SizedBox(
+          height: constraints.maxHeight,
+          child: OverflowBox(
+            alignment: Alignment.center,
+            minHeight: 0,
+            maxHeight: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
           // Raised circular wallet button with ambient radial glow
           Transform.translate(
             offset: const Offset(0, -6),
@@ -336,7 +344,10 @@ class _WalletNavItem extends StatelessWidget {
               ],
             ),
           ),
-        ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

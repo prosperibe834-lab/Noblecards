@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../services/wallet_service.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -17,7 +18,7 @@ import 'transaction_history_empty_state.dart';
 import 'transaction_history_error.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
-  const TransactionHistoryScreen({Key? key}) : super(key: key);
+  const TransactionHistoryScreen({super.key});
 
   @override
   State<TransactionHistoryScreen> createState() => _TransactionHistoryScreenState();
@@ -25,13 +26,17 @@ class TransactionHistoryScreen extends StatefulWidget {
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   final TransactionHistoryService _service = TransactionHistoryService();
-  
+  final WalletService _walletService = WalletService();
+
   List<TransactionHistoryModel> _transactions = [];
   bool _isLoading = true;
   bool _hasError = false;
-  
+
   bool _isBalanceVisible = true;
-  String _activeTab = 'All';
+  TransactionHistoryFilter _filter = const TransactionHistoryFilter();
+  double _walletBalance = 0;
+  double _totalDeposits = 0;
+  double _totalWithdrawals = 0;
 
   @override
   void initState() {
@@ -46,12 +51,24 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     });
 
     try {
-      final data = await _service.fetchTransactions();
+      final results = await Future.wait<dynamic>([
+        _walletService.getUsdBalance(),
+        _service.fetchTransactions(),
+      ]);
+      final walletBalance = results[0] as double;
+      final transactions = results[1] as List<TransactionHistoryModel>;
+
+      final deposits = transactions.where((t) => t.type == TransactionType.deposit).toList();
+      final withdrawals = transactions.where((t) => t.type == TransactionType.withdrawal).toList();
+
       setState(() {
-        _transactions = data;
+        _walletBalance = walletBalance;
+        _transactions = transactions;
+        _totalDeposits = deposits.fold<double>(0, (sum, item) => sum + item.amount);
+        _totalWithdrawals = withdrawals.fold<double>(0, (sum, item) => sum + item.amount);
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (_) {
       setState(() {
         _hasError = true;
         _isLoading = false;
@@ -62,19 +79,67 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   Future<void> _openFilterSheet() async {
     final selectedType = await TransactionFilterSheet.show(
       context,
-      initialType: _activeTab,
+      initialFilter: _filter,
     );
     if (!mounted || selectedType == null) return;
-    setState(() => _activeTab = selectedType);
+    setState(() => _filter = selectedType);
   }
 
   List<TransactionHistoryModel> get _filteredTransactions {
-    if (_activeTab == 'Deposits') {
-      return _transactions.where((t) => t.type == TransactionType.deposit).toList();
-    } else if (_activeTab == 'Withdrawals') {
-      return _transactions.where((t) => t.type == TransactionType.withdrawal).toList();
+    final now = DateTime.now();
+    DateTime? startDate;
+    DateTime? endDate;
+    switch (_filter.dateRange) {
+      case 'Today':
+        startDate = DateTime(now.year, now.month, now.day);
+        break;
+      case '7 Days':
+        startDate = now.subtract(const Duration(days: 7));
+        break;
+      case '30 Days':
+        startDate = now.subtract(const Duration(days: 30));
+        break;
+      case 'Custom':
+        startDate = _filter.customDateRange?.start;
+        endDate = _filter.customDateRange == null
+            ? null
+            : DateTime(
+                _filter.customDateRange!.end.year,
+                _filter.customDateRange!.end.month,
+                _filter.customDateRange!.end.day,
+                23,
+                59,
+                59,
+                999,
+              );
     }
-    return _transactions;
+
+    final filtered = _transactions.where((transaction) {
+      final matchesType = _filter.type == 'All' ||
+          (_filter.type == 'Deposits' && transaction.type == TransactionType.deposit) ||
+          (_filter.type == 'Withdrawals' && transaction.type == TransactionType.withdrawal);
+      final matchesStatus = _filter.status == 'All' ||
+          (_filter.status == 'Completed' && transaction.status == TransactionStatus.completed) ||
+          (_filter.status == 'Pending' &&
+              (transaction.status == TransactionStatus.pending || transaction.status == TransactionStatus.processing)) ||
+          (_filter.status == 'Failed' &&
+              (transaction.status == TransactionStatus.failed || transaction.status == TransactionStatus.cancelled));
+      final matchesDate = (startDate == null || !transaction.date.isBefore(startDate)) &&
+          (endDate == null || !transaction.date.isAfter(endDate));
+      return matchesType && matchesStatus && matchesDate;
+    }).toList();
+
+    switch (_filter.sortBy) {
+      case 'Oldest':
+        filtered.sort((left, right) => left.date.compareTo(right.date));
+        break;
+      case 'Highest Amount':
+        filtered.sort((left, right) => right.amount.compareTo(left.amount));
+        break;
+      default:
+        filtered.sort((left, right) => right.date.compareTo(left.date));
+    }
+    return filtered;
   }
 
   @override
@@ -141,17 +206,25 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         if (!mounted) return;
                         setState(() => _isBalanceVisible = !_isBalanceVisible);
                       },
-                      balance: 2450.80, // Bound this to user wallet state eventually
+                      balance: _walletBalance,
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    const TransactionSummaryCards(
-                      totalDeposits: 4320.00,
-                      totalWithdrawals: 1869.20,
+                    TransactionSummaryCards(
+                      totalDeposits: _totalDeposits,
+                      totalWithdrawals: _totalWithdrawals,
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     TransactionFilterTabs(
-                      activeTab: _activeTab,
-                      onTabChanged: (tab) => setState(() => _activeTab = tab),
+                      activeTab: _filter.type,
+                      onTabChanged: (tab) => setState(() {
+                        _filter = TransactionHistoryFilter(
+                          type: tab,
+                          status: _filter.status,
+                          dateRange: _filter.dateRange,
+                          sortBy: _filter.sortBy,
+                          customDateRange: _filter.customDateRange,
+                        );
+                      }),
                     ),
                     const SizedBox(height: AppSpacing.md),
                   ],
@@ -190,7 +263,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         child: SizedBox(
           height: 300,
           child: TransactionHistoryEmptyState(
-            onReset: () => setState(() => _activeTab = 'All'),
+            onReset: _loadData,
           ),
         ),
       );

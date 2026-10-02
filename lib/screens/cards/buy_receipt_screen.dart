@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import './models/sell_receipt_model.dart'; // Reusing VerificationStatus enum mapping
+import './models/purchased_gift_card.dart';
 import './providers/buy_receipt_provider.dart';
 import './widgets/receipt_detail_tile.dart'; // Reused from Sale Receipt
 import './widgets/receipt_header.dart'; // Reused from Sale Receipt
@@ -135,7 +136,7 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
 
                         // Map PurchaseStatus to VerificationStatus for the reused banner
                         ReceiptStatusBanner(
-                          status: VerificationStatus.completed,
+                          status: _verificationStatus(data.status),
                         ),
                         const SizedBox(height: 24),
 
@@ -159,9 +160,18 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: const Icon(
-                                  Boxicons.bxl_amazon,
-                                  color: Colors.orange,
+                                child: Icon(
+                                  data.brandName.toLowerCase().contains(
+                                        'amazon',
+                                      )
+                                      ? Boxicons.bxl_amazon
+                                      : Boxicons.bx_gift,
+                                  color:
+                                      data.brandName.toLowerCase().contains(
+                                        'amazon',
+                                      )
+                                      ? Colors.orange
+                                      : AppColors.success,
                                   size: 14,
                                 ),
                               ),
@@ -184,9 +194,9 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                           label: 'Region',
                           customValueWidget: Row(
                             children: [
-                              const Text(
-                                '🇺🇸',
-                                style: TextStyle(fontSize: 14),
+                              Text(
+                                data.countryFlag,
+                                style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -219,14 +229,16 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                         ReceiptDetailTile(
                           icon: Boxicons.bx_dollar_circle,
                           label: 'Face Value',
-                          value: '\$${data.faceValue.toStringAsFixed(2)}',
+                          value:
+                              '${data.currencyCode} ${data.faceValue.toStringAsFixed(2)}',
                         ),
                         _buildDivider(isDark),
 
                         ReceiptDetailTile(
                           icon: Boxicons.bx_wallet,
                           label: 'Amount Paid',
-                          value: '\$${data.amountPaid.toStringAsFixed(2)}',
+                          value:
+                              '${data.paymentCurrencyCode} ${data.amountPaid.toStringAsFixed(2)}',
                           isHighlighted: true,
                           isGreen: true,
                         ),
@@ -250,9 +262,13 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                           icon: Boxicons.bx_check_shield,
                           label: 'Status',
                           customValueWidget: Text(
-                            'Completed',
+                            _statusLabel(data.status),
                             style: TextStyle(
-                              color: AppColors.success,
+                              color: data.status == PurchaseStatus.completed
+                                  ? AppColors.success
+                                  : data.status == PurchaseStatus.failed
+                                  ? AppColors.error
+                                  : AppColors.warning,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
@@ -264,34 +280,38 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                 ),
 
                 const SizedBox(height: 24),
-                ReadyToUseInfoCard(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GiftCardDetailsScreen(card: data),
-                      ),
-                    );
-                  },
-                ),
+                if (data.status == PurchaseStatus.completed &&
+                    data.cardCode.isNotEmpty)
+                  ReadyToUseInfoCard(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GiftCardDetailsScreen(card: data),
+                        ),
+                      );
+                    },
+                  ),
                 const SizedBox(height: 24),
 
                 // Primary Button
-                _buildActionButton(
-                  context,
-                  label: 'View Gift Card',
-                  icon: Boxicons.bx_credit_card_front,
-                  isPrimary: true,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GiftCardDetailsScreen(card: data),
-                      ),
-                    );
-                  },
-                ),
+                if (data.status == PurchaseStatus.completed &&
+                    data.cardCode.isNotEmpty)
+                  _buildActionButton(
+                    context,
+                    label: 'View Gift Card',
+                    icon: Boxicons.bx_credit_card_front,
+                    isPrimary: true,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GiftCardDetailsScreen(card: data),
+                        ),
+                      );
+                    },
+                  ),
                 const SizedBox(height: 12),
 
                 // Secondary Button
@@ -334,6 +354,19 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
       height: 1,
     );
   }
+
+  VerificationStatus _verificationStatus(PurchaseStatus status) =>
+      switch (status) {
+        PurchaseStatus.completed => VerificationStatus.completed,
+        PurchaseStatus.failed => VerificationStatus.rejected,
+        PurchaseStatus.pending => VerificationStatus.pending,
+      };
+
+  String _statusLabel(PurchaseStatus status) => switch (status) {
+    PurchaseStatus.completed => 'Completed',
+    PurchaseStatus.failed => 'Failed',
+    PurchaseStatus.pending => 'Processing',
+  };
 
   Widget _buildActionButton(
     BuildContext context, {

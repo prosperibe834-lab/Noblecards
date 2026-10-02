@@ -4,8 +4,14 @@ import '../models/gift_card_region_model.dart';
 import '../services/region_service.dart';
 
 class RegionProvider extends ChangeNotifier {
-  RegionProvider({RegionService? service, bool loadInitialRegions = true})
-    : _service = service ?? RegionService() {
+  RegionProvider({
+    RegionService? service,
+    bool loadInitialRegions = true,
+    List<GiftCardRegionModel>? initialRegions,
+    GiftCardRegionModel? initialRegion,
+  }) : _service = service ?? RegionService(),
+       _regions = initialRegions ?? const [],
+       _selectedRegion = initialRegion {
     if (loadInitialRegions) loadRegions();
   }
 
@@ -13,7 +19,7 @@ class RegionProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   String _searchQuery = '';
-  List<GiftCardRegionModel> _regions = [];
+  List<GiftCardRegionModel> _regions;
   GiftCardRegionModel? _selectedRegion;
 
   bool get isLoading => _isLoading;
@@ -64,7 +70,13 @@ class RegionProvider extends ChangeNotifier {
 
   void replaceRegions(List<GiftCardRegionModel> regions) {
     _regions = regions;
-    _selectedRegion = regions.isEmpty ? null : regions.first;
+    final selectedCountryCode = _selectedRegion?.countryCode;
+    _selectedRegion = regions.isEmpty
+        ? null
+        : regions.firstWhere(
+            (region) => region.countryCode == selectedCountryCode,
+            orElse: () => regions.first,
+          );
     notifyListeners();
   }
 }

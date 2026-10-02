@@ -24,9 +24,10 @@ class RegionService {
     final byCountry = <String, GiftCardRegionModel>{};
 
     for (final product in products.whereType<Map>()) {
-      final countryCode = (product['countryCode'] ?? product['country'] ?? 'US')
+      final countryCode = (product['countryCode'] ?? product['country'] ?? '')
           .toString()
           .toUpperCase();
+      if (countryCode.isEmpty) continue;
       final currencyCode = (product['currency'] ?? 'USD')
           .toString()
           .toUpperCase();
@@ -57,10 +58,10 @@ class RegionService {
           currencySymbol: _currencySymbol(currencyCode),
           buyRate: rate,
           sellRate: rate,
-          availableDenominations: denominations.isEmpty
-              ? const ['50', '100', '250', '500']
-              : denominations,
+          availableDenominations: denominations,
           isAvailable: true,
+          minimumAmount: product['minimumAmount']?.toString() ?? '',
+          maximumAmount: product['maximumAmount']?.toString() ?? '',
         ),
       );
     }

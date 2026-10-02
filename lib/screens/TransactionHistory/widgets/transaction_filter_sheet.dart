@@ -4,23 +4,39 @@ import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_theme.dart';
 
+class TransactionHistoryFilter {
+  final String type;
+  final String status;
+  final String dateRange;
+  final String sortBy;
+  final DateTimeRange? customDateRange;
+
+  const TransactionHistoryFilter({
+    this.type = 'All',
+    this.status = 'All',
+    this.dateRange = '30 Days',
+    this.sortBy = 'Newest',
+    this.customDateRange,
+  });
+}
+
 class TransactionFilterSheet extends StatefulWidget {
-  final String initialType;
+  final TransactionHistoryFilter initialFilter;
 
   const TransactionFilterSheet({
     Key? key,
-    required this.initialType,
+    required this.initialFilter,
   }) : super(key: key);
 
-  static Future<String?> show(
+  static Future<TransactionHistoryFilter?> show(
     BuildContext context, {
-    String initialType = 'All',
+    TransactionHistoryFilter initialFilter = const TransactionHistoryFilter(),
   }) {
-    return showModalBottomSheet<String>(
+    return showModalBottomSheet<TransactionHistoryFilter>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => TransactionFilterSheet(initialType: initialType),
+      builder: (context) => TransactionFilterSheet(initialFilter: initialFilter),
     );
   }
 
@@ -30,11 +46,19 @@ class TransactionFilterSheet extends StatefulWidget {
 
 class _TransactionFilterSheetState extends State<TransactionFilterSheet> {
   late String _selectedType;
+  late String _selectedStatus;
+  late String _selectedDateRange;
+  late String _selectedSortBy;
+  DateTimeRange? _customDateRange;
 
   @override
   void initState() {
     super.initState();
-    _selectedType = widget.initialType;
+    _selectedType = widget.initialFilter.type;
+    _selectedStatus = widget.initialFilter.status;
+    _selectedDateRange = widget.initialFilter.dateRange;
+    _selectedSortBy = widget.initialFilter.sortBy;
+    _customDateRange = widget.initialFilter.customDateRange;
   }
 
   @override
@@ -77,11 +101,29 @@ class _TransactionFilterSheetState extends State<TransactionFilterSheet> {
                   onSelected: (value) => setState(() => _selectedType = value),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                _buildFilterSection('Status', ['All', 'Completed', 'Pending', 'Failed'], 'All', isDark),
+                _buildFilterSection(
+                  'Status',
+                  ['All', 'Completed', 'Pending', 'Failed'],
+                  _selectedStatus,
+                  isDark,
+                  onSelected: (value) => setState(() => _selectedStatus = value),
+                ),
                 const SizedBox(height: AppSpacing.lg),
-                _buildFilterSection('Date Range', ['Today', '7 Days', '30 Days', 'Custom'], '30 Days', isDark),
+                _buildFilterSection(
+                  'Date Range',
+                  ['Today', '7 Days', '30 Days', 'Custom'],
+                  _selectedDateRange,
+                  isDark,
+                  onSelected: _selectDateRange,
+                ),
                 const SizedBox(height: AppSpacing.lg),
-                _buildFilterSection('Sort By', ['Newest', 'Oldest', 'Highest Amount'], 'Newest', isDark),
+                _buildFilterSection(
+                  'Sort By',
+                  ['Newest', 'Oldest', 'Highest Amount'],
+                  _selectedSortBy,
+                  isDark,
+                  onSelected: (value) => setState(() => _selectedSortBy = value),
+                ),
               ],
             ),
           ),
@@ -89,7 +131,7 @@ class _TransactionFilterSheetState extends State<TransactionFilterSheet> {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pop(context, const TransactionHistoryFilter()),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                     side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
@@ -102,7 +144,16 @@ class _TransactionFilterSheetState extends State<TransactionFilterSheet> {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context, _selectedType),
+                  onPressed: () => Navigator.pop(
+                    context,
+                    TransactionHistoryFilter(
+                      type: _selectedType,
+                      status: _selectedStatus,
+                      dateRange: _selectedDateRange,
+                      sortBy: _selectedSortBy,
+                      customDateRange: _customDateRange,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
@@ -116,6 +167,25 @@ class _TransactionFilterSheetState extends State<TransactionFilterSheet> {
         ],
       ),
     );
+  }
+
+  Future<void> _selectDateRange(String value) async {
+    if (value == 'Custom') {
+      final now = DateTime.now();
+      final range = await showDateRangePicker(
+        context: context,
+        firstDate: DateTime(2000),
+        lastDate: now,
+        initialDateRange: _customDateRange,
+      );
+      if (range == null || !mounted) return;
+      setState(() {
+        _selectedDateRange = value;
+        _customDateRange = range;
+      });
+      return;
+    }
+    setState(() => _selectedDateRange = value);
   }
 
   Widget _buildFilterSection(

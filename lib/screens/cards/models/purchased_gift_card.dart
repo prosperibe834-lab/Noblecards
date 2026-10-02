@@ -9,8 +9,12 @@ class PurchasedGiftCard {
   final double faceValue;
   final double amountPaid;
   final String paymentMethod;
+  final String currencyCode;
+  final String paymentCurrencyCode;
+  final String countryFlag;
   final String purchaseDate;
   final PurchaseStatus status;
+  final String? providerMessage;
 
   // Card Details for the View Screen
   final String cardCode;
@@ -26,8 +30,12 @@ class PurchasedGiftCard {
     required this.faceValue,
     required this.amountPaid,
     required this.paymentMethod,
+    this.currencyCode = 'USD',
+    this.paymentCurrencyCode = 'USD',
+    this.countryFlag = '🌍',
     required this.purchaseDate,
     required this.status,
+    this.providerMessage,
     required this.cardCode,
     this.pin,
     this.barcodeUrl,

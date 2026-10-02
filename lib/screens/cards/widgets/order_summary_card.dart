@@ -73,7 +73,11 @@ class OrderSummaryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           _buildRow(
             'Rate',
-            '${provider.currentRate.toStringAsFixed(2)}%',
+            provider.isLoadingRate
+                ? '...'
+                : provider.quoteError != null
+                ? 'Unavailable'
+                : '${provider.currentRate.toStringAsFixed(2)}%',
             subTextColor,
             textColor,
           ),
@@ -93,7 +97,11 @@ class OrderSummaryCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '${provider.currencySymbol}${provider.totalToPay.toStringAsFixed(2)}',
+                provider.isLoadingRate
+                    ? '...'
+                    : provider.quoteError != null || provider.totalToPay == null
+                    ? 'Unavailable'
+                    : '\$${provider.totalToPay!.toStringAsFixed(2)}',
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 20,

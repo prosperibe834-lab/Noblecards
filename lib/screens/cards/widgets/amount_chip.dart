@@ -4,12 +4,14 @@ import 'package:noble_cards/theme/app_radius.dart';
 
 class AmountChip extends StatelessWidget {
   final double amount;
+  final String currencySymbol;
   final bool isSelected;
   final VoidCallback onTap;
 
   const AmountChip({
     Key? key,
     required this.amount,
+    this.currencySymbol = r'$',
     required this.isSelected,
     required this.onTap,
   }) : super(key: key);
@@ -35,7 +37,7 @@ class AmountChip extends StatelessWidget {
           ),
         ),
         child: Text(
-          '\$${amount.toInt()}',
+          '$currencySymbol${amount == amount.truncateToDouble() ? amount.toInt() : amount.toStringAsFixed(2)}',
           style: TextStyle(
             color: isSelected
                 ? AppColors.primary

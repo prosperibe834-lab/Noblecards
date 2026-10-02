@@ -7,6 +7,7 @@ import 'package:noble_cards/theme/app_spacing.dart';
 import 'package:noble_cards/screens/TransactionPin/pin_auth_dialog.dart';
 import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
+import 'package:noble_cards/screens/cards/buy_receipt_screen.dart';
 
 import 'models/gift_card_model.dart';
 import 'models/gift_card_region_model.dart';
@@ -30,15 +31,65 @@ class BuyCardScreen extends StatelessWidget {
   Future<void> _handlePayment(BuildContext context) async {
     final navigator = Navigator.of(context);
     final buyProvider = context.read<BuyProvider>();
+    final region = context.read<RegionProvider>().selectedRegion;
+
+    if (region == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select a supported country first.')),
+      );
+      return;
+    }
+    final amount = buyProvider.amount;
+    final quantity = buyProvider.quantity;
+    final minimum = double.tryParse(region.minimumAmount);
+    final maximum = double.tryParse(region.maximumAmount);
+    final denominations = region.availableDenominations
+        .map((value) => double.tryParse(value))
+        .whereType<double>()
+        .toList();
+    if (amount <= 0 ||
+        (minimum != null && amount < minimum) ||
+        (maximum != null && amount > maximum) ||
+        (denominations.isNotEmpty && !denominations.contains(amount))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a supported gift-card amount.')),
+      );
+      return;
+    }
+
+    await buyProvider.refreshQuote();
+    if (!context.mounted) return;
+    if (!buyProvider.hasCurrentQuote) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            buyProvider.quoteError ??
+                'Buy pricing is currently unavailable. Please try again.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    if (buyProvider.selectedRegion?.id != region.id ||
+        buyProvider.amount != amount ||
+        buyProvider.quantity != quantity) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'The selected product or country changed. Review the quote and try again.',
+          ),
+        ),
+      );
+      return;
+    }
+    final customerPriceUsd = buyProvider.totalToPay!;
 
     final success = await showDialog<bool>(
       context: context,
       builder: (_) => PinAuthDialog(
         onValidatePin: (pin) =>
             AuthenticationService().verifyTransactionPin(pin),
-        onSuccess: (pin) {
-          navigator.pop(true);
-        },
       ),
     );
 
@@ -46,33 +97,38 @@ class BuyCardScreen extends StatelessWidget {
 
     try {
       HapticFeedback.mediumImpact();
-      final response = await AuthenticationService().authenticatedPost(
-        '/gift-cards/buy',
-        body: {
-          'productId': card.id,
-          'amount': buyProvider.amount,
-          'quantity': buyProvider.quantity,
-          'deliveryEmail': null,
-        },
-      );
-
-      final purchaseId =
-          response['id']?.toString() ?? response['reference']?.toString() ?? '';
-
       if (!context.mounted) return;
 
-      await Navigator.push(
-        context,
+      final result = await navigator.push<Object?>(
         MaterialPageRoute(
           builder: (_) => DepositProcessingScreen(
-            amount: buyProvider.totalToPay,
-            currency: buyProvider.currencyCode,
-            convertedUsd: buyProvider.totalToPay,
-            navigateToBuySubmissionReceived: true,
-            onProcess: () async => purchaseId,
+            amount: customerPriceUsd,
+            currency: 'USD',
+            convertedUsd: customerPriceUsd,
+            onProcessTransaction: () =>
+                AuthenticationService().authenticatedPost(
+                  '/gift-cards/buy',
+                  body: {
+                    'productId': card.id,
+                    'countryCode': region.countryCode,
+                    'currencyCode': region.currencyCode,
+                    'amount': amount,
+                    'quantity': quantity,
+                  },
+                ),
+            transactionResultBuilder: (response) => BuyReceiptScreen(
+              transactionId: response['id']?.toString() ?? '',
+            ),
           ),
         ),
       );
+      if (result != null && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
     } catch (error) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,12 +156,13 @@ class BuyCardScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           builder: (_) => ChangeNotifierProvider.value(
             value: regionProvider,
-            child: const RegionBottomSheet(),
+            child: const RegionBottomSheet(rateLabel: 'Buy'),
           ),
         );
 
     if (pickedRegion != null) {
       buyProvider.setRegion(pickedRegion);
+      context.read<RegionProvider>().selectRegion(pickedRegion);
     }
   }
 
@@ -116,11 +173,27 @@ class BuyCardScreen extends StatelessWidget {
         ? AppColors.darkBackground
         : AppColors.lightBackground;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
+    GiftCardRegionModel? initialRegion;
+    for (final region in card.supportedRegions) {
+      if (region.countryCode == card.countryCode &&
+          region.currencyCode == card.currency) {
+        initialRegion = region;
+        break;
+      }
+    }
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => BuyProvider()),
-        ChangeNotifierProvider(create: (_) => RegionProvider()),
+        ChangeNotifierProvider(
+          create: (_) => BuyProvider(card: card, initialRegion: initialRegion),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RegionProvider(
+            loadInitialRegions: false,
+            initialRegions: card.supportedRegions,
+            initialRegion: initialRegion,
+          ),
+        ),
       ],
       child: Scaffold(
         backgroundColor: bgColor,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/providers/exchange_rate_provider.dart';
+import '../models/gift_card_model.dart';
 import '../models/gift_card_region_model.dart';
 
 class GiftCardSellService {
@@ -16,6 +17,127 @@ class GiftCardSellService {
     );
     final data = response['data'];
     return data is List ? data : const [];
+  }
+
+  Future<List<GiftCardModel>> getCatalogCards() async {
+    final results = await Future.wait<Object?>([
+      getCatalog(),
+      _authentication
+          .authenticatedGet('/gift-cards/sell/rates')
+          .then((response) => response['data'], onError: (_) => const []),
+    ]);
+    final catalog = results[0] as List<dynamic>;
+    final rateProducts = results[1];
+    return catalog
+        .whereType<Map>()
+        .map((product) {
+          final countries = product['countries'] is List
+              ? (product['countries'] as List).whereType<Map>().toList()
+              : const <Map>[];
+          final firstCountry = countries.isEmpty
+              ? const <String, dynamic>{}
+              : countries.first;
+          final countryCode = (firstCountry['code'] ?? '')
+              .toString()
+              .toUpperCase();
+          final currency = (firstCountry['currency'] ?? '')
+              .toString()
+              .toUpperCase();
+          final cardTypes = product['card_types'] is List
+              ? (product['card_types'] as List)
+                    .map((type) => type.toString())
+                    .toList()
+              : const <String>[];
+          final cardType = cardTypes.contains('ecode')
+              ? 'ecode'
+              : (cardTypes.isEmpty ? 'ecode' : cardTypes.first);
+          final rateProduct = rateProducts is List
+              ? rateProducts.whereType<Map>().firstWhere(
+                  (item) =>
+                      item['slug']?.toString() == product['slug']?.toString(),
+                  orElse: () => <String, dynamic>{},
+                )
+              : const <String, dynamic>{};
+          final rates = rateProduct['rates'];
+          final providerRate = _providerRate(rates, currency, cardType, 100);
+          final payoutCurrency = _payoutCurrency(rates, currency, cardType);
+          final supportedRegions = countries.map((country) {
+            final code = (country['code'] ?? country['country_code'] ?? '')
+                .toString()
+                .toUpperCase();
+            final countryCurrency =
+                (country['currency'] ?? country['currency_code'] ?? '')
+                    .toString()
+                    .toUpperCase();
+            final countryRate = _providerRate(
+              rates,
+              countryCurrency,
+              cardType,
+              100,
+            );
+            final countryPayout = _payoutCurrency(
+              rates,
+              countryCurrency,
+              cardType,
+            );
+            return GiftCardRegionModel(
+              id: code.toLowerCase(),
+              countryName: country['label']?.toString() ?? code,
+              countryCode: code,
+              flag: _flagForCountry(code),
+              currencyCode: countryCurrency,
+              currencySymbol: _symbolForCurrency(countryCurrency),
+              buyRate: 0,
+              sellRate: countryRate == null || countryPayout == null
+                  ? 0
+                  : _ratePercentage(
+                      countryRate,
+                      countryPayout,
+                      countryCurrency,
+                    ),
+              availableDenominations: [
+                if (product['min_amount'] != null)
+                  product['min_amount'].toString(),
+                if (product['max_amount'] != null)
+                  product['max_amount'].toString(),
+              ],
+              isAvailable: true,
+              minimumAmount: product['min_amount']?.toString() ?? '',
+              maximumAmount: product['max_amount']?.toString() ?? '',
+            );
+          }).toList();
+          return GiftCardModel(
+            id: product['slug']?.toString() ?? product['id']?.toString() ?? '',
+            name: product['name']?.toString() ?? 'Gift Card',
+            logoUrl:
+                product['logo_url']?.toString() ??
+                product['logoUrl']?.toString() ??
+                '',
+            country: firstCountry['label']?.toString() ?? countryCode,
+            countryFlag: _flagForCountry(countryCode),
+            category:
+                product['category']?.toString() ??
+                product['name']?.toString() ??
+                'Gift Card',
+            description:
+                product['description']?.toString() ?? '$currency gift card',
+            buyRate: 0,
+            sellRate: providerRate == null || payoutCurrency == null
+                ? 0
+                : _ratePercentage(providerRate, payoutCurrency, currency),
+            currency: currency,
+            minDenomination: product['min_amount']?.toString() ?? '',
+            maxDenomination: product['max_amount']?.toString() ?? '',
+            countryCode: countryCode.isEmpty ? null : countryCode,
+            provider: 'SOGO',
+            denominationType: product['denomination_type']?.toString() ?? '',
+            cardTypes: cardTypes,
+            supportedRegions: supportedRegions,
+            productData: Map<String, dynamic>.from(product),
+          );
+        })
+        .where((card) => card.id.isNotEmpty)
+        .toList();
   }
 
   Future<List<GiftCardRegionModel>> getRegionsForCard(
@@ -38,14 +160,19 @@ class GiftCardSellService {
           )['rates']
         : null;
     return countries.whereType<Map>().map((country) {
-      final code = (country['code'] ?? country['country_code'] ?? country['countryCode'])?.toString().toUpperCase() ?? '';
-      final currency = (country['currency'] ?? country['currency_code'] ?? country['currencyCode'])?.toString().toUpperCase() ?? '';
-      final providerRate = _providerRate(
-        rates,
-        currency,
-        cardType,
-        cardAmount,
-      );
+      final code =
+          (country['code'] ?? country['country_code'] ?? country['countryCode'])
+              ?.toString()
+              .toUpperCase() ??
+          '';
+      final currency =
+          (country['currency'] ??
+                  country['currency_code'] ??
+                  country['currencyCode'])
+              ?.toString()
+              .toUpperCase() ??
+          '';
+      final providerRate = _providerRate(rates, currency, cardType, cardAmount);
       final payoutCurrency = _payoutCurrency(rates, currency, cardType);
       final sellRate = providerRate == null || payoutCurrency == null
           ? 0.0
@@ -64,6 +191,8 @@ class GiftCardSellService {
           if (product['max_amount'] != null) product['max_amount'].toString(),
         ],
         isAvailable: true,
+        minimumAmount: product['min_amount']?.toString() ?? '',
+        maximumAmount: product['max_amount']?.toString() ?? '',
       );
     }).toList();
   }
@@ -218,18 +347,14 @@ class GiftCardSellService {
   bool _matchesCard(Map product, String cardName, [String? cardSlug]) {
     String normalize(String value) =>
         value.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
-    final requested = normalize(cardName);
-    final requestedSlug = normalize(cardSlug ?? '');
     final slug = normalize(product['slug']?.toString() ?? '');
+    if (cardSlug != null && cardSlug.trim().isNotEmpty) {
+      return slug == normalize(cardSlug);
+    }
+    final requested = normalize(cardName);
     final name = normalize(product['name']?.toString() ?? '');
     if (slug.isEmpty && name.isEmpty) return false;
-    return (requestedSlug.isNotEmpty && slug == requestedSlug) ||
-      slug == requested ||
-        name == requested ||
-        slug.contains(requested) ||
-      requested.contains(slug) ||
-      (requestedSlug.isNotEmpty &&
-        (slug.contains(requestedSlug) || requestedSlug.contains(slug)));
+    return slug == requested || name == requested;
   }
 
   String _symbolForCurrency(String currency) =>
@@ -251,24 +376,30 @@ class GiftCardSellService {
       currency;
 
   String _flagForCountry(String code) {
-    const combined = {
-      'CH': '🇨🇭🇱🇮',
-      'EU': '🇪🇺',
-    };
+    const combined = {'CH': '🇨🇭🇱🇮', 'EU': '🇪🇺'};
     if (combined.containsKey(code)) return combined[code]!;
-    if (code.length == 2 && code.codeUnits.every((unit) => unit >= 65 && unit <= 90)) {
-      return String.fromCharCodes(code.codeUnits.map((unit) => 0x1F1E6 + unit - 65));
+    if (code.length == 2 &&
+        code.codeUnits.every((unit) => unit >= 65 && unit <= 90)) {
+      return String.fromCharCodes(
+        code.codeUnits.map((unit) => 0x1F1E6 + unit - 65),
+      );
     }
     return {
-        'US': '🇺🇸',
-        'GB': '🇬🇧',
-        'CA': '🇨🇦',
-        'AU': '🇦🇺',
-        'DE': '🇩🇪',
-    }[code] ?? '🌍';
+          'US': '🇺🇸',
+          'GB': '🇬🇧',
+          'CA': '🇨🇦',
+          'AU': '🇦🇺',
+          'DE': '🇩🇪',
+        }[code] ??
+        '🌍';
   }
 
-  double? _providerRate(Object? rates, String currency, String cardType, double amount) {
+  double? _providerRate(
+    Object? rates,
+    String currency,
+    String cardType,
+    double amount,
+  ) {
     if (rates is! Map) return null;
     final typeNode = rates[currency] is Map ? rates[currency][cardType] : null;
     if (typeNode is! Map) return null;
@@ -306,8 +437,15 @@ class GiftCardSellService {
     return null;
   }
 
-  double _ratePercentage(double providerRate, String payoutCurrency, String cardCurrency) {
-    final payoutUsd = ExchangeRateProvider.convertToUSD(providerRate, payoutCurrency);
+  double _ratePercentage(
+    double providerRate,
+    String payoutCurrency,
+    String cardCurrency,
+  ) {
+    final payoutUsd = ExchangeRateProvider.convertToUSD(
+      providerRate,
+      payoutCurrency,
+    );
     final cardUnitUsd = ExchangeRateProvider.convertToUSD(1, cardCurrency);
     if (payoutUsd <= 0 || cardUnitUsd <= 0) return 0;
     return payoutUsd / cardUnitUsd * 100;

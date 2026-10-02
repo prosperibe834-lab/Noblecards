@@ -56,7 +56,11 @@ class RateInfoCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  '${provider.currentRate.toStringAsFixed(2)}%',
+                  provider.isLoadingRate
+                      ? '...'
+                      : provider.quoteError != null
+                      ? 'Unavailable'
+                      : '${provider.currentRate.toStringAsFixed(2)}%',
                   style: TextStyle(
                     color: textColor,
                     fontSize: 20,

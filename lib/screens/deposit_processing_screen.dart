@@ -14,6 +14,8 @@ class DepositProcessingScreen extends StatefulWidget {
   final bool navigateToBuySubmissionReceived;
   final String transactionId;
   final Future<String> Function()? onProcess;
+  final Future<Map<String, dynamic>> Function()? onProcessTransaction;
+  final Widget Function(Map<String, dynamic> result)? transactionResultBuilder;
 
   const DepositProcessingScreen({
     super.key,
@@ -25,6 +27,8 @@ class DepositProcessingScreen extends StatefulWidget {
     this.navigateToBuySubmissionReceived = false,
     this.transactionId = '',
     this.onProcess,
+    this.onProcessTransaction,
+    this.transactionResultBuilder,
   });
 
   @override
@@ -53,7 +57,21 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
 
   Future<void> _runProcess() async {
     var transactionId = widget.transactionId;
-    if (widget.onProcess != null) {
+    Map<String, dynamic>? transactionResult;
+    if (widget.onProcessTransaction != null) {
+      try {
+        transactionResult = await widget.onProcessTransaction!();
+        transactionId = transactionResult['id']?.toString() ?? '';
+        if (transactionId.isEmpty && widget.transactionResultBuilder != null) {
+          throw StateError('Gift-card transaction did not return an ID.');
+        }
+      } catch (error) {
+        if (mounted && Navigator.canPop(context)) {
+          Navigator.pop(context, error);
+        }
+        return;
+      }
+    } else if (widget.onProcess != null) {
       try {
         transactionId = await widget.onProcess!();
       } catch (error) {
@@ -69,6 +87,17 @@ class _DepositProcessingScreenState extends State<DepositProcessingScreen> {
         if (mounted) setState(() => _currentStage++);
       } else {
         timer.cancel();
+        if (transactionResult != null &&
+            widget.transactionResultBuilder != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  widget.transactionResultBuilder!(transactionResult!),
+            ),
+          );
+          return;
+        }
         if (widget.navigateToBuySubmissionReceived) {
           Navigator.pushReplacement(
             context,

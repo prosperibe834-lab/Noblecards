@@ -9,6 +9,8 @@ class GiftCardRegionModel {
   final double sellRate;
   final List<String> availableDenominations;
   final bool isAvailable;
+  final String minimumAmount;
+  final String maximumAmount;
 
   const GiftCardRegionModel({
     required this.id,
@@ -21,6 +23,8 @@ class GiftCardRegionModel {
     required this.sellRate,
     required this.availableDenominations,
     required this.isAvailable,
+    this.minimumAmount = '',
+    this.maximumAmount = '',
   });
 
   GiftCardRegionModel copyWith({
@@ -34,6 +38,8 @@ class GiftCardRegionModel {
     double? sellRate,
     List<String>? availableDenominations,
     bool? isAvailable,
+    String? minimumAmount,
+    String? maximumAmount,
   }) {
     return GiftCardRegionModel(
       id: id ?? this.id,
@@ -47,6 +53,8 @@ class GiftCardRegionModel {
       availableDenominations:
           availableDenominations ?? this.availableDenominations,
       isAvailable: isAvailable ?? this.isAvailable,
+      minimumAmount: minimumAmount ?? this.minimumAmount,
+      maximumAmount: maximumAmount ?? this.maximumAmount,
     );
   }
 }

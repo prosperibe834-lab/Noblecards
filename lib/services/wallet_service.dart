@@ -8,22 +8,30 @@ class WalletService {
 
   Future<double> getUsdBalance() async {
     final data = await authenticationService.authenticatedGet('/wallet');
-    final balances = data['balances'];
-    if (balances is! List) return 0;
+    final payload = data;
+    final balances = payload['balances'];
+    final resolvedBalances = balances is List ? balances : const <dynamic>[];
 
-    for (final item in balances) {
-      if (item is! Map) continue;
+    for (final item in resolvedBalances) {
+      if (item is! Map) {
+        continue;
+      }
       final currency = item['currency']?.toString().toUpperCase();
-      if (currency != 'USD') continue;
+      if (currency != 'USD') {
+        continue;
+      }
 
       final rawBalance = item['availableBalance'];
-      if (rawBalance is num) return rawBalance.toDouble();
-      return double.tryParse(
-            rawBalance?.toString().replaceAll(',', '') ?? '',
-          ) ??
-          0;
+      if (rawBalance is num) {
+        return rawBalance.toDouble();
+      }
+      final parsed = double.tryParse(rawBalance?.toString().replaceAll(',', '') ?? '');
+      if (parsed != null) {
+        return parsed;
+      }
+      throw FormatException('Wallet USD balance exists but is not numeric: $rawBalance');
     }
 
-    return 0;
+    throw StateError('Wallet response did not contain a USD balance. Response keys: ${payload.keys.toList()}');
   }
 }

@@ -1,42 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'models/gift_card_model.dart';
+import 'services/gift_card_sell_service.dart';
+import 'sell_gift_card_screen.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import 'models/mock_gift_card.dart';
 import 'widgets/gift_card_hero_banner.dart';
 import 'widgets/gift_card_search_bar.dart';
 import 'widgets/gift_card_category_chips.dart';
 import 'widgets/gift_card_product_card.dart';
 import 'widgets/gift_card_catalog_empty_state.dart';
+import 'widgets/gift_card_catalog_shimmer.dart';
+import 'widgets/network_error_widget.dart';
 
 class SellGiftCardsCatalogScreen extends StatefulWidget {
   const SellGiftCardsCatalogScreen({Key? key}) : super(key: key);
 
   @override
-  State<SellGiftCardsCatalogScreen> createState() => _SellGiftCardsCatalogScreenState();
+  State<SellGiftCardsCatalogScreen> createState() =>
+      _SellGiftCardsCatalogScreenState();
 }
 
-class _SellGiftCardsCatalogScreenState extends State<SellGiftCardsCatalogScreen> {
+class _SellGiftCardsCatalogScreenState
+    extends State<SellGiftCardsCatalogScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'All';
-  List<MockGiftCard> _filteredCards = [];
-  final List<String> _categories = ['All', 'Gaming', 'Shopping', 'Entertainment', 'Dining'];
+  List<GiftCardModel> _cards = [];
+  List<GiftCardModel> _filteredCards = [];
+  bool _isLoading = true;
+  bool _hasError = false;
+  final GiftCardSellService _service = GiftCardSellService();
+  final List<String> _categories = [
+    'All',
+    'Gaming',
+    'Shopping',
+    'Entertainment',
+    'Dining',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _filterCards();
+    _loadCards();
+  }
+
+  Future<void> _loadCards() async {
+    if (mounted && (!_isLoading || _hasError)) {
+      setState(() {
+        _isLoading = true;
+        _hasError = false;
+      });
+    }
+    try {
+      final cards = await _service.getCatalogCards();
+      if (!mounted) return;
+      final filteredCards = _filterCardsFrom(cards);
+      setState(() {
+        _cards = cards;
+        _filteredCards = filteredCards;
+        _isLoading = false;
+        _hasError = false;
+      });
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _filteredCards = [];
+        });
+      }
+    }
   }
 
   void _filterCards() {
     setState(() {
-      _filteredCards = mockGiftCards.where((card) {
-        final matchesSell = card.isSell;
-        final matchesSearch = card.brand.toLowerCase().contains(_searchController.text.toLowerCase());
-        final matchesCategory = _selectedCategory == 'All' || card.category == _selectedCategory;
-        return matchesSell && matchesSearch && matchesCategory;
-      }).toList();
+      _filteredCards = _filterCardsFrom(_cards);
     });
+  }
+
+  List<GiftCardModel> _filterCardsFrom(List<GiftCardModel> cards) {
+    final search = _searchController.text.toLowerCase();
+    return cards.where((card) {
+      final matchesSearch = card.name.toLowerCase().contains(search);
+      final matchesCategory =
+          _selectedCategory == 'All' || card.category == _selectedCategory;
+      return matchesSearch && matchesCategory;
+    }).toList();
   }
 
   @override
@@ -48,16 +97,37 @@ class _SellGiftCardsCatalogScreenState extends State<SellGiftCardsCatalogScreen>
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Sell Gift Cards', style: TextStyle(fontFamily: 'Poppins', fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('Turn your gift cards into cash', style: TextStyle(fontSize: 12, color: isDark ? AppColors.darkSubText : AppColors.lightSubText, fontWeight: FontWeight.normal)),
+            const Text(
+              'Sell Gift Cards',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              'Turn your gift cards into cash',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
           ],
         ),
         leading: IconButton(
-          icon: Icon(Boxicons.bx_chevron_left, color: isDark ? AppColors.darkText : AppColors.lightText),
+          icon: Icon(
+            Boxicons.bx_chevron_left,
+            color: isDark ? AppColors.darkText : AppColors.lightText,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(icon: const Icon(Boxicons.bx_gift), color: AppColors.success, onPressed: () {}),
+          IconButton(
+            icon: const Icon(Boxicons.bx_gift),
+            color: AppColors.success,
+            onPressed: () {},
+          ),
         ],
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -71,7 +141,8 @@ class _SellGiftCardsCatalogScreenState extends State<SellGiftCardsCatalogScreen>
                 children: [
                   GiftCardHeroBanner(
                     title: 'Sell Your\nGift Cards Today.',
-                    subtitle: 'Get competitive rates and instant payment for your unused gift cards.',
+                    subtitle:
+                        'Get competitive rates and instant payment for your unused gift cards.',
                     ctaText: 'Start Selling Now',
                     onCtaPressed: () {},
                   ),
@@ -96,8 +167,24 @@ class _SellGiftCardsCatalogScreenState extends State<SellGiftCardsCatalogScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Popular Gift Cards', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? AppColors.darkText : AppColors.lightText)),
-                      Text('View All →', style: TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.bold)),
+                      Text(
+                        'Popular Gift Cards',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDark
+                              ? AppColors.darkText
+                              : AppColors.lightText,
+                        ),
+                      ),
+                      Text(
+                        'View All →',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -105,7 +192,17 @@ class _SellGiftCardsCatalogScreenState extends State<SellGiftCardsCatalogScreen>
               ),
             ),
           ),
-          if (_filteredCards.isEmpty)
+          if (_isLoading)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: GiftCardCatalogShimmer(isDark: isDark),
+            )
+          else if (_hasError)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: NetworkErrorWidget(onRetry: _loadCards),
+            )
+          else if (_filteredCards.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
               child: GiftCardCatalogEmptyState(
@@ -129,17 +226,32 @@ class _SellGiftCardsCatalogScreenState extends State<SellGiftCardsCatalogScreen>
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
+                    final card = _filteredCards[index];
                     return GiftCardProductCard(
-                      card: _filteredCards[index],
+                      key: ValueKey(card.catalogKey),
+                      card: card,
                       isSellMode: true,
                       isDark: isDark,
                       onTap: () {
-                        // Pass mock data directly into the existing unmodified sell_gift_card_screen.dart
-                        // Navigator.pushNamed(context, '/sell_gift_card_screen', arguments: _filteredCards[index]);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SellGiftCardScreen(card: card),
+                          ),
+                        );
                       },
                     );
                   },
                   childCount: _filteredCards.length,
+                  findChildIndexCallback: (key) {
+                    if (key is ValueKey<String>) {
+                      final index = _filteredCards.indexWhere(
+                        (card) => card.catalogKey == key.value,
+                      );
+                      return index == -1 ? null : index;
+                    }
+                    return null;
+                  },
                 ),
               ),
             ),

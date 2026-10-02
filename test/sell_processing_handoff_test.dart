@@ -21,87 +21,124 @@ class _RecordingObserver extends NavigatorObserver {
 Widget _testApp({required Widget home, required NavigatorObserver observer}) {
   return MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => SubmissionProvider())],
-    child: MaterialApp(
-      navigatorObservers: [observer],
-      home: home,
-    ),
+    child: MaterialApp(navigatorObservers: [observer], home: home),
   );
 }
 
 void main() {
-  testWidgets('accepted Sell submission reaches the existing result screen with its real ID', (tester) async {
-    final observer = _RecordingObserver();
-    final process = Completer<String>();
+  testWidgets(
+    'accepted Sell submission reaches the existing result screen with its real ID',
+    (tester) async {
+      final observer = _RecordingObserver();
+      final process = Completer<String>();
 
-    await tester.pumpWidget(_testApp(
-      observer: observer,
-      home: DepositProcessingScreen(
-        amount: 0,
-        currency: 'USD',
-        convertedUsd: 0,
-        navigateToSubmissionReceived: true,
-        onProcess: () => process.future,
-      ),
-    ));
-
-    expect(find.byType(DepositProcessingScreen), findsOneWidget);
-    process.complete('sale-real-123');
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 6));
-    await tester.pump(const Duration(seconds: 2));
-
-    expect(observer.lastReplacement, isNotNull);
-  });
-
-  testWidgets('provider rejection reaches the existing result screen instead of returning to Sell', (tester) async {
-    await tester.pumpWidget(_testApp(
-      observer: _RecordingObserver(),
-      home: DepositProcessingScreen(
-        amount: 0,
-        currency: 'USD',
-        convertedUsd: 0,
-        navigateToSubmissionReceived: true,
-        onProcess: () async => 'sale-failed-422',
-      ),
-    ));
-
-    await tester.pump(const Duration(seconds: 6));
-    await tester.pump(const Duration(seconds: 2));
-
-    expect(find.byType(GiftcardSubmissionReceivedScreen), findsOneWidget);
-    expect(find.byType(DepositProcessingScreen), findsNothing);
-  });
-
-  testWidgets('existing result status presentation preserves provider outcomes', (tester) async {
-    final statuses = <String, String>{
-      'APPROVED': 'Successful',
-      'FAILED': 'Failed',
-      'SUBMITTED': 'Pending Verification',
-      'UNDER_REVIEW': 'Under Review',
-    };
-
-    for (final entry in statuses.entries) {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SubmissionStatusCard(
-              data: SubmissionModel(
-                referenceId: 'sale-${entry.key}',
-                status: entry.key,
-                cardsSubmitted: 1,
-                totalFaceValue: 100,
-                sellRate: 1,
-                estimatedReceive: 100,
-                verificationTime: '5 - 30 Minutes',
-                submittedOn: '2026-09-18',
-                paymentMethod: 'NGN',
-              ),
-            ),
+        _testApp(
+          observer: observer,
+          home: DepositProcessingScreen(
+            amount: 0,
+            currency: 'USD',
+            convertedUsd: 0,
+            navigateToSubmissionReceived: true,
+            onProcess: () => process.future,
           ),
         ),
       );
 
-      expect(find.text('Status: ${entry.value}'), findsOneWidget);
-    }
+      expect(find.byType(DepositProcessingScreen), findsOneWidget);
+      process.complete('sale-real-123');
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pump(const Duration(seconds: 2));
+
+      expect(observer.lastReplacement, isNotNull);
+    },
+  );
+
+  testWidgets(
+    'provider rejection reaches the existing result screen instead of returning to Sell',
+    (tester) async {
+      await tester.pumpWidget(
+        _testApp(
+          observer: _RecordingObserver(),
+          home: DepositProcessingScreen(
+            amount: 0,
+            currency: 'USD',
+            convertedUsd: 0,
+            navigateToSubmissionReceived: true,
+            onProcess: () async => 'sale-failed-422',
+          ),
+        ),
+      );
+
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pump(const Duration(seconds: 2));
+
+      expect(find.byType(GiftcardSubmissionReceivedScreen), findsOneWidget);
+      expect(find.byType(DepositProcessingScreen), findsNothing);
+    },
+  );
+
+  testWidgets('transaction result builder receives the real backend status', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DepositProcessingScreen(
+          amount: 0,
+          currency: 'USD',
+          convertedUsd: 0,
+          onProcessTransaction: () async => {
+            'id': 'sale-real-456',
+            'status': 'FAILED',
+            'providerMessage': 'Provider rejected the card',
+          },
+          transactionResultBuilder: (result) =>
+              Scaffold(body: Text('${result['id']}:${result['status']}')),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pump();
+
+    expect(find.text('sale-real-456:FAILED'), findsOneWidget);
   });
+
+  testWidgets(
+    'existing result status presentation preserves provider outcomes',
+    (tester) async {
+      final statuses = <String, String>{
+        'APPROVED': 'Successful',
+        'FAILED': 'Failed',
+        'SUBMITTED': 'Pending Verification',
+        'UNDER_REVIEW': 'Under Review',
+      };
+
+      for (final entry in statuses.entries) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SubmissionStatusCard(
+                data: SubmissionModel(
+                  referenceId: 'sale-${entry.key}',
+                  status: entry.key,
+                  cardsSubmitted: 1,
+                  totalFaceValue: 100,
+                  sellRate: 1,
+                  estimatedReceive: 100,
+                  verificationTime: '5 - 30 Minutes',
+                  submittedOn: '2026-09-18',
+                  paymentMethod: 'NGN',
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('Status: ${entry.value}'), findsOneWidget);
+      }
+    },
+  );
 }

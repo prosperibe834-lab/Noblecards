@@ -7,7 +7,9 @@ import 'package:noble_cards/theme/app_spacing.dart';
 import '../providers/region_provider.dart';
 
 class RegionBottomSheet extends StatefulWidget {
-  const RegionBottomSheet({super.key});
+  final String rateLabel;
+
+  const RegionBottomSheet({super.key, this.rateLabel = 'Sale'});
 
   @override
   State<RegionBottomSheet> createState() => _RegionBottomSheetState();
@@ -111,7 +113,6 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                   }
 
                   return ListView.separated(
-                    shrinkWrap: true,
                     padding: EdgeInsets.zero,
                     itemCount: regions.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 8),
@@ -171,7 +172,7 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        'Sale ${region.sellRate.toStringAsFixed(2)}%',
+                                        '${widget.rateLabel} ${(widget.rateLabel == 'Buy' ? region.buyRate : region.sellRate).toStringAsFixed(2)}%',
                                         style: const TextStyle(
                                           color: AppColors.primary,
                                           fontSize: 12,

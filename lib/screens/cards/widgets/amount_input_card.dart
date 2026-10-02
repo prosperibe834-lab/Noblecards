@@ -16,12 +16,10 @@ class AmountInputCard extends StatelessWidget {
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
     final inputColor = isDark ? AppColors.darkInput : AppColors.lightInput;
     final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
-    final denominationValues = provider.availableDenominations.isEmpty
-        ? [10.0, 25.0, 50.0, 100.0, 200.0]
-        : provider.availableDenominations
-              .map((value) => double.tryParse(value) ?? 0.0)
-              .where((value) => value > 0)
-              .toList();
+    final denominationValues = provider.availableDenominations
+        .map((value) => double.tryParse(value) ?? 0.0)
+        .where((value) => value > 0)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +56,11 @@ class AmountInputCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: TextFormField(
-                  initialValue: provider.amount.toInt().toString(),
+                  key: ValueKey(provider.selectedRegion?.id),
+                  initialValue:
+                      provider.amount == provider.amount.truncateToDouble()
+                      ? provider.amount.toInt().toString()
+                      : provider.amount.toString(),
                   keyboardType: TextInputType.number,
                   style: TextStyle(
                     color: textColor,
@@ -106,6 +108,7 @@ class AmountInputCard extends StatelessWidget {
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: AmountChip(
                   amount: amount,
+                  currencySymbol: provider.currencySymbol,
                   isSelected: provider.amount == amount,
                   onTap: () => provider.setAmount(amount),
                 ),

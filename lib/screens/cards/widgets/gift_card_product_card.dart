@@ -4,10 +4,10 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_shadow.dart';
 import '../../../theme/app_spacing.dart';
-import '../models/mock_gift_card.dart';
+import '../models/gift_card_model.dart';
 
 class GiftCardProductCard extends StatelessWidget {
-  final MockGiftCard card;
+  final GiftCardModel card;
   final bool isSellMode;
   final bool isDark;
   final VoidCallback onTap;
@@ -23,6 +23,7 @@ class GiftCardProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
@@ -30,7 +31,9 @@ class GiftCardProductCard extends StatelessWidget {
           color: isDark ? AppColors.darkCard : AppColors.lightCard,
           borderRadius: BorderRadius.circular(AppRadius.md),
           boxShadow: isDark ? AppShadow.dark : AppShadow.light,
-          border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
         ),
         padding: const EdgeInsets.all(AppSpacing.s),
         child: Column(
@@ -43,11 +46,17 @@ class GiftCardProductCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+                    color: isDark
+                        ? AppColors.darkBackground
+                        : AppColors.lightBackground,
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Center(
-                    child: Icon(Boxicons.bx_gift, color: AppColors.primary, size: 24),
+                    child: Icon(
+                      Boxicons.bx_gift,
+                      color: AppColors.primary,
+                      size: 24,
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -55,37 +64,90 @@ class GiftCardProductCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(card.brand, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? AppColors.darkText : AppColors.lightText, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text(
+                        card.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDark
+                              ? AppColors.darkText
+                              : AppColors.lightText,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       if (!isSellMode) ...[
                         const SizedBox(height: 2),
                         Row(
                           children: [
-                            const Icon(Boxicons.bx_map, size: 12, color: AppColors.textSecondary),
+                            const Icon(
+                              Boxicons.bx_map,
+                              size: 12,
+                              color: AppColors.textSecondary,
+                            ),
                             const SizedBox(width: 2),
-                            Text(card.country, style: TextStyle(fontSize: 10, color: isDark ? AppColors.darkSubText : AppColors.lightSubText)),
+                            Text(
+                              card.country,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: isDark
+                                    ? AppColors.darkSubText
+                                    : AppColors.lightSubText,
+                              ),
+                            ),
                           ],
                         ),
                       ],
-                      if (isSellMode && card.badge.isNotEmpty) ...[
+                      if (isSellMode && card.isTrending) ...[
                         const SizedBox(height: 4),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(color: AppColors.accent.withOpacity(0.2), borderRadius: BorderRadius.circular(4)),
-                          child: Text(card.badge, style: const TextStyle(fontSize: 9, color: AppColors.accent, fontWeight: FontWeight.bold)),
-                        )
-                      ]
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'Trending',
+                            style: TextStyle(
+                              fontSize: 9,
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                if (!isSellMode && card.badge.isNotEmpty)
+                if (!isSellMode && card.isTrending)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(AppRadius.full)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.accent,
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                    ),
                     child: Row(
                       children: [
-                        const Icon(Boxicons.bxs_flame, size: 10, color: Colors.white),
+                        const Icon(
+                          Boxicons.bxs_flame,
+                          size: 10,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: 2),
-                        Text(card.badge, style: const TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Trending',
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -93,20 +155,29 @@ class GiftCardProductCard extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              'Rate ${card.rate}',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+              'Rate ${isSellMode ? card.sellRate : card.buyRate}%',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
-              '\$${card.minDenomination} - \$${card.maxDenomination}',
-              style: TextStyle(fontSize: 10, color: isDark ? AppColors.darkSubText : AppColors.lightSubText),
+              '${card.currency.isEmpty ? '\$' : card.currency + ' '}${card.minDenomination} - ${card.currency.isEmpty ? '\$' : card.currency + ' '}${card.maxDenomination}',
+              style: TextStyle(
+                fontSize: 10,
+                color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [AppColors.primary, AppColors.successLight]),
+                gradient: LinearGradient(
+                  colors: [AppColors.primary, AppColors.successLight],
+                ),
                 borderRadius: BorderRadius.circular(AppRadius.full),
               ),
               child: Center(
@@ -115,12 +186,20 @@ class GiftCardProductCard extends StatelessWidget {
                   children: [
                     Text(
                       isSellMode ? 'Sell Now' : 'View Details',
-                      style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (!isSellMode) ...[
                       const SizedBox(width: 4),
-                      const Icon(Boxicons.bx_right_arrow_alt, color: Colors.white, size: 14),
-                    ]
+                      const Icon(
+                        Boxicons.bx_right_arrow_alt,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                    ],
                   ],
                 ),
               ),

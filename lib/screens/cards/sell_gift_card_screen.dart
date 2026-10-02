@@ -11,6 +11,8 @@ import 'package:noble_cards/providers/exchange_rate_provider.dart';
 import 'package:noble_cards/screens/TransactionPin/pin_auth_dialog.dart';
 import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
+import 'package:noble_cards/screens/cards/giftcard_submission_received_screen.dart';
+import 'package:noble_cards/screens/cards/sell_receipt_screen.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_model.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_region_model.dart';
 import 'package:noble_cards/screens/cards/providers/buy_provider.dart';
@@ -43,7 +45,7 @@ class SellGiftCardScreen extends StatefulWidget {
 
 class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
   bool _isPhysical = false;
-  List<String> _availableCardTypes = const ['ecode', 'physical'];
+  List<String> _availableCardTypes = const [];
   bool _isLoadingCardTypes = false;
   bool _sellCatalogLoaded = false;
   String? _payoutCurrency;
@@ -54,8 +56,18 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
   final bool _isLoading = false;
   bool _hasError = false;
   final bool _isEmpty = false;
-  final List<CardFormData> _cards = [CardFormData()];
+  late final List<CardFormData> _cards;
   final GiftCardSellService _sellService = GiftCardSellService();
+
+  @override
+  void initState() {
+    super.initState();
+    _cards = [CardFormData(amount: widget.card.minDenomination)];
+    _availableCardTypes = widget.card.cardTypes;
+    _isPhysical =
+        !_availableCardTypes.contains('ecode') &&
+        _availableCardTypes.contains('physical');
+  }
 
   Future<void> _loadAvailableCardTypes(GiftCardRegionModel region) async {
     if (_isLoadingCardTypes) return;
@@ -85,6 +97,9 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
   Future<void> _loadSellCatalog(RegionProvider provider) async {
     if (_sellCatalogLoaded) return;
     _sellCatalogLoaded = true;
+    if (widget.card.supportedRegions.isNotEmpty) {
+      provider.replaceRegions(widget.card.supportedRegions);
+    }
     try {
       final regions = await _sellService.getRegionsForCard(
         widget.card.name,
@@ -179,7 +194,9 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
 
   void _addCard() {
     HapticFeedback.lightImpact();
-    setState(() => _cards.add(CardFormData()));
+    setState(
+      () => _cards.add(CardFormData(amount: widget.card.minDenomination)),
+    );
   }
 
   void _removeCard(int index) {
@@ -222,6 +239,12 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
       (card) =>
           card.amount.trim().isEmpty ||
           double.tryParse(card.amount) == null ||
+          (double.tryParse(widget.card.minDenomination) != null &&
+              double.parse(card.amount) <
+                  double.parse(widget.card.minDenomination)) ||
+          (double.tryParse(widget.card.maxDenomination) != null &&
+              double.parse(card.amount) >
+                  double.parse(widget.card.maxDenomination)) ||
           (!_isPhysical && card.code.trim().isEmpty),
     );
     if (invalidCard) {
@@ -259,9 +282,8 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
           amount: 0,
           currency: 'USD',
           convertedUsd: 0,
-          navigateToSubmissionReceived: true,
-          onProcess: () async {
-            final response = await _sellService.submitSale(
+          onProcessTransaction: () async {
+            return _sellService.submitSale(
               slug: _catalogSlug ?? _slugForCard(widget.card.name),
               cardCountry: region.countryCode,
               cardType: _isPhysical ? 'physical' : 'ecode',
@@ -285,11 +307,25 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
                   )
                   .toList(),
             );
-            final transactionId = response['id']?.toString();
-            if (transactionId == null || transactionId.isEmpty) {
-              throw Exception('Sell submission did not return a sale ID.');
+          },
+          transactionResultBuilder: (response) {
+            final transactionId = response['id']?.toString() ?? '';
+            if (transactionId.isEmpty) {
+              throw StateError('Sell submission did not return a sale ID.');
             }
-            return transactionId;
+            final status = response['status']?.toString().toUpperCase() ?? '';
+            if ([
+              'FAILED',
+              'REJECTED',
+              'CANCELLED',
+              'APPROVED',
+              'PAID',
+            ].contains(status)) {
+              return SellReceiptScreen(transactionId: transactionId);
+            }
+            return GiftcardSubmissionReceivedScreen(
+              transactionId: transactionId,
+            );
           },
         ),
       ),
@@ -395,7 +431,10 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
                             ? null
                             : _displayCardCurrencyAmount(
                                 _quote!['finalRate'],
-                                context.watch<RegionProvider>().selectedRegion?.currencyCode,
+                                context
+                                    .watch<RegionProvider>()
+                                    .selectedRegion
+                                    ?.currencyCode,
                               ),
                         onChange: () => Navigator.pop(context),
                       ),
@@ -468,14 +507,17 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
                             ) ??
                             0,
                         sellRateText: _quote == null
-                          ? null
-                          : '${_displayCardCurrencyAmount(_quote!['finalRate'], context.watch<RegionProvider>().selectedRegion?.currencyCode)} / ${context.watch<RegionProvider>().selectedRegion?.currencyCode ?? 'USD'}',
+                            ? null
+                            : '${_displayCardCurrencyAmount(_quote!['finalRate'], context.watch<RegionProvider>().selectedRegion?.currencyCode)} / ${context.watch<RegionProvider>().selectedRegion?.currencyCode ?? 'USD'}',
                         estimatedPayoutText: _quote == null
-                          ? null
-                          : _displayCardCurrencyAmount(
-                            _quote!['estimatedPayout'],
-                            context.watch<RegionProvider>().selectedRegion?.currencyCode,
-                            ),
+                            ? null
+                            : _displayCardCurrencyAmount(
+                                _quote!['estimatedPayout'],
+                                context
+                                    .watch<RegionProvider>()
+                                    .selectedRegion
+                                    ?.currencyCode,
+                              ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       VerificationNotice(
@@ -503,9 +545,9 @@ class CardFormData {
   File? frontImage;
   File? backImage;
 
-  CardFormData({String? id})
+  CardFormData({String? id, String amount = ''})
     : id = id ?? UniqueKey().toString(),
-      amount = '100',
+      amount = amount,
       code = '';
 }
 

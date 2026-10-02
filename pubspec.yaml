@@ -58,16 +58,29 @@ flutter:
     - family: Poppins
       fonts:
         - asset: lib/assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: lib/assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: lib/assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
         - asset: lib/assets/fonts/Poppins-Bold.ttf
+          weight: 700
 
     - family: Inter
       fonts:
         - asset: lib/assets/fonts/Inter-Regular.ttf
+          weight: 400
         - asset: lib/assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: lib/assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: lib/assets/fonts/Inter-Bold.ttf
+          weight: 700
 
     - family: SpaceGrotesk
       fonts:
         - asset: lib/assets/fonts/SpaceGrotesk-Bold.ttf
+          weight: 700
 
 
 

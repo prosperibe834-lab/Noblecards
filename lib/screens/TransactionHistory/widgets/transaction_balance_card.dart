@@ -74,7 +74,7 @@ class TransactionBalanceCard extends StatelessWidget {
                   AnimatedSwitcher(
                     duration: AppAnimation.normal,
                     child: Text(
-                      isVisible ? '\$${balance.toStringAsFixed(2)}' : '••••••••',
+                      isVisible ? '\$${balance.toStringAsFixed(2)}' : '\$*******',
                       key: ValueKey(isVisible),
                       style: AppTextTheme.light.headlineLarge?.copyWith(
                         color: AppColors.white,

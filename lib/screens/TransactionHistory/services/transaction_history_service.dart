@@ -1,59 +1,155 @@
+import '../../authentication/services/authentication_service.dart';
 import '../models/transaction_history_model.dart';
 
 class TransactionHistoryService {
-  // Simulates fetching data from the NestJS backend
+  final AuthenticationService _authentication;
+
+  TransactionHistoryService({AuthenticationService? authentication})
+    : _authentication = authentication ?? AuthenticationService();
+
   Future<List<TransactionHistoryModel>> fetchTransactions() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-    
-    return [
-      TransactionHistoryModel(
-        id: '1',
-        type: TransactionType.deposit,
-        method: 'Bank Transfer',
-        date: DateTime(2025, 4, 28, 10, 24),
-        amount: 250.00,
-        status: TransactionStatus.completed,
-      ),
-      TransactionHistoryModel(
-        id: '2',
-        type: TransactionType.withdrawal,
-        method: 'Mobile Money',
-        date: DateTime(2025, 4, 27, 16, 15),
-        amount: 100.00,
-        status: TransactionStatus.completed,
-      ),
-      TransactionHistoryModel(
-        id: '3',
-        type: TransactionType.deposit,
-        method: 'Bank Transfer',
-        date: DateTime(2025, 4, 26, 11, 30),
-        amount: 500.00,
-        status: TransactionStatus.completed,
-      ),
-      TransactionHistoryModel(
-        id: '4',
-        type: TransactionType.withdrawal,
-        method: 'USDT (TRC20)',
-        date: DateTime(2025, 4, 24, 21, 12),
-        amount: 200.00,
-        status: TransactionStatus.completed,
-      ),
-      TransactionHistoryModel(
-        id: '5',
-        type: TransactionType.deposit,
-        method: 'Credit Card',
-        date: DateTime(2025, 4, 22, 14, 45),
-        amount: 150.00,
-        status: TransactionStatus.completed,
-      ),
-      TransactionHistoryModel(
-        id: '6',
-        type: TransactionType.withdrawal,
-        method: 'Bank Transfer',
-        date: DateTime(2025, 4, 20, 9, 00),
-        amount: 1250.00,
-        status: TransactionStatus.pending,
-      ),
-    ];
+    final responses = await Future.wait([
+      _authentication.authenticatedGetList('/deposits'),
+      _authentication.authenticatedGetList('/withdrawals'),
+    ]);
+
+    final transactions = <TransactionHistoryModel>[];
+    transactions.addAll(mapBackendTransactions(responses[0]));
+    transactions.addAll(mapBackendTransactions(responses[1]));
+    transactions.sort((left, right) => right.date.compareTo(left.date));
+
+    return transactions;
+  }
+
+  static List<TransactionHistoryModel> mapBackendTransactions(List<dynamic> rawItems) {
+    final mapped = <TransactionHistoryModel>[];
+
+    for (final rawItem in rawItems) {
+      if (rawItem is! Map) {
+        throw const FormatException('Transaction response contained a non-object record.');
+      }
+      final item = Map<String, dynamic>.from(rawItem);
+      final hasWithdrawalFields = item.containsKey('sourceAmount') || item.containsKey('sourceCurrencyCode');
+      if (hasWithdrawalFields) {
+        mapped.add(_mapWithdrawal(item));
+        continue;
+      }
+      mapped.add(_mapDeposit(item));
+    }
+
+    mapped.sort((left, right) => right.date.compareTo(left.date));
+    return mapped;
+  }
+
+  static TransactionHistoryModel _mapDeposit(Map<String, dynamic> item) {
+    final rawStatus = (item['status'] ?? item['transaction']?['status'] ?? 'PENDING').toString();
+    final currency = (item['currency'] ?? item['currencyCode'] ?? 'USD').toString().toUpperCase();
+    final usdAmount = item['netAmount'] ?? item['amount'];
+    if (item['netAmount'] == null && currency != 'USD') {
+      throw FormatException('Deposit response has no USD netAmount for $currency.');
+    }
+    final amount = _parseAmount(usdAmount);
+    final method = _methodLabel(
+      item['paymentMethod'] ?? item['provider'] ?? item['method'] ?? 'Bank Transfer',
+    );
+    final date = _parseDate(item['createdAt'] ?? item['updatedAt']);
+
+    return TransactionHistoryModel(
+      id: (item['id'] ?? item['transaction']?['id'] ?? '').toString(),
+      type: TransactionType.deposit,
+      method: method,
+      date: date,
+      amount: amount,
+      status: _mapStatus(rawStatus),
+      currency: 'USD',
+    );
+  }
+
+  static TransactionHistoryModel _mapWithdrawal(Map<String, dynamic> item) {
+    final rawStatus = (item['status'] ?? item['transaction']?['status'] ?? 'PENDING').toString();
+    final currency = (item['currency'] ?? item['destinationCurrency'] ?? item['destinationCurrencyCode'] ?? item['sourceCurrencyCode'] ?? 'USD').toString().toUpperCase();
+    final amount = _parseAmount(item['sourceAmount'] ?? item['amount'] ?? item['destinationAmount'] ?? 0);
+    final method = _methodLabel(item['paymentMethod'] ?? item['provider'] ?? item['method'] ?? 'Bank Transfer');
+    final date = _parseDate(item['createdAt'] ?? item['updatedAt']);
+
+    return TransactionHistoryModel(
+      id: (item['id'] ?? item['reference'] ?? item['transaction']?['id'] ?? '').toString(),
+      type: TransactionType.withdrawal,
+      method: method,
+      date: date,
+      amount: amount,
+      status: _mapStatus(rawStatus),
+      currency: currency,
+    );
+  }
+
+  static DateTime _parseDate(Object? value) {
+    final raw = value?.toString();
+    final parsed = raw == null || raw.isEmpty ? null : DateTime.tryParse(raw);
+    if (parsed == null) {
+      throw FormatException('Transaction record has an invalid createdAt date: $value');
+    }
+    return parsed;
+  }
+
+  static double _parseAmount(Object? value) {
+    if (value == null) {
+      throw const FormatException('Transaction record has no amount.');
+    }
+    if (value is num) return value.toDouble();
+    final numeric = value.toString().replaceAll(',', '').trim();
+    final parsed = double.tryParse(numeric);
+    if (parsed == null) {
+      throw FormatException('Transaction record has an invalid amount: $value');
+    }
+    return parsed;
+  }
+
+  static TransactionStatus _mapStatus(String rawStatus) {
+    switch (rawStatus.toUpperCase()) {
+      case 'SUCCESSFUL':
+      case 'COMPLETED':
+        return TransactionStatus.completed;
+      case 'PROCESSING':
+        return TransactionStatus.processing;
+      case 'PENDING':
+        return TransactionStatus.pending;
+      case 'FAILED':
+      case 'REJECTED':
+        return TransactionStatus.failed;
+      case 'CANCELLED':
+      case 'CANCELED':
+        return TransactionStatus.cancelled;
+      default:
+        return TransactionStatus.pending;
+    }
+  }
+
+  static String _methodLabel(String raw) {
+    final normalized = raw.toString().trim();
+    if (normalized.isEmpty) return 'Bank Transfer';
+
+    switch (normalized.toUpperCase()) {
+      case 'BANK_TRANSFER':
+        return 'Bank Transfer';
+      case 'CARD':
+        return 'Card';
+      case 'MOBILE_MONEY':
+        return 'Mobile Money';
+      case 'USSD':
+        return 'USSD';
+      case 'APPLE_PAY':
+        return 'Apple Pay';
+      case 'GOOGLE_PAY':
+        return 'Google Pay';
+      case 'WISE':
+        return 'Wise';
+      case 'WALLET_TRANSFER':
+        return 'Wallet Transfer';
+      case 'FLUTTERWAVE':
+        return 'Flutterwave';
+      default:
+        return normalized;
+    }
   }
 }

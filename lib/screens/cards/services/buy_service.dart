@@ -6,19 +6,22 @@ class BuyService {
   BuyService({AuthenticationService? authentication})
     : _authentication = authentication ?? AuthenticationService();
 
-  Future<double> fetchCurrentRate() async {
-    final response = await _authentication.authenticatedGet('/gift-cards/buy/catalog');
-    final products = response['products'];
-    if (products is! List || products.isEmpty) return 93.20;
-
-    final first = products.firstWhere(
-      (item) => item is Map,
-      orElse: () => <String, dynamic>{},
+  Future<Map<String, dynamic>> fetchQuote({
+    required String productId,
+    required String countryCode,
+    required String currencyCode,
+    required double amount,
+    required int quantity,
+  }) {
+    return _authentication.authenticatedPost(
+      '/gift-cards/buy/quote',
+      body: {
+        'productId': productId,
+        'countryCode': countryCode,
+        'currencyCode': currencyCode,
+        'amount': amount,
+        'quantity': quantity,
+      },
     );
-    if (first is! Map) return 93.20;
-    final value = first['customerRatePercent']?.toString() ??
-        first['baseBuyRatePercent']?.toString() ??
-        '93.20';
-    return double.tryParse(value) ?? 93.20;
   }
 }
