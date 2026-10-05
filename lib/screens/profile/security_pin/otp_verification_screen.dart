@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../authentication/services/authentication_service.dart';
 import '../../../widgets/otp_input.dart';
 import '../../../widgets/primary_gradient_button.dart';
+import '../../../widgets/transaction_pin_input.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  const OtpVerificationScreen({super.key});
+  const OtpVerificationScreen({super.key, this.userEmail = 'your registered email'});
+
+  final String userEmail;
 
   @override
   State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
@@ -13,12 +17,15 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpCtrl = TextEditingController();
+  final TextEditingController _newPinCtrl = TextEditingController();
+  final TextEditingController _confirmPinCtrl = TextEditingController();
+  final FocusNode _newPinFocus = FocusNode();
+  final FocusNode _confirmPinFocus = FocusNode();
   Timer? _timer;
   int _seconds = 60;
   bool _isLoading = false;
-
-  // Placeholder. Connect your actual user state here.
-  final String _userEmail = "user@gmail.com";
+  bool _isSubmitting = false;
+  String? _resetToken;
 
   @override
   void initState() {
@@ -42,26 +49,119 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void dispose() {
     _timer?.cancel();
     _otpCtrl.dispose();
+    _newPinCtrl.dispose();
+    _confirmPinCtrl.dispose();
+    _newPinFocus.dispose();
+    _confirmPinFocus.dispose();
     super.dispose();
   }
 
-  void _verifyOtp(String otp) async {
+  Future<void> _requestResend() async {
+    try {
+      await AuthenticationService().requestTransactionPinReset();
+      _startTimer();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('OTP Sent Successfully'),
+          backgroundColor: Color(0xFF00C853),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _verifyOtp(String otp) async {
+    if (_isLoading || otp.length != 6) return;
+
     setState(() => _isLoading = true);
+    try {
+      final data = await AuthenticationService().verifyTransactionPinResetCode(otp);
+      final token = data['resetToken'] as String?;
+      if (token == null || token.isEmpty) {
+        throw const FormatException('Reset token was not returned by the server.');
+      }
+      setState(() => _resetToken = token);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _newPinFocus.requestFocus();
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Identity verified. Please set your new PIN.'),
+          backgroundColor: Color(0xFF00C853),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
-    // Simulate verification delay
-    await Future.delayed(const Duration(seconds: 2));
+  Future<void> _completeReset() async {
+    if (_isSubmitting || _resetToken == null) return;
 
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+    final pin = _newPinCtrl.text.trim();
+    final confirmPin = _confirmPinCtrl.text.trim();
+    if (pin.length != 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enter a valid 4-digit PIN.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    if (pin != confirmPin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('PIN confirmation does not match.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    // Pop back to change PIN screen, conceptually unlocking Section 2 & 3
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Identity verified. Please set your new PIN."),
-        backgroundColor: Color(0xFF00C853),
-      ),
-    );
+    setState(() => _isSubmitting = true);
+    try {
+      await AuthenticationService().completeTransactionPinReset(
+        resetToken: _resetToken!,
+        pin: pin,
+        confirmPin: confirmPin,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Transaction PIN has been reset successfully.'),
+          backgroundColor: Color(0xFF00C853),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
@@ -109,7 +209,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         "Fill in the box below with the OTP.\nPlease check the OTP sent to ",
                   ),
                   TextSpan(
-                    text: _userEmail,
+                    text: widget.userEmail,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -137,15 +237,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
-                            _startTimer();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("OTP Sent Successfully"),
-                                backgroundColor: Color(0xFF00C853),
-                              ),
-                            );
-                          },
+                          onPressed: _requestResend,
                           child: const Text(
                             "Try Again / Resend OTP",
                             style: TextStyle(
@@ -157,13 +249,34 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ],
                     ),
             ),
+            if (_resetToken != null) ...[
+              const SizedBox(height: 32),
+              Text(
+                "Set a new PIN",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TransactionPinInput(
+                controller: _newPinCtrl,
+                focusNode: _newPinFocus,
+              ),
+              const SizedBox(height: 16),
+              TransactionPinInput(
+                controller: _confirmPinCtrl,
+                focusNode: _confirmPinFocus,
+              ),
+            ],
             const Spacer(),
             PrimaryGradientButton(
-              text: "Verify",
-              isLoading: _isLoading,
-              onPressed: _otpCtrl.text.length == 6
-                  ? () => _verifyOtp(_otpCtrl.text)
-                  : null,
+              text: _resetToken == null ? 'Verify' : 'Reset PIN',
+              isLoading: _isLoading || _isSubmitting,
+              onPressed: _resetToken == null
+                  ? (_otpCtrl.text.length == 6 ? () => _verifyOtp(_otpCtrl.text) : null)
+                  : _completeReset,
             ),
             const SizedBox(height: 24),
           ],

@@ -1,10 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../authentication/services/authentication_service.dart';
 import '../../../widgets/primary_gradient_button.dart';
 import 'otp_verification_screen.dart';
 
-class ForgotTransactionPinScreen extends StatelessWidget {
+class ForgotTransactionPinScreen extends StatefulWidget {
   const ForgotTransactionPinScreen({super.key});
+
+  @override
+  State<ForgotTransactionPinScreen> createState() =>
+      _ForgotTransactionPinScreenState();
+}
+
+class _ForgotTransactionPinScreenState extends State<ForgotTransactionPinScreen> {
+  bool _isLoading = false;
+
+  Future<void> _requestResetCode() async {
+    if (_isLoading) return;
+
+    setState(() => _isLoading = true);
+    try {
+      await AuthenticationService().requestTransactionPinReset();
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OtpVerificationScreen(
+            userEmail: AuthenticationService().currentUser?.email ??
+                'your registered email',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +105,8 @@ class ForgotTransactionPinScreen extends StatelessWidget {
             const SizedBox(height: 48),
             PrimaryGradientButton(
               text: "Continue",
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const OtpVerificationScreen(),
-                  ),
-                );
-              },
+              isLoading: _isLoading,
+              onPressed: _requestResetCode,
             ),
           ],
         ),

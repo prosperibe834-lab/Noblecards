@@ -95,13 +95,16 @@ class AuthenticationService {
   static bool _hasPersistedSession = false;
   final SharedPreferences? _preferences;
   final FlutterSecureStorage? _storage;
+  final http.Client? _httpClient;
   AuthUser? _currentUser;
 
   AuthenticationService({
     SharedPreferences? preferences,
     FlutterSecureStorage? storage,
+    http.Client? httpClient,
   }) : _preferences = preferences ?? _sharedPreferences,
-       _storage = storage ?? _secureStorage;
+       _storage = storage ?? _secureStorage,
+       _httpClient = httpClient;
 
   static Future<void> initialize() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -157,6 +160,54 @@ class AuthenticationService {
       throw Exception('Transaction PIN must be exactly 4 digits.');
     }
     await authenticatedPost('/users/me/transaction-pin', body: {'pin': pin});
+  }
+
+  Future<void> updateTransactionPin({
+    required String currentPin,
+    required String newPin,
+  }) async {
+    if (!RegExp(r'^\d{4}$').hasMatch(currentPin) ||
+        !RegExp(r'^\d{4}$').hasMatch(newPin)) {
+      throw Exception('Transaction PIN must be exactly 4 digits.');
+    }
+    await authenticatedPost(
+      '/users/me/transaction-pin',
+      body: {'currentPin': currentPin, 'newPin': newPin},
+    );
+  }
+
+  Future<void> requestTransactionPinReset() async {
+    await authenticatedPost('/users/me/transaction-pin/reset/request');
+  }
+
+  Future<Map<String, dynamic>> verifyTransactionPinResetCode(
+    String code,
+  ) async {
+    if (!RegExp(r'^\d{6}$').hasMatch(code)) {
+      throw Exception('Transaction PIN reset code must be exactly 6 digits.');
+    }
+    final data = await authenticatedPost(
+      '/users/me/transaction-pin/reset/verify',
+      body: {'code': code},
+    );
+    return data;
+  }
+
+  Future<void> completeTransactionPinReset({
+    required String resetToken,
+    required String pin,
+    required String confirmPin,
+  }) async {
+    if (!RegExp(r'^\d{4}$').hasMatch(pin)) {
+      throw Exception('Transaction PIN must be exactly 4 digits.');
+    }
+    if (pin != confirmPin) {
+      throw Exception('Transaction PIN confirmation does not match.');
+    }
+    await authenticatedPost(
+      '/users/me/transaction-pin/reset/complete',
+      body: {'resetToken': resetToken, 'pin': pin, 'confirmPin': confirmPin},
+    );
   }
 
   Future<AuthResponse> signUpWithEmail({
@@ -453,24 +504,29 @@ class AuthenticationService {
     if (authenticated)
       headers['Authorization'] =
           'Bearer ${await _storage?.read(key: _accessKey)}';
-    final response = method == 'POST'
-        ? await http.post(
-            Uri.parse('$_baseUrl$path'),
-            headers: headers,
-            body: jsonEncode(body ?? {}),
-          )
-        : method == 'PATCH'
-        ? await http.patch(
-            Uri.parse('$_baseUrl$path'),
-            headers: headers,
-            body: jsonEncode(body ?? {}),
-          )
-        : method == 'DELETE'
-        ? await http.delete(Uri.parse('$_baseUrl$path'), headers: headers)
-        : await http.get(Uri.parse('$_baseUrl$path'), headers: headers);
+    final response = await _sendRequest(
+      method,
+      Uri.parse('$_baseUrl$path'),
+      headers,
+      body ?? {},
+    );
     final data = response.body.isEmpty
         ? <String, dynamic>{}
         : await compute(_decodeJson, response.body);
+    if (kDebugMode &&
+        method == 'POST' &&
+        path == '/users/me/transaction-pin') {
+      final safeResponse = data is Map
+          ? <String, dynamic>{
+              for (final key in ['created', 'updated', 'hasTransactionPin', 'message'])
+                if (data.containsKey(key)) key: data[key],
+            }
+          : <String, dynamic>{'type': 'non-object response'};
+      debugPrint(
+        '[HTTP] $method $_baseUrl$path -> ${response.statusCode}; '
+        'safe response: ${jsonEncode(safeResponse)}',
+      );
+    }
     if (response.statusCode < 200 || response.statusCode >= 300)
       throw Exception(
         mapErrorMessage(
@@ -481,6 +537,29 @@ class AuthenticationService {
         ),
       );
     return data;
+  }
+
+  Future<http.Response> _sendRequest(
+    String method,
+    Uri uri,
+    Map<String, String> headers,
+    Map<String, dynamic> body,
+  ) {
+    final client = _httpClient;
+    if (client != null) {
+      return switch (method) {
+        'POST' => client.post(uri, headers: headers, body: jsonEncode(body)),
+        'PATCH' => client.patch(uri, headers: headers, body: jsonEncode(body)),
+        'DELETE' => client.delete(uri, headers: headers),
+        _ => client.get(uri, headers: headers),
+      };
+    }
+    return switch (method) {
+      'POST' => http.post(uri, headers: headers, body: jsonEncode(body)),
+      'PATCH' => http.patch(uri, headers: headers, body: jsonEncode(body)),
+      'DELETE' => http.delete(uri, headers: headers),
+      _ => http.get(uri, headers: headers),
+    };
   }
 
   String _responseMessage(String responseBody, String fallback) {
@@ -526,7 +605,7 @@ class AuthenticationService {
 
   String _friendlyMessage(Object message, {String? path}) {
     final text = message.toString().toLowerCase();
-    if (text.contains('already exists'))
+    if (path == '/auth/register' && text.contains('already exists'))
       return 'An account with this email already exists. Please log in or use a different email.';
     if (text.contains('invalid email'))
       return 'Please enter a valid email address.';

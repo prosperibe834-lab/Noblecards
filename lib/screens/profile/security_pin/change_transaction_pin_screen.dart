@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../authentication/services/authentication_service.dart';
 import '../../../widgets/transaction_pin_input.dart';
 import '../../../widgets/pin_strength_indicator.dart';
 import '../../../widgets/primary_gradient_button.dart';
@@ -28,6 +29,8 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
 
   late AnimationController _shakeController;
   bool _hasError = false;
+  bool _isVerifyingCurrentPin = false;
+  bool _currentPinVerified = false;
   int _activeStep = 1;
 
   @override
@@ -52,12 +55,78 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
     super.dispose();
   }
 
-  void _onCurrentPinChanged(String val) {
-    if (val.length == 4) {
-      setState(() => _activeStep = 2);
+  Future<void> _verifyCurrentPin() async {
+    final pin = _currentPinCtrl.text.trim();
+    if (pin.length != 4 || _isVerifyingCurrentPin) return;
+
+    setState(() {
+      _isVerifyingCurrentPin = true;
+      _hasError = false;
+    });
+
+    try {
+      final isValid = await AuthenticationService().verifyTransactionPin(pin);
+      if (!mounted) return;
+
+      if (!isValid) {
+        setState(() {
+          _currentPinVerified = false;
+          _activeStep = 1;
+          _hasError = true;
+          _newPinCtrl.clear();
+          _confirmPinCtrl.clear();
+        });
+        _shakeController.forward(from: 0.0);
+        _currentPinFocus.requestFocus();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid transaction PIN.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      setState(() {
+        _currentPinVerified = true;
+        _activeStep = 2;
+      });
       _newPinFocus.requestFocus();
-    } else {
-      setState(() => _activeStep = 1);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _currentPinVerified = false;
+        _activeStep = 1;
+        _hasError = true;
+        _newPinCtrl.clear();
+        _confirmPinCtrl.clear();
+      });
+      _shakeController.forward(from: 0.0);
+      _currentPinFocus.requestFocus();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifyingCurrentPin = false);
+      }
+    }
+  }
+
+  void _onCurrentPinChanged(String val) {
+    if (val.length < 4) {
+      setState(() {
+        _currentPinVerified = false;
+        _activeStep = 1;
+      });
+      return;
+    }
+
+    if (!_currentPinVerified) {
+      _verifyCurrentPin();
     }
   }
 
@@ -74,9 +143,15 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
     setState(() => _hasError = false);
   }
 
-  void _validateAndUpdate() {
-    if (_currentPinCtrl.text.length != 4) {
+  Future<void> _validateAndUpdate() async {
+    if (!_currentPinVerified || _currentPinCtrl.text.length != 4) {
       _currentPinFocus.requestFocus();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please verify your current PIN first.'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
     if (_newPinCtrl.text.length != 4) {
@@ -91,8 +166,44 @@ class _ChangeTransactionPinScreenState extends State<ChangeTransactionPinScreen>
       return;
     }
 
-    // Simulate Network API Call
-    TransactionPinSuccessDialog.show(context);
+    try {
+      final currentPin = _currentPinCtrl.text.trim();
+      final newPin = _newPinCtrl.text.trim();
+      final isVerified = await AuthenticationService().verifyTransactionPin(currentPin);
+      if (!isVerified || !mounted) {
+        if (mounted) {
+          setState(() {
+            _currentPinVerified = false;
+            _activeStep = 1;
+            _hasError = true;
+          });
+          _shakeController.forward(from: 0.0);
+          _currentPinFocus.requestFocus();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid transaction PIN.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      await AuthenticationService().updateTransactionPin(
+        currentPin: currentPin,
+        newPin: newPin,
+      );
+      if (!mounted) return;
+      TransactionPinSuccessDialog.show(context);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
