@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../authentication/services/authentication_service.dart';
 import 'widgets/password_input_field.dart';
 import 'widgets/password_strength_checker.dart';
 
@@ -50,11 +51,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       return;
     }
 
-    // 4. Set loading state and simulate network request
+    // 4. Set loading state and update the password on the backend
     setState(() => _isLoading = true);
 
     try {
-      await Future.delayed(const Duration(seconds: 2)); // Simulating API Call
+      await AuthenticationService().changeAuthenticatedPassword(
+        currentPassword: _currentPasswordController.text,
+        newPassword: pwd,
+      );
 
       // Reset loading state
       if (mounted) setState(() => _isLoading = false);
@@ -62,8 +66,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       // Show Success Modal
       if (mounted) _showSuccessModal();
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
-      _showErrorSnackBar('An error occurred. Please try again.');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        _showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }
     }
   }
 

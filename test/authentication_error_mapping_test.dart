@@ -88,6 +88,33 @@ void main() {
     });
   }
 
+  test('authenticated password change posts current and new passwords', () async {
+    final requests = <http.Request>[];
+    final client = MockClient((request) async {
+      requests.add(request);
+      return http.Response(
+        '{"updated":true}',
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    final service = AuthenticationService(httpClient: client);
+
+    await service.changeAuthenticatedPassword(
+      currentPassword: 'Current@123',
+      newPassword: 'Updated@456',
+    );
+
+    expect(requests, hasLength(1));
+    expect(requests.single.method, 'POST');
+    expect(requests.single.url.path, '/auth/change-password');
+    expect(jsonDecode(requests.single.body), {
+      'currentPassword': 'Current@123',
+      'newPassword': 'Updated@456',
+    });
+    client.close();
+  });
+
   test('Sogo redemption errors containing code are preserved', () {
     const message = 'The redemption code provided does not appear to be valid.';
     expect(

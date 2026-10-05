@@ -338,6 +338,19 @@ class AuthenticationService {
     await _remove(_recoveryCodeKey);
   }
 
+  Future<void> changeAuthenticatedPassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await authenticatedPost(
+      '/auth/change-password',
+      body: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+    );
+  }
+
   Future<void> resetPasswordForEmail(String email) =>
       sendPasswordResetOtp(email: email);
 
