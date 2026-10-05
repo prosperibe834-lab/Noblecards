@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import 'package:intl/intl.dart';
-import '../widgets/glass_card.dart';
+import 'package:screenshot/screenshot.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_shadow.dart';
+import '../theme/app_spacing.dart';
+import 'deposit_receipt_service.dart';
+import 'deposit/widgets/deposit_receipt_amount_card.dart';
+import 'deposit/widgets/deposit_receipt_details.dart';
+import 'withraw/widgets/withdraw_receipt_confetti.dart';
 
-class DepositReceiptScreen extends StatelessWidget {
+class DepositReceiptScreen extends StatefulWidget {
   final double amount;
   final String currency;
   final double convertedUsd;
+  final String? depositId;
+  final String? transactionId;
   final String? transactionReference;
   final String? status;
   final double? fee;
   final String? paymentMethod;
+  final String? provider;
+  final String? providerReference;
+  final String? providerTransactionId;
   final DateTime? transactionDate;
 
   const DepositReceiptScreen({
@@ -18,128 +30,409 @@ class DepositReceiptScreen extends StatelessWidget {
     required this.amount,
     required this.currency,
     required this.convertedUsd,
+    this.depositId,
+    this.transactionId,
     this.transactionReference,
     this.status,
     this.fee,
     this.paymentMethod,
+    this.provider,
+    this.providerReference,
+    this.providerTransactionId,
     this.transactionDate,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Transaction Receipt",
-          style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(icon: const Icon(Boxicons.bx_share_alt), onPressed: () {}),
-          IconButton(icon: const Icon(Boxicons.bx_download), onPressed: () {}),
-        ],
+  State<DepositReceiptScreen> createState() => _DepositReceiptScreenState();
+}
+
+class _DepositReceiptScreenState extends State<DepositReceiptScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+  final ScreenshotController _screenshotController = ScreenshotController();
+  bool _isProcessingDocument = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.05),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutCubic,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: GlassCard(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  String? get _receiptIdentifier =>
+      widget.transactionReference ?? widget.transactionId ?? widget.depositId;
+
+  void _onDone() => Navigator.of(context).pop();
+
+  Future<void> _handleShare() async {
+    if (_isProcessingDocument) return;
+    setState(() => _isProcessingDocument = true);
+    try {
+      final image = await _screenshotController.capture(
+        delay: const Duration(milliseconds: 10),
+      );
+      if (image == null) throw Exception('Receipt capture returned no image.');
+      await DepositReceiptService.shareReceiptImage(
+        image,
+        receiptIdentifier: _receiptIdentifier,
+      );
+    } catch (_) {
+      _showSnackBar('Unable to share receipt.', isError: true);
+    } finally {
+      if (mounted) setState(() => _isProcessingDocument = false);
+    }
+  }
+
+  Future<void> _handleDownload() async {
+    if (_isProcessingDocument) return;
+    setState(() => _isProcessingDocument = true);
+    try {
+      final image = await _screenshotController.capture(
+        delay: const Duration(milliseconds: 10),
+      );
+      if (image == null) throw Exception('Receipt capture returned no image.');
+      await DepositReceiptService.downloadReceiptPdf(
+        image,
+        receiptIdentifier: _receiptIdentifier,
+      );
+      _showSnackBar('Receipt downloaded successfully!');
+    } catch (_) {
+      _showSnackBar('Unable to download receipt.', isError: true);
+    } finally {
+      if (mounted) setState(() => _isProcessingDocument = false);
+    }
+  }
+
+  void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? AppColors.error : AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildAppBar(isDark),
+            Expanded(
+              child: Stack(
                 children: [
-                  Icon(
-                    Boxicons.bx_credit_card_front,
-                    color: Theme.of(context).primaryColor,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    "NOBLECARDS",
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
+                          children: [
+                            Screenshot(
+                              controller: _screenshotController,
+                              child: Container(
+                                color: isDark
+                                    ? AppColors.darkBackground
+                                    : AppColors.lightBackground,
+                                child: _buildReceiptContent(isDark),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xl),
+                            _buildActionButtons(isDark),
+                            const SizedBox(height: AppSpacing.xl),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+                  if (_isProcessingDocument)
+                    Container(
+                      color: Colors.black.withOpacity(0.3),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
                 ],
               ),
-              const SizedBox(height: 16),
-              const Text(
-                "DEPOSIT RECEIPT",
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 11,
-                  letterSpacing: 2,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "\$${convertedUsd.toStringAsFixed(2)} USD",
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Divider(),
-              _item("Transaction ID", transactionReference ?? "TXN-2026-081920"),
-              _item("Status", (status ?? "COMPLETED").toUpperCase(), color: Colors.green),
-              _item("Deposit Amount", "$currency ${amount.toStringAsFixed(2)}"),
-              _item(
-                "Exchange Rate",
-                "1 USD = $currency ${(amount / convertedUsd).toStringAsFixed(2)}",
-              ),
-              _item("Fee", "$currency ${(fee ?? 0).toStringAsFixed(2)}"),
-              _item("Payment Method", paymentMethod ?? "Flutterwave Virtual Account"),
-              _item(
-                "Date & Time",
-                transactionDate == null
-                    ? "July 28, 2026 • 03:02 PM"
-                    : DateFormat('MMMM d, yyyy • hh:mm a').format(transactionDate!.toLocal()),
-              ),
-              const Divider(height: 32),
-              const Text(
-                "NobleCards Financial Services Ltd.",
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 10,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _item(String label, String val, {Color? color}) {
+  Widget _buildAppBar(bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.s,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 12,
-              color: Colors.grey,
+          IconButton(
+            icon: Icon(
+              Boxicons.bx_chevron_left,
+              color: isDark ? AppColors.darkText : AppColors.lightText,
+            ),
+            onPressed: _onDone,
+          ),
+          Image.asset(
+            isDark
+                ? 'lib/assets/logos/MainDarkLogo.png.png'
+                : 'lib/assets/logos/MainLightLogo.png.png',
+            height: 28,
+            errorBuilder: (context, error, stackTrace) => Text(
+              'NobleCards',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
           ),
-          Text(
-            val,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: color,
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
+              borderRadius: BorderRadius.circular(AppRadius.xs),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Boxicons.bx_download,
+                size: 20,
+                color: isDark ? AppColors.darkText : AppColors.lightText,
+              ),
+              onPressed: _handleDownload,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildReceiptContent(bool isDark) {
+    return Stack(
+      children: [
+        const Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: WithdrawReceiptConfetti(),
+        ),
+        Column(
+          children: [
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Deposit Receipt',
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    fontSize: 24,
+                  ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            _buildStatusBadge(),
+            const SizedBox(height: AppSpacing.xl),
+            DepositReceiptAmountCard(
+              amount: widget.amount,
+              currency: widget.currency,
+              creditedUsd: widget.convertedUsd,
+              status: widget.status,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : AppColors.lightCard,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                boxShadow: isDark ? AppShadow.dark : AppShadow.light,
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : Colors.transparent,
+                ),
+              ),
+              child: DepositReceiptDetails(
+                depositId: widget.depositId,
+                transactionId: widget.transactionId,
+                reference: widget.transactionReference,
+                status: widget.status,
+                date: widget.transactionDate,
+                paymentMethod: widget.paymentMethod,
+                provider: widget.provider,
+                currency: widget.currency,
+                amount: widget.amount,
+                fee: widget.fee,
+                netAmountUsd: widget.convertedUsd,
+                providerReference: widget.providerReference,
+                providerTransactionId: widget.providerTransactionId,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge() {
+    final status = widget.status?.trim();
+    final label = status == null || status.isEmpty
+        ? 'Status unavailable'
+        : status
+            .split('_')
+            .map((part) => part.isEmpty
+                ? part
+                : '${part[0]}${part.substring(1).toLowerCase()}')
+            .join(' ');
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.s,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(AppRadius.full),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Boxicons.bx_check_circle,
+            color: AppColors.primary,
+            size: 16,
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(bool isDark) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: _handleShare,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+                  side: const BorderSide(color: AppColors.primary, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.full),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Boxicons.bx_upload, color: AppColors.primary, size: 20),
+                    SizedBox(width: AppSpacing.xs),
+                    Text(
+                      'Share Receipt',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: _handleDownload,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.full),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Boxicons.bx_download, color: Colors.white, size: 20),
+                    SizedBox(width: AppSpacing.xs),
+                    Text(
+                      'Download Receipt',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: _onDone,
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.m),
+              side: BorderSide(
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                width: 1.5,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.full),
+              ),
+            ),
+            child: Text(
+              'Done',
+              style: TextStyle(
+                color: isDark ? AppColors.darkText : AppColors.lightText,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
