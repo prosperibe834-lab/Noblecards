@@ -50,8 +50,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             _showSnackBar(provider.errorMessage!, isError: true);
           }
         },
-        onRemoveTap: () {
-          provider.removePhoto();
+        onRemoveTap: () async {
+          final success = await provider.removePhoto();
+          if (!success && provider.errorMessage != null && mounted) {
+            _showSnackBar(provider.errorMessage!, isError: true);
+          }
         },
       ),
     );

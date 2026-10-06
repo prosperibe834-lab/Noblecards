@@ -422,44 +422,15 @@ class AuthenticationService {
     XFile? image,
     bool removeImage = false,
   }) async {
-    final accessToken = await _storage?.read(key: _accessKey);
-    if (accessToken == null || accessToken.isEmpty)
-      throw Exception('Your login session has expired. Please log in again.');
     if (image != null) {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse('$_baseUrl/users/me/image'),
-      );
-      request.headers['Authorization'] = 'Bearer $accessToken';
-      final extension = image.name.split('.').last.toLowerCase();
-      final subtype = extension == 'jpg' || extension == 'jpeg'
-          ? 'jpeg'
-          : extension;
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'image',
-          await image.readAsBytes(),
-          filename: image.name,
-          contentType: MediaType('image', subtype),
-        ),
-      );
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception(
-          _friendlyMessage(
-            _responseMessage(responseBody, 'Profile image upload failed.'),
-          ),
-        );
-      }
-      final uploadData = jsonDecode(responseBody) as Map<String, dynamic>;
-      final uploadedUser = uploadData['user'] as Map<String, dynamic>?;
-      final uploadedImageUrl = uploadedUser?['profileImageUrl'] as String?;
-      if (uploadedImageUrl == null || uploadedImageUrl.isEmpty)
+      final uploadedUser = await uploadProfileImage(image);
+      final uploadedImageUrl = uploadedUser['profileImageUrl'] as String?;
+      if (uploadedImageUrl == null || uploadedImageUrl.isEmpty) {
         throw Exception('Profile image upload did not return a saved image.');
+      }
       profileData = {...profileData, 'profileImageUrl': uploadedImageUrl};
     } else if (removeImage) {
-      await _request('DELETE', '/users/me/image', authenticated: true);
+      await removeProfileImage();
     }
     final data = await _request(
       'PATCH',
@@ -480,6 +451,64 @@ class AuthenticationService {
       throw Exception('Profile could not be refreshed after saving.');
     _currentUser = AuthUser.fromJson(refreshedUser);
     return refreshedUser;
+  }
+
+  Future<Map<String, dynamic>> uploadProfileImage(XFile image) async {
+    final accessToken = await _storage?.read(key: _accessKey);
+    if (accessToken == null || accessToken.isEmpty) {
+      throw Exception('Your login session has expired. Please log in again.');
+    }
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$_baseUrl/users/me/image'),
+    );
+    request.headers['Authorization'] = 'Bearer $accessToken';
+    final extension = image.name.split('.').last.toLowerCase();
+    final subtype = extension == 'jpg' || extension == 'jpeg'
+        ? 'jpeg'
+        : extension;
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'image',
+        await image.readAsBytes(),
+        filename: image.name,
+        contentType: MediaType('image', subtype),
+      ),
+    );
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(
+        _friendlyMessage(
+          _responseMessage(responseBody, 'Profile image upload failed.'),
+        ),
+      );
+    }
+
+    final data = jsonDecode(responseBody) as Map<String, dynamic>;
+    final user = data['user'] as Map<String, dynamic>?;
+    final imageUrl = user?['profileImageUrl'] as String?;
+    if (user == null || imageUrl == null || imageUrl.isEmpty) {
+      throw Exception('Profile image upload did not return a saved image.');
+    }
+    _currentUser = AuthUser.fromJson(user);
+    return user;
+  }
+
+  Future<Map<String, dynamic>> removeProfileImage() async {
+    final data = await _request(
+      'DELETE',
+      '/users/me/image',
+      authenticated: true,
+    );
+    final user = data['user'] as Map<String, dynamic>?;
+    if (user == null) {
+      throw Exception('Profile image removal did not return the saved profile.');
+    }
+    _currentUser = AuthUser.fromJson(user);
+    return user;
   }
 
   Future<Map<String, dynamic>?> getUserProfile(String userId) async {

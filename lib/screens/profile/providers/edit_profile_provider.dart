@@ -6,14 +6,21 @@ import '../services/image_picker_service.dart';
 import '../services/profile_storage_service.dart';
 
 class EditProfileProvider extends ChangeNotifier {
-  final ProfileStorageService _storageService = ProfileStorageService();
-  final ImagePickerService _imagePickerService = ImagePickerService();
+  final ProfileStorageService _storageService;
+  final ImagePickerService _imagePickerService;
+
+  EditProfileProvider({
+    ProfileStorageService? storageService,
+    ImagePickerService? imagePickerService,
+  }) : _storageService = storageService ?? ProfileStorageService(),
+       _imagePickerService = imagePickerService ?? ImagePickerService();
 
   EditableProfileModel _initialProfile = EditableProfileModel.initial();
   EditableProfileModel _currentProfile = EditableProfileModel.initial();
 
   bool _isLoading = true;
   bool _isSaving = false;
+  bool _isImageBusy = false;
   String? _errorMessage;
   XFile? _selectedImage;
   Uint8List? _selectedImageBytes;
@@ -41,7 +48,8 @@ class EditProfileProvider extends ChangeNotifier {
         _currentProfile.dateOfBirth != _initialProfile.dateOfBirth ||
         _currentProfile.gender != _initialProfile.gender ||
         _currentProfile.address != _initialProfile.address ||
-        _currentProfile.photoPath != _initialProfile.photoPath;
+        _selectedImage != null ||
+        (_currentProfile.photoPath ?? '') != (_initialProfile.photoPath ?? '');
   }
 
   Future<void> loadProfileData() async {
@@ -103,44 +111,46 @@ class EditProfileProvider extends ChangeNotifier {
   }
 
   Future<bool> pickImageFromGallery() async {
-    try {
-      final image = await _imagePickerService.pickImageFromGallery();
-      if (image != null) {
-        _selectedImage = image;
-        _selectedImageBytes = await image.readAsBytes();
-        _currentProfile = _currentProfile.copyWith(photoPath: image.path);
-        notifyListeners();
-        return true;
-      }
-    } catch (e) {
-      _errorMessage = _friendlyImageError(e);
-      notifyListeners();
-    }
-    return false;
+    return _pickImage(_imagePickerService.pickImageFromGallery);
   }
 
   Future<bool> takePhotoWithCamera() async {
-    try {
-      final image = await _imagePickerService.takePhotoWithCamera();
-      if (image != null) {
-        _selectedImage = image;
-        _selectedImageBytes = await image.readAsBytes();
-        _currentProfile = _currentProfile.copyWith(photoPath: image.path);
-        notifyListeners();
-        return true;
-      }
-    } catch (e) {
-      _errorMessage = _friendlyImageError(e);
-      notifyListeners();
-    }
-    return false;
+    return _pickImage(_imagePickerService.takePhotoWithCamera);
   }
 
-  void removePhoto() {
+  Future<bool> _pickImage(Future<XFile?> Function() pickImage) async {
+    if (_isSaving || _isImageBusy) return false;
+    _isImageBusy = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final image = await pickImage();
+      if (image == null) return false;
+
+      _selectedImage = image;
+      _selectedImageBytes = await image.readAsBytes();
+      _currentProfile = _currentProfile.copyWith(photoPath: image.path);
+      return true;
+    } catch (e) {
+      _errorMessage = _friendlyImageError(e);
+      _selectedImage = null;
+      _selectedImageBytes = null;
+      return false;
+    } finally {
+      _isImageBusy = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> removePhoto() async {
+    if (_isSaving || _isImageBusy) return false;
+    _errorMessage = null;
     _selectedImage = null;
     _selectedImageBytes = null;
     _currentProfile = _currentProfile.copyWith(photoPath: '');
     notifyListeners();
+    return true;
   }
 
   void resetChanges() {
@@ -151,18 +161,24 @@ class EditProfileProvider extends ChangeNotifier {
   }
 
   Future<bool> saveChanges() async {
-    if (!isFormValid) return false;
+    if (!isFormValid || _isSaving || _isImageBusy) return false;
 
     _isSaving = true;
     notifyListeners();
 
     try {
-      _currentProfile = await _storageService.saveProfile(_currentProfile, image: _selectedImage);
+      _currentProfile = await _storageService.saveProfile(
+        _currentProfile,
+        image: _selectedImage,
+        removeImage: _selectedImage == null &&
+        (_currentProfile.photoPath ?? '').isEmpty &&
+        (_initialProfile.photoPath ?? '').isNotEmpty,
+      );
       _selectedImage = null;
       _selectedImageBytes = null;
       _initialProfile = _currentProfile;
     } catch (e) {
-      _errorMessage = 'Unable to save your profile photo. Please try again.';
+      _errorMessage = _friendlyImageError(e);
       _isSaving = false;
       notifyListeners();
       return false;
@@ -176,11 +192,16 @@ class EditProfileProvider extends ChangeNotifier {
   String _friendlyImageError(Object error) {
     final message = error.toString().toLowerCase();
     if (message.contains('cancel') || message.contains('pickedfile')) return '';
+    if (message.contains('camera_access_denied') ||
+        message.contains('camera permission')) {
+      return 'Camera permission was denied. Please allow camera access to continue.';
+    }
     if (message.contains('permission')) return 'Please allow photo access to continue.';
     if (message.contains('camera')) return 'The camera is unavailable on this device.';
     if (message.contains('unsupported operation') || message.contains('_namespace')) return 'Photo selection is unavailable on this device.';
-    if (message.contains('5mb')) return 'Selected image exceeds the 5MB size limit.';
+    if (message.contains('5mb') || message.contains('5242880')) return 'Selected image exceeds the 5MB size limit.';
     if (message.contains('jpg') || message.contains('png') || message.contains('webp')) return 'Please select a JPG, PNG, or WEBP image.';
-    return 'Unable to select that image. Please try again.';
+    final safeMessage = error.toString().replaceFirst('Exception: ', '').trim();
+    return safeMessage.isEmpty ? 'Unable to select that image. Please try again.' : safeMessage;
   }
 }
