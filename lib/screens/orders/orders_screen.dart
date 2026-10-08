@@ -13,7 +13,9 @@ import 'widgets/order_summary_card.dart';
 import 'widgets/orders_filter_bottom_sheet.dart';
 
 class OrdersScreen extends StatefulWidget {
-  const OrdersScreen({super.key});
+  final OrdersService? ordersService;
+
+  const OrdersScreen({super.key, this.ordersService});
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
@@ -24,6 +26,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   List<OrderModel> _allOrders = [];
   bool _isLoading = true;
+  bool _hasLoadError = false;
   String _activeChip = 'All';
 
   // Bottom sheet filters
@@ -50,9 +53,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
     try {
-      _allOrders = await OrdersService().fetchOrders();
+      _allOrders = await (widget.ordersService ?? OrdersService())
+          .fetchOrders();
+      _hasLoadError = false;
     } catch (_) {
       _allOrders = const [];
+      _hasLoadError = true;
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -215,12 +221,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         ],
                       ),
 
-                      const SizedBox(height: 20),
-
-                      // Animated Summary Cards
-                      OrderSummaryCard(orders: _allOrders),
-
-                      const SizedBox(height: 20),
+                      if (!_hasLoadError) ...[
+                        const SizedBox(height: 20),
+                        OrderSummaryCard(orders: _allOrders),
+                        const SizedBox(height: 20),
+                      ] else
+                        const SizedBox(height: 20),
 
                       // Filter Chips Row
                       SingleChildScrollView(
@@ -286,6 +292,39 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: OrderShimmer(),
+                  ),
+                )
+              else if (_hasLoadError)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 40,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Boxicons.bx_error_circle,
+                          size: 52,
+                          color: AppColors.error,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Unable to load orders',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _loadOrders,
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               else if (filteredOrders.isEmpty)

@@ -5,7 +5,6 @@ import '../widgets/deposit_step_indicator.dart';
 import 'bank_transfer_screen.dart';
 import 'gbp_bank_payment_screen.dart';
 import 'card_payment_screen.dart';
-import '../providers/exchange_rate_provider.dart';
 // import 'apple_pay_screen.dart'; // Uncomment if you have an apple pay screen file
 
 import 'apple_google_pay_screen.dart';
@@ -84,13 +83,8 @@ class PaymentMethodScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => CardPaymentScreen(
-                                  amount:
-                                      ExchangeRateProvider.convertFromUSDWithDepositFees(
-                                        convertedUsd,
-                                        currencyCode,
-                                      ),
+                                  amount: depositAmount,
                                   currency: currencyCode,
-                                  requestedUsdAmount: convertedUsd,
                                 ),
                               ),
                             );

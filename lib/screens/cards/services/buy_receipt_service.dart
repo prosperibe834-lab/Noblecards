@@ -40,6 +40,21 @@ class BuyReceiptService {
     );
   }
 
+  Future<String> requestRedemptionLink(String purchaseId) async {
+    final response = await _authentication.authenticatedPost(
+      '/gift-cards/buy/${Uri.encodeComponent(purchaseId)}/view-link',
+    );
+    final value = response['url'];
+    if (value is! String) throw const FormatException('Gift-card link is unavailable.');
+    final uri = Uri.tryParse(value);
+    if (uri == null ||
+        uri.scheme != 'https' ||
+        !(uri.host == 'tremendous.com' || uri.host.endsWith('.tremendous.com'))) {
+      throw const FormatException('Gift-card link is invalid.');
+    }
+    return uri.toString();
+  }
+
   PurchaseStatus _status(String status) {
     if (status == 'SUCCESSFUL') return PurchaseStatus.completed;
     if (status == 'FAILED' || status == 'CANCELLED' || status == 'REJECTED') {

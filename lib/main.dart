@@ -13,7 +13,6 @@ import 'screens/biometric_setup_screen.dart';
 // import 'package:noble_cards/screens/home_screen.dart';
 import 'screens/BottomNavigation/main_navigation_screen.dart';
 import 'navigation/app_router.dart';
-import 'navigation/authenticated_entry.dart';
 
 import 'providers/exchange_rate_provider.dart';
 import 'providers/payment_provider.dart';
@@ -21,7 +20,6 @@ import 'providers/wallet_provider.dart';
 import 'screens/cards/providers/submission_provider.dart';
 import 'screens/cards/providers/sell_receipt_provider.dart';
 import 'screens/cards/providers/buy_receipt_provider.dart';
-import 'screens/cards/providers/region_provider.dart';
 import 'screens/authentication/services/authentication_service.dart';
 
 Future<void> main() async {
@@ -38,6 +36,7 @@ Future<void> main() async {
     ),
   );
 
+
   runApp(
     MultiProvider(
       providers: [
@@ -47,9 +46,6 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SubmissionProvider()),
         ChangeNotifierProvider(create: (_) => SellReceiptProvider()),
         ChangeNotifierProvider(create: (_) => BuyReceiptProvider()),
-        ChangeNotifierProvider(
-          create: (_) => RegionProvider(loadInitialRegions: false),
-        ),
       ],
       child: const NobleCardsApp(),
     ),
@@ -74,19 +70,13 @@ class NobleCardsApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
 
       // Initial screen route based on the locally persisted API session.
-      home: hasActiveSession
-          ? AuthenticatedEntryScreen(
-              destinationBuilder: (_) => const MainNavigationScreen(),
-            )
-          : const OnboardingScreen(),
+      home: hasActiveSession ? const MainNavigationScreen() : const OnboardingScreen(),
 
       // <--- 2. ADDED THIS: Handles dynamic routes (/favourite-currencies, /exchange-rate)
       onGenerateRoute: AppRouter.generateRoute,
 
       routes: {
-        '/home': (context) => AuthenticatedEntryScreen(
-          destinationBuilder: (_) => const MainNavigationScreen(),
-        ),
+        '/home': (context) => const MainNavigationScreen(),
         '/signup': (context) => const SignupScreen(),
 
         '/login': (context) => const LoginScreen(),

@@ -31,11 +31,12 @@ dependencies:
   shared_preferences: ^2.0.15
   qr_flutter: ^4.1.0
   share_plus: ^13.3.0
-  url_launcher: ^6.3.1
   screenshot: ^3.0.0
   pdf: ^3.11.3
   path_provider: ^2.1.6
   mobile_scanner: ^7.4.0
+  url_launcher: ^6.3.1
+  webview_flutter: ^4.14.1
 
 dev_dependencies:
   flutter_test:
@@ -59,29 +60,20 @@ flutter:
     - family: Poppins
       fonts:
         - asset: lib/assets/fonts/Poppins-Regular.ttf
-          weight: 400
         - asset: lib/assets/fonts/Poppins-Medium.ttf
-          weight: 500
         - asset: lib/assets/fonts/Poppins-SemiBold.ttf
-          weight: 600
         - asset: lib/assets/fonts/Poppins-Bold.ttf
-          weight: 700
 
     - family: Inter
       fonts:
         - asset: lib/assets/fonts/Inter-Regular.ttf
-          weight: 400
         - asset: lib/assets/fonts/Inter-Medium.ttf
-          weight: 500
         - asset: lib/assets/fonts/Inter-SemiBold.ttf
-          weight: 600
         - asset: lib/assets/fonts/Inter-Bold.ttf
-          weight: 700
 
     - family: SpaceGrotesk
       fonts:
         - asset: lib/assets/fonts/SpaceGrotesk-Bold.ttf
-          weight: 700
 
 
 

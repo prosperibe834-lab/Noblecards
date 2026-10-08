@@ -19,10 +19,10 @@ class GiftCardDetailsService {
         ? purchase['redeemDetails'] as Map<String, dynamic>
         : <String, dynamic>{};
     final code = isSuccessful
-        ? purchase['voucherCode']?.toString() ?? ''
+        ? _readStringDeep(purchase, ['voucherCode', 'code', 'redemptionCode', 'redemption_code', 'giftCardCode', 'cardCode']) ?? ''
         : '';
     final pin = isSuccessful
-        ? _readString(redeemDetails, ['pin', 'voucherPin', 'pinCode'])
+        ? _readStringDeep(redeemDetails, ['pin', 'voucherPin', 'pinCode', 'cardPin'])
         : null;
     final importantInformation = <String>[
       if (purchase['providerMessage']?.toString().trim().isNotEmpty ?? false)
@@ -54,10 +54,21 @@ class GiftCardDetailsService {
     );
   }
 
-  String? _readString(Map<String, dynamic> source, List<String> keys) {
-    for (final key in keys) {
-      final value = source[key];
-      if (value is String && value.trim().isNotEmpty) return value.trim();
+  String? _readStringDeep(dynamic source, List<String> keys) {
+    if (source is Map) {
+      for (final key in keys) {
+        final value = source[key];
+        if (value is String && value.trim().isNotEmpty) return value.trim();
+      }
+      for (final value in source.values) {
+        final nested = _readStringDeep(value, keys);
+        if (nested != null) return nested;
+      }
+    } else if (source is List) {
+      for (final item in source) {
+        final nested = _readStringDeep(item, keys);
+        if (nested != null) return nested;
+      }
     }
     return null;
   }

@@ -9,10 +9,7 @@ class OrderDetailsRouter {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => GiftCardDetailsScreen(
-            giftCardData: null,
-            purchaseId: order.orderId,
-          ),
+          builder: (_) => GiftCardDetailsScreen(purchaseId: order.orderId),
         ),
       );
     } else {

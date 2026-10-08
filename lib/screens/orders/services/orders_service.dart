@@ -13,14 +13,13 @@ class OrdersService {
     final response = await _authentication.authenticatedGet(
       '/gift-cards/orders',
     );
-    final items = response['items'] is List
-        ? response['items']
-        : response['data'] is List
-        ? response['data']
-        : response['purchases'] is List
-        ? response['purchases']
-        : const <dynamic>[];
-
+    final items = response['items'];
+    if (items is! List) {
+      throw const FormatException('Invalid orders response.');
+    }
+    if (items.any((item) => item is! Map)) {
+      throw const FormatException('Invalid orders response.');
+    }
     return parseOrders(items);
   }
 

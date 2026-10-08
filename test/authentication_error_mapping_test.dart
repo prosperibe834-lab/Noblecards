@@ -38,6 +38,25 @@ void main() {
     );
   });
 
+  test('hasTransactionPin reads the authenticated profile contract', () async {
+    final requests = <http.Request>[];
+    final client = MockClient((request) async {
+      requests.add(request);
+      return http.Response(
+        '{"user":{"hasTransactionPin":true}}',
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+    });
+    final service = AuthenticationService(httpClient: client);
+
+    expect(await service.hasTransactionPin(), isTrue);
+    expect(requests, hasLength(1));
+    expect(requests.single.method, 'GET');
+    expect(requests.single.url.path, '/users/me');
+    client.close();
+  });
+
   test('registration conflicts keep the account-specific message', () {
     expect(
       authentication.mapErrorMessage(

@@ -2,20 +2,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/screens/orders/gift_card_details/models/gift_card_details_model.dart';
 import 'package:noble_cards/screens/orders/services/gift_card_details_service.dart';
+import 'package:noble_cards/screens/cards/services/buy_receipt_service.dart';
 
 class _FakeAuthenticationService extends AuthenticationService {
   final Map<String, dynamic> response;
   final String expectedPath;
+  final String? expectedPostPath;
+  final Map<String, dynamic>? postResponse;
 
   _FakeAuthenticationService({
     required this.response,
     required this.expectedPath,
+    this.expectedPostPath,
+    this.postResponse,
   });
 
   @override
   Future<Map<String, dynamic>> authenticatedGet(String path) async {
     expect(path, expectedPath);
     return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> authenticatedPost(
+    String path, {
+    Map<String, dynamic>? body,
+  }) async {
+    expect(path, expectedPostPath);
+    return postResponse!;
   }
 }
 
@@ -85,6 +99,35 @@ void main() {
     expect(details.pin, isNull);
   });
 
+  test('reads the actual code from nested redeemDetails when the top-level voucherCode is absent', () async {
+    final service = GiftCardDetailsService(
+      authentication: _FakeAuthenticationService(
+        expectedPath: '/gift-cards/buy/nested-code-id',
+        response: {
+          'id': 'nested-code-id',
+          'status': 'SUCCESSFUL',
+          'brandName': 'Amazon',
+          'productName': 'Amazon Gift Card',
+          'countryCode': 'US',
+          'cardCurrencyCode': 'USD',
+          'amount': '25.00',
+          'customerPrice': '25.50',
+          'redeemDetails': {
+            'giftCard': {
+              'code': 'NESTED-SECRET-CODE',
+              'pin': '9876',
+            },
+          },
+        },
+      ),
+    );
+
+    final details = await service.fetchPurchaseDetails('nested-code-id');
+
+    expect(details.code, 'NESTED-SECRET-CODE');
+    expect(details.pin, '9876');
+  });
+
   test('uses the backend model contract without inventing purchase details', () {
     final details = GiftCardDetailsModel(
       orderId: 'buy-db-id',
@@ -103,5 +146,39 @@ void main() {
 
     expect(details.code, isNotEmpty);
     expect(details.pin, isNotNull);
+  });
+
+  test('requests the secure View Gift Card URL using the authenticated purchase ID', () async {
+    final service = BuyReceiptService(
+      authentication: _FakeAuthenticationService(
+        response: const {},
+        expectedPath: '',
+        expectedPostPath: '/gift-cards/buy/buy-db-id/view-link',
+        postResponse: {
+          'url': 'https://testflight.tremendous.com/rewards/payout/secret-token',
+        },
+      ),
+    );
+
+    await expectLater(
+      service.requestRedemptionLink('buy-db-id'),
+      completion('https://testflight.tremendous.com/rewards/payout/secret-token'),
+    );
+  });
+
+  test('rejects redemption URLs that are not HTTPS Tremendous URLs', () async {
+    final service = BuyReceiptService(
+      authentication: _FakeAuthenticationService(
+        response: const {},
+        expectedPath: '',
+        expectedPostPath: '/gift-cards/buy/buy-db-id/view-link',
+        postResponse: {'url': 'https://evil.example/redeem'},
+      ),
+    );
+
+    await expectLater(
+      service.requestRedemptionLink('buy-db-id'),
+      throwsA(isA<FormatException>()),
+    );
   });
 }

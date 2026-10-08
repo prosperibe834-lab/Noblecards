@@ -7,6 +7,8 @@ import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_spacing.dart';
 import '../../../../theme/app_radius.dart';
 import '../../../../theme/app_animation.dart';
+import '../../cards/services/buy_receipt_service.dart';
+import '../../cards/gift_card_redemption_web_view.dart';
 import '../services/gift_card_details_service.dart';
 import 'models/gift_card_details_model.dart';
 import 'widgets/gift_card_components.dart';
@@ -16,11 +18,8 @@ class GiftCardDetailsScreen extends StatefulWidget {
   final String? purchaseId;
   final GiftCardDetailsModel? giftCardData;
 
-  const GiftCardDetailsScreen({
-    Key? key,
-    this.purchaseId,
-    this.giftCardData,
-  }) : super(key: key);
+  const GiftCardDetailsScreen({Key? key, this.purchaseId, this.giftCardData})
+    : super(key: key);
 
   @override
   State<GiftCardDetailsScreen> createState() => _GiftCardDetailsScreenState();
@@ -30,6 +29,7 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
   bool _isLoading = true;
   bool _isCodeVisible = false;
   bool _isPinVisible = false;
+  bool _isOpeningGiftCard = false;
   String? _errorMessage;
   GiftCardDetailsModel? _details;
 
@@ -81,7 +81,75 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
         ),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openGiftCard() async {
+    final purchaseId = widget.purchaseId;
+    if (_isOpeningGiftCard || purchaseId == null) return;
+    setState(() => _isOpeningGiftCard = true);
+    try {
+      final url = await BuyReceiptService().requestRedemptionLink(purchaseId);
+      if (!mounted) return;
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(builder: (_) => GiftCardRedemptionWebView(url: url)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to open this gift card. Please try again.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isOpeningGiftCard = false);
+    }
+  }
+
+  Widget _buildViewGiftCardButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        onPressed: _isOpeningGiftCard ? null : _openGiftCard,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_isOpeningGiftCard)
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            else
+              const Icon(Boxicons.bx_show, size: 20),
+            const SizedBox(width: AppSpacing.sm),
+            const Text(
+              'View Gift Card',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Inter',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -89,8 +157,9 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
   void _downloadOrShareReceipt() {
     if (_details == null) return;
     final card = _details!;
-    
-    final receiptText = '''
+
+    final receiptText =
+        '''
 NobleCards Gift Card Receipt
 --------------------------
 Brand: ${card.brandName}
@@ -103,15 +172,19 @@ Gift Card Code: ${card.code}
 ${card.pin != null ? 'PIN: ${card.pin}\n' : ''}
 Order ID: ${card.orderId}
     ''';
-    
+
     // Frontend-only shim: Triggers native share sheet acting as 'Download/Save'
-    Share.share(receiptText, subject: 'NobleCards - ${card.brandName} Gift Card');
+    Share.share(
+      receiptText,
+      subject: 'NobleCards - ${card.brandName} Gift Card',
+    );
   }
 
   void _copyAllDetails() {
     if (_details == null) return;
     final card = _details!;
-    final details = 'Brand: ${card.brandName}\nValue: \$${card.denomination.toStringAsFixed(2)}\nCode: ${card.code}${card.pin != null ? '\nPIN: ${card.pin}' : ''}';
+    final details =
+        'Brand: ${card.brandName}\nValue: \$${card.denomination.toStringAsFixed(2)}\nCode: ${card.code}${card.pin != null ? '\nPIN: ${card.pin}' : ''}';
     _copyToClipboard(details, 'All details copied successfully!');
   }
 
@@ -130,7 +203,11 @@ Order ID: ${card.orderId}
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Boxicons.bx_error_circle, size: 48, color: AppColors.error),
+                  Icon(
+                    Boxicons.bx_error_circle,
+                    size: 48,
+                    color: AppColors.error,
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     'Unable to load gift card details',
@@ -163,13 +240,15 @@ Order ID: ${card.orderId}
           child: _isLoading
               ? const GiftCardSkeleton()
               : _details == null
-                  ? const SizedBox.shrink()
-                  : Column(
+              ? const SizedBox.shrink()
+              : Column(
                   children: [
                     _buildHeader(isDark, theme, _details!.status),
                     Expanded(
                       child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                        ),
                         physics: const BouncingScrollPhysics(),
                         children: [
                           const SizedBox(height: AppSpacing.s),
@@ -182,11 +261,17 @@ Order ID: ${card.orderId}
                           if (_details!.code.isNotEmpty) ...[
                             GiftCardCodeSection(
                               title: 'Gift Card Code',
-                              subtitle: 'Use this code at checkout to redeem your gift card.',
+                              subtitle:
+                                  'Use this code at checkout to redeem your gift card.',
                               code: _details!.code,
                               isVisible: _isCodeVisible,
-                              onToggleVisibility: () => setState(() => _isCodeVisible = !_isCodeVisible),
-                              onCopy: () => _copyToClipboard(_details!.code, 'Code copied to clipboard!'),
+                              onToggleVisibility: () => setState(
+                                () => _isCodeVisible = !_isCodeVisible,
+                              ),
+                              onCopy: () => _copyToClipboard(
+                                _details!.code,
+                                'Code copied to clipboard!',
+                              ),
                               theme: theme,
                               showReadyBadge: true,
                             ),
@@ -198,8 +283,13 @@ Order ID: ${card.orderId}
                               subtitle: 'Some gift cards may require a PIN.',
                               code: _details!.pin!,
                               isVisible: _isPinVisible,
-                              onToggleVisibility: () => setState(() => _isPinVisible = !_isPinVisible),
-                              onCopy: () => _copyToClipboard(_details!.pin!, 'PIN copied to clipboard!'),
+                              onToggleVisibility: () => setState(
+                                () => _isPinVisible = !_isPinVisible,
+                              ),
+                              onCopy: () => _copyToClipboard(
+                                _details!.pin!,
+                                'PIN copied to clipboard!',
+                              ),
                               theme: theme,
                               showReadyBadge: false,
                             ),
@@ -210,7 +300,13 @@ Order ID: ${card.orderId}
                             theme: theme,
                           ),
                           const SizedBox(height: AppSpacing.m),
-                          GiftCardInfoSection(data: _details!, theme: theme, isDark: isDark),
+                          _buildViewGiftCardButton(),
+                          const SizedBox(height: AppSpacing.m),
+                          GiftCardInfoSection(
+                            data: _details!,
+                            theme: theme,
+                            isDark: isDark,
+                          ),
                           const SizedBox(height: AppSpacing.xl),
                         ],
                       ),
@@ -239,16 +335,26 @@ Order ID: ${card.orderId}
                 color: theme.cardColor,
                 border: Border.all(color: theme.dividerColor),
               ),
-              child: Icon(Boxicons.bx_arrow_back, color: theme.textTheme.bodyLarge?.color, size: 20),
+              child: Icon(
+                Boxicons.bx_arrow_back,
+                color: theme.textTheme.bodyLarge?.color,
+                size: 20,
+              ),
             ),
           ),
           Image.asset(
-            isDark ? 'lib/assets/logos/MainDarkLogo.png.png' : 'lib/assets/logos/MainLightLogo.png.png',
+            isDark
+                ? 'lib/assets/logos/MainDarkLogo.png.png'
+                : 'lib/assets/logos/MainLightLogo.png.png',
             height: 28,
-            errorBuilder: (context, error, stackTrace) => const Icon(Boxicons.bx_credit_card_front, size: 28),
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Boxicons.bx_credit_card_front, size: 28),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s, vertical: 6),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.s,
+              vertical: 6,
+            ),
             decoration: BoxDecoration(
               color: AppColors.success.withOpacity(0.1),
               borderRadius: BorderRadius.circular(AppRadius.full),
@@ -256,9 +362,21 @@ Order ID: ${card.orderId}
             ),
             child: Row(
               children: [
-                const Icon(Boxicons.bx_check_circle, color: AppColors.success, size: 14),
+                const Icon(
+                  Boxicons.bx_check_circle,
+                  color: AppColors.success,
+                  size: 14,
+                ),
                 const SizedBox(width: AppSpacing.xs),
-                Text(status, style: const TextStyle(color: AppColors.success, fontSize: 12, fontWeight: FontWeight.w600, fontFamily: 'Inter')),
+                Text(
+                  status,
+                  style: const TextStyle(
+                    color: AppColors.success,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Inter',
+                  ),
+                ),
               ],
             ),
           ),
@@ -276,7 +394,9 @@ Order ID: ${card.orderId}
         Text(
           'Here are your gift card details. Keep this information safe and never share it with anyone.',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.brightness == Brightness.light ? AppColors.secondary : AppColors.darkSubText,
+            color: theme.brightness == Brightness.light
+                ? AppColors.secondary
+                : AppColors.darkSubText,
           ),
         ),
       ],
@@ -301,14 +421,23 @@ Order ID: ${card.orderId}
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
             ),
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Boxicons.bx_copy, size: 20),
                 SizedBox(width: AppSpacing.sm),
-                Text('Copy All Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, fontFamily: 'Inter')),
+                Text(
+                  'Copy All Details',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Inter',
+                  ),
+                ),
               ],
             ),
           ),

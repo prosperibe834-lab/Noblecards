@@ -140,8 +140,9 @@ class AuthenticationService {
   }
 
   Future<bool> hasTransactionPin() async {
-    final data = await authenticatedGet('/users/me/transaction-pin');
-    return data['hasTransactionPin'] as bool? ?? false;
+    final data = await authenticatedGet('/users/me');
+    final user = data['user'] as Map<String, dynamic>?;
+    return user?['hasTransactionPin'] as bool? ?? false;
   }
 
   Future<bool> verifyTransactionPin(String pin) async {

@@ -7,11 +7,13 @@ import '../../../../theme/app_radius.dart';
 import './models/sell_receipt_model.dart'; // Reusing VerificationStatus enum mapping
 import './models/purchased_gift_card.dart';
 import './providers/buy_receipt_provider.dart';
+import './services/buy_receipt_service.dart';
 import './widgets/receipt_detail_tile.dart'; // Reused from Sale Receipt
 import './widgets/receipt_header.dart'; // Reused from Sale Receipt
 import './widgets/receipt_status_banner.dart'; // Reused from Sale Receipt
 import './widgets/ready_to_use_info_card.dart';
 import 'buy_gift_card_details_screen.dart';
+import 'gift_card_redemption_web_view.dart';
 
 class BuyReceiptScreen extends StatefulWidget {
   final String transactionId;
@@ -23,6 +25,8 @@ class BuyReceiptScreen extends StatefulWidget {
 }
 
 class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
+  bool _isOpeningGiftCard = false;
+
   @override
   void initState() {
     super.initState();
@@ -280,8 +284,7 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                 ),
 
                 const SizedBox(height: 24),
-                if (data.status == PurchaseStatus.completed &&
-                    data.cardCode.isNotEmpty)
+                if (data.status == PurchaseStatus.completed)
                   ReadyToUseInfoCard(
                     onTap: () {
                       Navigator.push(
@@ -295,22 +298,14 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
                 const SizedBox(height: 24),
 
                 // Primary Button
-                if (data.status == PurchaseStatus.completed &&
-                    data.cardCode.isNotEmpty)
+                if (data.status == PurchaseStatus.completed)
                   _buildActionButton(
                     context,
                     label: 'View Gift Card',
                     icon: Boxicons.bx_credit_card_front,
                     isPrimary: true,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => GiftCardDetailsScreen(card: data),
-                        ),
-                      );
-                    },
+                    onTap: _openGiftCard,
+                    isLoading: _isOpeningGiftCard,
                   ),
                 const SizedBox(height: 12),
 
@@ -348,6 +343,27 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
     );
   }
 
+  Future<void> _openGiftCard() async {
+    if (_isOpeningGiftCard) return;
+    HapticFeedback.lightImpact();
+    setState(() => _isOpeningGiftCard = true);
+    try {
+      final url = await BuyReceiptService().requestRedemptionLink(widget.transactionId);
+      if (!mounted) return;
+      await Navigator.push<void>(
+        context,
+        MaterialPageRoute(builder: (_) => GiftCardRedemptionWebView(url: url)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open this gift card. Please try again.')),
+      );
+    } finally {
+      if (mounted) setState(() => _isOpeningGiftCard = false);
+    }
+  }
+
   Widget _buildDivider(bool isDark) {
     return Divider(
       color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
@@ -375,6 +391,7 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
     required bool isPrimary,
     required VoidCallback onTap,
     bool isGhost = false,
+    bool isLoading = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isPrimary
@@ -392,7 +409,7 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
               : (isDark ? AppColors.darkBorder : AppColors.lightBorder));
 
     return InkWell(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap,
       borderRadius: BorderRadius.circular(AppRadius.lg),
       splashColor: isPrimary
           ? Colors.white24
@@ -408,7 +425,14 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: textColor, size: 20),
+            if (isLoading)
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: textColor),
+              )
+            else
+              Icon(icon, color: textColor, size: 20),
             const SizedBox(width: 8),
             Text(
               label,

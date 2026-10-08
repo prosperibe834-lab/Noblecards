@@ -66,8 +66,7 @@ class _GbpBankPaymentScreenState extends State<GbpBankPaymentScreen> {
           paymentMethod: 'BANK_TRANSFER',
           country: 'United Kingdom',
           countryCode: 'GB',
-          idempotencyKey:
-              '${widget.currency}-${widget.amount}-${DateTime.now().millisecondsSinceEpoch}',
+          idempotencyKey: '${widget.currency}-${widget.amount}-${DateTime.now().millisecondsSinceEpoch}',
         )
         .then((deposit) {
           if (mounted) {
@@ -150,8 +149,7 @@ class _GbpBankPaymentScreenState extends State<GbpBankPaymentScreen> {
 
           if (snapshot.hasError) {
             final errorText = snapshot.error.toString();
-            final isAmountLimit =
-                errorText.contains('£3,719') || errorText.contains('3,719');
+            final isAmountLimit = errorText.contains('£3,719') || errorText.contains('3,719');
 
             return Padding(
               padding: const EdgeInsets.all(16),
@@ -167,17 +165,12 @@ class _GbpBankPaymentScreenState extends State<GbpBankPaymentScreen> {
                     isAmountLimit
                         ? 'Amount Limit Exceeded'
                         : 'Payment Setup Failed',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    errorText
-                        .replaceFirst('Exception: ', '')
-                        .replaceFirst('Error: ', ''),
+                    errorText.replaceFirst('Exception: ', '').replaceFirst('Error: ', ''),
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
