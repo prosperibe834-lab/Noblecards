@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:share_plus/share_plus.dart'; // Standard sharing plugin for frontend download shim
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_spacing.dart';
@@ -95,16 +97,30 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
     try {
       final url = await BuyReceiptService().requestRedemptionLink(purchaseId);
       if (!mounted) return;
-      await Navigator.of(context).push<void>(
-        MaterialPageRoute(builder: (_) => GiftCardRedemptionWebView(url: url)),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to open this gift card. Please try again.'),
-          behavior: SnackBarBehavior.floating,
+      final opened = await openGiftCardTarget(
+        isWeb: kIsWeb,
+        uri: Uri.parse(url),
+        launchOnWeb: (uri) => launchUrl(uri, mode: LaunchMode.platformDefault),
+        openNativeWebView: () => Navigator.of(context).push<void>(
+          MaterialPageRoute(
+            builder: (_) => GiftCardRedemptionWebView(url: url),
+          ),
         ),
+      );
+      if (!opened) {
+        throw const GiftCardRedemptionFailure(
+          'Unable to open the gift-card page. Please try again.',
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      final message = error is GiftCardRedemptionFailure
+          ? error.message
+          : error is FormatException
+          ? 'Gift-card link is invalid.'
+          : 'Gift card is temporarily unavailable. Please try again.';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
       );
     } finally {
       if (mounted) setState(() => _isOpeningGiftCard = false);

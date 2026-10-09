@@ -1,6 +1,49 @@
 import '../models/purchased_gift_card.dart';
 import '../../authentication/services/authentication_service.dart';
 
+class GiftCardRedemptionFailure implements Exception {
+  final String message;
+
+  const GiftCardRedemptionFailure(this.message);
+
+  factory GiftCardRedemptionFailure.from(Object error) {
+    final text = error.toString().toLowerCase();
+    if (text.contains('previous delivery method')) {
+      return const GiftCardRedemptionFailure(
+        'This gift card was delivered using the previous delivery method.',
+      );
+    }
+    if (text.contains('not found')) {
+      return const GiftCardRedemptionFailure(
+        'This gift card could not be found.',
+      );
+    }
+    if (text.contains('invalid or expired session') ||
+        text.contains('authentication required')) {
+      return const GiftCardRedemptionFailure(
+        'Please sign in again to view this gift card.',
+      );
+    }
+    if (text.contains('socketexception') ||
+        text.contains('clientexception') ||
+        text.contains('failed to fetch') ||
+        text.contains('network') ||
+        text.contains('connection refused') ||
+        text.contains('timed out') ||
+        text.contains('timeout')) {
+      return const GiftCardRedemptionFailure(
+        'Unable to connect. Please check your internet connection and try again.',
+      );
+    }
+    return const GiftCardRedemptionFailure(
+      'Gift card is temporarily unavailable. Please try again.',
+    );
+  }
+
+  @override
+  String toString() => message;
+}
+
 class BuyReceiptService {
   final AuthenticationService _authentication;
 
@@ -41,15 +84,22 @@ class BuyReceiptService {
   }
 
   Future<String> requestRedemptionLink(String purchaseId) async {
-    final response = await _authentication.authenticatedPost(
-      '/gift-cards/buy/${Uri.encodeComponent(purchaseId)}/view-link',
-    );
+    late final Map<String, dynamic> response;
+    try {
+      response = await _authentication.authenticatedPost(
+        '/gift-cards/buy/${Uri.encodeComponent(purchaseId)}/view-link',
+      );
+    } catch (error) {
+      throw GiftCardRedemptionFailure.from(error);
+    }
     final value = response['url'];
-    if (value is! String) throw const FormatException('Gift-card link is unavailable.');
+    if (value is! String) {
+      throw const FormatException('Gift-card link is unavailable.');
+    }
     final uri = Uri.tryParse(value);
     if (uri == null ||
         uri.scheme != 'https' ||
-        !(uri.host == 'tremendous.com' || uri.host.endsWith('.tremendous.com'))) {
+      !(uri.host == 'tremendous.com' || uri.host.endsWith('.tremendous.com'))) {
       throw const FormatException('Gift-card link is invalid.');
     }
     return uri.toString();

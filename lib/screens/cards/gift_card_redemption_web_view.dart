@@ -1,7 +1,19 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../theme/app_colors.dart';
+
+Future<bool> openGiftCardTarget({
+  required bool isWeb,
+  required Uri uri,
+  required Future<bool> Function(Uri) launchOnWeb,
+  required Future<void> Function() openNativeWebView,
+}) async {
+  if (isWeb) return launchOnWeb(uri);
+  await openNativeWebView();
+  return true;
+}
 
 class GiftCardRedemptionWebView extends StatefulWidget {
   final String url;
@@ -9,7 +21,8 @@ class GiftCardRedemptionWebView extends StatefulWidget {
   const GiftCardRedemptionWebView({super.key, required this.url});
 
   @override
-  State<GiftCardRedemptionWebView> createState() => _GiftCardRedemptionWebViewState();
+  State<GiftCardRedemptionWebView> createState() =>
+      _GiftCardRedemptionWebViewState();
 }
 
 class _GiftCardRedemptionWebViewState extends State<GiftCardRedemptionWebView> {
@@ -20,6 +33,8 @@ class _GiftCardRedemptionWebViewState extends State<GiftCardRedemptionWebView> {
   @override
   void initState() {
     super.initState();
+    if (kIsWeb) return;
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -43,6 +58,14 @@ class _GiftCardRedemptionWebViewState extends State<GiftCardRedemptionWebView> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    if (kIsWeb) {
+      return const Scaffold(
+        body: Center(
+          child: Text('Opening gift card...'),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(

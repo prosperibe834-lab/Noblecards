@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import './models/sell_receipt_model.dart'; // Reusing VerificationStatus enum mapping
@@ -350,6 +352,18 @@ class _BuyReceiptScreenState extends State<BuyReceiptScreen> {
     try {
       final url = await BuyReceiptService().requestRedemptionLink(widget.transactionId);
       if (!mounted) return;
+
+      final uri = Uri.parse(url);
+      if (kIsWeb) {
+        final launched = await launchUrl(uri, mode: LaunchMode.platformDefault);
+        if (!launched) {
+          throw const GiftCardRedemptionFailure(
+            'Unable to open the gift-card page. Please try again.',
+          );
+        }
+        return;
+      }
+
       await Navigator.push<void>(
         context,
         MaterialPageRoute(builder: (_) => GiftCardRedemptionWebView(url: url)),
