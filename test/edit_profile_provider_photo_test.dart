@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:noble_cards/screens/profile/models/editable_profile_model.dart';
 import 'package:noble_cards/screens/profile/providers/edit_profile_provider.dart';
 import 'package:noble_cards/screens/profile/services/image_picker_service.dart';
 import 'package:noble_cards/screens/profile/services/profile_storage_service.dart';
+import 'package:noble_cards/screens/profile/widgets/profile_photo_picker.dart';
 
 class _FakeProfileStorageService extends ProfileStorageService {
   _FakeProfileStorageService(this.profile);
@@ -121,10 +123,40 @@ void main() {
     await expectLater(provider.takePhotoWithCamera(), completion(isTrue));
     await expectLater(provider.saveChanges(), completion(isFalse));
 
-    expect(provider.profile.photoPath, 'new.jpg');
+    expect(provider.profile.photoPath, initialProfile.photoPath);
+    expect(storage.profile.photoPath, initialProfile.photoPath);
     expect(provider.errorMessage, 'Profile image upload failed.');
-    expect(provider.selectedImageBytes, isNotNull);
+    expect(provider.selectedImageBytes, isNull);
     expect(provider.hasChanges, isTrue);
+  });
+
+  testWidgets('profile photo displays the saved image URL as a network image', (tester) async {
+    const imageUrl = 'http://localhost:3000/uploads/profile/saved-image.png';
+    ImageProvider? displayedImage;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) {
+            final picker = ProfilePhotoPicker(
+              photoPath: imageUrl,
+              onTap: () {},
+            );
+            final column = picker.build(context) as Column;
+            final gesture = column.children.first as GestureDetector;
+            final stack = gesture.child as Stack;
+            final outerContainer = stack.children.first as Container;
+            final padding = outerContainer.child as Padding;
+            final avatar = padding.child as Container;
+            displayedImage = (avatar.decoration as BoxDecoration).image!.image;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    expect(displayedImage, isA<NetworkImage>());
+    expect((displayedImage! as NetworkImage).url, imageUrl);
   });
 
   test('camera permission failure does not fall back to the gallery', () async {

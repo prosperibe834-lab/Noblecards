@@ -130,7 +130,6 @@ class EditProfileProvider extends ChangeNotifier {
 
       _selectedImage = image;
       _selectedImageBytes = await image.readAsBytes();
-      _currentProfile = _currentProfile.copyWith(photoPath: image.path);
       return true;
     } catch (e) {
       _errorMessage = _friendlyImageError(e);
@@ -179,6 +178,7 @@ class EditProfileProvider extends ChangeNotifier {
       _initialProfile = _currentProfile;
     } catch (e) {
       _errorMessage = _friendlyImageError(e);
+      if (_selectedImage != null) _selectedImageBytes = null;
       _isSaving = false;
       notifyListeners();
       return false;
