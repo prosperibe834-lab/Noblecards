@@ -26,9 +26,29 @@ class OrdersService {
   List<OrderModel> parseOrders(dynamic raw) {
     if (raw is! List) return const [];
 
-    final orders = raw.whereType<Map>().map(_mapOrder).toList();
-    orders.sort((left, right) => right.date.compareTo(left.date));
-    return orders;
+    final entries = raw.whereType<Map>().toList();
+    entries.sort((left, right) {
+      final leftTime = _timestampFromEntry(left);
+      final rightTime = _timestampFromEntry(right);
+      final byTime = rightTime.compareTo(leftTime);
+      if (byTime != 0) return byTime;
+
+      final leftId = (left['id'] ?? left['reference'] ?? '').toString();
+      final rightId = (right['id'] ?? right['reference'] ?? '').toString();
+      return rightId.compareTo(leftId);
+    });
+
+    return entries.map(_mapOrder).toList();
+  }
+
+  DateTime _timestampFromEntry(Map item) {
+    final value =
+        item['createdAt'] ??
+        item['updatedAt'] ??
+        item['date'] ??
+        DateTime.now().toIso8601String();
+    final parsed = DateTime.tryParse(value.toString());
+    return parsed ?? DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   OrderModel _mapOrder(Map entry) {
@@ -72,6 +92,7 @@ class OrdersService {
             entry['updatedAt'] ??
             DateTime.now().toIso8601String(),
       ),
+      createdAt: _timestampFromEntry(entry),
       quantity: int.tryParse(entry['quantity']?.toString() ?? '1') ?? 1,
       paymentMethod: provider,
     );

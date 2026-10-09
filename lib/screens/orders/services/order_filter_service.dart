@@ -51,11 +51,30 @@ class OrderFilterService {
 
       return true;
     }).toList()..sort((a, b) {
+      if (sortBy == null || sortBy == 'Newest') {
+        final leftTime = _timestampForOrder(a);
+        final rightTime = _timestampForOrder(b);
+        final byTime = rightTime.compareTo(leftTime);
+        if (byTime != 0) return byTime;
+        return b.orderId.compareTo(a.orderId);
+      }
+      if (sortBy == 'Oldest') {
+        final leftTime = _timestampForOrder(a);
+        final rightTime = _timestampForOrder(b);
+        final byTime = leftTime.compareTo(rightTime);
+        if (byTime != 0) return byTime;
+        return a.orderId.compareTo(b.orderId);
+      }
       if (sortBy == 'Highest Amount') return b.amount.compareTo(a.amount);
       if (sortBy == 'Lowest Amount') return a.amount.compareTo(b.amount);
       if (sortBy == 'A-Z') return a.giftCardName.compareTo(b.giftCardName);
       return 0; // Default order
     });
+  }
+
+  static DateTime _timestampForOrder(OrderModel order) {
+    final parsed = order.createdAt ?? DateTime.tryParse(order.date);
+    return parsed ?? DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   static int countAll(List<OrderModel> orders) => orders.length;

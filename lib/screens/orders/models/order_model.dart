@@ -16,6 +16,7 @@ class OrderModel {
   final String currency;
   final String region;
   final String date;
+  final DateTime? createdAt;
   final int quantity;
   final String paymentMethod;
 
@@ -31,6 +32,7 @@ class OrderModel {
     this.currency = '\$',
     required this.region,
     required this.date,
+    this.createdAt,
     this.quantity = 1,
     required this.paymentMethod,
   });

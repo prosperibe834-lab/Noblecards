@@ -215,6 +215,64 @@ void main() {
   });
 
   test(
+    'sorts mixed Buy and Sell orders newest first by real createdAt timestamp',
+    () {
+      final orders = OrdersService().parseOrders([
+        {
+          'id': 'older-buy-id',
+          'transactionType': 'buy',
+          'status': 'SUCCESSFUL',
+          'brandName': 'Amazon',
+          'productName': 'Amazon Gift Card',
+          'amount': '25',
+          'customerPrice': '25',
+          'createdAt': '2026-09-30T11:00:00Z',
+        },
+        {
+          'id': 'newer-sell-id',
+          'transactionType': 'sell',
+          'status': 'SUBMITTED',
+          'slug': 'apple',
+          'cardAmount': '50',
+          'createdAt': '2026-10-02T10:00:00Z',
+        },
+        {
+          'id': 'newer-buy-id',
+          'transactionType': 'buy',
+          'status': 'SUCCESSFUL',
+          'brandName': 'Steam',
+          'productName': 'Steam Gift Card',
+          'amount': '60',
+          'customerPrice': '60',
+          'createdAt': '2026-10-03T12:00:00Z',
+        },
+      ]);
+
+      expect(orders.map((order) => order.orderId).toList(), [
+        'newer-buy-id',
+        'newer-sell-id',
+        'older-buy-id',
+      ]);
+      expect(
+        OrderFilterService.filterOrders(
+          orders: orders,
+          sortBy: 'Newest',
+        ).map((order) => order.orderId).toList(),
+        ['newer-buy-id', 'newer-sell-id', 'older-buy-id'],
+      );
+      expect(
+        OrderFilterService.filterOrders(
+          orders: orders,
+          sortBy: 'Oldest',
+        ).map((order) => order.orderId).toList(),
+        ['older-buy-id', 'newer-sell-id', 'newer-buy-id'],
+      );
+      expect(orders.first.transactionType, TransactionType.buy);
+      expect(orders.last.transactionType, TransactionType.buy);
+    },
+  );
+
+  test(
     'maps combined API items into Buy and Sell types using explicit type',
     () {
       final orders = OrdersService().parseOrders([
