@@ -20,6 +20,7 @@ class PurchasedGiftCard {
   final String cardCode;
   final String? pin;
   final String? barcodeUrl;
+  final String? brandLogoUrl;
 
   PurchasedGiftCard({
     required this.referenceId,
@@ -39,5 +40,6 @@ class PurchasedGiftCard {
     required this.cardCode,
     this.pin,
     this.barcodeUrl,
+    this.brandLogoUrl,
   });
 }

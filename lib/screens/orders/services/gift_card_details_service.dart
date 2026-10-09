@@ -4,9 +4,8 @@ import '../gift_card_details/models/gift_card_details_model.dart';
 class GiftCardDetailsService {
   final AuthenticationService _authentication;
 
-  GiftCardDetailsService({
-    AuthenticationService? authentication,
-  }) : _authentication = authentication ?? AuthenticationService();
+  GiftCardDetailsService({AuthenticationService? authentication})
+    : _authentication = authentication ?? AuthenticationService();
 
   Future<GiftCardDetailsModel> fetchPurchaseDetails(String purchaseId) async {
     final purchase = await _authentication.authenticatedGet(
@@ -19,10 +18,23 @@ class GiftCardDetailsService {
         ? purchase['redeemDetails'] as Map<String, dynamic>
         : <String, dynamic>{};
     final code = isSuccessful
-        ? _readStringDeep(purchase, ['voucherCode', 'code', 'redemptionCode', 'redemption_code', 'giftCardCode', 'cardCode']) ?? ''
+        ? _readStringDeep(purchase, [
+                'voucherCode',
+                'code',
+                'redemptionCode',
+                'redemption_code',
+                'giftCardCode',
+                'cardCode',
+              ]) ??
+              ''
         : '';
     final pin = isSuccessful
-        ? _readStringDeep(redeemDetails, ['pin', 'voucherPin', 'pinCode', 'cardPin'])
+        ? _readStringDeep(redeemDetails, [
+            'pin',
+            'voucherPin',
+            'pinCode',
+            'cardPin',
+          ])
         : null;
     final importantInformation = <String>[
       if (purchase['providerMessage']?.toString().trim().isNotEmpty ?? false)
@@ -32,21 +44,27 @@ class GiftCardDetailsService {
 
     return GiftCardDetailsModel(
       orderId: purchase['id']?.toString() ?? purchaseId,
-      brandName: purchase['brandName']?.toString() ??
+      orderReference: _optionalString(purchase['reference']),
+      brandName:
+          purchase['brandName']?.toString() ??
           purchase['productName']?.toString() ??
           'Gift Card',
-      cardType: purchase['productName']?.toString() ??
+      cardType:
+          purchase['productName']?.toString() ??
           purchase['brandName']?.toString() ??
           'Digital Gift Card',
-      country: purchase['countryCode']?.toString() ??
+      brandLogoUrl: _httpsUrl(purchase['brandLogoUrl']),
+      country:
+          purchase['countryCode']?.toString() ??
           purchase['country']?.toString() ??
           'Unknown',
       format: 'Digital',
       denomination: _decimal(purchase['amount']),
       amountPaid: _decimal(purchase['customerPrice']),
-      currency: purchase['cardCurrencyCode']?.toString() ??
+      currency:
+          purchase['cardCurrencyCode']?.toString() ??
           purchase['currencyCode']?.toString() ??
-          'USD',
+          '',
       status: status,
       code: code,
       pin: pin,
@@ -75,7 +93,12 @@ class GiftCardDetailsService {
 
   List<String> _importantInformation(Map<String, dynamic> redeemDetails) {
     final values = <String>[];
-    for (final key in const ['instructions', 'instruction', 'redemptionInstructions', 'redeemInstruction']) {
+    for (final key in const [
+      'instructions',
+      'instruction',
+      'redemptionInstructions',
+      'redeemInstruction',
+    ]) {
       final value = redeemDetails[key];
       if (value is String && value.trim().isNotEmpty) {
         values.add(value.trim());
@@ -86,5 +109,19 @@ class GiftCardDetailsService {
 
   double _decimal(dynamic value) {
     return double.tryParse(value.toString()) ?? 0;
+  }
+
+  String? _optionalString(dynamic value) {
+    final text = value?.toString().trim();
+    return text == null || text.isEmpty ? null : text;
+  }
+
+  String? _httpsUrl(dynamic value) {
+    final text = _optionalString(value);
+    if (text == null) return null;
+    final uri = Uri.tryParse(text);
+    return uri != null && uri.scheme == 'https' && uri.host.isNotEmpty
+        ? uri.toString()
+        : null;
   }
 }

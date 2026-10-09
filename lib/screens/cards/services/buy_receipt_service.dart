@@ -62,6 +62,7 @@ class BuyReceiptService {
           purchase['brandName']?.toString() ??
           purchase['productName']?.toString() ??
           'Gift Card',
+      brandLogoUrl: purchase['brandLogoUrl']?.toString(),
       region: purchase['countryCode']?.toString() ?? '',
       countryFlag: _flagForCountry(purchase['countryCode']?.toString() ?? ''),
       cardType: 'Digital Code',
@@ -99,7 +100,8 @@ class BuyReceiptService {
     final uri = Uri.tryParse(value);
     if (uri == null ||
         uri.scheme != 'https' ||
-      !(uri.host == 'tremendous.com' || uri.host.endsWith('.tremendous.com'))) {
+        !(uri.host == 'tremendous.com' ||
+            uri.host.endsWith('.tremendous.com'))) {
       throw const FormatException('Gift-card link is invalid.');
     }
     return uri.toString();

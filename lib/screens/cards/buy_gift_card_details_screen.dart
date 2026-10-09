@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
+import '../../widgets/gift_card_brand_logo.dart';
 import './models/purchased_gift_card.dart';
 
 class GiftCardDetailsScreen extends StatefulWidget {
@@ -108,9 +109,9 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
                     left: 20,
                     child: Row(
                       children: [
-                        const Icon(
-                          Boxicons.bxl_amazon,
-                          color: Colors.orange,
+                        GiftCardBrandLogo(
+                          imageUrl: widget.card.brandLogoUrl,
+                          fallbackColor: Colors.white,
                           size: 32,
                         ),
                         const SizedBox(width: 8),

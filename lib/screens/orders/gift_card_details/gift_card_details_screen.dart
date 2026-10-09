@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
-import 'package:share_plus/share_plus.dart'; // Standard sharing plugin for frontend download shim
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../theme/app_colors.dart';
@@ -12,6 +11,7 @@ import '../../../../theme/app_animation.dart';
 import '../../cards/services/buy_receipt_service.dart';
 import '../../cards/gift_card_redemption_web_view.dart';
 import '../services/gift_card_details_service.dart';
+import '../services/gift_card_receipt_pdf_service.dart';
 import 'models/gift_card_details_model.dart';
 import 'widgets/gift_card_components.dart';
 import 'widgets/gift_card_skeleton.dart';
@@ -42,6 +42,12 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
   }
 
   Future<void> _loadDetails() async {
+    if (widget.giftCardData != null) {
+      _details = widget.giftCardData;
+      _isLoading = false;
+      return;
+    }
+
     if (widget.purchaseId == null) {
       if (!mounted) return;
       setState(() {
@@ -170,38 +176,25 @@ class _GiftCardDetailsScreenState extends State<GiftCardDetailsScreen> {
     );
   }
 
-  void _downloadOrShareReceipt() {
+  Future<void> _downloadOrShareReceipt() async {
     if (_details == null) return;
-    final card = _details!;
-
-    final receiptText =
-        '''
-NobleCards Gift Card Receipt
---------------------------
-Brand: ${card.brandName}
-Type: ${card.cardType}
-Value: \$${card.denomination.toStringAsFixed(2)}
-Amount Paid: \$${card.amountPaid.toStringAsFixed(2)} ${card.currency}
-Status: ${card.status}
-
-Gift Card Code: ${card.code}
-${card.pin != null ? 'PIN: ${card.pin}\n' : ''}
-Order ID: ${card.orderId}
-    ''';
-
-    // Frontend-only shim: Triggers native share sheet acting as 'Download/Save'
-    Share.share(
-      receiptText,
-      subject: 'NobleCards - ${card.brandName} Gift Card',
-    );
+    try {
+      await GiftCardReceiptPdfService.downloadOrShare(_details!);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to create the gift card PDF.')),
+      );
+    }
   }
 
   void _copyAllDetails() {
     if (_details == null) return;
     final card = _details!;
-    final details =
-        'Brand: ${card.brandName}\nValue: \$${card.denomination.toStringAsFixed(2)}\nCode: ${card.code}${card.pin != null ? '\nPIN: ${card.pin}' : ''}';
-    _copyToClipboard(details, 'All details copied successfully!');
+    _copyToClipboard(
+      card.copyAllDetailsText,
+      'All details copied successfully!',
+    );
   }
 
   @override
