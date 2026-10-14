@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
-import 'package:flutter/services.dart';
 
 import 'referral_info_sheet.dart';
+import 'models/referral_summary.dart';
+import 'services/referral_api_service.dart';
+import '../authentication/services/authentication_service.dart';
 import 'widgets/referral_balance_card.dart';
 import 'widgets/referral_stats_card.dart';
 import 'widgets/referral_link_card.dart';
@@ -11,7 +13,9 @@ import 'widgets/referral_progress.dart';
 import 'widgets/referral_reward_banner.dart';
 
 class ReferralScreen extends StatefulWidget {
-  const ReferralScreen({Key? key}) : super(key: key);
+  final Future<ReferralSummary> Function()? loadReferralSummary;
+
+  const ReferralScreen({super.key, this.loadReferralSummary});
 
   @override
   State<ReferralScreen> createState() => _ReferralScreenState();
@@ -20,14 +24,8 @@ class ReferralScreen extends StatefulWidget {
 class _ReferralScreenState extends State<ReferralScreen> {
   bool isLoading = true;
   bool hasError = false;
-
-  // Mock State Data (Ready to be replaced by your backend models)
-  String referralCode = 'PROSPERIBE';
-  String referralLink = 'noblecards.com/ref/PROSPERIBE';
-  double totalCredit = 24.75;
-  int friendsInvited = 18;
-  int qualifiedFriends = 7;
-  int qualifiedTarget = 5;
+  bool authenticationExpired = false;
+  ReferralSummary? _summary;
 
   @override
   void initState() {
@@ -39,15 +37,29 @@ class _ReferralScreenState extends State<ReferralScreen> {
     setState(() {
       isLoading = true;
       hasError = false;
+      authenticationExpired = false;
     });
 
     try {
-      // Simulating network delay
-      await Future.delayed(const Duration(seconds: 2));
+      final summary =
+          await (widget.loadReferralSummary ??
+              ReferralApiService(
+                AuthenticationService(),
+              ).getMyReferralSummary)();
+      if (!mounted) return;
       setState(() {
+        _summary = summary;
         isLoading = false;
       });
-    } catch (e) {
+    } on AuthenticationExpiredException {
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+        hasError = true;
+        authenticationExpired = true;
+      });
+    } catch (_) {
+      if (!mounted) return;
       setState(() {
         isLoading = false;
         hasError = true;
@@ -66,6 +78,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final summary = _summary;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
     final bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA);
@@ -136,22 +149,31 @@ class _ReferralScreenState extends State<ReferralScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            ReferralBalanceCard(balance: totalCredit),
-                            const SizedBox(height: 16),
-                            ReferralStatsCard(
-                              invited: friendsInvited,
-                              qualified: qualifiedFriends,
-                              earned: totalCredit,
+                            ReferralBalanceCard(
+                              balance: summary!.availableRewardUsd,
+                              pending: summary.pendingRewardUsd,
+                              held: summary.heldRewardUsd,
                             ),
                             const SizedBox(height: 16),
-                            ReferralLinkCard(link: referralLink),
+                            ReferralStatsCard(
+                              invited: summary.invitedCount,
+                              qualified: summary.qualifiedCount,
+                              earned: summary.totalEarnedUsd,
+                            ),
+                            const SizedBox(height: 16),
+                            ReferralLinkCard(
+                              code: summary.code,
+                              link: summary.link,
+                            ),
                             const SizedBox(height: 16),
                             const ReferralHowItWorks(),
                             const SizedBox(height: 16),
                             ReferralProgress(
-                              current: qualifiedFriends,
-                              target: qualifiedTarget,
+                              current: summary.qualifiedCount,
+                              target: summary.invitedCount,
                             ),
+                            const SizedBox(height: 16),
+                            _buildRewardHistory(summary, isDark),
                             const SizedBox(height: 16),
                             const ReferralRewardBanner(),
                             const SizedBox(height: 32),
@@ -171,7 +193,10 @@ class _ReferralScreenState extends State<ReferralScreen> {
           Icon(Boxicons.bx_error_circle, color: Colors.red[400], size: 64),
           const SizedBox(height: 16),
           Text(
-            'Failed to load referral data',
+            authenticationExpired
+                ? 'Your session has expired. Please log in again to view referrals.'
+                : 'Failed to load referral data. Check your connection and try again.',
+            textAlign: TextAlign.center,
             style: TextStyle(color: textColor, fontSize: 16),
           ),
           const SizedBox(height: 16),
@@ -187,6 +212,91 @@ class _ReferralScreenState extends State<ReferralScreen> {
             icon: const Icon(Boxicons.bx_refresh),
             label: const Text('Try Again'),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRewardHistory(ReferralSummary summary, bool isDark) {
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final subTextColor = isDark ? Colors.grey[400]! : Colors.grey[600]!;
+    final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Reward history',
+            style: TextStyle(
+              color: textColor,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (summary.rewardHistory.isEmpty)
+            Text(
+              'Your referral rewards will appear here.',
+              style: TextStyle(color: subTextColor, fontSize: 13),
+            )
+          else
+            ...summary.rewardHistory.map((reward) {
+              final statusColor = switch (reward.status) {
+                'AVAILABLE' => const Color(0xFF00B94A),
+                'PENDING' => Colors.orange,
+                'HELD' => Colors.deepOrange,
+                _ => subTextColor,
+              };
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            reward.referredName.isEmpty
+                                ? 'Referred friend'
+                                : reward.referredName,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            reward.status.toLowerCase().replaceAll('_', ' '),
+                            style: TextStyle(
+                              color: statusColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '\$${reward.amountUsd.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
         ],
       ),
     );

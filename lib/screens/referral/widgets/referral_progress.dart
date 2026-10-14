@@ -6,10 +6,10 @@ class ReferralProgress extends StatelessWidget {
   final int target;
 
   const ReferralProgress({
-    Key? key,
+    super.key,
     required this.current,
     required this.target,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,7 @@ class ReferralProgress extends StatelessWidget {
     final textColor = isDark ? Colors.white : Colors.black;
     final borderColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
 
-    final progress = (current / target).clamp(0.0, 1.0);
-    final remaining = target - current;
+    final progress = target == 0 ? 0.0 : (current / target).clamp(0.0, 1.0);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -43,7 +42,7 @@ class ReferralProgress extends StatelessWidget {
                 ),
               ),
               Text(
-                '$current / $target Qualified',
+                '$current / $target Invited',
                 style: TextStyle(
                   color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontSize: 13,
@@ -70,9 +69,9 @@ class ReferralProgress extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  remaining > 0
-                      ? 'Invite $remaining more ${remaining == 1 ? 'friend' : 'friends'} to unlock your next milestone'
-                      : 'Milestone reached! Great job!',
+                  target == 0
+                      ? 'Invite a friend to get started'
+                      : '$current of your invited ${target == 1 ? 'friend has' : 'friends have'} qualified',
                   style: TextStyle(
                     color: isDark ? Colors.grey[400] : Colors.grey[600],
                     fontSize: 12,

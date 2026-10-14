@@ -1,4 +1,5 @@
 import '../../authentication/services/authentication_service.dart';
+import 'package:intl/intl.dart';
 
 class EditableProfileModel {
   final String fullName;
@@ -44,7 +45,7 @@ class EditableProfileModel {
         'phone': phone,
         'country': country,
         'gender': gender,
-        'dateOfBirth': dateOfBirth.isEmpty ? null : dateOfBirth,
+        'dateOfBirth': dateOfBirth.isEmpty ? null : _dateOfBirthForApi(dateOfBirth),
         'address': address,
       };
 
@@ -93,7 +94,7 @@ class EditableProfileModel {
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
       country: map['country'] ?? '',
-      dateOfBirth: map['dateOfBirth'] ?? '',
+      dateOfBirth: _dateOfBirthForDisplay(map['dateOfBirth']),
       gender: map['gender'] ?? '',
       address: map['address'] ?? '',
       photoPath: _imageUrl(map['photoPath'] ?? map['profileImageUrl']),
@@ -104,5 +105,36 @@ class EditableProfileModel {
     if (value == null || value.toString().isEmpty) return null;
     final path = value.toString();
     return path.startsWith('/') ? '${AuthenticationService.apiBaseUrl}$path' : path;
+  }
+
+  static String _dateOfBirthForApi(String value) {
+    final date = _parseDateOfBirth(value);
+    if (date == null) throw FormatException('Invalid date of birth.');
+    return DateFormat('yyyy-MM-dd').format(date);
+  }
+
+  static String _dateOfBirthForDisplay(Object? value) {
+    final text = value?.toString() ?? '';
+    if (text.isEmpty) return '';
+    final date = _parseDateOfBirth(text);
+    return date == null ? text : DateFormat('d MMMM yyyy').format(date);
+  }
+
+  static DateTime? _parseDateOfBirth(String value) {
+    final text = value.trim();
+    final isoDate = RegExp(r'^(\d{4})-(\d{2})-(\d{2})(?:$|T)').firstMatch(text);
+    if (isoDate != null) {
+      final year = int.parse(isoDate.group(1)!);
+      final month = int.parse(isoDate.group(2)!);
+      final day = int.parse(isoDate.group(3)!);
+      final date = DateTime.utc(year, month, day);
+      if (date.year == year && date.month == month && date.day == day) return date;
+      return null;
+    }
+    try {
+      return DateFormat('d MMMM yyyy').parseStrict(text, true);
+    } on FormatException {
+      return null;
+    }
   }
 }

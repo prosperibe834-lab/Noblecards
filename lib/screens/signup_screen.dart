@@ -166,6 +166,7 @@ class _SignupScreenState extends State<SignupScreen>
           phone: phoneNumber,
           country: country,
           gender: gender,
+          referralCode: referralCode,
         );
 
         if (!mounted) return;

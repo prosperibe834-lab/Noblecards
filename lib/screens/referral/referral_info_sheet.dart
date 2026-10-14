@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 
 class ReferralInfoSheet extends StatelessWidget {
-  const ReferralInfoSheet({Key? key}) : super(key: key);
+  const ReferralInfoSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF1A1D21) : Colors.white;
     final textColor = isDark ? Colors.white : Colors.black;
-    final subTextColor = isDark ? Colors.grey[400] : Colors.grey[600];
-
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.9,

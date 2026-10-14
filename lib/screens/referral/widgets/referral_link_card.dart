@@ -5,15 +5,17 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReferralLinkCard extends StatelessWidget {
+  final String code;
   final String link;
 
-  const ReferralLinkCard({Key? key, required this.link}) : super(key: key);
+  const ReferralLinkCard({super.key, required this.code, required this.link});
 
-  void _copyLink(BuildContext context) {
-    Clipboard.setData(ClipboardData(text: link));
+  Future<void> _copy(BuildContext context, String value, String message) async {
+    await Clipboard.setData(ClipboardData(text: value));
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Referral link copied!'),
+      SnackBar(
+        content: Text(message),
         backgroundColor: Color(0xFF00B94A),
         behavior: SnackBarBehavior.floating,
       ),
@@ -21,7 +23,9 @@ class ReferralLinkCard extends StatelessWidget {
   }
 
   void _shareLink() {
-    Share.share('Join me on NobleCards using my referral link: $link');
+    SharePlus.instance.share(
+      ShareParams(text: 'Join me on NobleCards using my referral link: $link'),
+    );
   }
 
   @override
@@ -63,6 +67,52 @@ class ReferralLinkCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Referral code',
+                        style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        code,
+                        style: const TextStyle(
+                          color: Color(0xFF00B94A),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Copy referral code',
+                  onPressed: () =>
+                      _copy(context, code, 'Referral code copied!'),
+                  icon: Icon(
+                    Boxicons.bx_copy,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -93,7 +143,8 @@ class ReferralLinkCard extends StatelessWidget {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => _copyLink(context),
+                        onTap: () =>
+                            _copy(context, link, 'Referral link copied!'),
                         child: Icon(
                           Boxicons.bx_copy,
                           color: isDark ? Colors.grey[400] : Colors.grey[600],
@@ -179,7 +230,8 @@ class ReferralLinkCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () => _copyLink(context),
+                  onPressed: () =>
+                      _copy(context, link, 'Referral link copied!'),
                   icon: const Icon(Boxicons.bx_copy, size: 18),
                   label: const Text(
                     'Copy Link',

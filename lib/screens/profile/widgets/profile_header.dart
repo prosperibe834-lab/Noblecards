@@ -8,6 +8,15 @@ import 'package:noble_cards/screens/profile/edit_profile_screen.dart';
 import 'package:noble_cards/screens/profile/providers/edit_profile_provider.dart';
 import '../../authentication/services/authentication_service.dart';
 
+String profileHeaderStatusText(AuthUser? user) {
+  if (user?.isVerified == true) return 'Noble Verified';
+  return user?.isProfileComplete == true
+      ? 'Profile complete'
+      : 'Profile incomplete';
+}
+
+bool profileHeaderShowsVerifiedBadge(AuthUser? user) => user?.isVerified == true;
+
 class ProfileHeader extends StatefulWidget {
   const ProfileHeader({super.key});
 
@@ -19,6 +28,7 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
   late AnimationController _copyAnimController;
   late Animation<double> _copyScaleAnim;
   AuthUser? _user;
+  String? _failedProfileImageUrl;
 
   @override
   void initState() {
@@ -36,7 +46,21 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
   Future<void> _loadUser() async {
     final auth = AuthenticationService();
     await auth.getUserProfile('current');
-    if (mounted) setState(() => _user = auth.currentUser);
+    if (mounted) {
+      setState(() {
+        if (_resolveImageUrl(_user?.profileImageUrl) !=
+            _resolveImageUrl(auth.currentUser?.profileImageUrl)) {
+          _failedProfileImageUrl = null;
+        }
+        _user = auth.currentUser;
+      });
+    }
+  }
+
+  String? _resolveImageUrl(String? value) {
+    final path = value?.trim();
+    if (path == null || path.isEmpty) return null;
+    return path.startsWith('/') ? '${AuthenticationService.apiBaseUrl}$path' : path;
   }
 
   @override
@@ -64,6 +88,8 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final user = _user ?? AuthenticationService().currentUser;
+    final imageUrl = _resolveImageUrl(user?.profileImageUrl);
+    final visibleImageUrl = imageUrl == _failedProfileImageUrl ? null : imageUrl;
 
     return InkWell(
       onTap: () async {
@@ -102,10 +128,17 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isDark ? AppColors.darkBackground : Colors.grey[200],
-                image: DecorationImage(
-                  image: user?.profileImageUrl != null ? NetworkImage(user!.profileImageUrl!.startsWith('/') ? '${AuthenticationService.apiBaseUrl}${user.profileImageUrl}' : user.profileImageUrl!) : const NetworkImage('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'),
-                  fit: BoxFit.cover,
-                ),
+                image: visibleImageUrl == null
+                    ? null
+                    : DecorationImage(
+                        image: NetworkImage(visibleImageUrl),
+                        fit: BoxFit.cover,
+                        onError: (_, _) {
+                          if (mounted) {
+                            setState(() => _failedProfileImageUrl = visibleImageUrl);
+                          }
+                        },
+                      ),
                 border: Border.all(
                   color: isDark ? Colors.white10 : Colors.grey.shade300,
                   width: 2,
@@ -129,16 +162,16 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                         ),
                       ),
                       const SizedBox(width: 6),
-                      if (user?.isVerified == true) const Icon(Boxicons.bxs_check_circle, color: AppColors.success, size: 18),
+                      if (profileHeaderShowsVerifiedBadge(user)) const Icon(Boxicons.bxs_check_circle, color: AppColors.success, size: 18),
                     ],
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      if (user?.isVerified == true) const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 14),
+                      if (profileHeaderShowsVerifiedBadge(user)) const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        user?.isVerified == true ? 'Noble Verified' : 'Profile incomplete',
+                        profileHeaderStatusText(user),
                         style: TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w600),
                       ),
                     ],

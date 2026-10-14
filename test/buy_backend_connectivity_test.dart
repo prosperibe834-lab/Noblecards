@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_model.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_region_model.dart';
-import 'package:noble_cards/screens/cards/providers/buy_provider.dart';
+import 'package:noble_cards/screens/cards/widgets/buy_provider.dart';
 import 'package:noble_cards/screens/cards/services/buy_service.dart';
 import 'package:noble_cards/screens/cards/services/cards_service.dart';
 import 'package:noble_cards/screens/cards/services/region_service.dart';
@@ -177,7 +177,7 @@ void main() {
       expect(selected.name, 'Amazon GB');
       expect(selected.provider, 'TREMENDOUS');
       expect(selected.currency, 'GBP');
-      expect(selected.denominations, ['20', '50']);
+      expect(selected.denominations.map(double.parse).toList(), [20, 50]);
       expect(selected.supportedRegions.map((region) => region.countryCode), [
         'US',
         'GB',

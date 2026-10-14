@@ -2,7 +2,7 @@ import 'package:image_picker/image_picker.dart';
 
 typedef ImagePickOverride = Future<XFile?> Function(
   ImageSource source, {
-  required int imageQuality,
+  required int? imageQuality,
 });
 
 class ImagePickerService {
@@ -29,9 +29,9 @@ class ImagePickerService {
   Future<XFile?> _pickImage(ImageSource source) {
     final override = _pickImageOverride;
     if (override != null) {
-      return override(source, imageQuality: 85);
+      return override(source, imageQuality: null);
     }
-    return _picker.pickImage(source: source, imageQuality: 85);
+    return _picker.pickImage(source: source);
   }
 
   Future<XFile> _validate(XFile image) async {

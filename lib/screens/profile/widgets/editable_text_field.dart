@@ -43,7 +43,14 @@ class _EditableTextFieldState extends State<EditableTextField> {
   void didUpdateWidget(covariant EditableTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value && _controller.text != widget.value) {
-      _controller.text = widget.value;
+      final updatedValue = widget.value;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || widget.value != updatedValue || _controller.text == updatedValue) return;
+        _controller.value = TextEditingValue(
+          text: updatedValue,
+          selection: TextSelection.collapsed(offset: updatedValue.length),
+        );
+      });
     }
   }
 

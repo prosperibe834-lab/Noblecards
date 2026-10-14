@@ -9,6 +9,17 @@ import '../../../core/config/api_config.dart';
 
 dynamic _decodeJson(String body) => jsonDecode(body);
 
+class AuthenticationExpiredException implements Exception {
+  final String message;
+
+  const AuthenticationExpiredException([
+    this.message = 'Your login session has expired. Please log in again.',
+  ]);
+
+  @override
+  String toString() => message;
+}
+
 class AuthUser {
   final String id;
   final String email;
@@ -220,6 +231,7 @@ class AuthenticationService {
     String? country,
     String? countryCode,
     String? gender,
+    String? referralCode,
   }) async {
     await _request(
       'POST',
@@ -233,6 +245,8 @@ class AuthenticationService {
         if (country != null) 'country': country,
         if (countryCode != null) 'countryCode': countryCode,
         if (gender != null) 'gender': gender,
+        if (referralCode != null && referralCode.trim().isNotEmpty)
+          'referralCode': referralCode.trim(),
       },
     );
     return AuthResponse(user: null, session: null);
@@ -345,10 +359,7 @@ class AuthenticationService {
   }) async {
     await authenticatedPost(
       '/auth/change-password',
-      body: {
-        'currentPassword': currentPassword,
-        'newPassword': newPassword,
-      },
+      body: {'currentPassword': currentPassword, 'newPassword': newPassword},
     );
   }
 
@@ -506,7 +517,9 @@ class AuthenticationService {
     );
     final user = data['user'] as Map<String, dynamic>?;
     if (user == null) {
-      throw Exception('Profile image removal did not return the saved profile.');
+      throw Exception(
+        'Profile image removal did not return the saved profile.',
+      );
     }
     _currentUser = AuthUser.fromJson(user);
     return user;
@@ -556,12 +569,15 @@ class AuthenticationService {
     final data = response.body.isEmpty
         ? <String, dynamic>{}
         : await compute(_decodeJson, response.body);
-    if (kDebugMode &&
-        method == 'POST' &&
-        path == '/users/me/transaction-pin') {
+    if (kDebugMode && method == 'POST' && path == '/users/me/transaction-pin') {
       final safeResponse = data is Map
           ? <String, dynamic>{
-              for (final key in ['created', 'updated', 'hasTransactionPin', 'message'])
+              for (final key in [
+                'created',
+                'updated',
+                'hasTransactionPin',
+                'message',
+              ])
                 if (data.containsKey(key)) key: data[key],
             }
           : <String, dynamic>{'type': 'non-object response'};
@@ -569,6 +585,9 @@ class AuthenticationService {
         '[HTTP] $method $_baseUrl$path -> ${response.statusCode}; '
         'safe response: ${jsonEncode(safeResponse)}',
       );
+    }
+    if (authenticated && response.statusCode == 401) {
+      throw const AuthenticationExpiredException();
     }
     if (response.statusCode < 200 || response.statusCode >= 300)
       throw Exception(

@@ -15,6 +15,7 @@ class _FakeProfileStorageService extends ProfileStorageService {
   EditableProfileModel profile;
   String? uploadedPhotoPath;
   bool failUpload = false;
+  bool failRemove = false;
   int uploadCount = 0;
   int removeCount = 0;
 
@@ -35,7 +36,11 @@ class _FakeProfileStorageService extends ProfileStorageService {
     }
     if (removeImage) {
       removeCount++;
-      profile = editedProfile.copyWith(photoPath: '');
+      if (failRemove) throw Exception('Profile image removal failed.');
+      profile = EditableProfileModel.fromMap({
+        ...editedProfile.toMap(),
+        'photoPath': null,
+      });
       return profile;
     }
     profile = editedProfile;
@@ -56,57 +61,83 @@ void main() {
     photoPath: 'http://localhost:3000/uploads/profile/old.jpg',
   );
 
-  test('selection marks changes dirty and upload waits for Save Changes', () async {
-    final storage = _FakeProfileStorageService(initialProfile)
-      ..uploadedPhotoPath = 'http://localhost:3000/uploads/profile/new.jpg';
-    final provider = EditProfileProvider(
-      storageService: storage,
-      imagePickerService: ImagePickerService(
-        pickImage: (source, {required imageQuality}) async => XFile.fromData(
-          Uint8List.fromList([1, 2, 3]),
-          path: 'new.jpg',
-          mimeType: 'image/jpeg',
+  test(
+    'selection marks changes dirty and upload waits for Save Changes',
+    () async {
+      final storage = _FakeProfileStorageService(initialProfile)
+        ..uploadedPhotoPath = 'http://localhost:3000/uploads/profile/new.jpg';
+      final provider = EditProfileProvider(
+        storageService: storage,
+        imagePickerService: ImagePickerService(
+          pickImage: (source, {required imageQuality}) async => XFile.fromData(
+            Uint8List.fromList([1, 2, 3]),
+            path: 'new.jpg',
+            mimeType: 'image/jpeg',
+          ),
         ),
-      ),
-    );
-    addTearDown(provider.dispose);
+      );
+      addTearDown(provider.dispose);
 
-    await provider.loadProfileData();
-    await expectLater(provider.pickImageFromGallery(), completion(isTrue));
+      await provider.loadProfileData();
+      await expectLater(provider.pickImageFromGallery(), completion(isTrue));
 
-    expect(storage.uploadCount, 0);
-    expect(provider.selectedImageBytes, isNotNull);
-    expect(provider.hasChanges, isTrue);
+      expect(storage.uploadCount, 0);
+      expect(provider.selectedImageBytes, isNotNull);
+      expect(provider.hasChanges, isTrue);
 
-    await expectLater(provider.saveChanges(), completion(isTrue));
+      await expectLater(provider.saveChanges(), completion(isTrue));
 
-    expect(storage.uploadCount, 1);
-    expect(provider.profile.photoPath, storage.uploadedPhotoPath);
-    expect(provider.selectedImageBytes, isNull);
-    expect(provider.hasChanges, isFalse);
-  });
+      expect(storage.uploadCount, 1);
+      expect(provider.profile.photoPath, storage.uploadedPhotoPath);
+      expect(provider.selectedImageBytes, isNull);
+      expect(provider.hasChanges, isFalse);
+    },
+  );
 
-  test('remove is staged and DELETE happens when Save Changes is pressed', () async {
-    final storage = _FakeProfileStorageService(initialProfile);
+  test(
+    'remove is staged and DELETE happens when Save Changes is pressed',
+    () async {
+      final storage = _FakeProfileStorageService(initialProfile);
+      final provider = EditProfileProvider(storageService: storage);
+      addTearDown(provider.dispose);
+
+      await provider.loadProfileData();
+      await expectLater(provider.removePhoto(), completion(isTrue));
+
+      expect(storage.removeCount, 0);
+      expect(provider.profile.photoPath, isEmpty);
+      expect(provider.hasChanges, isTrue);
+
+      await expectLater(provider.saveChanges(), completion(isTrue));
+
+      expect(storage.removeCount, 1);
+      expect(provider.profile.photoPath, isNull);
+      expect(provider.hasChanges, isFalse);
+    },
+  );
+
+  test('failed removal preserves the previously saved photo', () async {
+    final storage = _FakeProfileStorageService(initialProfile)
+      ..failRemove = true;
     final provider = EditProfileProvider(storageService: storage);
     addTearDown(provider.dispose);
 
     await provider.loadProfileData();
     await expectLater(provider.removePhoto(), completion(isTrue));
-
-    expect(storage.removeCount, 0);
     expect(provider.profile.photoPath, isEmpty);
-    expect(provider.hasChanges, isTrue);
 
-    await expectLater(provider.saveChanges(), completion(isTrue));
+    await expectLater(provider.saveChanges(), completion(isFalse));
 
     expect(storage.removeCount, 1);
-    expect(provider.profile.photoPath, isEmpty);
+    expect(storage.profile.photoPath, initialProfile.photoPath);
+    expect(provider.profile.photoPath, initialProfile.photoPath);
+    expect(provider.errorMessage, 'Profile image removal failed.');
     expect(provider.hasChanges, isFalse);
   });
 
   test('failed save preserves the selected image for retry', () async {
-    final storage = _FakeProfileStorageService(initialProfile)..failUpload = true;
+    final storage = _FakeProfileStorageService(initialProfile)
+      ..failUpload = true;
     final provider = EditProfileProvider(
       storageService: storage,
       imagePickerService: ImagePickerService(
@@ -130,34 +161,62 @@ void main() {
     expect(provider.hasChanges, isTrue);
   });
 
-  testWidgets('profile photo displays the saved image URL as a network image', (tester) async {
-    const imageUrl = 'http://localhost:3000/uploads/profile/saved-image.png';
-    ImageProvider? displayedImage;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Builder(
-          builder: (context) {
-            final picker = ProfilePhotoPicker(
-              photoPath: imageUrl,
-              onTap: () {},
-            );
-            final column = picker.build(context) as Column;
-            final gesture = column.children.first as GestureDetector;
-            final stack = gesture.child as Stack;
-            final outerContainer = stack.children.first as Container;
-            final padding = outerContainer.child as Padding;
-            final avatar = padding.child as Container;
-            displayedImage = (avatar.decoration as BoxDecoration).image!.image;
-            return const SizedBox.shrink();
-          },
+  testWidgets(
+    'profile photo displays the saved image and falls back locally on failure',
+    (tester) async {
+      const imageUrl = 'http://localhost:3000/uploads/profile/saved-image.png';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ProfilePhotoPicker(photoPath: imageUrl, onTap: () {}),
+          ),
         ),
-      ),
-    );
+      );
 
-    expect(displayedImage, isA<NetworkImage>());
-    expect((displayedImage! as NetworkImage).url, imageUrl);
-  });
+      BoxDecoration avatarDecoration() => tester
+          .widgetList<Container>(find.byType(Container))
+          .map((container) => container.decoration)
+          .whereType<BoxDecoration>()
+          .firstWhere(
+            (decoration) =>
+                decoration.shape == BoxShape.circle && decoration.image != null,
+          );
+
+      var decorationImage = avatarDecoration().image!;
+      final displayedImage = decorationImage.image;
+      expect(displayedImage, isA<NetworkImage>());
+      expect((displayedImage as NetworkImage).url, imageUrl);
+      expect(decorationImage.fit, BoxFit.cover);
+
+      decorationImage.onError!(
+        Exception('image unavailable'),
+        StackTrace.current,
+      );
+      await tester.pump();
+      expect(
+        tester.widgetList<Container>(find.byType(Container)).where((container) {
+          final decoration = container.decoration;
+          return decoration is BoxDecoration && decoration.image != null;
+        }),
+        isEmpty,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ProfilePhotoPicker(photoPath: null, onTap: () {}),
+          ),
+        ),
+      );
+      expect(
+        tester.widgetList<Container>(find.byType(Container)).where((container) {
+          final decoration = container.decoration;
+          return decoration is BoxDecoration && decoration.image != null;
+        }),
+        isEmpty,
+      );
+    },
+  );
 
   test('camera permission failure does not fall back to the gallery', () async {
     final attemptedSources = <ImageSource>[];

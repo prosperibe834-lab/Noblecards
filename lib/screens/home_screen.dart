@@ -210,12 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGreeting(Color textColor, Color subTextColor) {
     return Row(
       children: [
-        const CircleAvatar(
-          radius: 22,
-          backgroundImage: NetworkImage(
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-          ),
-        ),
+        const CircleAvatar(radius: 22),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

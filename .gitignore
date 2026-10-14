@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/integration_test/referral_smoke.local.json
 
 # Symbolication related
 app.*.symbols
@@ -45,4 +46,3 @@ app.*.map.json
 /android/app/release
 
 node_modules/
-

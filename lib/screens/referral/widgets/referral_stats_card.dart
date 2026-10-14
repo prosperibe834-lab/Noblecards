@@ -7,11 +7,11 @@ class ReferralStatsCard extends StatelessWidget {
   final double earned;
 
   const ReferralStatsCard({
-    Key? key,
+    super.key,
     required this.invited,
     required this.qualified,
     required this.earned,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

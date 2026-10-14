@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
 
-class ProfilePhotoPicker extends StatelessWidget {
+class ProfilePhotoPicker extends StatefulWidget {
   final String? photoPath;
   final Uint8List? photoBytes;
   final VoidCallback onTap;
@@ -16,22 +16,38 @@ class ProfilePhotoPicker extends StatelessWidget {
   });
 
   @override
+  State<ProfilePhotoPicker> createState() => _ProfilePhotoPickerState();
+}
+
+class _ProfilePhotoPickerState extends State<ProfilePhotoPicker> {
+  bool _imageLoadFailed = false;
+
+  @override
+  void didUpdateWidget(covariant ProfilePhotoPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.photoPath != widget.photoPath ||
+        oldWidget.photoBytes != widget.photoBytes) {
+      _imageLoadFailed = false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    ImageProvider imageProvider;
-    if (photoBytes != null) {
-      imageProvider = MemoryImage(photoBytes!);
-    } else if (photoPath != null && photoPath!.isNotEmpty) {
-      imageProvider = NetworkImage(photoPath!);
-    } else {
-      imageProvider = const NetworkImage('https://i.pravatar.cc/150?img=11');
+    ImageProvider? imageProvider;
+    if (!_imageLoadFailed && widget.photoBytes != null) {
+      imageProvider = MemoryImage(widget.photoBytes!);
+    } else if (!_imageLoadFailed &&
+        widget.photoPath != null &&
+        widget.photoPath!.trim().isNotEmpty) {
+      imageProvider = NetworkImage(widget.photoPath!.trim());
     }
 
     return Column(
       children: [
         GestureDetector(
-          onTap: onTap,
+          onTap: widget.onTap,
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -51,10 +67,17 @@ class ProfilePhotoPicker extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                      ),
+                      image: imageProvider == null
+                          ? null
+                          : DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                              onError: (_, _) {
+                                if (mounted) {
+                                  setState(() => _imageLoadFailed = true);
+                                }
+                              },
+                            ),
                     ),
                   ),
                 ),
@@ -105,7 +128,7 @@ class ProfilePhotoPicker extends StatelessWidget {
           'JPG, PNG or WEBP. Max size 5MB.',
           style: TextStyle(
             fontSize: 11,
-            color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                    color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
           ),
         ),
       ],

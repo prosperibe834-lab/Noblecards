@@ -3,9 +3,15 @@ import 'package:boxicons/boxicons.dart';
 
 class ReferralBalanceCard extends StatelessWidget {
   final double balance;
+  final double pending;
+  final double held;
 
-  const ReferralBalanceCard({Key? key, required this.balance})
-    : super(key: key);
+  const ReferralBalanceCard({
+    super.key,
+    required this.balance,
+    required this.pending,
+    required this.held,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +32,9 @@ class ReferralBalanceCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00B94A).withOpacity(isDark ? 0.1 : 0.2),
+            color: const Color(
+              0xFF00B94A,
+            ).withValues(alpha: isDark ? 0.1 : 0.2),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -44,7 +52,7 @@ class ReferralBalanceCard extends StatelessWidget {
                     Text(
                       'Total Referral Credit',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -52,7 +60,7 @@ class ReferralBalanceCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Icon(
                       Boxicons.bx_info_circle,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       size: 16,
                     ),
                   ],
@@ -70,7 +78,15 @@ class ReferralBalanceCard extends StatelessWidget {
                 Text(
                   'Available to buy gift cards',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Pending: \$${pending.toStringAsFixed(2)}  |  Held: \$${held.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 12,
                   ),
                 ),
@@ -81,7 +97,7 @@ class ReferralBalanceCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -96,7 +112,7 @@ class ReferralBalanceCard extends StatelessWidget {
                       Text(
                         'Not withdrawable',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -111,7 +127,7 @@ class ReferralBalanceCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(Boxicons.bxs_gift, color: Colors.white, size: 48),

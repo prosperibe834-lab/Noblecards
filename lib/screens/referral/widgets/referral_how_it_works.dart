@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 
 class ReferralHowItWorks extends StatelessWidget {
-  const ReferralHowItWorks({Key? key}) : super(key: key);
+  const ReferralHowItWorks({super.key});
 
   @override
   Widget build(BuildContext context) {

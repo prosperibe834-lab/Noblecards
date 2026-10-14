@@ -165,19 +165,26 @@ class EditProfileProvider extends ChangeNotifier {
     _isSaving = true;
     notifyListeners();
 
+    final removeImage = _selectedImage == null &&
+        (_currentProfile.photoPath ?? '').isEmpty &&
+        (_initialProfile.photoPath ?? '').isNotEmpty;
+
     try {
       _currentProfile = await _storageService.saveProfile(
         _currentProfile,
         image: _selectedImage,
-        removeImage: _selectedImage == null &&
-        (_currentProfile.photoPath ?? '').isEmpty &&
-        (_initialProfile.photoPath ?? '').isNotEmpty,
+        removeImage: removeImage,
       );
       _selectedImage = null;
       _selectedImageBytes = null;
       _initialProfile = _currentProfile;
     } catch (e) {
       _errorMessage = _friendlyImageError(e);
+      if (removeImage) {
+        _currentProfile = _currentProfile.copyWith(
+          photoPath: _initialProfile.photoPath ?? '',
+        );
+      }
       if (_selectedImage != null) _selectedImageBytes = null;
       _isSaving = false;
       notifyListeners();
