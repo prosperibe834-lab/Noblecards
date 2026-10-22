@@ -193,10 +193,7 @@ class _SellGiftCardsCatalogScreenState
             ),
           ),
           if (_isLoading)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: GiftCardCatalogShimmer(isDark: isDark),
-            )
+            SliverToBoxAdapter(child: GiftCardCatalogShimmer(isDark: isDark))
           else if (_hasError)
             SliverFillRemaining(
               hasScrollBody: false,

@@ -15,6 +15,7 @@ class PinInputWidget extends StatefulWidget {
   final Future<bool> Function(String pin)? onValidatePin;
   final Future<bool> Function()? onAuthenticateBiometric;
   final ValueChanged<bool>? onSuccess;
+  final bool autoPopOnSuccess;
 
   const PinInputWidget({
     super.key,
@@ -22,6 +23,7 @@ class PinInputWidget extends StatefulWidget {
     this.onValidatePin,
     this.onAuthenticateBiometric,
     this.onSuccess,
+    this.autoPopOnSuccess = true,
   });
 
   /// Static trigger method to show the Bottom Sheet from any screen
@@ -30,6 +32,7 @@ class PinInputWidget extends StatefulWidget {
     TransactionPinContext contextData = const TransactionPinContext(),
     Future<bool> Function(String pin)? onValidatePin,
     Future<bool> Function()? onAuthenticateBiometric,
+    bool autoPopOnSuccess = true,
   }) {
     return showModalBottomSheet<bool>(
       context: context,
@@ -40,6 +43,7 @@ class PinInputWidget extends StatefulWidget {
         contextData: contextData,
         onValidatePin: onValidatePin,
         onAuthenticateBiometric: onAuthenticateBiometric,
+        autoPopOnSuccess: autoPopOnSuccess,
       ),
     );
   }
@@ -116,7 +120,9 @@ class _PinInputWidgetState extends State<PinInputWidget>
 
       if (success) {
         widget.onSuccess?.call(true);
-        Navigator.of(context).pop(true);
+        if (widget.autoPopOnSuccess && mounted) {
+          Navigator.of(context).pop(true);
+        }
       } else {
         _triggerErrorState('Incorrect PIN. Please try again.');
       }
@@ -153,7 +159,9 @@ class _PinInputWidgetState extends State<PinInputWidget>
 
       if (success) {
         widget.onSuccess?.call(true);
-        Navigator.of(context).pop(true);
+        if (widget.autoPopOnSuccess && mounted) {
+          Navigator.of(context).pop(true);
+        }
       } else {
         _triggerErrorState('Biometric authentication failed.');
       }

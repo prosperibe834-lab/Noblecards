@@ -115,6 +115,12 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 59,
                 999,
               );
+        break;
+      case 'All':
+      default:
+        startDate = null;
+        endDate = null;
+        break;
     }
 
     final filtered = _transactions.where((transaction) {
@@ -295,7 +301,11 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       isVisible: _isBalanceVisible,
                       onToggleVisibility: () {
                         if (!mounted) return;
-                        setState(() => _isBalanceVisible = !_isBalanceVisible);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            setState(() => _isBalanceVisible = !_isBalanceVisible);
+                          }
+                        });
                       },
                       balance: _walletBalance,
                     ),
@@ -307,15 +317,21 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                     const SizedBox(height: AppSpacing.lg),
                     TransactionFilterTabs(
                       activeTab: _filter.type,
-                      onTabChanged: (tab) => setState(() {
-                        _filter = TransactionHistoryFilter(
-                          type: tab,
-                          status: _filter.status,
-                          dateRange: _filter.dateRange,
-                          sortBy: _filter.sortBy,
-                          customDateRange: _filter.customDateRange,
-                        );
-                      }),
+                      onTabChanged: (tab) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            setState(() {
+                              _filter = TransactionHistoryFilter(
+                                type: tab,
+                                status: _filter.status,
+                                dateRange: _filter.dateRange,
+                                sortBy: _filter.sortBy,
+                                customDateRange: _filter.customDateRange,
+                              );
+                            });
+                          }
+                        });
+                      },
                     ),
                     const SizedBox(height: AppSpacing.md),
                   ],
@@ -363,9 +379,15 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
+          final tx = data[index];
           return TransactionListItem(
-            transaction: data[index],
-            onTap: () => _openTransaction(data[index]),
+            key: ValueKey(tx.id.isNotEmpty ? tx.id : 'tx-$index'),
+            transaction: tx,
+            onTap: () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _openTransaction(tx);
+              });
+            },
           );
         },
         childCount: data.length,

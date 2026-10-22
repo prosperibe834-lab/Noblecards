@@ -17,8 +17,7 @@ class WithdrawBalanceCard extends StatelessWidget {
     final equivalentFormatter = NumberFormat("#,##0.00", "en_US");
 
     // Calculate total equivalent for display
-    final totalEquivalent =
-        provider.availableBalance * provider.selectedCountry.exchangeRate;
+    final totalEquivalent = provider.convertedBalance;
 
     return Container(
       width: double.infinity,
@@ -91,7 +90,9 @@ class WithdrawBalanceCard extends StatelessWidget {
                   children: [
                     Text(
                       provider.isBalanceVisible
-                          ? '\$${formatter.format(provider.availableBalance)}'
+                          ? provider.availableBalance == null
+                                ? '--'
+                                : '\$${formatter.format(provider.availableBalance)}'
                           : '••••••',
                       style: const TextStyle(
                         color: Colors.white,
@@ -148,7 +149,9 @@ class WithdrawBalanceCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
-                  'Equivalent in ${provider.selectedCountry.currency} ${provider.selectedCountry.currency == 'NGN' ? '₦' : ''}${equivalentFormatter.format(totalEquivalent)}',
+                  totalEquivalent == null
+                      ? 'Equivalent in ${provider.selectedCountry.currency} --'
+                      : 'Equivalent in ${provider.selectedCountry.currency} ${provider.selectedCountry.currencySymbol}${equivalentFormatter.format(totalEquivalent)}',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 12,

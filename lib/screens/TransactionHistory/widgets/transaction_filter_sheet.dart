@@ -14,7 +14,7 @@ class TransactionHistoryFilter {
   const TransactionHistoryFilter({
     this.type = 'All',
     this.status = 'All',
-    this.dateRange = '30 Days',
+    this.dateRange = 'All',
     this.sortBy = 'Newest',
     this.customDateRange,
   });
@@ -111,7 +111,7 @@ class _TransactionFilterSheetState extends State<TransactionFilterSheet> {
                 const SizedBox(height: AppSpacing.lg),
                 _buildFilterSection(
                   'Date Range',
-                  ['Today', '7 Days', '30 Days', 'Custom'],
+                  ['All', 'Today', '7 Days', '30 Days', 'Custom'],
                   _selectedDateRange,
                   isDark,
                   onSelected: _selectDateRange,

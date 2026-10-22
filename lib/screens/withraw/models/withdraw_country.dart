@@ -2,7 +2,6 @@ class WithdrawCountry {
   final String id;
   final String name;
   final String currency;
-  final double exchangeRate;
   final String flagInitials; // Fallback for flag
   final List<String> supportedMethodIds;
 
@@ -10,7 +9,6 @@ class WithdrawCountry {
     required this.id,
     required this.name,
     required this.currency,
-    required this.exchangeRate,
     required this.flagInitials,
     required this.supportedMethodIds,
   });

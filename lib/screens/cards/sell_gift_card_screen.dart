@@ -34,16 +34,51 @@ import 'widgets/sell_empty_state.dart';
 import 'widgets/region_selector_card.dart';
 import 'widgets/region_bottom_sheet.dart';
 
-class SellGiftCardScreen extends StatefulWidget {
+class SellGiftCardScreen extends StatelessWidget {
   final GiftCardModel card;
+  final GiftCardSellService? sellService;
 
-  const SellGiftCardScreen({super.key, required this.card});
+  const SellGiftCardScreen({super.key, required this.card, this.sellService});
 
   @override
-  State<SellGiftCardScreen> createState() => _SellGiftCardScreenState();
+  Widget build(BuildContext context) {
+    GiftCardRegionModel? initialRegion;
+    for (final region in card.supportedRegions) {
+      if (region.countryCode == card.countryCode &&
+          region.currencyCode == card.currency) {
+        initialRegion = region;
+        break;
+      }
+    }
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BuyProvider()),
+        ChangeNotifierProvider(
+          create: (_) => RegionProvider(
+            loadInitialRegions: false,
+            initialRegions: card.supportedRegions,
+            initialRegion: initialRegion,
+          ),
+        ),
+      ],
+      child: _SellGiftCardScreenBody(card: card, sellService: sellService),
+    );
+  }
 }
 
-class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
+class _SellGiftCardScreenBody extends StatefulWidget {
+  final GiftCardModel card;
+  final GiftCardSellService? sellService;
+
+  const _SellGiftCardScreenBody({required this.card, this.sellService});
+
+  @override
+  State<_SellGiftCardScreenBody> createState() =>
+      _SellGiftCardScreenBodyState();
+}
+
+class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
   bool _isPhysical = false;
   List<String> _availableCardTypes = const [];
   bool _isLoadingCardTypes = false;
@@ -57,11 +92,12 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
   bool _hasError = false;
   final bool _isEmpty = false;
   late final List<CardFormData> _cards;
-  final GiftCardSellService _sellService = GiftCardSellService();
+  late final GiftCardSellService _sellService;
 
   @override
   void initState() {
     super.initState();
+    _sellService = widget.sellService ?? GiftCardSellService();
     _cards = [CardFormData(amount: widget.card.minDenomination)];
     _availableCardTypes = widget.card.cardTypes;
     _isPhysical =
@@ -377,162 +413,155 @@ class _SellGiftCardScreenState extends State<SellGiftCardScreen> {
         : AppColors.lightBackground;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
 
-    return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => BuyProvider())],
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Boxicons.bx_chevron_left, color: textColor),
-            onPressed: () => Navigator.pop(context),
+    return Scaffold(
+      backgroundColor: bgColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Boxicons.bx_chevron_left, color: textColor),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Sell Gift Card',
+          style: TextStyle(
+            color: textColor,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
-          title: Text(
-            'Sell Gift Card',
-            style: TextStyle(
-              color: textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          centerTitle: true,
-          actions: [
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'History',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+        ),
+        centerTitle: true,
+        actions: [
+          TextButton(
+            onPressed: () {},
+            child: Text(
+              'History',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ],
-        ),
-        body: SafeArea(
-          child: _isLoading
-              ? const SellLoadingShimmer()
-              : _hasError
-              ? SellNetworkError(
-                  onRetry: () => setState(() => _hasError = false),
-                )
-              : _isEmpty
-              ? const SellEmptyState()
-              : SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SellCardHeader(
-                        card: widget.card,
-                        rateText: _quote == null
-                            ? null
-                            : _displayCardCurrencyAmount(
-                                _quote!['finalRate'],
-                                context
-                                    .watch<RegionProvider>()
-                                    .selectedRegion
-                                    ?.currencyCode,
-                              ),
-                        onChange: () => Navigator.pop(context),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Builder(
-                        builder: (context) {
-                          context.watch<RegionProvider>();
-                          if (!_sellCatalogLoaded) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (mounted) {
-                                _loadSellCatalog(
-                                  context.read<RegionProvider>(),
-                                );
-                              }
-                            });
-                          }
-                          return RegionSelectorCard(
-                            onTap: () => _openRegionSelector(context),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      CardTypeSelector(
-                        isPhysical: _isPhysical,
-                        onChanged: _toggleSellType,
-                        availableCardTypes: _availableCardTypes,
-                        onUnavailable: _showUnavailableCardType,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      BulkCardCounter(
-                        quantity: _cards.length,
-                        onAdd: _addCard,
-                        onRemove: () => _removeCard(_cards.length - 1),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      ..._cards.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final cardForm = entry.value;
-                        return AnimatedCardForm(
-                          key: ValueKey(cardForm.id),
-                          index: index,
-                          isPhysical: _isPhysical,
-                          cardForm: cardForm,
-                          onRemove: () => _removeCard(index),
-                          onChanged: () {
-                            setState(() {});
-                            _refreshQuote();
-                          },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: _isLoading
+            ? const SellLoadingShimmer()
+            : _hasError
+            ? SellNetworkError(onRetry: () => setState(() => _hasError = false))
+            : _isEmpty
+            ? const SellEmptyState()
+            : SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SellCardHeader(
+                      card: widget.card,
+                      rateText: _quote == null
+                          ? null
+                          : _displayCardCurrencyAmount(
+                              _quote!['finalRate'],
+                              context
+                                  .watch<RegionProvider>()
+                                  .selectedRegion
+                                  ?.currencyCode,
+                            ),
+                      onChange: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Builder(
+                      builder: (context) {
+                        context.watch<RegionProvider>();
+                        if (!_sellCatalogLoaded) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
+                              _loadSellCatalog(context.read<RegionProvider>());
+                            }
+                          });
+                        }
+                        return RegionSelectorCard(
+                          onTap: () => _openRegionSelector(context),
                         );
-                      }),
-                      const SizedBox(height: AppSpacing.lg),
-                      SellSummaryCard(
-                        cardCount: _cards.length,
-                        totalAmount: _calculateTotalAmount(),
-                        cardCurrency:
-                            context
-                                .watch<RegionProvider>()
-                                .selectedRegion
-                                ?.currencyCode ??
-                            'USD',
-                        payoutCurrency: _payoutCurrency ?? 'NGN',
-                        sellRate:
-                            double.tryParse(
-                              _quote?['finalRate']?.toString() ?? '',
-                            ) ??
-                            0,
-                        estimatedPayout:
-                            double.tryParse(
-                              _quote?['estimatedPayout']?.toString() ?? '',
-                            ) ??
-                            0,
-                        sellRateText: _quote == null
-                            ? null
-                            : '${_displayCardCurrencyAmount(_quote!['finalRate'], context.watch<RegionProvider>().selectedRegion?.currencyCode)} / ${context.watch<RegionProvider>().selectedRegion?.currencyCode ?? 'USD'}',
-                        estimatedPayoutText: _quote == null
-                            ? null
-                            : _displayCardCurrencyAmount(
-                                _quote!['estimatedPayout'],
-                                context
-                                    .watch<RegionProvider>()
-                                    .selectedRegion
-                                    ?.currencyCode,
-                              ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      VerificationNotice(
-                        accepted: _verifiedNoticeAccepted,
-                        onChanged: _toggleVerifiedNotice,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      SubmitSellButton(
-                        enabled: _verifiedNoticeAccepted,
-                        onTap: () => _submit(context),
-                      ),
-                    ],
-                  ),
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    CardTypeSelector(
+                      isPhysical: _isPhysical,
+                      onChanged: _toggleSellType,
+                      availableCardTypes: _availableCardTypes,
+                      onUnavailable: _showUnavailableCardType,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    BulkCardCounter(
+                      quantity: _cards.length,
+                      onAdd: _addCard,
+                      onRemove: () => _removeCard(_cards.length - 1),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    ..._cards.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final cardForm = entry.value;
+                      return AnimatedCardForm(
+                        key: ValueKey(cardForm.id),
+                        index: index,
+                        isPhysical: _isPhysical,
+                        cardForm: cardForm,
+                        onRemove: () => _removeCard(index),
+                        onChanged: () {
+                          setState(() {});
+                          _refreshQuote();
+                        },
+                      );
+                    }),
+                    const SizedBox(height: AppSpacing.lg),
+                    SellSummaryCard(
+                      cardCount: _cards.length,
+                      totalAmount: _calculateTotalAmount(),
+                      cardCurrency:
+                          context
+                              .watch<RegionProvider>()
+                              .selectedRegion
+                              ?.currencyCode ??
+                          'USD',
+                      payoutCurrency: _payoutCurrency ?? 'NGN',
+                      sellRate:
+                          double.tryParse(
+                            _quote?['finalRate']?.toString() ?? '',
+                          ) ??
+                          0,
+                      estimatedPayout:
+                          double.tryParse(
+                            _quote?['estimatedPayout']?.toString() ?? '',
+                          ) ??
+                          0,
+                      sellRateText: _quote == null
+                          ? null
+                          : '${_displayCardCurrencyAmount(_quote!['finalRate'], context.watch<RegionProvider>().selectedRegion?.currencyCode)} / ${context.watch<RegionProvider>().selectedRegion?.currencyCode ?? 'USD'}',
+                      estimatedPayoutText: _quote == null
+                          ? null
+                          : _displayCardCurrencyAmount(
+                              _quote!['estimatedPayout'],
+                              context
+                                  .watch<RegionProvider>()
+                                  .selectedRegion
+                                  ?.currencyCode,
+                            ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    VerificationNotice(
+                      accepted: _verifiedNoticeAccepted,
+                      onChanged: _toggleVerifiedNotice,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    SubmitSellButton(
+                      enabled: _verifiedNoticeAccepted,
+                      onTap: () => _submit(context),
+                    ),
+                  ],
                 ),
-        ),
+              ),
       ),
     );
   }

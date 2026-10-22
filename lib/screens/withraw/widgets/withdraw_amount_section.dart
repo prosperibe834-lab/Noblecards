@@ -173,8 +173,9 @@ class _WithdrawAmountSectionState extends State<WithdrawAmountSection> {
 
     // Check if this chip is currently the precise selected value
     final isSelected = isMax
-        ? widget.provider.amountText ==
-              widget.provider.availableBalance.toStringAsFixed(2)
+        ? widget.provider.availableBalance != null &&
+              widget.provider.amountText ==
+                  widget.provider.availableBalance!.toStringAsFixed(2)
         : widget.provider.amountText == value ||
               widget.provider.amountText == '$value.00';
 

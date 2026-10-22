@@ -1,17 +1,16 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../authentication/services/authentication_service.dart';
 import 'models/withdrawal_transaction_model.dart';
 import 'withdraw_success_screen.dart';
 
+import 'providers/withdraw_bank_provider.dart';
+
 enum WithdrawalStatusRoute { success, pending, failed }
 
 WithdrawalStatusRoute routeForWithdrawalStatus(String? rawStatus) {
   switch (rawStatus?.trim().toUpperCase()) {
     case 'SUCCESSFUL':
-    case 'SUCCESS':
-    case 'COMPLETED':
       return WithdrawalStatusRoute.success;
     case 'FAILED':
       return WithdrawalStatusRoute.failed;
@@ -25,13 +24,19 @@ WithdrawalStatusRoute routeForWithdrawalStatus(String? rawStatus) {
 }
 
 class WithdrawProcessingScreen extends StatefulWidget {
-  final WithdrawalTransactionModel transaction;
-  final String withdrawalId;
+  final WithdrawalTransactionModel? transaction;
+  final String? withdrawalId;
+  final WithdrawBankProvider? provider;
+  final String? pin;
+  final AuthenticationService? authService;
 
   const WithdrawProcessingScreen({
     super.key,
-    required this.transaction,
-    required this.withdrawalId,
+    this.transaction,
+    this.withdrawalId,
+    this.provider,
+    this.pin,
+    this.authService,
   });
 
   @override
@@ -40,7 +45,9 @@ class WithdrawProcessingScreen extends StatefulWidget {
 }
 
 class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
+  static const _statusChecks = 3;
   int _currentStage = 0;
+  late final AuthenticationService _authService;
   final List<String> _stages = [
     "Verifying payout account details...",
     "Checking withdrawal limits & fees...",
@@ -51,19 +58,21 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
   @override
   void initState() {
     super.initState();
+    _authService = widget.authService ?? AuthenticationService();
     _startSequence();
   }
 
-  Future<Map<String, dynamic>> _executeWithdrawal() async {
-    return AuthenticationService().authenticatedPost(
-      '/withdrawals/${widget.withdrawalId}/execute',
+  Future<Map<String, dynamic>> _executeWithdrawal(String withdrawalId) async {
+    return _authService.authenticatedPost(
+      '/withdrawals/$withdrawalId/execute',
     );
   }
 
   WithdrawalTransactionModel _withStatus(
     WithdrawalTransactionModel baseTransaction,
-    String status,
-  ) {
+    String status, {
+    String? failureReason,
+  }) {
     return WithdrawalTransactionModel(
       amount: baseTransaction.amount,
       sourceAmount: baseTransaction.sourceAmount,
@@ -84,86 +93,189 @@ class _WithdrawProcessingScreenState extends State<WithdrawProcessingScreen> {
       referenceId: baseTransaction.referenceId,
       timestamp: baseTransaction.timestamp,
       status: status,
+      failureReason: failureReason ?? baseTransaction.failureReason,
+    );
+  }
+
+  double _requiredAmount(Map<String, dynamic> json, String key) {
+    final value = json[key];
+    final amount = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '');
+    if (amount == null || !amount.isFinite) {
+      throw FormatException('The backend returned an invalid withdrawal $key.');
+    }
+    return amount;
+  }
+
+  double? _optionalAmount(Object? value) {
+    final amount = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '');
+    return amount != null && amount.isFinite ? amount : null;
+  }
+
+  Future<String> _pollWithdrawalStatus({
+    required String withdrawalId,
+    String? knownStatus,
+  }) async {
+    var status = knownStatus?.toUpperCase() ?? 'UNDER_REVIEW';
+    for (var attempt = 0; attempt < _statusChecks; attempt++) {
+      try {
+        final record = await _authService.authenticatedGet(
+          '/withdrawals/$withdrawalId',
+        );
+        status = record['status']?.toString().toUpperCase() ?? status;
+        final route = routeForWithdrawalStatus(status);
+        if (route != WithdrawalStatusRoute.pending) return status;
+
+        if (status == 'PROCESSING' || status == 'UNDER_REVIEW') {
+          try {
+            final result = await _authService.authenticatedPost(
+              '/withdrawals/$withdrawalId/reconcile',
+            );
+            status = result['status']?.toString().toUpperCase() ?? status;
+            if (routeForWithdrawalStatus(status) !=
+                WithdrawalStatusRoute.pending) {
+              return status;
+            }
+          } catch (error) {
+            debugPrint('Withdrawal reconciliation is still pending: $error');
+          }
+        }
+      } catch (error) {
+        debugPrint('Unable to confirm withdrawal status yet: $error');
+      }
+
+      if (attempt + 1 < _statusChecks) {
+        await Future<void>.delayed(const Duration(seconds: 1));
+      }
+    }
+    return status == 'PENDING' || status == 'NEW' ? 'UNDER_REVIEW' : status;
+  }
+
+  Future<void> _showStatus(
+    WithdrawalTransactionModel tx,
+    String status, {
+    String? failureReason,
+  }) async {
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WithdrawSuccessScreen(
+          transaction: _withStatus(
+            tx,
+            status,
+            failureReason: failureReason,
+          ),
+        ),
+      ),
     );
   }
 
   Future<void> _startSequence() async {
+    WithdrawalTransactionModel? activeTx = widget.transaction;
+    String? activeWithdrawalId = widget.withdrawalId;
+    String status = 'UNDER_REVIEW';
+    String? failureReason;
+
     try {
-      final result = await _executeWithdrawal();
-      final status = result['status']?.toString().toUpperCase() ?? 'UNKNOWN';
-      final route = routeForWithdrawalStatus(status);
-      final statusAwareTransaction = _withStatus(widget.transaction, status);
+      if (widget.provider != null && widget.pin != null) {
+        if (mounted) setState(() => _currentStage = 0);
+        final withdrawal =
+            await widget.provider!.createWithdrawal(widget.pin!);
+        final withdrawalId = withdrawal['id']?.toString();
+        final reference = withdrawal['reference']?.toString();
+        final timestamp = DateTime.tryParse(
+          withdrawal['createdAt']?.toString() ?? '',
+        );
+        final initialStatus = withdrawal['status']?.toString();
+        final sourceCurrency = withdrawal['sourceCurrency']?.toString();
+        final destinationCurrency =
+            withdrawal['destinationCurrency']?.toString();
+        final destinationCountry =
+            withdrawal['destinationCountry']?.toString();
 
-      if (route == WithdrawalStatusRoute.success) {
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WithdrawSuccessScreen(
-              transaction: statusAwareTransaction,
-            ),
-          ),
-        );
-        return;
-      }
+        if (withdrawalId == null ||
+            withdrawalId.isEmpty ||
+            reference == null ||
+            reference.isEmpty ||
+            timestamp == null ||
+            initialStatus == null ||
+            initialStatus.isEmpty ||
+            sourceCurrency == null ||
+            sourceCurrency.isEmpty ||
+            destinationCurrency == null ||
+            destinationCurrency.isEmpty ||
+            destinationCountry == null ||
+            destinationCountry.isEmpty) {
+          throw const FormatException(
+            'The backend returned incomplete withdrawal details.',
+          );
+        }
 
-      if (route == WithdrawalStatusRoute.pending) {
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WithdrawSuccessScreen(
-              transaction: statusAwareTransaction,
-            ),
-          ),
+        activeWithdrawalId = withdrawalId;
+        activeTx = WithdrawalTransactionModel(
+          amount: _requiredAmount(withdrawal, 'recipientAmount'),
+          sourceAmount: _requiredAmount(withdrawal, 'sourceAmount'),
+          sourceCurrency: sourceCurrency,
+          destinationAmount: _requiredAmount(withdrawal, 'destinationAmount'),
+          destinationCurrency: destinationCurrency,
+          amountToSend: _requiredAmount(withdrawal, 'sourceAmount'),
+          exchangeRate: _requiredAmount(withdrawal, 'exchangeRate'),
+          convertedAmount: _requiredAmount(withdrawal, 'destinationAmount'),
+          fee: _optionalAmount(withdrawal['destinationFee']),
+          amountToReceive: _requiredAmount(withdrawal, 'recipientAmount'),
+          currency: destinationCurrency,
+          method: 'Bank Transfer',
+          destinationCountry: destinationCountry,
+          countryFlag: widget.provider!.destination.flag,
+          destinationBank:
+              widget.provider!.selectedBank?.name ?? 'Bank Transfer',
+          destinationAccountMasked: widget.provider!.maskedAccountNumber,
+          referenceId: reference,
+          timestamp: timestamp,
+          status: initialStatus,
         );
-        return;
-      }
-      if (route == WithdrawalStatusRoute.failed) {
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WithdrawSuccessScreen(
-              transaction: _withStatus(widget.transaction, 'failed'),
-              hasError: true,
-              errorMessage: 'Your withdrawal could not be completed.',
-            ),
-          ),
-        );
-        return;
       }
     } catch (error) {
+      debugPrint('Withdrawal creation failed: $error');
       if (!mounted) return;
-      final message = error.toString().replaceFirst('Exception: ', '').trim();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => WithdrawSuccessScreen(
-            transaction: widget.transaction,
             hasError: true,
-            errorMessage: message.isEmpty ? null : message,
-            onRetry: _startSequence,
+            errorMessage: error.toString().replaceFirst('Exception: ', ''),
           ),
         ),
       );
       return;
     }
 
-    Timer.periodic(const Duration(milliseconds: 1300), (timer) {
-      if (_currentStage < _stages.length - 1) {
-        if (mounted) setState(() => _currentStage++);
-      } else {
-        timer.cancel();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                WithdrawSuccessScreen(transaction: widget.transaction),
-          ),
-        );
-      }
-    });
+    if (mounted) setState(() => _currentStage = 1);
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+
+    if (mounted) setState(() => _currentStage = 2);
+    try {
+      final result = await _executeWithdrawal(activeWithdrawalId!);
+      status = result['status']?.toString().toUpperCase() ?? 'UNDER_REVIEW';
+      failureReason = result['failureReason']?.toString();
+    } catch (error) {
+      debugPrint('Withdrawal execution response is uncertain: $error');
+      status = 'UNDER_REVIEW';
+    }
+
+    if (mounted) setState(() => _currentStage = 3);
+    if (routeForWithdrawalStatus(status) == WithdrawalStatusRoute.pending) {
+      status = await _pollWithdrawalStatus(
+        withdrawalId: activeWithdrawalId!,
+        knownStatus: status,
+      );
+    }
+
+    await _showStatus(activeTx!, status, failureReason: failureReason);
   }
 
   @override

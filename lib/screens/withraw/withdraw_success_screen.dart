@@ -8,6 +8,7 @@ import 'widgets/withdraw_success_animation.dart';
 import 'widgets/withdraw_summary_card.dart';
 import 'widgets/withdraw_notification_card.dart';
 import 'withdrawal_receipt_screen.dart';
+import 'withdraw_screen.dart';
 
 class WithdrawSuccessScreen extends StatefulWidget {
   final WithdrawalTransactionModel? transaction;
@@ -17,13 +18,13 @@ class WithdrawSuccessScreen extends StatefulWidget {
   final VoidCallback? onRetry;
 
   const WithdrawSuccessScreen({
-    Key? key,
+    super.key,
     this.transaction,
     this.isLoading = false,
     this.hasError = false,
     this.errorMessage,
     this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   State<WithdrawSuccessScreen> createState() => _WithdrawSuccessScreenState();
@@ -95,8 +96,9 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
   String get _statusTitle {
     if (_isSuccessful) return 'Withdrawal Successful!';
     if (_normalizedStatus == 'under_review') return 'Withdrawal Under Review';
-    if (_isPendingLike || _normalizedStatus == 'processing')
+    if (_isPendingLike || _normalizedStatus == 'processing') {
       return 'Withdrawal Pending';
+    }
     if (_isFailed) return 'Withdrawal Failed';
     return 'Withdrawal Pending';
   }
@@ -104,6 +106,10 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
   String get _statusDescription {
     if (_isSuccessful) {
       return 'Your withdrawal has been successfully completed.';
+    }
+    if (_isFailed) {
+      return widget.transaction?.failureReason ??
+          'Your withdrawal could not be completed.';
     }
     if (_normalizedStatus == 'under_review') {
       return 'Your withdrawal is being reviewed. Your funds remain protected while we confirm the provider result.';
@@ -118,6 +124,10 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
     if (_isSuccessful) {
       return 'Your funds have been successfully credited to your destination.';
     }
+    if (_isFailed) {
+      return widget.transaction?.failureReason ??
+          'Your withdrawal could not be completed.';
+    }
     if (_normalizedStatus == 'under_review') {
       return 'Your withdrawal is under review. Your funds remain protected while we confirm the provider result.';
     }
@@ -131,11 +141,10 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
   }
 
   void _onDone() {
-    // Safely pops back to DepositScreen if it exists in the stack.
-    // If it doesn't, you can replace this with a named route pushReplacement.
-    Navigator.of(context).popUntil((route) {
-      return route.settings.name == '/deposit' || route.isFirst;
-    });
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const WithdrawScreen()),
+      (route) => false,
+    );
   }
 
   void _onViewReceipt() {
@@ -153,7 +162,10 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => WithdrawalReceiptScreen(transaction: transaction),
+        builder: (_) => WithdrawalReceiptScreen(
+          transaction: transaction,
+          returnToPreviousScreen: true,
+        ),
       ),
     );
   }
@@ -262,14 +274,14 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
             borderRadius: BorderRadius.circular(AppRadius.full),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 5),
               ),
             ],
           ),
           child: ElevatedButton(
-            onPressed: widget.transaction == null ? null : _onViewReceipt,
+            onPressed: _canViewReceipt ? _onViewReceipt : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,

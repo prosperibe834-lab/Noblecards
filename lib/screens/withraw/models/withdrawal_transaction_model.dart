@@ -43,7 +43,9 @@ class WithdrawalTransactionModel {
     this.failureReason,
   });
 
-  factory WithdrawalTransactionModel.fromBackendJson(Map<String, dynamic> json) {
+  factory WithdrawalTransactionModel.fromBackendJson(
+    Map<String, dynamic> json,
+  ) {
     final sourceCurrency = _requiredString(json, 'sourceCurrency');
     final destinationCurrency = _requiredString(json, 'destinationCurrency');
     final countryCode = (json['countryCode'] ?? '').toString().toUpperCase();
@@ -61,16 +63,16 @@ class WithdrawalTransactionModel {
       amountToSend: _requiredAmount(json, 'sourceAmount'),
       exchangeRate: _requiredAmount(json, 'exchangeRate'),
       convertedAmount: _requiredAmount(json, 'destinationAmount'),
-      fee: _requiredAmount(json, 'fee'),
+      fee: _optionalAmount(json['destinationFee']),
       amountToReceive: amountReceived,
-      currency: sourceCurrency,
+      currency: destinationCurrency,
       method: _formatMethod(_requiredString(json, 'paymentMethod')),
       destinationCountry: _requiredString(json, 'country'),
       countryFlag: _countryFlag(countryCode),
       destinationBank: (beneficiary['institutionName'] ?? '').toString(),
       destinationAccountMasked: beneficiary['accountLast4'] == null
           ? ''
-          : '******${beneficiary['accountLast4']}',
+          : '****${beneficiary['accountLast4']}',
       referenceId: _requiredString(json, 'reference'),
       timestamp: _requiredDate(json, 'createdAt'),
       status: _requiredString(json, 'status'),
@@ -97,6 +99,13 @@ class WithdrawalTransactionModel {
     return parsed;
   }
 
+  static double? _optionalAmount(Object? value) {
+    final parsed = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '');
+    return parsed != null && parsed.isFinite ? parsed : null;
+  }
+
   static DateTime _requiredDate(Map<String, dynamic> json, String key) {
     final value = DateTime.tryParse(json[key]?.toString() ?? '');
     if (value == null) {
@@ -112,7 +121,11 @@ class WithdrawalTransactionModel {
 
   static String _formatMethod(String method) => method
       .split('_')
-      .map((part) => part.isEmpty ? part : '${part[0]}${part.substring(1).toLowerCase()}')
+      .map(
+        (part) => part.isEmpty
+            ? part
+            : '${part[0]}${part.substring(1).toLowerCase()}',
+      )
       .join(' ');
 
   static String _countryFlag(String code) {

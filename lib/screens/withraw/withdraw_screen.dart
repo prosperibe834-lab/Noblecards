@@ -63,7 +63,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'Withdrawals usually take 5-15 minutes depending on the chosen method. A standard 1% fee applies to cover transaction costs.',
+                  'Withdrawals usually take 5-15 minutes depending on the chosen method. The applicable fees and exchange rate are shown in your quote.',
                   style: TextStyle(
                     color: isDark
                         ? AppColors.darkSubText
@@ -95,7 +95,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 
-  void _handleContinue() {
+  Future<void> _handleContinue() async {
     if (_provider.parsedAmount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -105,7 +105,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       );
       return;
     }
-    if (_provider.parsedAmount > _provider.availableBalance) {
+    final availableBalance = _provider.availableBalance;
+    if (availableBalance == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to load your available balance.')),
+      );
+      return;
+    }
+    if (_provider.parsedAmount > availableBalance) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Amount exceeds available balance'),
@@ -119,6 +126,57 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         const SnackBar(
           content: Text('Please select a withdrawal method'),
           backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+    if (_provider.isIndicativeRoute) {
+      if (!_provider.isIndicativePreview) {
+        await _provider.refreshIndicativePreviewNow();
+      }
+      if (!mounted) return;
+      if (!_provider.isIndicativePreview) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _provider.dataError ?? 'Unable to generate indicative estimate.',
+            ),
+          ),
+        );
+        return;
+      }
+      final methodId = _provider.selectedMethod?.id ?? 'bank';
+      final paymentMethod =
+          methodId == 'bank' ? 'BANK_TRANSFER' : 'MOBILE_MONEY';
+      final destination = WithdrawalDestination(
+        countryCode: _provider.selectedCountry.id,
+        countryName: _provider.selectedCountry.name,
+        currency: _provider.selectedCountry.currency,
+        flag: _provider.selectedCountry.flagInitials,
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => WithdrawBankDetailsScreen(
+            destination: destination,
+            paymentMethod: paymentMethod,
+            sourceAmount: _provider.parsedAmount,
+            initialQuoteId: null,
+          ),
+        ),
+      );
+      return;
+    }
+
+    await _provider.refreshQuoteNow();
+    if (!mounted) return;
+    if (!_provider.hasQuote || _provider.quoteId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _provider.dataError ?? 'Unable to create a withdrawal quote.',
+          ),
         ),
       );
       return;
@@ -140,6 +198,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           destination: destination,
           paymentMethod: paymentMethod,
           sourceAmount: _provider.parsedAmount,
+          initialQuoteId: _provider.quoteId,
         ),
       ),
     );
@@ -293,7 +352,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       ),
                     ),
                     child: ElevatedButton(
-                      onPressed: _handleContinue,
+                      onPressed: _provider.isQuoteLoading
+                          ? null
+                          : _handleContinue,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
@@ -301,10 +362,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           borderRadius: BorderRadius.circular(AppRadius.sm),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             'Continue',
                             style: TextStyle(
                               color: Colors.white,
@@ -312,8 +373,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(width: AppSpacing.sm),
-                          Icon(
+                          const SizedBox(width: AppSpacing.sm),
+                          const Icon(
                             Boxicons.bx_right_arrow_alt,
                             color: Colors.white,
                             size: 20,
@@ -331,4 +392,3 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     );
   }
 }
-

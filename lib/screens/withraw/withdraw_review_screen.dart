@@ -19,6 +19,7 @@ class WithdrawReviewScreen extends StatefulWidget {
 
   const WithdrawReviewScreen({super.key, required this.provider});
 
+  @override
   State<WithdrawReviewScreen> createState() => _WithdrawReviewScreenState();
 }
 
@@ -35,50 +36,42 @@ class _WithdrawReviewScreenState extends State<WithdrawReviewScreen> {
       final authorized = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (_) => PinAuthDialog(
+        builder: (dialogContext) => PinAuthDialog(
+          autoPopOnSuccess: false,
           onValidatePin: (pin) async {
             enteredPin = pin;
             return widget.provider.authService.verifyTransactionPin(pin);
           },
-          onSuccess: (_) {},
+          onSuccess: (_) {
+            if (_hasNavigatedToProcessing || !mounted) return;
+            _hasNavigatedToProcessing = true;
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (_) => WithdrawProcessingScreen(
+                  provider: widget.provider,
+                  pin: enteredPin!,
+                ),
+              ),
+              (route) => false,
+            );
+          },
         ),
       );
 
-      if (!context.mounted || authorized != true || enteredPin == null) return;
+      if (_hasNavigatedToProcessing) return;
 
-      final withdrawal = await widget.provider.createWithdrawal(enteredPin!);
-      final transaction = WithdrawalTransactionModel(
-        amount: widget.provider.amountToReceive,
-        sourceAmount: widget.provider.amountToSend,
-        sourceCurrency: 'USD',
-        destinationAmount: widget.provider.convertedAmount,
-        destinationCurrency: widget.provider.destination.currency,
-        amountToSend: widget.provider.amountToSend,
-        exchangeRate: widget.provider.exchangeRate,
-        convertedAmount: widget.provider.convertedAmount,
-        fee: widget.provider.fee,
-        amountToReceive: widget.provider.amountToReceive,
-        currency: widget.provider.destination.currency,
-        method: 'Bank Transfer',
-        destinationCountry: widget.provider.destination.countryName,
-        countryFlag: widget.provider.destination.flag,
-        destinationBank: widget.provider.selectedBank?.name ?? 'Bank Transfer',
-        destinationAccountMasked: widget.provider.maskedAccountNumber,
-        referenceId:
-            withdrawal['reference']?.toString() ??
-            'WD-${DateTime.now().millisecondsSinceEpoch}',
-        timestamp: DateTime.now(),
-        status: withdrawal['status']?.toString() ?? 'pending',
-      );
+      if (!context.mounted || authorized != true || enteredPin == null) {
+        if (mounted) setState(() => _isSubmitting = false);
+        return;
+      }
 
-      if (!context.mounted) return;
       _hasNavigatedToProcessing = true;
       await Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (_) => WithdrawProcessingScreen(
-            transaction: transaction,
-            withdrawalId: withdrawal['id']?.toString() ?? '',
+            provider: widget.provider,
+            pin: enteredPin!,
           ),
         ),
         (route) => false,
@@ -310,6 +303,6 @@ class _WithdrawReviewScreenState extends State<WithdrawReviewScreen> {
   }
 
   Widget _buildDivider(Color color) {
-    return Divider(color: color.withOpacity(0.5), height: AppSpacing.md);
+    return Divider(color: color.withValues(alpha: 0.5), height: AppSpacing.md);
   }
 }

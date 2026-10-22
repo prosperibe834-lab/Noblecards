@@ -4,7 +4,6 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../providers/withdraw_provider.dart';
-import '../models/withdraw_country.dart';
 
 class WithdrawDestinationSection extends StatelessWidget {
   final WithdrawProvider provider;

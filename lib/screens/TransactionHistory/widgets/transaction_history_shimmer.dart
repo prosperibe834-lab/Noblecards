@@ -33,11 +33,8 @@ class _TransactionHistoryShimmerState extends State<TransactionHistoryShimmer> w
 
     return FadeTransition(
       opacity: Tween<double>(begin: 0.5, end: 1.0).animate(_controller),
-      child: ListView.builder(
-        itemCount: 6,
-        padding: EdgeInsets.zero,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
+      child: Column(
+        children: List.generate(6, (index) {
           return Container(
             margin: const EdgeInsets.only(bottom: AppSpacing.sm),
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -78,7 +75,7 @@ class _TransactionHistoryShimmerState extends State<TransactionHistoryShimmer> w
               ],
             ),
           );
-        },
+        }),
       ),
     );
   }

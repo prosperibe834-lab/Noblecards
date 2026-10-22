@@ -9,12 +9,16 @@ class WithdrawBankSelectorSheet extends StatefulWidget {
   final List<WithdrawalBank> banks;
   final WithdrawalBank? selectedBank;
   final ValueChanged<WithdrawalBank> onBankSelected;
+  final String title;
+  final String subtitle;
 
   const WithdrawBankSelectorSheet({
     super.key,
     required this.banks,
     this.selectedBank,
     required this.onBankSelected,
+    this.title = "Select Bank",
+    this.subtitle = "Bank Transfer",
   });
 
   @override
@@ -67,7 +71,7 @@ class _WithdrawBankSelectorSheetState extends State<WithdrawBankSelectorSheet> {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            "Select Bank",
+            widget.title,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -129,7 +133,7 @@ class _WithdrawBankSelectorSheetState extends State<WithdrawBankSelectorSheet> {
                           ),
                         ),
                         subtitle: Text(
-                          "Bank Transfer",
+                          widget.subtitle,
                           style: TextStyle(
                             color: subTextColor,
                             fontFamily: "Inter",

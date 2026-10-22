@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../screens/favourite_currencies_screen.dart';
 import '../screens/exchange_rate_screen.dart';
+import '../screens/withraw/withdraw_screen.dart';
 
 /// Defines string constants for all app route names.
 abstract class AppRoutes {
   static const String favouriteCurrencies = '/favourite-currencies';
   static const String exchangeRate = '/exchange-rate';
+  static const String withdraw = '/withdraw';
 }
 
 /// Route generator handling [RouteSettings] for main app navigation.
@@ -21,6 +23,12 @@ class AppRouter {
       case AppRoutes.exchangeRate:
         return MaterialPageRoute(
           builder: (_) => const ExchangeRateScreen(),
+          settings: settings,
+        );
+
+      case AppRoutes.withdraw:
+        return MaterialPageRoute(
+          builder: (_) => const WithdrawScreen(),
           settings: settings,
         );
 
