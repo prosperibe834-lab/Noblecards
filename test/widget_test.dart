@@ -40,6 +40,8 @@ void main() {
       'NGN': 'Nigerian Naira',
       'GBP': 'British Pound',
       'GHS': 'Ghanaian Cedi',
+      'USD': 'US Dollar',
+      'CAD': 'Canadian Dollar',
     };
 
     for (final entry in currencies.entries) {
@@ -52,6 +54,6 @@ void main() {
     }
 
     expect(find.text('Euro'), findsNothing);
-    expect(find.text('Canadian Dollar'), findsNothing);
+    expect(find.text('South African Rand'), findsNothing);
   });
 }

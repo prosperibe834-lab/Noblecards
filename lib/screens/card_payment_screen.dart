@@ -4,7 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import '../models/deposit_model.dart';
 import '../services/deposits_service.dart';
+import '../providers/exchange_rate_provider.dart';
+import '../theme/app_colors.dart';
 import 'authentication/services/authentication_service.dart';
 
 enum CardType { visa, mastercard, verve, amex, unknown }
@@ -34,6 +37,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   final TextEditingController _expiryController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
   final TextEditingController _cardHolderController = TextEditingController();
+  final TextEditingController _pinController = TextEditingController();
 
   CardType _cardType = CardType.unknown;
   bool _saveCard = false;
@@ -52,6 +56,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     _expiryController.dispose();
     _cvvController.dispose();
     _cardHolderController.dispose();
+    _pinController.dispose();
     super.dispose();
   }
 
@@ -94,7 +99,12 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   void _processPayment() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (widget.requestedUsdAmount == null) {
+    final requestedUsd = widget.requestedUsdAmount ??
+        (widget.currency == 'USD'
+            ? widget.amount
+            : ExchangeRateProvider.convertToUSD(widget.amount, widget.currency));
+
+    if (requestedUsd <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Unable to determine the requested USD amount.'),
@@ -118,13 +128,14 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
       );
       final deposit = await depositsService.createCardDeposit(
         amount: widget.amount,
-        requestedAmount: widget.requestedUsdAmount!,
+        requestedAmount: requestedUsd,
         currency: widget.currency,
         cardNumber: _cardNumberController.text.replaceAll(' ', ''),
         cvv: _cvvController.text,
         expiryMonth: expiryParts[0],
         expiryYear: expiryParts[1],
         cardHolderName: _cardHolderController.text.trim(),
+        pin: _pinController.text.trim().isNotEmpty ? _pinController.text.trim() : null,
       );
 
       if (!mounted) return;
@@ -134,8 +145,202 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
           Uri.parse(deposit.authorizationUrl!),
           mode: LaunchMode.externalApplication,
         );
+        _showVerificationModal(deposit);
+      } else {
+        _showPendingSnackbar();
       }
-      _showPendingSnackbar();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  void _showVerificationModal(Deposit deposit) {
+    final otpController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Icon(Boxicons.bx_shield_quarter, color: AppColors.primary, size: 28),
+                const SizedBox(width: 12),
+                Text(
+                  "Card Authentication",
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Poppins",
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Your bank requires verification (OTP / 3D-Secure). Enter the OTP or open the verification page below.",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: otpController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: "Enter OTP (e.g. 12345)",
+                prefixIcon: const Icon(Boxicons.bx_key),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () {
+                final otp = otpController.text.trim();
+                if (otp.isNotEmpty) {
+                  Navigator.pop(sheetContext);
+                  _submitOtp(deposit.id, otp);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter the OTP received from your bank.')),
+                  );
+                }
+              },
+              icon: const Icon(Boxicons.bx_check_shield, color: Colors.white),
+              label: const Text(
+                "Submit OTP",
+                style: TextStyle(fontFamily: "Poppins", color: Colors.white, fontWeight: FontWeight.w600),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (deposit.authorizationUrl != null && deposit.authorizationUrl!.isNotEmpty) ...[
+              OutlinedButton.icon(
+                onPressed: () {
+                  launchUrl(
+                    Uri.parse(deposit.authorizationUrl!),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                icon: const Icon(Boxicons.bx_link_external),
+                label: const Text(
+                  "Or Open Verification Page",
+                  style: TextStyle(fontFamily: "Poppins", fontWeight: FontWeight.w600),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () async {
+                  Navigator.pop(sheetContext);
+                  _checkDepositStatus(deposit.id);
+                },
+                icon: const Icon(Boxicons.bx_check_circle, size: 18),
+                label: const Text(
+                  "I already authorized in browser",
+                  style: TextStyle(fontFamily: "Poppins", fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _submitOtp(String depositId, String otp) async {
+    if (otp.trim().isEmpty) return;
+    setState(() => _isProcessing = true);
+    try {
+      final accessToken = await AuthenticationService().getAccessToken();
+      if (accessToken == null) return;
+      final depositsService = DepositsService(
+        httpClient: http.Client(),
+        getAuthToken: () => accessToken,
+      );
+      final updated = await depositsService.validateDepositOtp(depositId, otp.trim());
+      if (!mounted) return;
+      if (updated.status.toLowerCase() == 'completed' || updated.status.toLowerCase() == 'successful') {
+        widget.onPaymentSuccess?.call();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Payment completed successfully! Wallet credited.'),
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deposit status: ${updated.status}.'),
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString().replaceFirst('Exception: ', '')),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  void _checkDepositStatus(String depositId) async {
+    setState(() => _isProcessing = true);
+    try {
+      final accessToken = await AuthenticationService().getAccessToken();
+      if (accessToken == null) return;
+      final depositsService = DepositsService(
+        httpClient: http.Client(),
+        getAuthToken: () => accessToken,
+      );
+      final updated = await depositsService.verifyAndCheckDeposit(depositId);
+      if (!mounted) return;
+      if (updated.status.toLowerCase() == 'completed' || updated.status.toLowerCase() == 'successful') {
+        widget.onPaymentSuccess?.call();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Payment completed successfully! Wallet credited.'),
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deposit status is currently: ${updated.status}. If completed, your balance will reflect shortly.'),
+          ),
+        );
+      }
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -326,6 +531,24 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Card PIN (e.g. 3310 for test/debit cards)
+                    _buildSectionLabel('Card PIN (Optional / 4 digits for debit cards)'),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _pinController,
+                      keyboardType: TextInputType.number,
+                      obscureText: true,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(4),
+                      ],
+                      decoration: _inputDecoration(
+                        hintText: 'e.g. 3310',
+                        prefixIcon: Boxicons.bx_key,
+                      ),
                     ),
                     const SizedBox(height: 16),
 

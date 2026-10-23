@@ -60,6 +60,7 @@ class DepositsService {
     required String expiryMonth,
     required String expiryYear,
     required String cardHolderName,
+    String? pin,
     String? idempotencyKey,
   }) async {
     final token = getAuthToken();
@@ -80,6 +81,7 @@ class DepositsService {
           'expiryMonth': expiryMonth,
           'expiryYear': expiryYear,
           'cardHolderName': cardHolderName,
+          if (pin != null && pin.isNotEmpty) 'pin': pin,
         },
       }),
     );
@@ -123,6 +125,28 @@ class DepositsService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to verify deposit: ${response.body}');
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return Deposit.fromJson(json);
+  }
+
+  Future<Deposit> validateDepositOtp(String depositId, String otp) async {
+    final token = getAuthToken();
+
+    final response = await httpClient.post(
+      Uri.parse('$_baseUrl/deposits/$depositId/validate-otp'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'otp': otp,
+      }),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to validate OTP: ${response.body}');
     }
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;

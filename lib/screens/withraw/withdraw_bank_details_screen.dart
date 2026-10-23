@@ -911,11 +911,8 @@ class _WithdrawBankDetailsScreenState extends State<WithdrawBankDetailsScreen> {
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: InkWell(
               onTap: () async {
-                if (isSelected) {
-                  await _saveAndContinue(provider, context);
-                } else {
-                  provider.selectSavedBeneficiary(beneficiary);
-                }
+                provider.selectSavedBeneficiary(beneficiary);
+                await _saveAndContinue(provider, context);
               },
               borderRadius: BorderRadius.circular(AppRadius.lg),
               child: AnimatedContainer(

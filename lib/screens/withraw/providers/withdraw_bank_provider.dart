@@ -719,6 +719,7 @@ class WithdrawBankProvider extends ChangeNotifier {
         if (_institutionNumber.isNotEmpty)
           'institutionNumber': _institutionNumber,
         if (_transitNumber.isNotEmpty) 'transitNumber': _transitNumber,
+        'saveAccount': _saveAccount,
       },
     );
     _beneficiaryId = data['id']?.toString();
@@ -752,6 +753,7 @@ class WithdrawBankProvider extends ChangeNotifier {
         'postalCode': _postalCode.trim(),
         if (_transferReason.isNotEmpty)
           'transferReason': _transferReason.trim(),
+        'saveAccount': _saveAccount,
       },
     );
     _beneficiaryId = data['id']?.toString();

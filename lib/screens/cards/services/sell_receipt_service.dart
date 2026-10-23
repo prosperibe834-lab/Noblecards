@@ -25,6 +25,23 @@ class SellReceiptService {
     final payoutCurrency = data['payoutCurrency']?.toString() ?? 'USD';
     final payout = ExchangeRateProvider.convertToUSD(providerPayout, payoutCurrency);
 
+    final rawStatus = data['providerStatus']?.toString().trim();
+    final String? providerStatus = (rawStatus != null &&
+            !rawStatus.contains('{') &&
+            !rawStatus.contains('"') &&
+            rawStatus.isNotEmpty)
+        ? rawStatus.toUpperCase()
+        : null;
+
+    final rawMessage = data['providerMessage']?.toString().trim();
+    final String? providerMessage = (rawMessage != null &&
+            !rawMessage.toLowerCase().contains('code') &&
+            !rawMessage.contains('{') &&
+            !rawMessage.contains('"') &&
+            rawMessage.isNotEmpty)
+        ? rawMessage
+        : null;
+
     return SellReceiptModel(
       referenceId: data['id']?.toString() ?? transactionId,
       giftCardName:
@@ -39,6 +56,8 @@ class SellReceiptService {
       status: status,
       submittedOn:
           data['createdAt']?.toString() ?? DateTime.now().toIso8601String(),
+      providerStatus: providerStatus,
+      providerMessage: providerMessage,
     );
   }
 }

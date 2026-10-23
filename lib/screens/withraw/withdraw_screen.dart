@@ -11,6 +11,7 @@ import 'widgets/withdraw_destination_section.dart';
 import 'widgets/withdraw_method_section.dart';
 import 'widgets/withdraw_summary_card.dart';
 import 'withdraw_bank_details_screen.dart';
+import '../BottomNavigation/main_navigation_screen.dart';
 
 class WithdrawScreen extends StatefulWidget {
   const WithdrawScreen({super.key});
@@ -219,23 +220,27 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.only(
-            left: AppSpacing.md,
-            top: 8,
-            bottom: 8,
-          ),
-          child: InkWell(
-            onTap: () => Navigator.maybePop(context),
-            borderRadius: BorderRadius.circular(AppRadius.full),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: borderColor),
-              ),
-              child: Icon(Boxicons.bx_chevron_left, color: textColor, size: 24),
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: borderColor),
             ),
+            child: Icon(Boxicons.bx_chevron_left, color: textColor, size: 20),
           ),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => MainNavigationScreen(),
+                ),
+                (route) => false,
+              );
+            }
+          },
         ),
         title: Text(
           'Withdraw Funds',

@@ -12,7 +12,9 @@ class _CurrencySelectorScreenState extends State<CurrencySelectorScreen> {
   final String _query = "";
   final List<Map<String, String>> _allCurrencies = [
     {"code": "NGN", "name": "Nigerian Naira", "flag": "🇳🇬"},
+    {"code": "USD", "name": "US Dollar", "flag": "🇺🇸"},
     {"code": "GBP", "name": "British Pound", "flag": "🇬🇧"},
+    {"code": "CAD", "name": "Canadian Dollar", "flag": "🇨🇦"},
     {"code": "GHS", "name": "Ghanaian Cedi", "flag": "🇬🇭"},
   ];
 

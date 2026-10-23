@@ -28,7 +28,9 @@ class _DepositScreenState extends State<DepositScreen> {
 
   final List<Map<String, String>> _favorites = [
     {"code": "NGN", "flag": "🇳🇬"},
+    {"code": "USD", "flag": "🇺🇸"},
     {"code": "GBP", "flag": "🇬🇧"},
+    {"code": "CAD", "flag": "🇨🇦"},
     {"code": "GHS", "flag": "🇬🇭"},
   ];
 

@@ -9,6 +9,7 @@ import 'widgets/withdraw_summary_card.dart';
 import 'widgets/withdraw_notification_card.dart';
 import 'withdrawal_receipt_screen.dart';
 import 'withdraw_screen.dart';
+import '../BottomNavigation/main_navigation_screen.dart';
 
 class WithdrawSuccessScreen extends StatefulWidget {
   final WithdrawalTransactionModel? transaction;
@@ -142,8 +143,11 @@ class _WithdrawSuccessScreenState extends State<WithdrawSuccessScreen>
 
   void _onDone() {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const WithdrawScreen()),
+      MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
       (route) => false,
+    );
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const WithdrawScreen()),
     );
   }
 

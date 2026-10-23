@@ -10,6 +10,8 @@ class SellReceiptModel {
   final double estimatedReceive;
   final VerificationStatus status;
   final String submittedOn;
+  final String? providerStatus;
+  final String? providerMessage;
 
   SellReceiptModel({
     required this.referenceId,
@@ -21,5 +23,7 @@ class SellReceiptModel {
     required this.estimatedReceive,
     required this.status,
     required this.submittedOn,
+    this.providerStatus,
+    this.providerMessage,
   });
 }

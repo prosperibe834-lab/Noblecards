@@ -85,6 +85,7 @@ class PaymentMethodScreen extends StatelessWidget {
                                 builder: (_) => CardPaymentScreen(
                                   amount: depositAmount,
                                   currency: currencyCode,
+                                  requestedUsdAmount: convertedUsd,
                                 ),
                               ),
                             );

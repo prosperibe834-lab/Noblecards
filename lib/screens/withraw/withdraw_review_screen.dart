@@ -46,11 +46,13 @@ class _WithdrawReviewScreenState extends State<WithdrawReviewScreen> {
             if (_hasNavigatedToProcessing || !mounted) return;
             _hasNavigatedToProcessing = true;
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => WithdrawProcessingScreen(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => WithdrawProcessingScreen(
                   provider: widget.provider,
                   pin: enteredPin!,
                 ),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero,
               ),
               (route) => false,
             );
@@ -68,11 +70,13 @@ class _WithdrawReviewScreenState extends State<WithdrawReviewScreen> {
       _hasNavigatedToProcessing = true;
       await Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (_) => WithdrawProcessingScreen(
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => WithdrawProcessingScreen(
             provider: widget.provider,
             pin: enteredPin!,
           ),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         ),
         (route) => false,
       );
