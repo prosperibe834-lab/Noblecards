@@ -8,7 +8,7 @@ import '../widgets/copy_button.dart';
 import '../widgets/countdown_timer_card.dart';
 import 'authentication/services/authentication_service.dart';
 import 'deposit_processing_screen.dart';
-import 'deposit_screen.dart';
+import 'deposit/deposit_screen.dart';
 
 class BankTransferScreen extends StatefulWidget {
   final double amount;

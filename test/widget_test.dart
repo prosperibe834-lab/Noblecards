@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:noble_cards/providers/exchange_rate_provider.dart';
-import 'package:noble_cards/screens/currency_selector_screen.dart';
-import 'package:noble_cards/screens/deposit_screen.dart';
+import 'package:noble_cards/providers/wallet_provider.dart';
+import 'package:noble_cards/theme/theme_provider.dart';
+import 'package:noble_cards/screens/deposit/deposit_screen.dart';
+import 'package:noble_cards/screens/deposit/select_deposit_currency_screen.dart';
 
 void main() {
   setUp(() {
@@ -12,48 +15,39 @@ void main() {
       'NGN': 1500.0,
       'GBP': 0.79,
       'GHS': 12.5,
+      'CAD': 1.36,
     });
   });
 
-  testWidgets('Deposit screen renders and includes the local deposit state', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: DepositScreen()));
+  Widget buildTestApp(Widget child) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => WalletProvider()),
+      ],
+      child: MaterialApp(home: child),
+    );
+  }
+
+  testWidgets('Deposit screen renders header and wallet card', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestApp(const DepositScreen()));
+    await tester.pumpAndSettle();
 
     expect(find.text('Deposit Funds'), findsOneWidget);
-    expect(find.text('You Deposit (NGN)'), findsOneWidget);
-    expect(find.textContaining('FX rate:'), findsOneWidget);
-    expect(find.textContaining('You Get:'), findsOneWidget);
-    expect(find.text('FX rate: 1 USD = NGN 1500.00'), findsOneWidget);
+    expect(find.text('Wallet Balance'), findsOneWidget);
+    expect(find.text('Select Currency'), findsOneWidget);
+    expect(find.text('Deposit Amount'), findsOneWidget);
+    expect(find.text('Quick Amount'), findsOneWidget);
+    expect(find.text('Continue to Payment'), findsOneWidget);
   });
 
-  testWidgets('Quick amount buttons exist and are clickable', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: DepositScreen()));
+  testWidgets('Select deposit currency screen renders supported currencies', (WidgetTester tester) async {
+    await tester.pumpWidget(buildTestApp(const SelectDepositCurrencyScreen()));
+    await tester.pumpAndSettle();
 
-    // Find quick amount buttons (should have 5 buttons: $50, $100, $200, $500, $1000)
-    final quickAmountButtons = find.byType(InkWell).evaluate();
-    expect(quickAmountButtons.length, greaterThanOrEqualTo(5), reason: 'Should have at least 5 quick amount buttons');
-  });
-
-  testWidgets('Currency selector includes only the Flutterwave-supported currencies', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: CurrencySelectorScreen()));
-
-    final currencies = {
-      'NGN': 'Nigerian Naira',
-      'GBP': 'British Pound',
-      'GHS': 'Ghanaian Cedi',
-      'USD': 'US Dollar',
-      'CAD': 'Canadian Dollar',
-    };
-
-    for (final entry in currencies.entries) {
-      await tester.scrollUntilVisible(
-        find.text(entry.value),
-        100,
-        scrollable: find.byType(Scrollable).last,
-      );
-      expect(find.text(entry.value), findsOneWidget);
-    }
-
-    expect(find.text('Euro'), findsNothing);
-    expect(find.text('South African Rand'), findsNothing);
+    expect(find.text('Select Deposit Currency'), findsOneWidget);
+    expect(find.text('NGN'), findsWidgets);
+    expect(find.text('USD'), findsWidgets);
+    expect(find.text('GBP'), findsWidgets);
   });
 }

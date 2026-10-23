@@ -1,29 +1,15 @@
-import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
-import '../widgets/custom_app_bar.dart';
+library noble_cards.screens.favorite_currencies_screen;
 
-import '../theme/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'deposit/favourite_currencies_screen.dart' as dep;
+
+export 'deposit/favourite_currencies_screen.dart' hide FavouriteCurrenciesScreen;
 
 class FavoriteCurrenciesScreen extends StatelessWidget {
   const FavoriteCurrenciesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Scaffold(
-      backgroundColor: isDark
-          ? AppColors.darkBackground
-          : AppColors.lightBackground,
-      appBar: const CustomAppBar(title: 'Favorite Currencies'),
-      body: Center(
-        child: Text(
-          'Currency Management',
-          style: TextStyle(
-            color: isDark ? AppColors.darkText : AppColors.lightText,
-          ),
-        ),
-      ),
-    );
+    return const dep.FavouriteCurrenciesScreen();
   }
 }

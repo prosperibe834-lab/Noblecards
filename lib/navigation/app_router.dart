@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../screens/favourite_currencies_screen.dart';
+import '../screens/deposit/favourite_currencies_screen.dart';
+import '../screens/deposit/deposit_screen.dart';
 import '../screens/exchange_rate_screen.dart';
 import '../screens/withraw/withdraw_screen.dart';
 
@@ -8,12 +9,19 @@ abstract class AppRoutes {
   static const String favouriteCurrencies = '/favourite-currencies';
   static const String exchangeRate = '/exchange-rate';
   static const String withdraw = '/withdraw';
+  static const String deposit = '/deposit';
 }
 
 /// Route generator handling [RouteSettings] for main app navigation.
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.deposit:
+        return MaterialPageRoute(
+          builder: (_) => const DepositScreen(),
+          settings: settings,
+        );
+
       case AppRoutes.favouriteCurrencies:
         return MaterialPageRoute(
           builder: (_) => const FavouriteCurrenciesScreen(),

@@ -21,6 +21,7 @@ import 'screens/cards/providers/submission_provider.dart';
 import 'screens/cards/providers/sell_receipt_provider.dart';
 import 'screens/cards/providers/buy_receipt_provider.dart';
 import 'screens/withraw/withdraw_screen.dart';
+import 'screens/deposit/deposit_screen.dart';
 import 'screens/authentication/services/authentication_service.dart';
 
 Future<void> main() async {
@@ -87,6 +88,7 @@ class NobleCardsApp extends StatelessWidget {
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/create-new-password': (context) => const CreateNewPasswordScreen(),
         '/withdraw': (context) => const WithdrawScreen(),
+        '/deposit': (context) => const DepositScreen(),
 
         '/register': (context) => Scaffold(
           appBar: AppBar(title: const Text('Create Account')),

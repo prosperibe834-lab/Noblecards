@@ -4,12 +4,12 @@ import '../theme/app_radius.dart';
 import '../widgets/wallet_balance_card.dart';
 import '../widgets/wallet_action_button.dart';
 import '../widgets/wallet_transaction_tile.dart';
-import 'deposit_screen.dart';
+import 'deposit/deposit_screen.dart';
 import 'withraw/withdraw_screen.dart';
 import 'TransactionHistory/widgets/transaction_history_screen.dart';
 import 'transaction_details_screen.dart';
 import 'Analytics/analytics_screen.dart';
-import 'favorite_currencies_screen.dart';
+import 'deposit/favourite_currencies_screen.dart';
 import '../theme/app_colors.dart';
 
 import '../theme/app_spacing.dart';
@@ -334,7 +334,7 @@ class WalletScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const FavoriteCurrenciesScreen(),
+                  builder: (_) => const FavouriteCurrenciesScreen(),
                 ),
               );
             },

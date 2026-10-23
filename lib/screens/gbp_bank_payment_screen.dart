@@ -6,7 +6,7 @@ import '../services/deposits_service.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/deposit_step_indicator.dart';
 import 'authentication/services/authentication_service.dart';
-import 'deposit_screen.dart';
+import 'deposit/deposit_screen.dart';
 
 class GbpBankPaymentScreen extends StatefulWidget {
   final double amount;
