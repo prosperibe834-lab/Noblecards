@@ -51,7 +51,7 @@ class _DepositScreenContentState extends State<_DepositScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final provider = context.watch<DepositProvider>();
     final balance = context.watch<WalletProvider>().balance;
 

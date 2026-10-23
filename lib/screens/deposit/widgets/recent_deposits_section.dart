@@ -50,7 +50,7 @@ class _RecentDepositsSectionState extends State<RecentDepositsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +138,7 @@ class _RecentDepositsSectionState extends State<RecentDepositsSection> {
     required String time,
     required String amount,
   }) {
-    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

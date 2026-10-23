@@ -15,7 +15,7 @@ class DepositCurrencySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DepositProvider>();
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // First 4 currencies matching the reference image: NGN, USD, GBP, CAD
     final displayCurrencies = supportedCurrencies.take(4).toList();
@@ -65,14 +65,25 @@ class DepositCurrencySelector extends StatelessWidget {
                   provider.setCurrency(selected);
                 }
               },
-              child: const Text(
-                'Manage',
-                style: TextStyle(
-                  color: Color(0xFF10B981),
-                  fontFamily: 'Inter',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(
+                    Boxicons.bx_cog,
+                    size: 15,
+                    color: Color(0xFF10B981),
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    'Manage',
+                    style: TextStyle(
+                      color: Color(0xFF10B981),
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

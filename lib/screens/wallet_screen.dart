@@ -67,7 +67,10 @@ class WalletScreen extends StatelessWidget {
               onDeposit: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const DepositScreen()),
+                  MaterialPageRoute(
+                    settings: const RouteSettings(name: '/deposit'),
+                    builder: (_) => const DepositScreen(),
+                  ),
                 );
               },
               onWithdraw: () {
@@ -112,6 +115,7 @@ class WalletScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
+                          settings: const RouteSettings(name: '/deposit'),
                           builder: (_) => const DepositScreen(),
                         ),
                       );

@@ -13,7 +13,7 @@ class QuickAccessCurrencies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<FavouriteCurrenciesProvider>();
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
     final favourites = provider.favouriteCurrencies;
 

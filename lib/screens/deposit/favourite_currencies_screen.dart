@@ -30,7 +30,7 @@ class _FavouriteCurrenciesScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
     final provider = context.watch<FavouriteCurrenciesProvider>();
 
@@ -144,7 +144,7 @@ class _FavouriteCurrenciesScreenContent extends StatelessWidget {
   }
 
   Widget _buildEmptySearchState(BuildContext context) {
-    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

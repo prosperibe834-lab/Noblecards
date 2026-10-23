@@ -48,7 +48,7 @@ class _DepositAmountInputState extends State<DepositAmountInput> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DepositProvider>();
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final numberFormat = NumberFormat("#,##0.00");
 
     // Keep text controller in sync if quick amount selection changes externally

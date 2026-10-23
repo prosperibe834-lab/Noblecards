@@ -12,7 +12,7 @@ class DepositQuickAmounts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DepositProvider>();
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Exact quick amounts from reference image: $10, $25, $50, $100
     final quickAmounts = [10.0, 25.0, 50.0, 100.0];

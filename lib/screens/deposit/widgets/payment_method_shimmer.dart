@@ -32,7 +32,7 @@ class _PaymentMethodShimmerState extends State<PaymentMethodShimmer> with Single
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final baseColor = isDark ? AppColors.darkCard : AppColors.lightBorder.withOpacity(0.5);
     final highlightColor = isDark ? AppColors.darkBorder : Colors.white.withOpacity(0.5);
 

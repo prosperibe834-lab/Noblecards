@@ -20,7 +20,7 @@ class DepositHelpBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
 
     return Container(
@@ -94,7 +94,7 @@ class DepositHelpBottomSheet extends StatelessWidget {
   }
 
   Widget _buildStepRow(BuildContext context, String number, String title, String desc) {
-    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Row(
