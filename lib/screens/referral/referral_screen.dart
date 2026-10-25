@@ -11,6 +11,7 @@ import 'widgets/referral_link_card.dart';
 import 'widgets/referral_how_it_works.dart';
 import 'widgets/referral_progress.dart';
 import 'widgets/referral_reward_banner.dart';
+import '../../localization/app_localizations.dart';
 
 class ReferralScreen extends StatefulWidget {
   final Future<ReferralSummary> Function()? loadReferralSummary;
@@ -96,7 +97,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
         title: Column(
           children: [
             Text(
-              'Referral Program',
+              context.tr('referral_program', fallback: 'Referral Program'),
               style: TextStyle(
                 color: textColor,
                 fontSize: 18,

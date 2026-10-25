@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/app_text_styles.dart';
+import '../../localization/app_localizations.dart';
 
 import 'widgets/cards_hero_carousel.dart';
 import 'widgets/cards_action_cards.dart';
@@ -101,12 +101,12 @@ class _CardsScreenState extends State<CardsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Gift Cards",
+                    context.tr('gift_cards', fallback: 'Gift Cards'),
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    "Buy, sell & discover gift cards worldwide",
+                    context.tr('cards_subtitle', fallback: 'Buy, sell & discover gift cards worldwide'),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

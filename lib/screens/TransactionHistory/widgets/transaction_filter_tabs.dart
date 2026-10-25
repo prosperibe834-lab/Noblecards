@@ -4,6 +4,7 @@ import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_theme.dart';
 import '../../../theme/app_animation.dart';
+import '../../../localization/app_localizations.dart';
 
 class TransactionFilterTabs extends StatelessWidget {
   final String activeTab;
@@ -29,6 +30,11 @@ class TransactionFilterTabs extends StatelessWidget {
       child: Row(
         children: tabs.map((tab) {
           final isActive = activeTab == tab;
+          final localizedLabel = tab == 'All'
+              ? context.tr('filter_all', fallback: 'All')
+              : tab == 'Deposits'
+                  ? context.tr('deposits', fallback: 'Deposits')
+                  : context.tr('withdrawals', fallback: 'Withdrawals');
           return Expanded(
             child: GestureDetector(
               onTap: () => onTabChanged(tab),
@@ -42,7 +48,7 @@ class TransactionFilterTabs extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  tab,
+                  localizedLabel,
                   style: AppTextTheme.light.bodyMedium?.copyWith(
                     color: isActive 
                         ? AppColors.white 

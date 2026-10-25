@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -13,10 +14,10 @@ class HotTodaySection extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final items = [
-      {"title": "Gaming", "price": "From \$10", "badge": "+12%", "icon": Boxicons.bxs_game, "colors": [AppColors.secondary, Color(0xFF3B82F6)]},
-      {"title": "Shopping", "price": "From \$25", "badge": "+8%", "icon": Boxicons.bx_shopping_bag, "colors": [AppColors.accentViolet, Color(0xFF6366F1)]},
-      {"title": "Entertainment", "price": "From \$15", "badge": "+10%", "icon": Boxicons.bx_movie_play, "colors": [Color(0xFFD946EF), Color(0xFFA855F7)]},
-      {"title": "Dining", "price": "From \$20", "badge": "+6%", "icon": Boxicons.bx_restaurant, "colors": [AppColors.accent, Color(0xFFF97316)]},
+      {"titleKey": "gaming", "price": "10", "badge": "+12%", "icon": Boxicons.bxs_game, "colors": [AppColors.secondary, Color(0xFF3B82F6)]},
+      {"titleKey": "shopping", "price": "25", "badge": "+8%", "icon": Boxicons.bx_shopping_bag, "colors": [AppColors.accentViolet, Color(0xFF6366F1)]},
+      {"titleKey": "entertainment", "price": "15", "badge": "+10%", "icon": Boxicons.bx_movie_play, "colors": [Color(0xFFD946EF), Color(0xFFA855F7)]},
+      {"titleKey": "dining", "price": "20", "badge": "+6%", "icon": Boxicons.bx_restaurant, "colors": [AppColors.accent, Color(0xFFF97316)]},
     ];
 
     return Column(
@@ -32,14 +33,14 @@ class HotTodaySection extends StatelessWidget {
                   const Text("🔥", style: TextStyle(fontSize: 18)),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    "Hot Today",
+                    context.tr('hot_today'),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
                   ),
                 ],
               ),
               Text(
-                "View All",
-                style: TextStyle(
+                context.tr('view_all'),
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -76,7 +77,7 @@ class HotTodaySection extends StatelessWidget {
                   children: [
                     Icon(item["icon"] as IconData, color: Colors.white, size: 24),
                     Text(
-                      item["title"] as String,
+                      context.tr(item["titleKey"] as String),
                       style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12),
                       maxLines: 1, overflow: TextOverflow.ellipsis,
                     ),
@@ -84,7 +85,7 @@ class HotTodaySection extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          item["price"] as String,
+                          "${context.tr('from')} \$${item["price"]}",
                           style: const TextStyle(color: Colors.white70, fontSize: 10),
                         ),
                         Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -41,9 +42,9 @@ class WhyNobleCardsSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          buildFeature(Boxicons.bx_rocket, "Fast Delivery"),
-          buildFeature(Boxicons.bx_lock_alt, "Secure Checkout"),
-          buildFeature(Boxicons.bx_globe, "Global Selection"),
+          buildFeature(Boxicons.bx_rocket, context.tr('fast_delivery')),
+          buildFeature(Boxicons.bx_lock_alt, context.tr('secure_checkout')),
+          buildFeature(Boxicons.bx_globe, context.tr('global_selection')),
         ],
       ),
     );

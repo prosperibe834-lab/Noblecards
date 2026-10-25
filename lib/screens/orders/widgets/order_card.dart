@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import '../models/order_model.dart';
@@ -110,7 +111,7 @@ class OrderCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Order ID: ${order.orderId}',
+                        '${context.tr('order_id')}: ${order.orderId}',
                         style: TextStyle(
                           fontSize: 11,
                           color: isDark

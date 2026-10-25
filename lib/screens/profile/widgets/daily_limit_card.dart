@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
 import '../models/account_tier_model.dart';
@@ -57,7 +58,7 @@ class DailyLimitCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  "Daily Transaction Limit",
+                  context.tr('daily_tx_limit'),
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontSize: 16),
@@ -86,7 +87,7 @@ class DailyLimitCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "Remaining Today",
+                      context.tr('remaining_today'),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -97,7 +98,7 @@ class DailyLimitCard extends StatelessWidget {
                     _buildCircularProgress(),
                     const SizedBox(height: 8),
                     Text(
-                      "\$${data.remainingDailyLimit.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')} left",
+                      "\$${data.remainingDailyLimit.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')} ${context.tr('left')}",
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 12,

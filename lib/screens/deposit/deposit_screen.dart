@@ -16,6 +16,7 @@ import 'widgets/deposit_info_card.dart';
 import 'widgets/recent_deposits_section.dart';
 import 'widgets/deposit_help_bottom_sheet.dart';
 import 'widgets/deposit_header_graphic.dart';
+import '../../localization/app_localizations.dart';
 
 class DepositScreen extends StatelessWidget {
   const DepositScreen({super.key});
@@ -142,7 +143,7 @@ class _DepositScreenContentState extends State<_DepositScreenContent> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Deposit Funds',
+                                context.tr('deposit_funds', fallback: 'Deposit Funds'),
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontWeight: FontWeight.w800,
@@ -153,7 +154,7 @@ class _DepositScreenContentState extends State<_DepositScreenContent> {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                'Add funds to your NobleCards wallet and get started.',
+                                context.tr('deposit_funds_subtitle', fallback: 'Add funds to your NobleCards wallet and get started.'),
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 13,
@@ -243,20 +244,20 @@ class _DepositScreenContentState extends State<_DepositScreenContent> {
                         ),
                       ],
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Continue to Payment',
-                          style: TextStyle(
+                          context.tr('continue_to_payment', fallback: 'Continue to Payment'),
+                          style: const TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
                       ],
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import '../models/order_model.dart';
@@ -84,7 +85,7 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Filter Orders',
+                  context.tr('filter_orders'),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -101,22 +102,22 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
             const SizedBox(height: 12),
 
             // Transaction Type
-            _buildSectionTitle('Transaction Type'),
+            _buildSectionTitle(context.tr('transaction_type')),
             Wrap(
               spacing: 8,
               children: [
                 _buildChoiceChip(
-                  'All',
+                  context.tr('all'),
                   _type == null,
                   () => setState(() => _type = null),
                 ),
                 _buildChoiceChip(
-                  'Buy',
+                  context.tr('buy'),
                   _type == TransactionType.buy,
                   () => setState(() => _type = TransactionType.buy),
                 ),
                 _buildChoiceChip(
-                  'Sell',
+                  context.tr('sell'),
                   _type == TransactionType.sell,
                   () => setState(() => _type = TransactionType.sell),
                 ),
@@ -125,28 +126,28 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
             const SizedBox(height: 16),
 
             // Status
-            _buildSectionTitle('Status'),
+            _buildSectionTitle(context.tr('status')),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
                 _buildChoiceChip(
-                  'All',
+                  context.tr('all'),
                   _status == null,
                   () => setState(() => _status = null),
                 ),
                 _buildChoiceChip(
-                  'Completed',
+                  context.tr('completed'),
                   _status == OrderStatus.completed,
                   () => setState(() => _status = OrderStatus.completed),
                 ),
                 _buildChoiceChip(
-                  'Pending',
+                  context.tr('pending'),
                   _status == OrderStatus.pending,
                   () => setState(() => _status = OrderStatus.pending),
                 ),
                 _buildChoiceChip(
-                  'Cancelled',
+                  context.tr('cancelled'),
                   _status == OrderStatus.cancelled,
                   () => setState(() => _status = OrderStatus.cancelled),
                 ),
@@ -155,15 +156,16 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
             const SizedBox(height: 16),
 
             // Gift Cards
-            _buildSectionTitle('Gift Card Brand'),
+            _buildSectionTitle(context.tr('gift_card_brand')),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: _brands.map((brand) {
                 final isSelected =
                     (_giftCard == null && brand == 'All') || _giftCard == brand;
+                final displayBrand = brand == 'All' ? context.tr('all') : brand;
                 return _buildChoiceChip(
-                  brand,
+                  displayBrand,
                   isSelected,
                   () =>
                       setState(() => _giftCard = brand == 'All' ? null : brand),
@@ -173,7 +175,7 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
             const SizedBox(height: 16),
 
             // Sort
-            _buildSectionTitle('Sort By'),
+            _buildSectionTitle(context.tr('sort_by')),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -202,7 +204,7 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
                     ),
-                    child: const Text('Reset'),
+                    child: Text(context.tr('reset')),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -220,7 +222,7 @@ class _OrdersFilterBottomSheetState extends State<OrdersFilterBottomSheet> {
                         borderRadius: BorderRadius.circular(AppRadius.lg),
                       ),
                     ),
-                    child: const Text('Apply Filters'),
+                    child: Text(context.tr('apply_filters')),
                   ),
                 ),
               ],

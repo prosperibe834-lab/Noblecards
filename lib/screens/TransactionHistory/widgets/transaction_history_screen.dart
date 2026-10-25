@@ -8,6 +8,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_text_theme.dart';
+import '../../../localization/app_localizations.dart';
 
 import '../models/transaction_history_model.dart';
 import '../services/transaction_history_service.dart';
@@ -264,7 +265,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           ),
         ),
         title: Text(
-          'Transaction History',
+          context.tr('transaction_history', fallback: 'Transaction History'),
           style: AppTextTheme.light.titleLarge?.copyWith(
             color: textColor,
             fontSize: 18,

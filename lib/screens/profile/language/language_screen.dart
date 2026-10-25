@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import 'package:provider/provider.dart';
+import '../../../../localization/app_localizations.dart';
+import '../../../../providers/language_provider.dart';
 import 'models/language_model.dart';
 import 'services/language_service.dart';
 import 'widgets/current_language_card.dart';
@@ -32,12 +35,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
   Future<void> _loadLanguages() async {
     final languages = await _languageService.getLanguages();
     if (mounted) {
+      final activeLanguage = context.read<LanguageProvider>().currentLanguage;
       setState(() {
         _allLanguages = languages;
         _filteredLanguages = languages;
         _selectedLanguage = languages.firstWhere(
-          (lang) => lang.isDefault,
-          orElse: () => languages.first,
+          (lang) => lang.id == activeLanguage.id,
+          orElse: () => languages.firstWhere(
+            (lang) => lang.isDefault,
+            orElse: () => languages.first,
+          ),
         );
         _isLoading = false;
       });
@@ -58,15 +65,50 @@ class _LanguageScreenState extends State<LanguageScreen> {
     });
   }
 
-  void _onLanguageSelected(LanguageModel language) {
+  Future<void> _onLanguageSelected(LanguageModel language) async {
     setState(() {
       _selectedLanguage = language;
     });
+
+    final languageProvider = context.read<LanguageProvider>();
+    await languageProvider.changeLanguage(language);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Text(language.flag, style: const TextStyle(fontSize: 18)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '${language.name} ${context.tr('selected', fallback: 'selected')}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF0F1A15),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Color(0xFF00C853), width: 0.8),
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeLanguage = context.watch<LanguageProvider>().currentLanguage;
+    final displayedCurrentLanguage = _selectedLanguage ?? activeLanguage;
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1419) : Colors.white,
@@ -85,7 +127,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         title: Column(
           children: [
             Text(
-              "Language",
+              context.tr('language', fallback: "Language"),
               style: TextStyle(
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 18,
@@ -94,7 +136,10 @@ class _LanguageScreenState extends State<LanguageScreen> {
             ),
             const SizedBox(height: 2),
             Text(
-              "Choose your preferred language",
+              context.tr(
+                'choose_language',
+                fallback: "Choose your preferred language",
+              ),
               style: TextStyle(
                 color: isDark ? Colors.white54 : Colors.black54,
                 fontSize: 12,
@@ -117,14 +162,14 @@ class _LanguageScreenState extends State<LanguageScreen> {
                         Hero(
                           tag: 'current_language_card',
                           child: CurrentLanguageCard(
-                            language: _selectedLanguage!,
+                            language: displayedCurrentLanguage,
                           ),
                         ),
                         const SizedBox(height: 24),
                         LanguageSearchField(onChanged: _onSearch),
                         const SizedBox(height: 32),
                         Text(
-                          "All Languages",
+                          context.tr('all_languages', fallback: "All Languages"),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -164,7 +209,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                                 child: LanguageTile(
                                   language: language,
                                   isSelected:
-                                      _selectedLanguage?.id == language.id,
+                                      displayedCurrentLanguage.id == language.id,
                                   onTap: () => _onLanguageSelected(language),
                                 ),
                               );

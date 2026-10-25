@@ -12,6 +12,7 @@ import 'widgets/withdraw_method_section.dart';
 import 'widgets/withdraw_summary_card.dart';
 import 'withdraw_bank_details_screen.dart';
 import '../BottomNavigation/main_navigation_screen.dart';
+import '../../localization/app_localizations.dart';
 
 class WithdrawScreen extends StatefulWidget {
   const WithdrawScreen({super.key});
@@ -55,7 +56,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Withdrawal Help',
+                  context.tr('withdrawal_help', fallback: 'Withdrawal Help'),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -85,7 +86,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       ),
                     ),
                     onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Understood'),
+                    child: Text(context.tr('understood', fallback: 'Understood')),
                   ),
                 ),
               ],
@@ -243,7 +244,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           },
         ),
         title: Text(
-          'Withdraw Funds',
+          context.tr('withdraw_funds', fallback: 'Withdraw Funds'),
           style: TextStyle(
             color: textColor,
             fontSize: 16,
@@ -370,9 +371,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Continue',
-                            style: TextStyle(
+                          Text(
+                            context.tr('continue', fallback: 'Continue'),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

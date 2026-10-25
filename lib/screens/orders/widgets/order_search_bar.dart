@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 
@@ -36,7 +37,7 @@ class OrderSearchBar extends StatelessWidget {
           color: isDark ? Colors.white : Colors.black,
         ),
         decoration: InputDecoration(
-          hintText: 'Search gift card, order ID, region...',
+          hintText: context.tr('search_orders_hint'),
           hintStyle: TextStyle(
             fontSize: 13,
             color: isDark ? AppColors.darkSubText : AppColors.lightSubText,

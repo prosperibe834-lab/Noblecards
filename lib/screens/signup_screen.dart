@@ -7,6 +7,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_animation.dart';
+import '../localization/app_localizations.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -300,7 +301,7 @@ class _SignupScreenState extends State<SignupScreen>
                 const SizedBox(height: AppSpacing.xl),
 
                 Text(
-                  "Create Your Account",
+                  context.tr('create_account', fallback: "Create Your Account"),
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 26,
@@ -310,7 +311,7 @@ class _SignupScreenState extends State<SignupScreen>
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  "Create your NobleCards account and start buying and selling gift cards securely with the best market rates.",
+                  context.tr('create_account_subtitle', fallback: "Create your NobleCards account and start buying and selling gift cards securely with the best market rates."),
                   style: TextStyle(
                     fontFamily: "Inter",
                     fontSize: 14,
@@ -867,7 +868,7 @@ class _SignupScreenState extends State<SignupScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Already have an account? ",
+                      context.tr('already_have_account', fallback: "Already have an account? "),
                       style: TextStyle(
                         fontFamily: "Inter",
                         fontSize: 14,
@@ -881,9 +882,9 @@ class _SignupScreenState extends State<SignupScreen>
                         // Navigate to Login Screen
                         Navigator.pushNamed(context, '/login');
                       },
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(
+                      child: Text(
+                        context.tr('log_in', fallback: "Sign In"),
+                        style: const TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

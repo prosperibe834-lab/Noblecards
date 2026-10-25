@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
 
@@ -14,7 +15,7 @@ class HowToLevelUpSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "How to Level Up",
+          context.tr('how_to_level_up'),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
         ),
         const SizedBox(height: 16),
@@ -33,10 +34,10 @@ class HowToLevelUpSection extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildCheckItem(context, "Complete more transactions"),
-                  _buildCheckItem(context, "Buy or sell more gift cards"),
-                  _buildCheckItem(context, "Keep your account secure"),
-                  _buildCheckItem(context, "Maintain a good account standing"),
+                  _buildCheckItem(context, context.tr('complete_more_tx')),
+                  _buildCheckItem(context, context.tr('buy_sell_more_cards')),
+                  _buildCheckItem(context, context.tr('keep_account_secure')),
+                  _buildCheckItem(context, context.tr('maintain_good_standing')),
                 ],
               ),
               Positioned(

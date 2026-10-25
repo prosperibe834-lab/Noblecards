@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import '../authentication/services/authentication_service.dart';
 import 'edit_profile_screen.dart';
 import 'providers/edit_profile_provider.dart';
+import '../../localization/app_localizations.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({Key? key}) : super(key: key);
@@ -205,7 +206,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen>
         ),
         centerTitle: true,
         title: Text(
-          'Personal Information',
+          context.tr('personal_information', fallback: 'Personal Information'),
           style: TextStyle(
             color: primaryTextColor,
             fontSize: 18,

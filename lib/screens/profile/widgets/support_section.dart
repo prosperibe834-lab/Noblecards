@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 
 class SupportSection extends StatelessWidget {
@@ -13,12 +14,12 @@ class SupportSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Need help?",
+          context.tr('need_help'),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
         ),
         const SizedBox(height: 8),
         Text(
-          "Our support team is here for you.",
+          context.tr('support_team_here'),
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 16),
@@ -38,9 +39,9 @@ class SupportSection extends StatelessWidget {
               elevation: 0,
             ),
             icon: const Icon(Boxicons.bx_message_rounded_dots, size: 20),
-            label: const Text(
-              "Contact Support",
-              style: TextStyle(
+            label: Text(
+              context.tr('contact_support'),
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Poppins',

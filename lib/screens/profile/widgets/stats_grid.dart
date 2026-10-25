@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
 import '../models/account_tier_model.dart';
@@ -23,15 +24,15 @@ class StatsGrid extends StatelessWidget {
           context,
           Boxicons.bxs_star,
           AppColors.warning,
-          "Total Points",
+          context.tr('total_points'),
           stats.totalPoints.toString(),
-          "Lifetime points",
+          context.tr('lifetime_points'),
         ),
         _buildStatCard(
           context,
           Boxicons.bx_calendar,
           AppColors.info,
-          "Member Since",
+          context.tr('member_since'),
           stats.memberSince,
           "1 year, 2 months",
         ),
@@ -39,17 +40,17 @@ class StatsGrid extends StatelessWidget {
           context,
           Boxicons.bx_bar_chart_alt_2,
           AppColors.success,
-          "Successful Transactions",
+          context.tr('successful_transactions'),
           stats.successfulTransactions.toString(),
-          "This month",
+          context.tr('this_month_capital'),
         ),
         _buildStatCard(
           context,
           Boxicons.bx_wallet,
           AppColors.accentViolet,
-          "Total Volume",
+          context.tr('total_volume'),
           "\$${stats.totalVolume.toInt().toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), ',')}",
-          "This month",
+          context.tr('this_month_capital'),
         ),
       ],
     );

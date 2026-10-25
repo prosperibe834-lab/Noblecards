@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import '../models/order_model.dart';
@@ -20,7 +21,7 @@ class OrderTypeChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Text(
-        isBuy ? 'Buy' : 'Sell',
+        isBuy ? context.tr('buy') : context.tr('sell'),
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
@@ -46,27 +47,27 @@ class OrderStatusBadge extends StatelessWidget {
       case OrderStatus.completed:
         bg = AppColors.success.withOpacity(0.12);
         fg = AppColors.success;
-        label = 'Completed';
+        label = context.tr('completed');
         break;
       case OrderStatus.pending:
         bg = Colors.orange.withOpacity(0.12);
         fg = Colors.orange;
-        label = 'Pending';
+        label = context.tr('pending');
         break;
       case OrderStatus.processing:
         bg = Colors.blue.withOpacity(0.12);
         fg = Colors.blue;
-        label = 'Processing';
+        label = context.tr('processing');
         break;
       case OrderStatus.cancelled:
         bg = isDark(context) ? Colors.white10 : Colors.black12;
         fg = isDark(context) ? Colors.white60 : Colors.black54;
-        label = 'Cancelled';
+        label = context.tr('cancelled');
         break;
       case OrderStatus.failed:
         bg = Colors.redAccent.withOpacity(0.12);
         fg = Colors.redAccent;
-        label = 'Failed';
+        label = context.tr('failed');
         break;
     }
 

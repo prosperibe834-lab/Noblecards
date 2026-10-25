@@ -12,6 +12,7 @@ import 'widgets/gift_card_product_card.dart';
 import 'widgets/gift_card_catalog_empty_state.dart';
 import 'widgets/gift_card_catalog_shimmer.dart';
 import 'widgets/network_error_widget.dart';
+import '../../localization/app_localizations.dart';
 
 class SellGiftCardsCatalogScreen extends StatefulWidget {
   const SellGiftCardsCatalogScreen({Key? key}) : super(key: key);
@@ -97,16 +98,16 @@ class _SellGiftCardsCatalogScreenState
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Sell Gift Cards',
-              style: TextStyle(
+            Text(
+              context.tr('sell_gift_cards', fallback: 'Sell Gift Cards'),
+              style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              'Turn your gift cards into cash',
+              context.tr('sell_cards_desc', fallback: 'Turn your gift cards into cash'),
               style: TextStyle(
                 fontSize: 12,
                 color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
@@ -168,7 +169,7 @@ class _SellGiftCardsCatalogScreenState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Popular Gift Cards',
+                        context.tr('popular_gift_cards'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -178,8 +179,8 @@ class _SellGiftCardsCatalogScreenState
                         ),
                       ),
                       Text(
-                        'View All →',
-                        style: TextStyle(
+                        context.tr('view_all_arrow'),
+                        style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,

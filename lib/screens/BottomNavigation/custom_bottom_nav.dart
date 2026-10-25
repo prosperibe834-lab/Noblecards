@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../localization/app_localizations.dart';
 import '../../theme/app_animation.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
@@ -208,7 +209,9 @@ class _StandardNavItem extends StatelessWidget {
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               color: isActive ? activeTextColor : inactiveTextColor,
             ),
-            child: Text(item.label),
+            child: Text(
+              context.tr(item.label.toLowerCase(), fallback: item.label),
+            ),
           ),
           const SizedBox(height: 3),
           // Active Indicator Dot
@@ -322,7 +325,9 @@ class _WalletNavItem extends StatelessWidget {
                     fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                     color: isActive ? activeTextColor : inactiveTextColor,
                   ),
-                  child: Text(item.label),
+                  child: Text(
+                    context.tr(item.label.toLowerCase(), fallback: item.label),
+                  ),
                 ),
                 const SizedBox(height: 3),
                 AnimatedOpacity(

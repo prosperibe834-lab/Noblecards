@@ -11,6 +11,7 @@ import 'widgets/order_search_bar.dart';
 import 'widgets/order_shimmer.dart';
 import 'widgets/order_summary_card.dart';
 import 'widgets/orders_filter_bottom_sheet.dart';
+import '../../localization/app_localizations.dart';
 
 class OrdersScreen extends StatefulWidget {
   final OrdersService? ordersService;
@@ -145,7 +146,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Orders',
+                                context.tr('orders', fallback: 'Orders'),
                                 style: TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w800,
@@ -155,7 +156,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Track all your gift card transactions',
+                                context.tr('orders_subtitle', fallback: 'Track all your gift card transactions'),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: isDark
@@ -205,7 +206,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Filter',
+                                    context.tr('filter', fallback: 'Filter'),
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
@@ -235,10 +236,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         child: Row(
                           children: _chips.map((chip) {
                             final isSelected = _activeChip == chip;
+                            final localizedChipText = switch (chip.toLowerCase()) {
+                              'all' => context.tr('all', fallback: 'All'),
+                              'buy' => context.tr('buy', fallback: 'Buy'),
+                              'sell' => context.tr('sell', fallback: 'Sell'),
+                              'pending' => context.tr('pending', fallback: 'Pending'),
+                              'completed' => context.tr('completed', fallback: 'Completed'),
+                              'cancelled' => context.tr('cancelled', fallback: 'Cancelled'),
+                              _ => chip,
+                            };
                             return Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: ChoiceChip(
-                                label: Text(chip),
+                                label: Text(localizedChipText),
                                 selected: isSelected,
                                 onSelected: (_) {
                                   setState(() => _activeChip = chip);

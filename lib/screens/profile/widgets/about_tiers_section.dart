@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../models/account_tier_model.dart';
 
@@ -19,7 +20,7 @@ class AboutTiersSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "About Your Tier",
+          context.tr('about_your_tier'),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
         ),
         const SizedBox(height: 16),
@@ -117,8 +118,8 @@ class AboutTiersSection extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   tier.maxPoints == 99999
-                      ? "${tier.minPoints}+ points"
-                      : "${tier.minPoints} - ${tier.maxPoints} points",
+                      ? "${tier.minPoints}+ ${context.tr('points')}"
+                      : "${tier.minPoints} - ${tier.maxPoints} ${context.tr('points')}",
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(fontSize: 12),
@@ -127,7 +128,7 @@ class AboutTiersSection extends StatelessWidget {
             ),
           ),
           Text(
-            "Up to \$${(tier.dailyLimit / 1000).toInt()}k/day",
+            "${context.tr('up_to')} \$${(tier.dailyLimit / 1000).toInt()}k/${context.tr('day')}",
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w600,

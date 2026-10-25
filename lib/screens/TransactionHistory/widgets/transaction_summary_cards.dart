@@ -4,6 +4,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_theme.dart';
+import '../../../localization/app_localizations.dart';
 
 class TransactionSummaryCards extends StatelessWidget {
   final double totalDeposits;
@@ -46,7 +47,7 @@ class TransactionSummaryCards extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Total Deposits', style: AppTextTheme.light.bodyMedium?.copyWith(color: subTextColor, fontSize: 12)),
+                      Text(context.tr('total_deposits', fallback: 'Total Deposits'), style: AppTextTheme.light.bodyMedium?.copyWith(color: subTextColor, fontSize: 12)),
                       const SizedBox(height: 2),
                       Text('\$${totalDeposits.toStringAsFixed(2)}', style: AppTextTheme.light.titleLarge?.copyWith(color: textColor, fontSize: 16)),
                     ],
@@ -79,7 +80,7 @@ class TransactionSummaryCards extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Total Withdrawals', style: AppTextTheme.light.bodyMedium?.copyWith(color: subTextColor, fontSize: 12)),
+                      Text(context.tr('total_withdrawals', fallback: 'Total Withdrawals'), style: AppTextTheme.light.bodyMedium?.copyWith(color: subTextColor, fontSize: 12)),
                       const SizedBox(height: 2),
                       Text('\$${totalWithdrawals.toStringAsFixed(2)}', style: AppTextTheme.light.titleLarge?.copyWith(color: textColor, fontSize: 16)),
                     ],

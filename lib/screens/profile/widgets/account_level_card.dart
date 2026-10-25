@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_radius.dart';
 import '../../../../theme/app_shadow.dart';
 import '../account_level_screen.dart';
@@ -49,17 +50,17 @@ class AccountLevelCard extends StatelessWidget {
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'Account Level',
-                      style: TextStyle(
+                      context.tr('account_level'),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 2),
-                    Text(
+                    const SizedBox(height: 2),
+                    const Text(
                       'Gold',
                       style: TextStyle(
                         color: Colors.white,
@@ -74,9 +75,9 @@ class AccountLevelCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text(
-                  'Daily Limit',
-                  style: TextStyle(
+                Text(
+                  context.tr('daily_limit'),
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -93,17 +94,17 @@ class AccountLevelCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Row(
-                  children: const [
+                  children: [
                     Text(
-                      'View Benefits',
-                      style: TextStyle(
+                      context.tr('view_benefits'),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(
+                    const SizedBox(width: 4),
+                    const Icon(
                       Boxicons.bx_chevron_right,
                       color: Colors.white,
                       size: 14,

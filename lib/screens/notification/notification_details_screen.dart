@@ -8,7 +8,8 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_shadow.dart';
 import '../../theme/app_spacing.dart';
-import 'models/notification_model.dart'; // Your existing model
+import 'models/notification_model.dart';
+import '../../localization/app_localizations.dart';
 
 class NotificationDetailsScreen extends StatefulWidget {
   final NotificationModel notification;
@@ -217,7 +218,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen>
               onPressed: () => Navigator.pop(context),
             ),
             Text(
-              "Notification Details",
+              context.tr('notifications', fallback: "Notification Details"),
               style: textTheme.titleLarge?.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,

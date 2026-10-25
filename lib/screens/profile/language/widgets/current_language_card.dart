@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../models/language_model.dart';
 
 class CurrentLanguageCard extends StatelessWidget {
@@ -44,9 +45,9 @@ class CurrentLanguageCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Current Language",
-                  style: TextStyle(
-                    color: const Color(0xFF00C853),
+                  context.tr('current_language', fallback: "Current Language"),
+                  style: const TextStyle(
+                    color: Color(0xFF00C853),
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -70,9 +71,11 @@ class CurrentLanguageCard extends StatelessWidget {
                     color: const Color(0xFF00C853).withOpacity(0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    "Default",
-                    style: TextStyle(
+                  child: Text(
+                    language.isDefault
+                        ? context.tr('default', fallback: "Default")
+                        : context.tr('active', fallback: "Active"),
+                    style: const TextStyle(
                       color: Color(0xFF00C853),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,

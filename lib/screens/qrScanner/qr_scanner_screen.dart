@@ -4,6 +4,7 @@ import 'package:boxicons/boxicons.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart' show Icons;
+import '../../localization/app_localizations.dart';
 import 'widgets/qr_scanner_info_sheet.dart';
 import 'qr_scanner_overlay.dart';
 
@@ -65,8 +66,8 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         setState(() => _isProcessing = false);
         _showResultModal(
           isSuccess: false,
-          title: 'No QR Code Found',
-          message: "We couldn't detect a valid QR code in the selected image.",
+          title: context.tr('no_qr_found'),
+          message: context.tr('no_qr_found_desc'),
         );
       }
       // If found, the onDetect callback of MobileScanner handles the success routing.
@@ -104,15 +105,15 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         if (isNobleCardsCode) {
           _showResultModal(
             isSuccess: true,
-            title: 'QR Code Detected',
-            message: 'Processing your request...',
+            title: context.tr('qr_code_detected'),
+            message: context.tr('processing_request'),
           );
           // Navigate to destination here...
         } else {
           _showResultModal(
             isSuccess: false,
-            title: 'Unsupported QR Code',
-            message: "Sorry, this QR code isn't recognized by NobleCards.",
+            title: context.tr('unsupported_qr_code'),
+            message: context.tr('unsupported_qr_desc'),
           );
         }
       }
@@ -196,7 +197,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    isSuccess ? 'Continue' : 'Scan Again',
+                    isSuccess ? context.tr('continue') : context.tr('scan_again'),
                     style: TextStyle(
                       color: isSuccess ? Colors.white : const Color(0xFF10B981),
                       fontSize: 16,
@@ -250,7 +251,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         ),
         centerTitle: true,
         title: Text(
-          'Scan QR Code',
+          context.tr('scan_qr_code'),
           style: TextStyle(
             color: primaryTextColor,
             fontSize: 18,
@@ -281,9 +282,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                   children: [
                     Icon(Boxicons.bx_camera_off, color: Colors.white, size: 40),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Camera permission denied or unavailable.',
-                      style: TextStyle(color: Colors.white),
+                    Text(
+                      context.tr('camera_denied'),
+                      style: const TextStyle(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
@@ -291,9 +292,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                         backgroundColor: primaryGreen,
                       ),
                       onPressed: () => _scannerController.start(),
-                      child: const Text(
-                        'Retry',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        context.tr('retry'),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ],
@@ -322,12 +323,11 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                         height: 1.4,
                       ),
                       children: [
-                        const TextSpan(
-                          text:
-                              'Position the QR code within the frame\nto scan ',
+                        TextSpan(
+                          text: context.tr('qr_scan_instruction'),
                         ),
                         TextSpan(
-                          text: 'automatically.',
+                          text: context.tr('automatically'),
                           style: TextStyle(
                             color: primaryGreen,
                             fontWeight: FontWeight.w600,
@@ -373,7 +373,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Tap to turn on flashlight',
+                          _isTorchOn
+                              ? context.tr('tap_torch_off')
+                              : context.tr('tap_torch_on'),
                           style: TextStyle(
                             color: primaryTextColor,
                             fontSize: 13,
@@ -408,7 +410,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                       children: [
                         _buildBottomActionButton(
                           icon: Boxicons.bx_image_alt,
-                          label: 'Album',
+                          label: context.tr('album'),
                           onTap: _pickImageFromGallery,
                         ),
                         // Divider Line
@@ -421,7 +423,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                           icon: _isTorchOn
                               ? Icons.flash_on_rounded
                               : Icons.flash_off_rounded,
-                          label: 'Flashlight',
+                          label: context.tr('flashlight'),
                           isActive: _isTorchOn,
                           onTap: _toggleTorch,
                         ),

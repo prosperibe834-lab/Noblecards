@@ -13,6 +13,7 @@ import 'package:noble_cards/screens/authentication/services/authentication_servi
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
 import 'package:noble_cards/screens/cards/giftcard_submission_received_screen.dart';
 import 'package:noble_cards/screens/cards/sell_receipt_screen.dart';
+import '../../localization/app_localizations.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_model.dart';
 import 'package:noble_cards/screens/cards/models/gift_card_region_model.dart';
 import 'package:noble_cards/screens/cards/providers/buy_provider.dart';
@@ -423,7 +424,7 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Sell Gift Card',
+          context.tr('sell_gift_card', fallback: 'Sell Gift Card'),
           style: TextStyle(
             color: textColor,
             fontSize: 18,
@@ -435,7 +436,7 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
           TextButton(
             onPressed: () {},
             child: Text(
-              'History',
+              context.tr('history', fallback: 'History'),
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,

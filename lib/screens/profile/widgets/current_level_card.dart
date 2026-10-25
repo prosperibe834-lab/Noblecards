@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../models/account_tier_model.dart';
 
@@ -32,9 +33,9 @@ class CurrentLevelCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Your Current Level",
-                      style: TextStyle(
+                    Text(
+                      context.tr('your_current_level'),
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -50,9 +51,9 @@ class CurrentLevelCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      "Great job! You're enjoying premium benefits and higher limits.",
-                      style: TextStyle(
+                    Text(
+                      context.tr('current_level_desc'),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
                         height: 1.4,
@@ -68,7 +69,7 @@ class CurrentLevelCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Progress to ${data.nextTier}",
+                "${context.tr('progress_to')} ${data.nextTier}",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -89,7 +90,7 @@ class CurrentLevelCard extends StatelessWidget {
           _buildProgressBar(),
           const SizedBox(height: 8),
           Text(
-            "${data.currentPoints} / ${data.requiredPoints} points",
+            "${data.currentPoints} / ${data.requiredPoints} ${context.tr('points')}",
             style: const TextStyle(color: Colors.white70, fontSize: 12),
           ),
         ],

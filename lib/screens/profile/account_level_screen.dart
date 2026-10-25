@@ -2,6 +2,7 @@ import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../localization/app_localizations.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_shadow.dart';
 import 'models/account_tier_model.dart';
@@ -60,7 +61,7 @@ class _AccountLevelScreenState extends State<AccountLevelScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Account Level",
+          context.tr('account_level'),
           style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: true,

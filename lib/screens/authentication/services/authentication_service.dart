@@ -35,6 +35,7 @@ class AuthUser {
   final String? bio;
   final String? address;
   final String? profileImageUrl;
+  final String? preferredLanguage;
   final bool isEmailVerified;
   final bool isProfileComplete;
   final bool isVerified;
@@ -54,6 +55,7 @@ class AuthUser {
     this.bio,
     this.address,
     this.profileImageUrl,
+    this.preferredLanguage,
     this.isEmailVerified = false,
     this.isProfileComplete = false,
     this.isVerified = false,
@@ -74,6 +76,7 @@ class AuthUser {
     bio: json['bio'] as String?,
     address: json['address'] as String?,
     profileImageUrl: json['profileImageUrl'] as String?,
+    preferredLanguage: json['preferredLanguage'] as String?,
     isEmailVerified: json['isEmailVerified'] as bool? ?? false,
     isProfileComplete: json['isProfileComplete'] as bool? ?? false,
     isVerified: json['isVerified'] as bool? ?? false,
@@ -530,6 +533,18 @@ class AuthenticationService {
     if (data['user'] is Map<String, dynamic>)
       _currentUser = AuthUser.fromJson(data['user'] as Map<String, dynamic>);
     return data['user'] as Map<String, dynamic>?;
+  }
+
+  Future<void> updatePreferredLanguage(String languageId) async {
+    if (!_hasPersistedSession) return;
+    try {
+      await _request(
+        'PATCH',
+        '/users/me',
+        body: {'preferredLanguage': languageId},
+        authenticated: true,
+      );
+    } catch (_) {}
   }
 
   Future<Map<String, dynamic>> _request(

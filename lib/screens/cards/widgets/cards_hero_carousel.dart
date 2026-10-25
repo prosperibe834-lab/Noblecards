@@ -6,6 +6,7 @@ import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_animation.dart';
 import '../../../theme/app_shadow.dart';
+import '../../../localization/app_localizations.dart';
 
 class CardsHeroCarousel extends StatefulWidget {
   const CardsHeroCarousel({Key? key}) : super(key: key);
@@ -21,22 +22,31 @@ class _CardsHeroCarouselState extends State<CardsHeroCarousel> {
 
   final List<Map<String, dynamic>> _slides = [
     {
+      "tag_key": "global_gift_cards",
       "tag": "Global Gift Cards",
+      "headline_key": "cards_worldwide",
       "headline": "4,000+\nCards Worldwide",
+      "sub_key": "discover_brands",
       "sub": "Discover your favorite brands from around the world.",
       "colors": [AppColors.primary, AppColors.secondary],
       "icon": Boxicons.bx_globe
     },
     {
+      "tag_key": "better_rates",
       "tag": "Better Rates. Faster Access.",
+      "headline_key": "more_value",
       "headline": "More Value\nEvery Time",
+      "sub_key": "better_rates_desc",
       "sub": "Shop popular gift cards with transparent pricing and instant access.",
       "colors": [AppColors.primaryDark, AppColors.info],
       "icon": Boxicons.bx_trending_up
     },
     {
+      "tag_key": "powerful_marketplace",
       "tag": "One Powerful Marketplace",
+      "headline_key": "buy_sell_confidence",
       "headline": "Buy & Sell\nWith Confidence",
+      "sub_key": "marketplace_desc",
       "sub": "Discover global brands or turn unused gift cards into value.",
       "colors": [AppColors.primary, AppColors.accentViolet],
       "icon": Boxicons.bx_check_shield
@@ -143,7 +153,7 @@ class _CardsHeroCarouselState extends State<CardsHeroCarousel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                slide["tag"],
+                context.tr(slide["tag_key"] as String, fallback: slide["tag"] as String),
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
@@ -153,7 +163,7 @@ class _CardsHeroCarouselState extends State<CardsHeroCarousel> {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                slide["headline"],
+                context.tr(slide["headline_key"] as String, fallback: slide["headline"] as String),
                 style: const TextStyle(
                   fontFamily: 'Poppins',
                   color: Colors.white,
@@ -164,7 +174,7 @@ class _CardsHeroCarouselState extends State<CardsHeroCarousel> {
               ),
               const Spacer(),
               Text(
-                slide["sub"],
+                context.tr(slide["sub_key"] as String, fallback: slide["sub"] as String),
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,

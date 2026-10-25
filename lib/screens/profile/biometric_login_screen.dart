@@ -10,6 +10,7 @@ import 'widgets/biometric_loading_shimmer.dart';
 import 'widgets/biometric_method_card.dart';
 import 'widgets/security_footer_card.dart';
 import 'widgets/security_setting_tile.dart';
+import '../../../localization/app_localizations.dart';
 
 class BiometricLoginScreen extends StatefulWidget {
   const BiometricLoginScreen({super.key});
@@ -62,7 +63,7 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Biometric Login',
+          context.tr('biometric_login', fallback: 'Biometric Login'),
           style: AppTextStyles.h3.copyWith(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,

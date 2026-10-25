@@ -5,6 +5,7 @@ import '../theme/app_radius.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import 'animated_counter.dart';
+import '../localization/app_localizations.dart';
 
 class WalletBalanceCard extends StatefulWidget {
   final double balance;
@@ -123,9 +124,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                             ),
                           ),
                           const SizedBox(width: AppSpacing.xs),
-                          const Text(
-                            'Main Balance',
-                            style: TextStyle(
+                          Text(
+                            context.tr('main_balance', fallback: 'Main Balance'),
+                            style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: Colors.white70,
@@ -286,9 +287,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                           child: ElevatedButton.icon(
                             onPressed: widget.onDeposit,
                             icon: const Icon(Boxicons.bx_plus, size: 20),
-                            label: const Text(
-                              'Deposit',
-                              style: TextStyle(
+                            label: Text(
+                              context.tr('deposit', fallback: 'Deposit'),
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),
@@ -319,9 +320,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                               Boxicons.bx_transfer_alt,
                               size: 18,
                             ),
-                            label: const Text(
-                              'Withdraw',
-                              style: TextStyle(
+                            label: Text(
+                              context.tr('withdraw', fallback: 'Withdraw'),
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),

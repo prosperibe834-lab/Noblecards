@@ -15,6 +15,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../providers/wallet_provider.dart';
 import 'package:provider/provider.dart';
+import '../localization/app_localizations.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -31,7 +32,7 @@ class WalletScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Wallet',
+          context.tr('wallet', fallback: 'Wallet'),
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: 22,
@@ -110,7 +111,7 @@ class WalletScreen extends StatelessWidget {
                 children: [
                   WalletActionButton(
                     icon: Boxicons.bx_plus,
-                    label: 'Deposit',
+                    label: context.tr('deposit', fallback: 'Deposit'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -123,7 +124,7 @@ class WalletScreen extends StatelessWidget {
                   ),
                   WalletActionButton(
                     icon: Boxicons.bx_minus,
-                    label: 'Withdraw',
+                    label: context.tr('withdraw', fallback: 'Withdraw'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -135,7 +136,7 @@ class WalletScreen extends StatelessWidget {
                   ),
                   WalletActionButton(
                     icon: Boxicons.bx_receipt,
-                    label: 'History',
+                    label: context.tr('history', fallback: 'History'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -147,7 +148,7 @@ class WalletScreen extends StatelessWidget {
                   ),
                   WalletActionButton(
                     icon: Boxicons.bx_pie_chart_alt_2,
-                    label: 'Analytics',
+                    label: context.tr('analytics', fallback: 'Analytics'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -174,7 +175,7 @@ class WalletScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Recent Transactions',
+                  context.tr('recent_transactions', fallback: 'Recent Transactions'),
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 16,
@@ -200,7 +201,7 @@ class WalletScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          'See All',
+                          context.tr('see_all', fallback: 'See All'),
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 13,
@@ -245,11 +246,11 @@ class WalletScreen extends StatelessWidget {
               child: Column(
                 children: [
                   WalletTransactionTile(
-                    title: 'USD Wallet Deposit',
+                    title: context.tr('usd_wallet_deposit'),
                     date: 'Today, 2:30 PM',
                     amount: 400.00,
                     isDeposit: true,
-                    status: 'Successful',
+                    status: context.tr('successful'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -267,11 +268,11 @@ class WalletScreen extends StatelessWidget {
                     color: isDark ? Colors.white10 : Colors.black12,
                   ),
                   WalletTransactionTile(
-                    title: 'Bank Withdrawal',
+                    title: context.tr('bank_withdrawal'),
                     date: 'Yesterday, 10:15 AM',
                     amount: 150.00,
                     isDeposit: false,
-                    status: 'Successful',
+                    status: context.tr('successful'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -320,7 +321,7 @@ class WalletScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Live Exchange Rate',
+                    context.tr('live_exchange_rate', fallback: 'Live Exchange Rate'),
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark

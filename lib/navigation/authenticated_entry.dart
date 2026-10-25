@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/language_provider.dart';
 import '../screens/authentication/services/authentication_service.dart';
 import '../screens/createPin/create_pin_screen.dart';
 
@@ -8,6 +10,23 @@ Future<void> navigateAfterAuthentication(
   required WidgetBuilder destinationBuilder,
 }) async {
   final authService = AuthenticationService();
+  
+  // Sync user preferred language from backend across devices
+  try {
+    final langId = authService.currentUser?.preferredLanguage;
+    if (langId != null && langId.isNotEmpty) {
+      if (context.mounted) {
+        context.read<LanguageProvider>().syncUserLanguage(langId);
+      }
+    } else {
+      final profile = await authService.getUserProfile('');
+      final serverLang = profile?['preferredLanguage'] as String?;
+      if (serverLang != null && serverLang.isNotEmpty && context.mounted) {
+        context.read<LanguageProvider>().syncUserLanguage(serverLang);
+      }
+    }
+  } catch (_) {}
+
   final hasTransactionPin = await authService.hasTransactionPin();
   if (!context.mounted) return;
 
@@ -44,6 +63,23 @@ class _AuthenticatedEntryScreenState extends State<AuthenticatedEntryScreen> {
 
   Future<void> _openDestination() async {
     final authService = AuthenticationService();
+
+    // Sync user preferred language from backend across devices
+    try {
+      final langId = authService.currentUser?.preferredLanguage;
+      if (langId != null && langId.isNotEmpty) {
+        if (mounted) {
+          context.read<LanguageProvider>().syncUserLanguage(langId);
+        }
+      } else {
+        final profile = await authService.getUserProfile('');
+        final serverLang = profile?['preferredLanguage'] as String?;
+        if (serverLang != null && serverLang.isNotEmpty && mounted) {
+          context.read<LanguageProvider>().syncUserLanguage(serverLang);
+        }
+      }
+    } catch (_) {}
+
     final hasTransactionPin = await authService.hasTransactionPin();
     if (!mounted) return;
 

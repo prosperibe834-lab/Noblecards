@@ -11,6 +11,7 @@ import 'widgets/image_source_bottom_sheet.dart';
 import 'widgets/info_banner.dart';
 import 'widgets/profile_photo_picker.dart';
 import 'package:country_picker/country_picker.dart';
+import '../../../localization/app_localizations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String? selectedField;
@@ -166,7 +167,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Edit Profile',
+          context.tr('edit_profile', fallback: 'Edit Profile'),
           style: AppTextStyles.h3.copyWith(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,

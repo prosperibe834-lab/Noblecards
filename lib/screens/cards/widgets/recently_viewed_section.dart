@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -22,12 +23,12 @@ class RecentlyViewedSection extends StatelessWidget {
                   Icon(Boxicons.bx_time_five, color: Theme.of(context).textTheme.bodyMedium?.color, size: 20),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    "Recently Viewed",
+                    context.tr('recently_viewed'),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
                   ),
                 ],
               ),
-              Text("View All", style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12)),
+              Text(context.tr('view_all'), style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12)),
             ],
           ),
         ),

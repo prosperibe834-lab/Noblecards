@@ -10,6 +10,7 @@ import '../forgotPassword/forgot_password_screen.dart';
 import '../verifyOtp/verify_otp_screen.dart';
 import 'widgets/login_background.dart';
 import 'widgets/login_text_field.dart';
+import '../../../localization/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -181,13 +182,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Header Texts
                   Text(
-                    'Welcome back',
+                    context.tr('welcome_back_title', fallback: 'Welcome back'),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Login to your account and continue\nwhere you left off',
+                    context.tr('login_subtitle', fallback: 'Login to your account and continue\nwhere you left off'),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
@@ -197,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   LoginTextField(
                     controller: _emailController,
                     focusNode: _emailFocus,
-                    hintText: 'Email address',
+                    hintText: context.tr('email_address', fallback: 'Email address'),
                     prefixIcon: Boxicons.bx_envelope,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
@@ -217,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   LoginTextField(
                     controller: _passwordController,
                     focusNode: _passwordFocus,
-                    hintText: 'Password',
+                    hintText: context.tr('password', fallback: 'Password'),
                     prefixIcon: Boxicons.bx_lock_alt,
                     isPassword: true,
                     textInputAction: TextInputAction.done,
@@ -243,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
-                        'Forgot password?',
+                        context.tr('forgot_password', fallback: 'Forgot password?'),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.secondary,
                           fontWeight: FontWeight.w600,
@@ -283,9 +284,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 strokeWidth: 2.5,
                               ),
                             )
-                          : const Text(
-                              'Log In',
-                              style: TextStyle(
+                          : Text(
+                              context.tr('log_in', fallback: 'Log In'),
+                              style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -308,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
-                            'or continue with',
+                            context.tr('or_continue_with', fallback: 'or continue with'),
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
@@ -363,8 +364,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Text(
                                         _biometricType ==
                                                 BiometricSupportType.face
-                                            ? 'Login with Face ID'
-                                            : 'Login with Fingerprint',
+                                            ? context.tr('login_face_id', fallback: 'Login with Face ID')
+                                            : context.tr('login_fingerprint', fallback: 'Login with Fingerprint'),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -373,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                       ),
                                       Text(
-                                        'Quick & secure',
+                                        context.tr('quick_secure', fallback: 'Quick & secure'),
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
@@ -394,13 +395,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account? ",
+                        context.tr('dont_have_account', fallback: "Don't have an account? "),
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       GestureDetector(
                         onTap: _isLoading ? null : _handleSignUp,
                         child: Text(
-                          'Sign up',
+                          context.tr('sign_up', fallback: 'Sign up'),
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: AppColors.secondary,

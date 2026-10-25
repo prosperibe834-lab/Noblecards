@@ -12,6 +12,7 @@ import 'widgets/notification_loading_shimmer.dart';
 import 'widgets/notification_empty_widget.dart';
 import 'widgets/notification_settings_bottom_sheet.dart';
 import 'widgets/swipe_notification_actions.dart';
+import '../../localization/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -113,7 +114,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Notifications",
+          context.tr('notifications', fallback: "Notifications"),
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 18,

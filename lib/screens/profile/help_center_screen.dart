@@ -12,6 +12,7 @@ import 'widgets/help_footer_card.dart';
 import 'widgets/help_search_bar.dart';
 import 'widgets/quick_help_card.dart';
 import 'widgets/report_problem_card.dart';
+import '../../../localization/app_localizations.dart';
 
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
@@ -146,7 +147,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   children: [
                     // Header Details
                     Text(
-                      'Help Center',
+                      context.tr('help_center', fallback: 'Help Center'),
                       style: AppTextStyles.h3.copyWith(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,

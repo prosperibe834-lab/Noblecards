@@ -5,6 +5,7 @@ import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_text_theme.dart';
 import '../../../theme/app_animation.dart';
+import '../../../localization/app_localizations.dart';
 
 class TransactionBalanceCard extends StatelessWidget {
   final bool isVisible;
@@ -46,7 +47,7 @@ class TransactionBalanceCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Total Balance',
+                    context.tr('total_balance', fallback: 'Total Balance'),
                     style: AppTextTheme.light.bodyMedium?.copyWith(
                       color: AppColors.white70,
                     ),

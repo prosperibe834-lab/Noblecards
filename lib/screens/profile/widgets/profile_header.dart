@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:provider/provider.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 import 'package:noble_cards/screens/profile/edit_profile_screen.dart';
 import 'package:noble_cards/screens/profile/providers/edit_profile_provider.dart';
 import '../../authentication/services/authentication_service.dart';
 
-String profileHeaderStatusText(AuthUser? user) {
+String profileHeaderStatusText(AuthUser? user, [BuildContext? context]) {
+  if (context != null) {
+    if (user?.isVerified == true) return context.tr('noble_verified');
+    return user?.isProfileComplete == true
+        ? context.tr('profile_complete')
+        : context.tr('profile_incomplete');
+  }
   if (user?.isVerified == true) return 'Noble Verified';
   return user?.isProfileComplete == true
       ? 'Profile complete'
@@ -75,7 +82,7 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('User ID copied to clipboard.', style: TextStyle(color: Colors.white)),
+          content: Text(context.tr('user_id_copied'), style: const TextStyle(color: Colors.white)),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
@@ -171,7 +178,7 @@ class _ProfileHeaderState extends State<ProfileHeader> with SingleTickerProvider
                       if (profileHeaderShowsVerifiedBadge(user)) const Icon(Boxicons.bx_check_shield, color: AppColors.success, size: 14),
                       const SizedBox(width: 4),
                       Text(
-                        profileHeaderStatusText(user),
+                        profileHeaderStatusText(user, context),
                         style: TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w600),
                       ),
                     ],

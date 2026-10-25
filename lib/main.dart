@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'localization/app_localizations.dart';
+import 'providers/language_provider.dart';
+import 'screens/profile/language/data/language_data.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_provider.dart';
 import 'screens/onboarding/onboarding_screen.dart';
@@ -43,6 +47,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
         ChangeNotifierProvider(create: (_) => WalletProvider()),
         ChangeNotifierProvider(create: (_) => SubmissionProvider()),
@@ -60,11 +65,17 @@ class NobleCardsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
     final bool hasActiveSession = AuthenticationService().isAuthenticated;
 
     return MaterialApp(
       title: 'NobleCards',
       debugShowCheckedModeBanner: false,
+
+      // Internationalization & Localization
+      locale: languageProvider.locale,
+      supportedLocales: LanguageData.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
 
       // Utilizing themes from lib/theme/app_theme.dart
       theme: AppTheme.lightTheme,

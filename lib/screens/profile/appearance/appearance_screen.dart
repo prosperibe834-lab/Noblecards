@@ -9,6 +9,7 @@ import 'models/appearance_option.dart';
 import 'widgets/appearance_card.dart';
 import 'widgets/appearance_footer.dart';
 import 'widgets/appearance_shimmer.dart';
+import '../../../localization/app_localizations.dart';
 
 class AppearanceScreen extends StatefulWidget {
   const AppearanceScreen({super.key});
@@ -113,7 +114,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                   children: [
                     // Header Titles
                     Text(
-                      'Appearance',
+                      context.tr('appearance', fallback: 'Appearance'),
                       style: AppTextStyles.h3.copyWith(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,
@@ -121,7 +122,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Customize how NobleCards looks',
+                      context.tr('appearance_subtitle', fallback: 'Customize how NobleCards looks'),
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark
@@ -138,7 +139,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Theme',
+                            context.tr('theme', fallback: 'Theme'),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -147,7 +148,7 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Choose your preferred theme for the app.',
+                            context.tr('theme_desc', fallback: 'Choose your preferred theme for the app.'),
                             style: TextStyle(
                               fontSize: 13,
                               color: isDark
@@ -165,8 +166,8 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       option: ThemeOption.light,
                       isSelected: _selectedOption == ThemeOption.light,
                       onTap: () => _handleOptionTap(ThemeOption.light),
-                      title: 'Light Mode',
-                      subtitle: 'Always use light theme throughout the app.',
+                      title: context.tr('light_mode', fallback: 'Light Mode'),
+                      subtitle: context.tr('light_mode_desc', fallback: 'Always use light theme throughout the app.'),
                       icon: Boxicons.bx_sun,
                       iconColor: Colors.orange,
                       iconBgColor: Colors.orange.withOpacity(0.12),
@@ -177,8 +178,8 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       option: ThemeOption.dark,
                       isSelected: _selectedOption == ThemeOption.dark,
                       onTap: () => _handleOptionTap(ThemeOption.dark),
-                      title: 'Dark Mode',
-                      subtitle: 'Always use dark theme throughout the app.',
+                      title: context.tr('dark_mode', fallback: 'Dark Mode'),
+                      subtitle: context.tr('dark_mode_desc', fallback: 'Always use dark theme throughout the app.'),
                       icon: Boxicons.bx_moon,
                       iconColor: const Color(0xFF6B4EE6),
                       iconBgColor: const Color(0xFF6B4EE6).withOpacity(0.12),
@@ -189,8 +190,8 @@ class _AppearanceScreenState extends State<AppearanceScreen> {
                       option: ThemeOption.system,
                       isSelected: _selectedOption == ThemeOption.system,
                       onTap: () => _handleOptionTap(ThemeOption.system),
-                      title: 'System Default',
-                      subtitle: 'Use system theme preference.',
+                      title: context.tr('system_default', fallback: 'System Default'),
+                      subtitle: context.tr('system_default_desc', fallback: 'Use system theme preference.'),
                       icon: Boxicons.bx_mobile_alt,
                       iconColor: AppColors.success,
                       iconBgColor: AppColors.success.withOpacity(0.12),

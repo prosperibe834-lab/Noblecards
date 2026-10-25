@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 
 class EmptyLanguageWidget extends StatelessWidget {
   const EmptyLanguageWidget({super.key});
@@ -37,7 +38,7 @@ class EmptyLanguageWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    "No language found",
+                    context.tr('no_language_found', fallback: "No language found"),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -46,7 +47,7 @@ class EmptyLanguageWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Try searching for another language",
+                    context.tr('try_searching_again', fallback: "Try searching for another language"),
                     style: TextStyle(
                       fontSize: 14,
                       color: isDark ? Colors.white54 : Colors.black54,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -12,10 +13,10 @@ class TopRatesSection extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final rates = [
-      {"cat": "Gaming", "icon": Boxicons.bxs_game, "rate": "82%", "label": "Best Rate", "color": AppColors.secondary},
-      {"cat": "Shopping", "icon": Boxicons.bx_shopping_bag, "rate": "81%", "label": "Great Rate", "color": AppColors.accentViolet},
-      {"cat": "Entertainment", "icon": Boxicons.bx_movie_play, "rate": "78%", "label": "Good Rate", "color": AppColors.error},
-      {"cat": "Dining", "icon": Boxicons.bx_restaurant, "rate": "76%", "label": "Good Rate", "color": AppColors.accent},
+      {"catKey": "gaming", "icon": Boxicons.bxs_game, "rate": "82%", "labelKey": "best_rate", "color": AppColors.secondary},
+      {"catKey": "shopping", "icon": Boxicons.bx_shopping_bag, "rate": "81%", "labelKey": "great_rate", "color": AppColors.accentViolet},
+      {"catKey": "entertainment", "icon": Boxicons.bx_movie_play, "rate": "78%", "labelKey": "good_rate", "color": AppColors.error},
+      {"catKey": "dining", "icon": Boxicons.bx_restaurant, "rate": "76%", "labelKey": "good_rate", "color": AppColors.accent},
     ];
 
     return Column(
@@ -31,12 +32,12 @@ class TopRatesSection extends StatelessWidget {
                   Icon(Boxicons.bx_star, color: AppColors.primary, size: 20),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    "Top Rates Today",
+                    context.tr('top_rates_today'),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
                   ),
                 ],
               ),
-              Text("View All", style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12)),
+              Text(context.tr('view_all'), style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12)),
             ],
           ),
         ),
@@ -67,7 +68,7 @@ class TopRatesSection extends StatelessWidget {
                         Icon(rate["icon"] as IconData, size: 14, color: rate["color"] as Color),
                         const SizedBox(width: 4),
                         Text(
-                          rate["cat"] as String,
+                          context.tr(rate["catKey"] as String),
                           style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodyMedium?.color),
                           overflow: TextOverflow.ellipsis,
                         )
@@ -79,8 +80,8 @@ class TopRatesSection extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 16),
                     ),
                     Text(
-                      rate["label"] as String,
-                      style: TextStyle(fontSize: 10, color: AppColors.primary, fontWeight: FontWeight.w500),
+                      context.tr(rate["labelKey"] as String),
+                      style: const TextStyle(fontSize: 10, color: AppColors.primary, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),

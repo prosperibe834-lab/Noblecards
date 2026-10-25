@@ -3,6 +3,7 @@ import 'package:boxicons/boxicons.dart';
 import '../authentication/services/authentication_service.dart';
 import 'widgets/password_input_field.dart';
 import 'widgets/password_strength_checker.dart';
+import '../../localization/app_localizations.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
@@ -210,7 +211,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
         centerTitle: true,
         title: Text(
-          'Change Password',
+          context.tr('change_password', fallback: 'Change Password'),
           style: TextStyle(
             color: primaryTextColor,
             fontSize: 18,

@@ -1,5 +1,6 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_shadow.dart';
 
@@ -17,16 +18,16 @@ class TierBenefitsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Tier Benefits",
+              context.tr('tier_benefits'),
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontSize: 18),
             ),
             TextButton(
               onPressed: () {},
-              child: const Text(
-                "View All Benefits >",
-                style: TextStyle(
+              child: Text(
+                context.tr('view_all_benefits'),
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
@@ -40,28 +41,28 @@ class TierBenefitsSection extends StatelessWidget {
           children: [
             _buildBenefitItem(
               context,
-              "Higher Limits",
+              context.tr('higher_limits'),
               Boxicons.bx_line_chart,
               AppColors.success,
               isDark,
             ),
             _buildBenefitItem(
               context,
-              "Better Rates",
+              context.tr('better_rates_label'),
               Boxicons.bx_cog,
               AppColors.info,
               isDark,
             ),
             _buildBenefitItem(
               context,
-              "Priority Support",
+              context.tr('priority_support'),
               Boxicons.bx_headphone,
               AppColors.accentViolet,
               isDark,
             ),
             _buildBenefitItem(
               context,
-              "Faster Payouts",
+              context.tr('fast_delivery'),
               Boxicons.bxs_zap,
               AppColors.warning,
               isDark,

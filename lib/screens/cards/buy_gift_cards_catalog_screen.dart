@@ -12,6 +12,7 @@ import 'widgets/gift_card_product_card.dart';
 import 'widgets/gift_card_catalog_empty_state.dart';
 import 'widgets/gift_card_catalog_shimmer.dart';
 import 'widgets/network_error_widget.dart';
+import '../../localization/app_localizations.dart';
 
 class BuyGiftCardsCatalogScreen extends StatefulWidget {
   const BuyGiftCardsCatalogScreen({Key? key}) : super(key: key);
@@ -95,9 +96,9 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Buy Gift Cards',
-              style: TextStyle(
+            Text(
+              context.tr('buy_gift_cards', fallback: 'Buy Gift Cards'),
+              style: const TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -166,7 +167,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Popular Gift Cards',
+                        context.tr('popular_gift_cards'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -176,8 +177,8 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                         ),
                       ),
                       Text(
-                        'View All →',
-                        style: TextStyle(
+                        context.tr('view_all_arrow'),
+                        style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,

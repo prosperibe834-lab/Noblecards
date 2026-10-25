@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 
@@ -12,28 +13,28 @@ class QuickStatsSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _StatCard(
-          label: 'Total Transactions',
+          label: context.tr('total_transactions'),
           targetCount: 128,
           icon: Boxicons.bx_transfer_alt,
           baseColor: AppColors.success,
         ),
         const SizedBox(width: 8),
         _StatCard(
-          label: 'Gift Cards Bought',
+          label: context.tr('cards_bought'),
           targetCount: 67,
           icon: Boxicons.bx_shopping_bag,
           baseColor: Colors.orange,
         ),
         const SizedBox(width: 8),
         _StatCard(
-          label: 'Gift Cards Sold',
+          label: context.tr('cards_sold'),
           targetCount: 61,
           icon: Boxicons.bx_money,
           baseColor: Colors.teal,
         ),
         const SizedBox(width: 8),
         _StatCard(
-          label: 'Wallet Balance',
+          label: context.tr('wallet_balance'),
           targetDouble: 2450.80,
           isCurrency: true,
           icon: Boxicons.bx_wallet,

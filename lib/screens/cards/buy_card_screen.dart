@@ -8,6 +8,7 @@ import 'package:noble_cards/screens/TransactionPin/pin_auth_dialog.dart';
 import 'package:noble_cards/screens/authentication/services/authentication_service.dart';
 import 'package:noble_cards/screens/deposit_processing_screen.dart';
 import 'package:noble_cards/screens/cards/buy_receipt_screen.dart';
+import '../../localization/app_localizations.dart';
 
 import 'models/gift_card_model.dart';
 import 'models/gift_card_region_model.dart';
@@ -205,7 +206,7 @@ class BuyCardScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'Buy Gift Card',
+            context.tr('buy_gift_card', fallback: 'Buy Gift Card'),
             style: TextStyle(
               color: textColor,
               fontWeight: FontWeight.w600,

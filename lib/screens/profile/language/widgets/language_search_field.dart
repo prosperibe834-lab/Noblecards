@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 
 class LanguageSearchField extends StatelessWidget {
   final ValueChanged<String> onChanged;
@@ -26,7 +27,7 @@ class LanguageSearchField extends StatelessWidget {
           fontSize: 16,
         ),
         decoration: InputDecoration(
-          hintText: "Search languages...",
+          hintText: context.tr('search_languages', fallback: "Search languages..."),
           hintStyle: TextStyle(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 16,

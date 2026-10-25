@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../localization/app_localizations.dart';
 
 import 'referral/referral_screen.dart';
 import 'rate/market_rates_screen.dart';
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // 5. FEATURED GIFT CARDS
               _buildSectionHeader(
-                title: "Featured Gift Cards",
+                title: context.tr('featured_gift_cards', fallback: "Featured Gift Cards"),
                 textColor: textColor,
                 onViewAll: widget.onNavigateToCards ?? () {},
               ),
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // 6. QUICK ACTIONS GRID
               _buildSectionHeader(
-                title: "Quick Actions",
+                title: context.tr('quick_actions', fallback: "Quick Actions"),
                 textColor: textColor,
                 showViewAll: false,
               ),
@@ -75,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // 7. TODAY'S MARKET
               _buildSectionHeader(
-                title: "Today's Market",
+                title: context.tr('todays_market', fallback: "Today's Market"),
                 textColor: textColor,
                 onViewAll: widget.onNavigateToCards ?? () {},
               ),
@@ -218,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 Text(
-                  "Hello, Prosper",
+                  "${context.tr('hello', fallback: 'Hello')}, Prosper",
                   style: TextStyle(
                     color: textColor,
                     fontSize: 17,
@@ -230,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             Text(
-              "Welcome back to NobleCards",
+              context.tr('welcome_back', fallback: "Welcome back to NobleCards"),
               style: TextStyle(color: subTextColor, fontSize: 13),
             ),
           ],
@@ -278,9 +279,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Row(
                       children: [
-                        const Text(
-                          "Wallet Balance",
-                          style: TextStyle(
+                        Text(
+                          context.tr('wallet_balance', fallback: "Wallet Balance"),
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -332,14 +333,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 6),
                 Row(
-                  children: const [
-                    Icon(
+                  children: [
+                    const Icon(
                       Boxicons.bx_up_arrow_alt,
                       color: Color(0xFF6EE7B7),
                       size: 16,
                     ),
-                    SizedBox(width: 2),
-                    Text(
+                    const SizedBox(width: 2),
+                    const Text(
                       "12.5%",
                       style: TextStyle(
                         color: Color(0xFF6EE7B7),
@@ -347,10 +348,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
-                      "this month",
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      context.tr('this_month', fallback: "this month"),
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
                 ),
@@ -361,9 +362,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildSubBalanceItem("Available Balance", '\$200,000.00'),
-                      _buildSubBalanceItem("Pending Balance", '\$25,000.00'),
-                      _buildSubBalanceItem("Reward Points", "2,450"),
+                      _buildSubBalanceItem(context.tr('available_balance', fallback: "Available Balance"), '\$200,000.00'),
+                      _buildSubBalanceItem(context.tr('pending_balance', fallback: "Pending Balance"), '\$25,000.00'),
+                      _buildSubBalanceItem(context.tr('reward_points', fallback: "Reward Points"), "2,450"),
                     ],
                   ),
               ],
@@ -410,9 +411,9 @@ class _HomeScreenState extends State<HomeScreen> {
               size: 18,
               color: Colors.white,
             ),
-            label: const Text(
-              "Buy Gift Cards",
-              style: TextStyle(
+            label: Text(
+              context.tr('buy_gift_cards', fallback: "Buy Gift Cards"),
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -438,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: isDark ? Colors.white : const Color(0xFF10B981),
             ),
             label: Text(
-              "Sell Gift Cards",
+              context.tr('sell_gift_cards', fallback: "Sell Gift Cards"),
               style: TextStyle(
                 color: textColor,
                 fontWeight: FontWeight.bold,
@@ -481,9 +482,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (showViewAll)
           GestureDetector(
             onTap: onViewAll,
-            child: const Text(
-              "View all",
-              style: TextStyle(
+            child: Text(
+              context.tr('view_all', fallback: "View all"),
+              style: const TextStyle(
                 color: Color(0xFF10B981),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -601,14 +602,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Buy  ${item['buy']}",
+                    "${context.tr('buy', fallback: 'Buy')}  ${item['buy']}",
                     style: TextStyle(
                       color: cardTextColor.withOpacity(0.7),
                       fontSize: 11,
                     ),
                   ),
                   Text(
-                    "Sell  ${item['sell']}",
+                    "${context.tr('sell', fallback: 'Sell')}  ${item['sell']}",
                     style: TextStyle(
                       color: cardTextColor,
                       fontWeight: FontWeight.bold,
@@ -626,14 +627,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildQuickActionsGrid(bool isDark, Color cardBg, Color textColor) {
     final actions = [
-      {'label': 'Buy Gift\nCards', 'icon': Boxicons.bx_shopping_bag},
-      {'label': 'Sell\nCards', 'icon': Boxicons.bx_refresh},
-      {'label': 'Exchange\nRates', 'icon': Boxicons.bx_line_chart},
-      {'label': 'My\nOrders', 'icon': Boxicons.bx_receipt},
-      {'label': 'My\nWallet', 'icon': Boxicons.bx_wallet},
-      {'label': 'Transaction\nHistory', 'icon': Boxicons.bx_history},
-      {'label': 'Saved\nCards', 'icon': Boxicons.bx_credit_card},
-      {'label': 'Referral\nProgram', 'icon': Boxicons.bx_gift},
+      {'key': 'buy_cards', 'label': 'Buy Gift\nCards', 'icon': Boxicons.bx_shopping_bag},
+      {'key': 'sell_cards', 'label': 'Sell\nCards', 'icon': Boxicons.bx_refresh},
+      {'key': 'exchange_rates', 'label': 'Exchange\nRates', 'icon': Boxicons.bx_line_chart},
+      {'key': 'my_orders', 'label': 'My\nOrders', 'icon': Boxicons.bx_receipt},
+      {'key': 'my_wallet', 'label': 'My\nWallet', 'icon': Boxicons.bx_wallet},
+      {'key': 'transaction_history', 'label': 'Transaction\nHistory', 'icon': Boxicons.bx_history},
+      {'key': 'saved_cards', 'label': 'Saved\nCards', 'icon': Boxicons.bx_credit_card},
+      {'key': 'referral_program', 'label': 'Referral\nProgram', 'icon': Boxicons.bx_gift},
     ];
 
     return GridView.builder(
@@ -650,12 +651,12 @@ class _HomeScreenState extends State<HomeScreen> {
         final item = actions[index];
         return GestureDetector(
           onTap: () {
-            if (item['label'] == 'Referral\nProgram') {
+            if (item['key'] == 'referral_program') {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const ReferralScreen()),
               );
-            } else if (item['label'] == 'Exchange\nRates') {
+            } else if (item['key'] == 'exchange_rates') {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => const MarketRatesScreen()),
@@ -695,7 +696,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  item['label'] as String,
+                  context.tr(item['key'] as String, fallback: item['label'] as String),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: textColor,
@@ -720,24 +721,28 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     final marketData = [
       {
+        'key': 'highest_paying',
         'tag': 'Highest Paying',
         'icon': Boxicons.bxl_amazon,
         'price': '\$480.00',
         'change': '↑ 8.2%',
       },
       {
+        'key': 'trending',
         'tag': 'Trending',
         'icon': Boxicons.bxl_steam,
         'price': '\$430.00',
         'change': '↑ 6.5%',
       },
       {
+        'key': 'most_traded',
         'tag': 'Most Traded',
         'icon': Boxicons.bxl_apple,
         'price': '\$690.00',
         'change': '↑ 5.1%',
       },
       {
+        'key': 'best_selling',
         'tag': 'Best Selling',
         'icon': Boxicons.bxl_play_store,
         'price': '\$340.00',
@@ -776,7 +781,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    item['tag'] as String,
+                    context.tr(item['key'] as String, fallback: item['tag'] as String),
                     style: TextStyle(
                       color: subTextColor,
                       fontSize: 10,

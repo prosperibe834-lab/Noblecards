@@ -17,6 +17,8 @@ import 'help_center_screen.dart';
 import './livechat/live_chat_screen.dart';
 import 'security_pin/change_transaction_pin_screen.dart';
 import 'language/language_screen.dart';
+import '../../localization/app_localizations.dart';
+import '../../providers/language_provider.dart';
 import '../notification/notification_screen.dart';
 import 'personal_information_screen.dart';
 import 'change_password_screen.dart';
@@ -37,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          'Profile',
+          context.tr('profile', fallback: 'Profile'),
           style: AppTextStyles.h2.copyWith(
             color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.bold,
@@ -112,11 +114,11 @@ class ProfileScreen extends StatelessWidget {
 
                 // MY ACCOUNT
                 ProfileSection(
-                  title: 'My Account',
+                  title: context.tr('my_account', fallback: 'My Account'),
                   children: [
                     ProfileTile(
                       icon: Boxicons.bx_user,
-                      title: 'Personal Information',
+                      title: context.tr('personal_information', fallback: 'Personal Information'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -129,7 +131,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_check_shield,
-                      title: 'Security & PIN',
+                      title: context.tr('security_pin', fallback: 'Security & PIN'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -142,17 +144,17 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bxs_bank,
-                      title: 'Bank Accounts',
+                      title: context.tr('bank_accounts', fallback: 'Bank Accounts'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_credit_card,
-                      title: 'Payment Methods',
+                      title: context.tr('payment_methods', fallback: 'Payment Methods'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_fingerprint,
-                      title: 'Biometric Login',
+                      title: context.tr('biometric_login', fallback: 'Biometric Login'),
                       trailingText: 'Enabled',
                       trailingTextColor: AppColors.success,
                       onTap: () {
@@ -169,7 +171,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_lock_alt,
-                      title: 'Change Password',
+                      title: context.tr('change_password', fallback: 'Change Password'),
                       showBorder: false,
                       onTap: () {
                         Navigator.push(
@@ -185,33 +187,33 @@ class ProfileScreen extends StatelessWidget {
 
                 // WALLET
                 ProfileSection(
-                  title: 'Wallet',
+                  title: context.tr('wallet', fallback: 'Wallet'),
                   children: [
                     ProfileTile(
                       icon: Boxicons.bx_wallet,
-                      title: 'USD Wallet',
+                      title: context.tr('usd_wallet', fallback: 'USD Wallet'),
                       trailingText: '\$2,450.80',
                       trailingTextColor: AppColors.success,
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_list_ul,
-                      title: 'Transaction History',
+                      title: context.tr('transaction_history', fallback: 'Transaction History'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_down_arrow_circle,
-                      title: 'Deposit Funds',
+                      title: context.tr('deposit_funds', fallback: 'Deposit Funds'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_up_arrow_circle,
-                      title: 'Withdraw Funds',
+                      title: context.tr('withdraw_funds', fallback: 'Withdraw Funds'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_bookmark,
-                      title: 'Saved Withdrawal Accounts',
+                      title: context.tr('saved_accounts', fallback: 'Saved Withdrawal Accounts'),
                       showBorder: false,
                       onTap: () {},
                     ),
@@ -220,26 +222,26 @@ class ProfileScreen extends StatelessWidget {
 
                 // ORDERS
                 ProfileSection(
-                  title: 'Orders',
+                  title: context.tr('orders', fallback: 'Orders'),
                   children: [
                     ProfileTile(
                       icon: Boxicons.bx_shopping_bag,
-                      title: 'My Orders',
+                      title: context.tr('my_orders', fallback: 'My Orders'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_time_five,
-                      title: 'Pending Orders',
+                      title: context.tr('pending_orders', fallback: 'Pending Orders'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_check_circle,
-                      title: 'Completed Orders',
+                      title: context.tr('completed_orders', fallback: 'Completed Orders'),
                       onTap: () {},
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_x_circle,
-                      title: 'Cancelled Orders',
+                      title: context.tr('cancelled_orders', fallback: 'Cancelled Orders'),
                       showBorder: false,
                       onTap: () {},
                     ),
@@ -248,11 +250,11 @@ class ProfileScreen extends StatelessWidget {
 
                 // PREFERENCES
                 ProfileSection(
-                  title: 'Preferences',
+                  title: context.tr('preferences', fallback: 'Preferences'),
                   children: [
                     ProfileTile(
                       icon: Boxicons.bx_palette,
-                      title: 'Appearance',
+                      title: context.tr('appearance', fallback: 'Appearance'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -264,20 +266,20 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_globe,
-                      title: 'Language',
+                      title: context.tr('language', fallback: 'Language'),
+                      trailingText: context.watch<LanguageProvider>().currentLanguage.name,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const LanguageScreen(), // Replace with your Language Screen widget
+                            builder: (context) => const LanguageScreen(),
                           ),
                         );
                       },
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_money,
-                      title: 'Currency',
+                      title: context.tr('currency', fallback: 'Currency'),
                       showBorder: false,
                       onTap: () {},
                     ),
@@ -286,11 +288,11 @@ class ProfileScreen extends StatelessWidget {
 
                 // SUPPORT
                 ProfileSection(
-                  title: 'Support',
+                  title: context.tr('support', fallback: 'Support'),
                   children: [
                     ProfileTile(
                       icon: Boxicons.bx_help_circle,
-                      title: 'Help Center',
+                      title: context.tr('help_center', fallback: 'Help Center'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -302,7 +304,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_message_dots,
-                      title: 'Live Chat',
+                      title: context.tr('live_chat', fallback: 'Live Chat'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -314,7 +316,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_error_circle,
-                      title: 'Report a Problem',
+                      title: context.tr('report_problem', fallback: 'Report a Problem'),
                       showBorder: false,
                       onTap: () {
                         Navigator.push(
@@ -334,12 +336,12 @@ class ProfileScreen extends StatelessWidget {
 
                 // DANGER ZONE
                 ProfileSection(
-                  title: 'Danger Zone',
+                  title: context.tr('danger_zone', fallback: 'Danger Zone'),
                   titleColor: AppColors.error,
                   children: [
                     ProfileTile(
                       icon: Boxicons.bx_log_out_circle,
-                      title: 'Logout',
+                      title: context.tr('logout', fallback: 'Log Out'),
                       iconColor: AppColors.error,
                       textColor: AppColors.error,
                       hideChevron: true,
@@ -373,7 +375,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     ProfileTile(
                       icon: Boxicons.bx_trash,
-                      title: 'Delete Account',
+                      title: context.tr('delete_account', fallback: 'Delete Account'),
                       iconColor: AppColors.error,
                       textColor: AppColors.error,
                       hideChevron: true,
@@ -418,7 +420,7 @@ class _ReferralPromoCard extends StatelessWidget {
               const Icon(Boxicons.bxs_gift, color: Colors.white, size: 28),
               const SizedBox(width: 12),
               Text(
-                'Invite Friends',
+                context.tr('invite_friends', fallback: 'Invite Friends'),
                 style: AppTextStyles.h3.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -428,7 +430,7 @@ class _ReferralPromoCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Earn rewards when friends join NobleCards using your link.',
+            context.tr('invite_friends_desc', fallback: 'Earn rewards when friends join NobleCards using your link.'),
             style: AppTextStyles.bodyText2.copyWith(
               color: Colors.white.withValues(alpha: 0.9),
             ),
@@ -445,9 +447,9 @@ class _ReferralPromoCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               elevation: 0,
             ),
-            child: const Text(
-              'Invite Friends',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            child: Text(
+              context.tr('invite_friends', fallback: 'Invite Friends'),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

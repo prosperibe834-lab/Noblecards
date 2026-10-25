@@ -6,6 +6,7 @@ import '../../../theme/app_spacing.dart';
 import '../../../theme/app_shadow.dart';
 import '../buy_gift_cards_catalog_screen.dart';
 import '../sell_gift_cards_catalog_screen.dart';
+import '../../../localization/app_localizations.dart';
 
 class CardsActionCards extends StatelessWidget {
   const CardsActionCards({Key? key}) : super(key: key);
@@ -19,8 +20,8 @@ class CardsActionCards extends StatelessWidget {
           Expanded(
             child: _buildActionCard(
               context: context,
-              title: "Buy Gift Cards",
-              subtext: "Get your favourite cards at the best rates",
+              title: context.tr('buy_gift_cards', fallback: 'Buy Gift Cards'),
+              subtext: context.tr('buy_cards_desc', fallback: 'Get your favourite cards at the best rates'),
               icon: Boxicons.bx_gift,
               colors: [AppColors.primary, AppColors.successLight],
               onTap: () {
@@ -37,8 +38,8 @@ class CardsActionCards extends StatelessWidget {
           Expanded(
             child: _buildActionCard(
               context: context,
-              title: "Sell Gift Cards",
-              subtext: "Turn your gift cards into cash",
+              title: context.tr('sell_gift_cards', fallback: 'Sell Gift Cards'),
+              subtext: context.tr('sell_cards_desc', fallback: 'Turn your gift cards into cash'),
               icon: Boxicons.bx_wallet,
               colors: [AppColors.accentViolet, AppColors.secondary],
               onTap: () {

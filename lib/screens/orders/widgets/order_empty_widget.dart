@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
 
@@ -31,7 +32,7 @@ class OrderEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No Orders Yet',
+            context.tr('no_orders_yet'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -40,7 +41,7 @@ class OrderEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Your gift card purchases and sales will appear here.',
+            context.tr('no_orders_desc'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
@@ -51,7 +52,7 @@ class OrderEmptyWidget extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: onGoToMarketplace,
             icon: const Icon(Boxicons.bx_store_alt, size: 18),
-            label: const Text('Go To Marketplace'),
+            label: Text(context.tr('go_to_marketplace')),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.success,
               foregroundColor: Colors.white,

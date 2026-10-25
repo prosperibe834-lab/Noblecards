@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
+import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_spacing.dart';
 import '../../../theme/app_radius.dart';
@@ -12,10 +13,10 @@ class LiveMarketSection extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final stats = [
-      {"label": "Live Rates", "icon": Boxicons.bx_pulse},
-      {"label": "Instant Delivery", "icon": Boxicons.bx_bolt_circle},
-      {"label": "Secure Trading", "icon": Boxicons.bx_lock_alt},
-      {"label": "4,000+ Cards", "icon": Boxicons.bx_store_alt},
+      {"key": "live_rates", "icon": Boxicons.bx_pulse},
+      {"key": "instant_delivery", "icon": Boxicons.bx_bolt_circle},
+      {"key": "secure_trading", "icon": Boxicons.bx_lock_alt},
+      {"key": "cards_count", "icon": Boxicons.bx_store_alt},
     ];
 
     return Column(
@@ -28,7 +29,7 @@ class LiveMarketSection extends StatelessWidget {
               Icon(Boxicons.bx_pulse, color: AppColors.primary, size: 20),
               const SizedBox(width: AppSpacing.xs),
               Text(
-                "Live Market",
+                context.tr('live_market'),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18),
               ),
               const Spacer(),
@@ -38,9 +39,9 @@ class LiveMarketSection extends StatelessWidget {
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppRadius.full),
                 ),
-                child: const Text(
-                  "● Real-time Stats",
-                  style: TextStyle(
+                child: Text(
+                  context.tr('real_time_stats'),
+                  style: const TextStyle(
                     color: AppColors.primary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class LiveMarketSection extends StatelessWidget {
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     Text(
-                      stats[index]["label"] as String,
+                      context.tr(stats[index]["key"] as String),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
