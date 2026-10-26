@@ -4,7 +4,7 @@ import '../models/notification_model.dart';
 import '../data/notification_data.dart';
 
 class NotificationService {
-  List<NotificationModel> _list = NotificationData.getInitialNotifications();
+  final List<NotificationModel> _list = NotificationData.getInitialNotifications();
 
   Future<List<NotificationModel>> fetchNotifications() async {
     await Future.delayed(const Duration(milliseconds: 1000));
@@ -31,5 +31,14 @@ class NotificationService {
 
   void togglePin(NotificationModel item) {
     item.isPinned = !item.isPinned;
+  }
+
+  void addNotification(NotificationModel item) {
+    _list.insert(0, item);
+  }
+
+  int countByCategory(List<NotificationModel> items, NotificationCategory category) {
+    if (category == NotificationCategory.all) return items.length;
+    return items.where((item) => item.category == category).length;
   }
 }

@@ -412,6 +412,12 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen>
         return 'UPDATES';
       case NotificationCategory.security:
         return 'SECURITY';
+      case NotificationCategory.marketing:
+        return 'MARKETING';
+      case NotificationCategory.system:
+        return 'SYSTEM';
+      case NotificationCategory.maintenance:
+        return 'MAINTENANCE';
     }
   }
 
@@ -641,6 +647,14 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen>
         return 'Your welcome bonus is available in your NobleCards wallet.';
       case NotificationType.adminAnnouncement:
         return 'Please review this announcement for the latest NobleCards updates.';
+      case NotificationType.transaction:
+        return 'Your transaction was processed. Check your updated account balance and activity.';
+      case NotificationType.update:
+        return 'A new version or feature update is ready to enhance your noble card experience.';
+      case NotificationType.marketing:
+        return 'Discover rewards, referral bonuses, and promotional deals crafted for you.';
+      case NotificationType.maintenance:
+        return 'Scheduled system maintenance notice to keep the platform reliable and secure.';
     }
   }
 }

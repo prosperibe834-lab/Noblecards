@@ -8,8 +8,6 @@ class OrderPendingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(title: const Text("Order Status")),
       body: Padding(

@@ -27,17 +27,23 @@ class _SubmitSellButtonState extends State<SubmitSellButton> {
 
   void _handleTapDown(TapDownDetails details) {
     if (!widget.enabled || widget.isLoading) return;
-    setState(() => _isPressed = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _isPressed = true);
+    });
   }
 
   void _handleTapUp(TapUpDetails details) {
     if (!widget.enabled || widget.isLoading) return;
-    setState(() => _isPressed = false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _isPressed = false);
+    });
   }
 
   void _handleTapCancel() {
     if (!widget.enabled || widget.isLoading) return;
-    setState(() => _isPressed = false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _isPressed = false);
+    });
   }
 
   @override

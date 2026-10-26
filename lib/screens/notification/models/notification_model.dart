@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 enum NotificationCategory {
   all,
   transactions,
-  promotions,
   updates,
+  promotions,
   security,
+  marketing,
+  system,
+  maintenance,
 }
 
 enum NotificationType {
@@ -21,6 +24,10 @@ enum NotificationType {
   promotion,
   kycVerified,
   adminAnnouncement,
+  transaction,
+  update,
+  marketing,
+  maintenance,
 }
 
 class NotificationDetail {

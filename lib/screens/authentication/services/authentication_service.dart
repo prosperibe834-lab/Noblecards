@@ -62,25 +62,46 @@ class AuthUser {
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => AuthUser(
-    id: json['id'] as String,
-    email: json['email'] as String,
-    firstName: json['firstName'] as String? ?? '',
-    lastName: json['lastName'] as String? ?? '',
-    username: json['username'] as String?,
-    displayName: json['displayName'] as String?,
-    phone: json['phone'] as String?,
-    country: json['country'] as String?,
-    countryCode: json['countryCode'] as String?,
-    gender: json['gender'] as String?,
-    dateOfBirth: json['dateOfBirth'] as String?,
-    bio: json['bio'] as String?,
-    address: json['address'] as String?,
-    profileImageUrl: json['profileImageUrl'] as String?,
-    preferredLanguage: json['preferredLanguage'] as String?,
-    isEmailVerified: json['isEmailVerified'] as bool? ?? false,
-    isProfileComplete: json['isProfileComplete'] as bool? ?? false,
-    isVerified: json['isVerified'] as bool? ?? false,
+    id: (json['id'] ?? '').toString(),
+    email: (json['email'] ?? '').toString(),
+    firstName: (json['firstName'] ?? '').toString(),
+    lastName: (json['lastName'] ?? '').toString(),
+    username: json['username']?.toString(),
+    displayName: json['displayName']?.toString(),
+    phone: json['phone']?.toString(),
+    country: json['country']?.toString(),
+    countryCode: json['countryCode']?.toString(),
+    gender: json['gender']?.toString(),
+    dateOfBirth: json['dateOfBirth']?.toString(),
+    bio: json['bio']?.toString(),
+    address: json['address']?.toString(),
+    profileImageUrl: json['profileImageUrl']?.toString(),
+    preferredLanguage: json['preferredLanguage']?.toString(),
+    isEmailVerified: json['isEmailVerified'] == true,
+    isProfileComplete: json['isProfileComplete'] == true,
+    isVerified: json['isVerified'] == true,
   );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'email': email,
+    'firstName': firstName,
+    'lastName': lastName,
+    'username': username,
+    'displayName': displayName,
+    'phone': phone,
+    'country': country,
+    'countryCode': countryCode,
+    'gender': gender,
+    'dateOfBirth': dateOfBirth,
+    'bio': bio,
+    'address': address,
+    'profileImageUrl': profileImageUrl,
+    'preferredLanguage': preferredLanguage,
+    'isEmailVerified': isEmailVerified,
+    'isProfileComplete': isProfileComplete,
+    'isVerified': isVerified,
+  };
 }
 
 class AuthSession {
@@ -104,13 +125,14 @@ class AuthenticationService {
   static const _recoveryEmailKey = 'noble_cards_recovery_email';
   static const _recoveryCodeKey = 'noble_cards_recovery_code';
 
+  static const _cachedUserKey = 'noble_cards_cached_user';
   static SharedPreferences? _sharedPreferences;
   static FlutterSecureStorage? _secureStorage;
   static bool _hasPersistedSession = false;
+  static AuthUser? _currentUser;
   final SharedPreferences? _preferences;
   final FlutterSecureStorage? _storage;
   final http.Client? _httpClient;
-  AuthUser? _currentUser;
 
   AuthenticationService({
     SharedPreferences? preferences,
@@ -127,6 +149,23 @@ class AuthenticationService {
     await _sharedPreferences!.remove(_refreshKey);
     _hasPersistedSession =
         (await _secureStorage!.read(key: _accessKey))?.isNotEmpty == true;
+
+    final cachedUserJson = _sharedPreferences?.getString(_cachedUserKey);
+    if (cachedUserJson != null && cachedUserJson.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(cachedUserJson);
+        if (decoded is Map) {
+          _currentUser = AuthUser.fromJson(Map<String, dynamic>.from(decoded));
+        }
+      } catch (_) {}
+    }
+  }
+
+  static Future<void> _persistCachedUser(AuthUser user) async {
+    _currentUser = user;
+    try {
+      await _sharedPreferences?.setString(_cachedUserKey, jsonEncode(user.toJson()));
+    } catch (_) {}
   }
 
   bool get isAuthenticated => _hasPersistedSession;
@@ -381,6 +420,7 @@ class AuthenticationService {
     await _preferences?.remove('biometric_face_id');
     await _preferences?.remove('biometric_fingerprint');
     await _preferences?.remove('biometric_remember_device');
+    await _preferences?.remove(_cachedUserKey);
     _currentUser = null;
   }
 
@@ -461,10 +501,13 @@ class AuthenticationService {
       '/users/me',
       authenticated: true,
     );
-    final refreshedUser = refreshedData['user'] as Map<String, dynamic>?;
-    if (refreshedUser == null)
+    final rawRefreshed = refreshedData['user'] ?? refreshedData;
+    if (rawRefreshed is! Map) {
       throw Exception('Profile could not be refreshed after saving.');
-    _currentUser = AuthUser.fromJson(refreshedUser);
+    }
+    final refreshedUser = Map<String, dynamic>.from(rawRefreshed);
+    final user = AuthUser.fromJson(refreshedUser);
+    await _persistCachedUser(user);
     return refreshedUser;
   }
 
@@ -518,21 +561,41 @@ class AuthenticationService {
       '/users/me/image',
       authenticated: true,
     );
-    final user = data['user'] as Map<String, dynamic>?;
-    if (user == null) {
+    final rawUser = data['user'] ?? data;
+    if (rawUser is! Map) {
       throw Exception(
         'Profile image removal did not return the saved profile.',
       );
     }
-    _currentUser = AuthUser.fromJson(user);
-    return user;
+    final userMap = Map<String, dynamic>.from(rawUser);
+    final user = AuthUser.fromJson(userMap);
+    await _persistCachedUser(user);
+    return userMap;
   }
 
   Future<Map<String, dynamic>?> getUserProfile(String userId) async {
-    final data = await _request('GET', '/users/me', authenticated: true);
-    if (data['user'] is Map<String, dynamic>)
-      _currentUser = AuthUser.fromJson(data['user'] as Map<String, dynamic>);
-    return data['user'] as Map<String, dynamic>?;
+    try {
+      final data = await _request('GET', '/users/me', authenticated: true);
+      final rawUser = data['user'] ?? data;
+      if (rawUser is Map) {
+        final userMap = Map<String, dynamic>.from(rawUser);
+        final user = AuthUser.fromJson(userMap);
+        await _persistCachedUser(user);
+        return userMap;
+      }
+    } catch (_) {
+      try {
+        final authData = await _request('GET', '/auth/me', authenticated: true);
+        final rawUser = authData['user'] ?? authData;
+        if (rawUser is Map) {
+          final userMap = Map<String, dynamic>.from(rawUser);
+          final user = AuthUser.fromJson(userMap);
+          await _persistCachedUser(user);
+          return userMap;
+        }
+      } catch (_) {}
+    }
+    return _currentUser != null ? _currentUser!.toJson() : null;
   }
 
   Future<void> updatePreferredLanguage(String languageId) async {
@@ -649,12 +712,16 @@ class AuthenticationService {
   }
 
   Future<AuthResponse> _storeSession(Map<String, dynamic> data) async {
-    final user = AuthUser.fromJson(data['user'] as Map<String, dynamic>);
-    final access = data['accessToken'] as String;
+    final rawUser = data['user'];
+    final userMap = rawUser is Map
+        ? Map<String, dynamic>.from(rawUser)
+        : <String, dynamic>{};
+    final user = AuthUser.fromJson(userMap);
+    final access = (data['accessToken'] ?? '').toString();
     await _save(_accessKey, access);
     if (data['refreshToken'] != null)
-      await _save(_refreshKey, data['refreshToken'] as String);
-    _currentUser = user;
+      await _save(_refreshKey, data['refreshToken'].toString());
+    await _persistCachedUser(user);
     return AuthResponse(user: user, session: AuthSession(access));
   }
 
