@@ -235,14 +235,43 @@ class GiftCardSellService {
     if (payoutKeys.isEmpty) return null;
     final payout = payoutKeys.first.toString();
     final payoutValue = typeNode[payout];
-    final receiptType = payoutValue is Map && payoutValue.isNotEmpty
-        ? payoutValue.keys.first.toString()
-        : null;
+    final availableReceiptTypes = <Map<String, dynamic>>[];
+    String? receiptType;
+    if (payoutValue is Map && payoutValue.isNotEmpty) {
+      receiptType = payoutValue.keys.first.toString();
+      for (final entry in payoutValue.entries) {
+        final key = entry.key.toString();
+        if (!RegExp(r'^[A-Z]{3}$').hasMatch(key)) {
+          double? rate;
+          if (entry.value is num) {
+            rate = (entry.value as num).toDouble();
+          } else if (entry.value is List && (entry.value as List).isNotEmpty) {
+            final first = (entry.value as List).first;
+            if (first is Map && first['rate'] is num) {
+              rate = (first['rate'] as num).toDouble();
+            }
+          }
+          final label = key
+              .replaceAll('_', ' ')
+              .split(' ')
+              .map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
+              .join(' ');
+          availableReceiptTypes.add({
+            'type': key,
+            'label': label,
+            'rate': rate,
+          });
+        }
+      }
+    }
     return {
       'slug': product['slug'],
       'cardCurrency': country['currency'],
       'payoutCurrency': payout,
       'receiptType': receiptType,
+      'availableReceiptTypes': availableReceiptTypes,
+      'minAmount': product['min_amount'],
+      'maxAmount': product['max_amount'],
     };
   }
 
@@ -271,13 +300,82 @@ class GiftCardSellService {
           )) {
         return const [];
       }
-      final cardTypes = product['card_types'];
-      if (cardTypes is! List) return const [];
-      return cardTypes
+
+      final rawCardTypes = product['card_types'];
+      if (rawCardTypes is! List) return const [];
+      final catalogTypes = rawCardTypes
           .map((type) => type.toString().trim().toLowerCase())
           .where((type) => type == 'ecode' || type == 'physical')
           .toSet()
           .toList();
+
+      // Check live rates for this country's currency to verify if physical/ecode has active rates
+      try {
+        final matchingCountry = countries is List
+            ? countries.whereType<Map>().firstWhere(
+                (c) =>
+                    (c['code'] ?? c['country_code'])
+                        ?.toString()
+                        .toUpperCase() ==
+                    countryCode.toUpperCase(),
+                orElse: () => <String, dynamic>{},
+              )
+            : <String, dynamic>{};
+        final currency = (matchingCountry['currency'] ??
+                matchingCountry['currency_code'])
+            ?.toString()
+            .toUpperCase();
+
+        if (currency != null && currency.isNotEmpty) {
+          final ratesResponse = await _authentication.authenticatedGet(
+            '/gift-cards/sell/rates',
+          );
+          final rateProducts = ratesResponse['data'];
+          if (rateProducts is List) {
+            final rateProduct = rateProducts.whereType<Map>().firstWhere(
+                  (item) =>
+                      item['slug']?.toString() == product['slug']?.toString(),
+                  orElse: () => <String, dynamic>{},
+                );
+            final rates = rateProduct['rates'] is Map
+                ? rateProduct['rates'] as Map
+                : null;
+            if (rates != null && rates.containsKey(currency)) {
+              final currencyNode = rates[currency];
+              if (currencyNode is Map) {
+                final supportedByRates = <String>[];
+                for (final type in catalogTypes) {
+                  final typeNode = currencyNode[type];
+                  if (typeNode is Map && typeNode.isNotEmpty) {
+                    final hasRate = typeNode.values.any((val) {
+                      if (val is num && val > 0) return true;
+                      if (val is Map && val.isNotEmpty) {
+                        return val.values.any((subVal) {
+                          if (subVal is num && subVal > 0) return true;
+                          if (subVal is List && subVal.isNotEmpty) return true;
+                          return false;
+                        });
+                      }
+                      if (val is List && val.isNotEmpty) return true;
+                      return false;
+                    });
+                    if (hasRate) {
+                      supportedByRates.add(type);
+                    }
+                  }
+                }
+                if (supportedByRates.isNotEmpty) {
+                  return supportedByRates;
+                }
+              }
+            }
+          }
+        }
+      } catch (_) {
+        // Fall back to catalog card types
+      }
+
+      return catalogTypes;
     }
     return null;
   }

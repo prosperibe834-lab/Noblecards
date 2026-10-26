@@ -34,6 +34,7 @@ import 'widgets/sell_network_error.dart';
 import 'widgets/sell_empty_state.dart';
 import 'widgets/region_selector_card.dart';
 import 'widgets/region_bottom_sheet.dart';
+import 'widgets/receipt_type_selector.dart';
 
 class SellGiftCardScreen extends StatelessWidget {
   final GiftCardModel card;
@@ -82,14 +83,17 @@ class _SellGiftCardScreenBody extends StatefulWidget {
 class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
   bool _isPhysical = false;
   List<String> _availableCardTypes = const [];
+  List<Map<String, dynamic>> _availableReceiptTypes = const [];
   bool _isLoadingCardTypes = false;
   bool _sellCatalogLoaded = false;
   String? _payoutCurrency;
   String? _receiptType;
   String? _catalogSlug;
+  String? _minAmount;
+  String? _maxAmount;
   Map<String, dynamic>? _quote;
   bool _verifiedNoticeAccepted = false;
-  final bool _isLoading = false;
+  bool _isLoading = false;
   bool _hasError = false;
   final bool _isEmpty = false;
   late final List<CardFormData> _cards;
@@ -104,6 +108,8 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
     _isPhysical =
         !_availableCardTypes.contains('ecode') &&
         _availableCardTypes.contains('physical');
+    _minAmount = widget.card.minDenomination;
+    _maxAmount = widget.card.maxDenomination;
   }
 
   Future<void> _loadAvailableCardTypes(GiftCardRegionModel region) async {
@@ -150,7 +156,8 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
         return;
       }
       provider.replaceRegions(regions);
-      await _loadAvailableCardTypes(regions.first);
+      final currentRegion = provider.selectedRegion ?? regions.first;
+      await _loadAvailableCardTypes(currentRegion);
     } catch (error) {
       if (mounted) setState(() => _hasError = true);
     }
@@ -165,10 +172,23 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
       cardType: selectedType,
     );
     if (!mounted || configuration == null) return;
+    final receiptTypes = (configuration['availableReceiptTypes'] as List?)
+            ?.whereType<Map<String, dynamic>>()
+            .toList() ??
+        const [];
     setState(() {
       _catalogSlug = configuration['slug']?.toString();
       _payoutCurrency = configuration['payoutCurrency']?.toString();
-      _receiptType = configuration['receiptType']?.toString();
+      _availableReceiptTypes = receiptTypes;
+      _minAmount = configuration['minAmount']?.toString() ?? _minAmount;
+      _maxAmount = configuration['maxAmount']?.toString() ?? _maxAmount;
+      if (receiptTypes.isNotEmpty) {
+        if (_receiptType == null || !receiptTypes.any((r) => r['type'] == _receiptType)) {
+          _receiptType = receiptTypes.first['type']?.toString();
+        }
+      } else {
+        _receiptType = null;
+      }
     });
     await _refreshQuote();
   }
@@ -218,11 +238,12 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
     setState(() {
       _isPhysical = isPhysical;
       _quote = null;
+      _receiptType = null;
     });
     final region = context.read<RegionProvider>().selectedRegion;
-    if (region != null) _loadAvailableCardTypes(region);
-    _sellCatalogLoaded = false;
-    _loadSellCatalog(context.read<RegionProvider>());
+    if (region != null) {
+      _loadSellConfiguration(region);
+    }
   }
 
   void _toggleVerifiedNotice(bool value) {
@@ -272,20 +293,21 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
       _showError('Select the card region before submitting.');
       return;
     }
+    final minLimit = double.tryParse(_minAmount ?? widget.card.minDenomination);
+    final maxLimit = double.tryParse(_maxAmount ?? widget.card.maxDenomination);
     final invalidCard = _cards.any(
       (card) =>
           card.amount.trim().isEmpty ||
           double.tryParse(card.amount) == null ||
-          (double.tryParse(widget.card.minDenomination) != null &&
-              double.parse(card.amount) <
-                  double.parse(widget.card.minDenomination)) ||
-          (double.tryParse(widget.card.maxDenomination) != null &&
-              double.parse(card.amount) >
-                  double.parse(widget.card.maxDenomination)) ||
-          (!_isPhysical && card.code.trim().isEmpty),
+          (minLimit != null && double.parse(card.amount) < minLimit) ||
+          (maxLimit != null && double.parse(card.amount) > maxLimit) ||
+          (!_isPhysical && card.code.trim().isEmpty) ||
+          (_isPhysical && card.frontImage == null && card.code.trim().isEmpty),
     );
     if (invalidCard) {
-      _showError('Enter a valid amount and card code before submitting.');
+      _showError(_isPhysical
+          ? 'Enter a valid amount and upload card image or code.'
+          : 'Enter a valid amount and card code before submitting.');
       return;
     }
     final selectedCardType = _isPhysical ? 'physical' : 'ecode';
@@ -437,7 +459,7 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
             onPressed: () {},
             child: Text(
               context.tr('history', fallback: 'History'),
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
               ),
@@ -504,11 +526,23 @@ class _SellGiftCardScreenBodyState extends State<_SellGiftCardScreenBody> {
                     ..._cards.asMap().entries.map((entry) {
                       final index = entry.key;
                       final cardForm = entry.value;
+                      final selectedRegion = context.watch<RegionProvider>().selectedRegion;
                       return AnimatedCardForm(
                         key: ValueKey(cardForm.id),
                         index: index,
                         isPhysical: _isPhysical,
                         cardForm: cardForm,
+                        brandSlug: _catalogSlug ?? widget.card.id,
+                        currencySymbol: selectedRegion?.currencySymbol ?? r'$',
+                        minAmount: _minAmount ?? widget.card.minDenomination,
+                        maxAmount: _maxAmount ?? widget.card.maxDenomination,
+                        selectedReceiptType: _receiptType,
+                        availableReceiptTypes: _availableReceiptTypes,
+                        canRemove: _cards.length > 1,
+                        onReceiptTypeChanged: (type) {
+                          setState(() => _receiptType = type);
+                          _refreshQuote();
+                        },
                         onRemove: () => _removeCard(index),
                         onChanged: () {
                           setState(() {});
@@ -585,6 +619,14 @@ class AnimatedCardForm extends StatelessWidget {
   final int index;
   final bool isPhysical;
   final CardFormData cardForm;
+  final String? brandSlug;
+  final String? minAmount;
+  final String? maxAmount;
+  final String currencySymbol;
+  final String? selectedReceiptType;
+  final List<Map<String, dynamic>> availableReceiptTypes;
+  final bool canRemove;
+  final ValueChanged<String>? onReceiptTypeChanged;
   final VoidCallback onRemove;
   final VoidCallback onChanged;
 
@@ -593,12 +635,24 @@ class AnimatedCardForm extends StatelessWidget {
     required this.index,
     required this.isPhysical,
     required this.cardForm,
+    this.brandSlug,
+    this.minAmount,
+    this.maxAmount,
+    this.currencySymbol = r'$',
+    this.selectedReceiptType,
+    this.availableReceiptTypes = const [],
+    this.canRemove = true,
+    this.onReceiptTypeChanged,
     required this.onRemove,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? AppColors.darkCard : AppColors.white;
+    final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
+
     return AnimatedSwitcher(
       duration: AppAnimation.fast,
       child: Container(
@@ -606,15 +660,19 @@ class AnimatedCardForm extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AppSpacing.lg),
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? AppColors.darkCard
-              : AppColors.white,
+          color: cardBg,
           borderRadius: BorderRadius.circular(AppRadius.lg),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.primary.withValues(alpha: 0.15),
+            width: 1.2,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.25)
+                  : AppColors.primary.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -624,38 +682,93 @@ class AnimatedCardForm extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Card #${index + 1}',
-                  style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.darkText
-                        : AppColors.lightText,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(AppRadius.full),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Card #${index + 1}',
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                RemoveCardButton(onTap: onRemove),
+                if (canRemove) RemoveCardButton(onTap: onRemove),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
             AmountInput(
               initialValue: cardForm.amount,
+              currencySymbol: currencySymbol,
+              minAmount: minAmount,
+              maxAmount: maxAmount,
               onChanged: (value) {
                 cardForm.amount = value;
                 onChanged();
               },
             ),
             const SizedBox(height: AppSpacing.md),
-            CardCodeInput(
-              initialValue: cardForm.code,
-              onChanged: (value) {
-                cardForm.code = value;
-                onChanged();
-              },
-            ),
             if (isPhysical) ...[
+              if (availableReceiptTypes.isNotEmpty && onReceiptTypeChanged != null) ...[
+                ReceiptTypeSelector(
+                  selectedType: selectedReceiptType,
+                  receiptTypes: availableReceiptTypes,
+                  onChanged: onReceiptTypeChanged!,
+                ),
+                const SizedBox(height: AppSpacing.md),
+              ],
+              PhysicalCardUploadSection(
+                frontImage: cardForm.frontImage,
+                backImage: cardForm.backImage,
+                onFrontImageChanged: (file) {
+                  cardForm.frontImage = file;
+                  onChanged();
+                },
+                onBackImageChanged: (file) {
+                  cardForm.backImage = file;
+                  onChanged();
+                },
+              ),
               const SizedBox(height: AppSpacing.md),
-              const PhysicalCardUploadSection(),
+              CardCodeInput(
+                initialValue: cardForm.code,
+                brandSlug: brandSlug,
+                label: 'Printed Code / PIN (Optional)',
+                helperText: 'If visible on card',
+                onChanged: (value) {
+                  cardForm.code = value;
+                  onChanged();
+                },
+              ),
+            ] else ...[
+              CardCodeInput(
+                initialValue: cardForm.code,
+                brandSlug: brandSlug,
+                label: 'Redemption Code',
+                helperText: 'Required',
+                onChanged: (value) {
+                  cardForm.code = value;
+                  onChanged();
+                },
+              ),
             ],
           ],
         ),
