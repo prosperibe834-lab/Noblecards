@@ -16,13 +16,15 @@ class HomeActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sellBgColor = isDark ? const Color(0xFF131E27) : Colors.white;
-    final sellBorderColor = isDark ? const Color(0xFF1E2D38) : const Color(0xFFE2E8F0);
+
+    final sellBgColor = isDark ? const Color(0xFF0E1A16) : Colors.white;
+    final sellBorderColor = isDark ? const Color(0xFF1B382D) : const Color(0xFFE2E8F0);
     final sellTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final sellArrowColor = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 
     return Row(
       children: [
-        // 1. Buy Gift Cards (Emerald Filled Gradient)
+        // 1. Buy Gift Cards (Solid Emerald Green with Right Arrow)
         Expanded(
           child: GestureDetector(
             onTap: () {
@@ -30,19 +32,20 @@ class HomeActionButtons extends StatelessWidget {
               onBuyTap();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF00E599), Color(0xFF00B074)],
+                  colors: [Color(0xFF00E599), Color(0xFF00A859)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x3500D084),
+                    color: isDark ? const Color(0x4000E599) : const Color(0x3500D084),
                     blurRadius: 14,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -50,19 +53,28 @@ class HomeActionButtons extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Boxicons.bx_shopping_bag,
+                    Boxicons.bx_credit_card_front,
                     color: Colors.white,
-                    size: 19,
+                    size: 18,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    context.tr('buy_gift_cards', fallback: "Buy Gift Cards"),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      letterSpacing: -0.2,
+                  const SizedBox(width: 7),
+                  Flexible(
+                    child: Text(
+                      context.tr('buy_gift_cards', fallback: "Buy Gift Cards"),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.5,
+                        letterSpacing: -0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
+                  ),
+                  const SizedBox(width: 5),
+                  const Icon(
+                    Boxicons.bx_right_arrow_alt,
+                    color: Colors.white,
+                    size: 16,
                   ),
                 ],
               ),
@@ -71,7 +83,7 @@ class HomeActionButtons extends StatelessWidget {
         ),
         const SizedBox(width: 12),
 
-        // 2. Sell Gift Cards (Adaptive Card Button)
+        // 2. Sell Gift Cards (Adaptive Card Button with Green Tag and Right Arrow)
         Expanded(
           child: GestureDetector(
             onTap: () {
@@ -79,7 +91,8 @@ class HomeActionButtons extends StatelessWidget {
               onSellTap();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
                 color: sellBgColor,
                 borderRadius: BorderRadius.circular(16),
@@ -87,29 +100,38 @@ class HomeActionButtons extends StatelessWidget {
                 boxShadow: [
                   if (!isDark)
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                 ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Boxicons.bx_purchase_tag,
-                    color: Color(0xFF00D084),
-                    size: 19,
+                    color: isDark ? const Color(0xFF00E599) : const Color(0xFF00D084),
+                    size: 18,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    context.tr('sell_gift_cards', fallback: "Sell Gift Cards"),
-                    style: TextStyle(
-                      color: sellTextColor,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      letterSpacing: -0.2,
+                  const SizedBox(width: 7),
+                  Flexible(
+                    child: Text(
+                      context.tr('sell_gift_cards', fallback: "Sell Gift Cards"),
+                      style: TextStyle(
+                        color: sellTextColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.5,
+                        letterSpacing: -0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
+                  ),
+                  const SizedBox(width: 5),
+                  Icon(
+                    Boxicons.bx_right_arrow_alt,
+                    color: sellArrowColor,
+                    size: 16,
                   ),
                 ],
               ),
@@ -120,4 +142,3 @@ class HomeActionButtons extends StatelessWidget {
     );
   }
 }
-

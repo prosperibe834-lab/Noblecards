@@ -18,16 +18,19 @@ class HomeTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
-    final buttonBg = isDark ? const Color(0xFF141E26) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF1E2D38) : const Color(0xFFE2E8F0);
+    final subTextColor = isDark ? const Color(0xFF8B9FA8) : const Color(0xFF64748B);
+    final buttonBg = isDark ? const Color(0xFF101C24) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF1A2B36) : const Color(0xFFE2E8F0);
     final iconColor = isDark ? Colors.white : const Color(0xFF334155);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Left: NobleCards Logo & Brand Name
+        // Left: NobleCards Logo & Brand Name + Subtitle
         Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Emerald Brand Mark Icon
             Container(
@@ -63,14 +66,32 @@ class HomeTopBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            Text(
-              "NobleCards",
-              style: TextStyle(
-                color: textColor,
-                fontSize: 21,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.6,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "NobleCards",
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 18.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                    height: 1.15,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "Buy • Sell • Swap • Earn",
+                  style: TextStyle(
+                    color: subTextColor,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.1,
+                    height: 1.1,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -101,11 +122,11 @@ class HomeTopBar extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: buttonBg,
                       shape: BoxShape.circle,
-                      border: Border.all(color: borderColor, width: 1),
+                      border: Border.all(color: borderColor, width: 1.1),
                       boxShadow: [
                         if (!isDark)
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -123,21 +144,23 @@ class HomeTopBar extends StatelessWidget {
                     top: -2,
                     right: -2,
                     child: Container(
-                      padding: const EdgeInsets.all(4.5),
+                      width: 17,
+                      height: 17,
                       decoration: BoxDecoration(
                         color: const Color(0xFFEF4444),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isDark ? const Color(0xFF0B0F15) : Colors.white,
-                          width: 1.5,
+                          color: isDark ? const Color(0xFF0B141A) : Colors.white,
+                          width: 1.8,
                         ),
                       ),
+                      alignment: Alignment.center,
                       child: const Text(
                         '3',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 9.5,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           height: 1,
                         ),
                       ),
@@ -167,11 +190,11 @@ class HomeTopBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: buttonBg,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: borderColor, width: 1),
+                  border: Border.all(color: borderColor, width: 1.1),
                   boxShadow: [
                     if (!isDark)
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),

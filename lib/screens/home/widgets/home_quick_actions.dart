@@ -30,46 +30,47 @@ class HomeQuickActions extends StatelessWidget {
     this.onNavigateToCards,
   });
 
+  // All 8 quick actions matching Image 1
   static const List<QuickActionItem> actions = [
     QuickActionItem(
       key: 'buy_cards',
-      label: 'Buy Gift\nCards',
-      icon: Boxicons.bx_shopping_bag,
+      label: 'Buy Gift Cards',
+      icon: Boxicons.bx_gift,
     ),
     QuickActionItem(
       key: 'sell_cards',
-      label: 'Sell\nCards',
-      icon: Boxicons.bx_refresh,
+      label: 'Sell Cards',
+      icon: Boxicons.bx_purchase_tag,
     ),
     QuickActionItem(
       key: 'exchange_rates',
-      label: 'Exchange\nRates',
+      label: 'Exchange Rates',
       icon: Boxicons.bx_line_chart,
     ),
     QuickActionItem(
       key: 'my_orders',
-      label: 'My\nOrders',
+      label: 'My Orders',
       icon: Boxicons.bx_receipt,
     ),
     QuickActionItem(
       key: 'my_wallet',
-      label: 'My\nWallet',
+      label: 'My Wallet',
       icon: Boxicons.bx_wallet,
     ),
     QuickActionItem(
       key: 'transaction_history',
-      label: 'Transaction\nHistory',
+      label: 'Transaction History',
       icon: Boxicons.bx_history,
     ),
     QuickActionItem(
       key: 'saved_cards',
-      label: 'Saved\nCards',
+      label: 'Saved Cards',
       icon: Boxicons.bx_credit_card,
     ),
     QuickActionItem(
       key: 'referral_program',
-      label: 'Referral\nProgram',
-      icon: Boxicons.bx_gift,
+      label: 'Referral Program',
+      icon: Boxicons.bx_user_plus,
     ),
   ];
 
@@ -126,29 +127,123 @@ class HomeQuickActions extends StatelessWidget {
     }
   }
 
+  void _showAllActionsBottomSheet(BuildContext context) {
+    HapticFeedback.mediumImpact();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF0F1A20) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: bg,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF273844) : const Color(0xFFCBD5E1),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "All Quick Actions",
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: actions.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 0.84,
+                  ),
+                  itemBuilder: (_, index) {
+                    final item = actions[index];
+                    return _QuickActionButton(
+                      item: item,
+                      isDark: isDark,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _handleAction(context, item.key);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF121C24) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF1E2D38) : const Color(0xFFF1F5F9);
     final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header: "Quick Actions"
-        Text(
-          context.tr('quick_actions', fallback: "Quick Actions"),
-          style: TextStyle(
-            color: titleColor,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.3,
-          ),
+        // Header: "Quick Actions" + "View All >" matching Image 2
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              context.tr('quick_actions', fallback: "Quick Actions"),
+              style: TextStyle(
+                color: titleColor,
+                fontSize: 16.5,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
+              ),
+            ),
+            GestureDetector(
+              onTap: () => _showAllActionsBottomSheet(context),
+              child: Row(
+                children: [
+                  Text(
+                    context.tr('view_all', fallback: "View All"),
+                    style: const TextStyle(
+                      color: Color(0xFF00D084),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  const Icon(
+                    Boxicons.bx_chevron_right,
+                    size: 16,
+                    color: Color(0xFF00D084),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
 
-        // 4x2 Grid Matrix
+        // 4x2 Grid of all 8 items styled exactly like Image 2
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -157,14 +252,12 @@ class HomeQuickActions extends StatelessWidget {
             crossAxisCount: 4,
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
-            childAspectRatio: 0.88,
+            childAspectRatio: 0.84,
           ),
           itemBuilder: (context, index) {
             final item = actions[index];
             return _QuickActionButton(
               item: item,
-              cardBg: cardBg,
-              borderColor: borderColor,
               isDark: isDark,
               onTap: () => _handleAction(context, item.key),
             );
@@ -175,69 +268,82 @@ class HomeQuickActions extends StatelessWidget {
   }
 }
 
-class _QuickActionButton extends StatefulWidget {
+class _QuickActionButton extends StatelessWidget {
   final QuickActionItem item;
-  final Color cardBg;
-  final Color borderColor;
   final bool isDark;
   final VoidCallback onTap;
 
   const _QuickActionButton({
     required this.item,
-    required this.cardBg,
-    required this.borderColor,
     required this.isDark,
     required this.onTap,
   });
 
   @override
-  State<_QuickActionButton> createState() => _QuickActionButtonState();
-}
-
-class _QuickActionButtonState extends State<_QuickActionButton> {
-  @override
   Widget build(BuildContext context) {
-    final textColor = widget.isDark ? Colors.white : const Color(0xFF0F172A);
+    // Exact styling from Image 2:
+    // Outer rounded card container with dark slate / soft mint background
+    final cardBg = isDark ? const Color(0xFF0D1D17) : const Color(0xFFEAF8F1);
+    final borderColor = isDark ? const Color(0xFF163327) : const Color(0xFFD4F2E4);
+    final iconGlowBg = isDark
+        ? const Color(0xFF00E599).withOpacity(0.12)
+        : const Color(0xFF00D084).withOpacity(0.12);
+    final iconColor = isDark ? const Color(0xFF00E599) : const Color(0xFF00D084);
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
 
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: widget.cardBg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: widget.borderColor, width: 1.1),
+          color: cardBg,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: borderColor, width: 1.1),
           boxShadow: [
-            if (!widget.isDark)
+            if (!isDark)
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.025),
+                color: const Color(0x0C00D084),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Emerald Icon Box
+            // Inner Glowing Icon Badge (from Image 2)
             Container(
-              padding: const EdgeInsets.all(7.5),
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                color: const Color(0xFF00D084).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
+                color: iconGlowBg,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  if (isDark)
+                    BoxShadow(
+                      color: const Color(0xFF00E599).withOpacity(0.10),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                ],
               ),
-              child: Icon(
-                widget.item.icon,
-                color: const Color(0xFF00D084),
-                size: 20,
+              child: Center(
+                child: Icon(
+                  item.icon,
+                  color: iconColor,
+                  size: 21,
+                ),
               ),
             ),
-            const SizedBox(height: 7),
+            const SizedBox(height: 6),
 
-            // Title (2 lines)
+            // Label text below icon
             Text(
-              context.tr(widget.item.key, fallback: widget.item.label),
+              context.tr(item.key, fallback: item.label),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: textColor,
                 fontSize: 10.5,

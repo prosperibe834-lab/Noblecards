@@ -33,16 +33,38 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   AuthUser? _currentUser;
   double? _availableBalance;
   double? _pendingBalance;
   double? _mainBalance;
 
+  late final AnimationController _animController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+
   @override
   void initState() {
     super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.04),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    ));
+
     final auth = AuthenticationService();
     _currentUser = auth.currentUser;
     final cached = WalletService.cachedBalances;
@@ -52,6 +74,13 @@ class _HomeScreenState extends State<HomeScreen> {
       _mainBalance = cached.availableBalance;
     }
     _fetchBackendData();
+    _animController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchBackendData() async {
@@ -89,25 +118,30 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isLoading = true);
 
     await _fetchBackendData();
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     if (!mounted) return;
     setState(() => _isLoading = false);
+    _animController.reset();
+    _animController.forward();
     HapticFeedback.mediumImpact();
   }
 
   String get _resolvedUserName {
     final user = _currentUser ?? AuthenticationService().currentUser;
+    final firstName = user?.firstName?.trim();
+    if (firstName != null && firstName.isNotEmpty) {
+      return firstName;
+    }
     final username = user?.username?.trim();
     if (username != null && username.isNotEmpty) {
       return username;
     }
-    final fullName = user?.displayName?.trim() ??
-        '${user?.firstName ?? ''} ${user?.lastName ?? ''}'.trim();
-    if (fullName.isNotEmpty) {
-      return fullName;
+    final fullName = user?.displayName?.trim();
+    if (fullName != null && fullName.isNotEmpty) {
+      return fullName.split(' ').first;
     }
-    return 'firminofx1';
+    return 'Fawaz';
   }
 
   String? get _resolvedAvatarUrl {
@@ -129,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final scaffoldBg = isDark ? AppColors.darkBackground : AppColors.lightBackground;
+    final scaffoldBg = isDark ? const Color(0xFF0B1319) : const Color(0xFFF8FAFC);
 
     WalletProvider? walletProvider;
     try {
@@ -158,145 +192,169 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: scaffoldBg,
       body: SafeArea(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: _isLoading
-              ? const HomeLoadingShimmer(key: ValueKey('shimmer'))
-              : RefreshIndicator(
-                  key: const ValueKey('content'),
-                  color: AppColors.primary,
-                  backgroundColor: isDark ? const Color(0xFF141E26) : Colors.white,
-                  onRefresh: _handleRefresh,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
+        bottom: false,
+        child: Column(
+          children: [
+            // 1. PINNED / FIXED TOP BAR (Always in fixed position at the top)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 10.0, 16.0, 10.0),
+              child: HomeTopBar(
+                onNotificationTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationScreen(),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 12.0,
+                  );
+                },
+                onQrScanTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const QrScannerScreen(),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 1. TOP BAR / APP HEADER (NobleCards brand mark, Notification Bell, QR Scan)
-                        HomeTopBar(
-                          onNotificationTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const NotificationScreen(),
-                              ),
-                            );
-                          },
-                          onQrScanTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const QrScannerScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 18),
+                  );
+                },
+              ),
+            ),
 
-                        // 2. USER GREETING SECTION ("Hello, username / fullName 👋")
-                        HomeGreeting(
-                          userName: _resolvedUserName,
-                          avatarUrl: _resolvedAvatarUrl,
-                        ),
-                        const SizedBox(height: 20),
-
-                        // 3. WALLET BALANCE CARD (Dollar currency, backend balances, and stats)
-                        HomeWalletCard(
-                          mainBalance: formattedMain,
-                          availableBalance: formattedAvailable,
-                          pendingBalance: formattedPending,
-                          rewardPoints: '2,450',
-                          growthPercentage: '12.5%',
-                          onAddTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const DepositScreen(),
+            // 2. SCROLLABLE REFRESHABLE BODY WITH NETWORK SHIMMER AND ANIMATIONS
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: _isLoading
+                    ? const HomeLoadingShimmer(key: ValueKey('shimmer'))
+                    : RefreshIndicator(
+                        key: const ValueKey('content'),
+                        color: AppColors.primary,
+                        backgroundColor: isDark ? const Color(0xFF101B22) : Colors.white,
+                        onRefresh: _handleRefresh,
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-
-                        // 4. MAIN ACTION BUTTONS ("Buy Gift Cards" & "Sell Gift Cards")
-                        HomeActionButtons(
-                          onBuyTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BuyGiftCardsCatalogScreen(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 6.0,
                               ),
-                            );
-                          },
-                          onSellTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const SellGiftCardsCatalogScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 26),
-
-                        // 5. FEATURED GIFT CARDS (Top-Tier Panoramic Cards: Apple, Amazon, Steam, Google Play)
-                        HomeFeaturedCards(
-                          onViewAll: widget.onNavigateToCards ??
-                              () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const BuyGiftCardsCatalogScreen(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Greeting Section ("Hello," "Fawaz 👑" [✓ Verified])
+                                  HomeGreeting(
+                                    userName: _resolvedUserName,
+                                    avatarUrl: _resolvedAvatarUrl,
                                   ),
-                                );
-                              },
-                          onCardTap: (card) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BuyGiftCardsCatalogScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 26),
+                                  const SizedBox(height: 18),
 
-                        // 6. QUICK ACTIONS (4x2 Grid Matrix of 8 Actions)
-                        HomeQuickActions(
-                          onNavigateToCards: widget.onNavigateToCards,
-                        ),
-                        const SizedBox(height: 26),
+                                  // Hero Wallet Balance Card
+                                  HomeWalletCard(
+                                    mainBalance: formattedMain,
+                                    availableBalance: formattedAvailable,
+                                    pendingBalance: formattedPending,
+                                    rewardPoints: '2,450',
+                                    growthPercentage: '+12.5%',
+                                    onAddTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const DepositScreen(),
+                                        ),
+                                      );
+                                    },
+                                    onViewAnalytics: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const MarketRatesScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 18),
 
-                        // 7. TODAY'S MARKET (Highest Paying, Trending, Most Traded, Best Selling)
-                        HomeTodaysMarket(
-                          onViewAll: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const MarketRatesScreen(),
+                                  // Action Buttons ("Buy Gift Cards ->" and "Sell Gift Cards ->")
+                                  HomeActionButtons(
+                                    onBuyTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const BuyGiftCardsCatalogScreen(),
+                                        ),
+                                      );
+                                    },
+                                    onSellTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const SellGiftCardsCatalogScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 24),
+
+                                  // Featured Gift Cards (Apple & Amazon with badges, discounts, rates)
+                                  HomeFeaturedCards(
+                                    onViewAll: widget.onNavigateToCards ??
+                                        () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const BuyGiftCardsCatalogScreen(),
+                                        ),
+                                      );
+                                    },
+                                    onCardTap: (card) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const BuyGiftCardsCatalogScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 24),
+
+                                  // Quick Actions (4 Equal Items: Buy Gift Cards, Sell Cards, Exchange Rates, My Orders)
+                                  HomeQuickActions(
+                                    onNavigateToCards: widget.onNavigateToCards,
+                                  ),
+                                  const SizedBox(height: 24),
+
+                                  // Today's Market Section
+                                  HomeTodaysMarket(
+                                    onViewAll: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const MarketRatesScreen(),
+                                        ),
+                                      );
+                                    },
+                                    onItemTap: (marketItem) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const MarketRatesScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                ],
                               ),
-                            );
-                          },
-                          onItemTap: (marketItem) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const MarketRatesScreen(),
-                              ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 32),
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+              ),
+            ),
+          ],
         ),
       ),
     );
