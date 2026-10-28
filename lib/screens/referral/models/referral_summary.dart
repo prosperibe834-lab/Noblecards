@@ -18,7 +18,9 @@ class ReferralReward {
   factory ReferralReward.fromJson(Map<String, dynamic> json) {
     return ReferralReward(
       id: _requiredString(json, 'id'),
-      referredName: _requiredString(json, 'referredName'),
+      referredName: (json['referredName'] as String?)?.trim().isNotEmpty == true
+          ? (json['referredName'] as String).trim()
+          : 'Referred Friend',
       amountUsd: _requiredAmount(json, 'amountUsd'),
       status: _requiredString(json, 'status'),
       createdAt: _date(json['createdAt']),
@@ -30,6 +32,8 @@ class ReferralReward {
 class ReferralSummary {
   final String code;
   final String link;
+  final String qrCode;
+  final String qrData;
   final int invitedCount;
   final int qualifiedCount;
   final double pendingRewardUsd;
@@ -42,6 +46,8 @@ class ReferralSummary {
   const ReferralSummary({
     required this.code,
     required this.link,
+    this.qrCode = '',
+    this.qrData = '',
     required this.invitedCount,
     required this.qualifiedCount,
     required this.pendingRewardUsd,
@@ -57,9 +63,16 @@ class ReferralSummary {
     if (historyJson is! List) {
       throw const FormatException('Referral reward history is invalid.');
     }
+    final link = _requiredString(json, 'link');
+    final code = _requiredString(json, 'code');
+    final qrCode = json['qrCode'] as String? ?? link;
+    final qrData = json['qrData'] as String? ?? qrCode;
+
     return ReferralSummary(
-      code: _requiredString(json, 'code'),
-      link: _requiredString(json, 'link'),
+      code: code,
+      link: link,
+      qrCode: qrCode,
+      qrData: qrData,
       invitedCount: _requiredInt(json, 'invitedCount'),
       qualifiedCount: _requiredInt(json, 'qualifiedCount'),
       pendingRewardUsd: _requiredAmount(json, 'pendingRewardUsd'),

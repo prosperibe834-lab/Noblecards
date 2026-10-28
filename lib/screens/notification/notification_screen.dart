@@ -122,7 +122,7 @@ class _NotificationScreenState extends State<NotificationScreen>
 
   void _navigateToDetail(NotificationModel item) {
     setState(() {
-      item.isRead = true;
+      _service.markAsRead(item);
     });
 
     Navigator.push(
@@ -133,37 +133,24 @@ class _NotificationScreenState extends State<NotificationScreen>
     );
   }
 
-  /// Simulates receiving a real-time incoming notification on the phone!
-  void _triggerIncomingNotificationDemo() {
-    HapticFeedback.heavyImpact();
-    final newNotification = NotificationModel(
-      id: 'tx-new-${DateTime.now().millisecondsSinceEpoch}',
-      title: 'Payment Received!',
-      description: 'You received \$180.00 from Alex Morgan.\nFunds are available in your wallet.',
-      time: 'Just now',
-      group: 'Today',
-      type: NotificationType.transaction,
-      category: NotificationCategory.transactions,
-      icon: Boxicons.bx_transfer,
-      iconBgColor: const Color(0xFF10B981),
-      iconColor: Colors.white,
-      isRead: false,
-    );
+  /// Refreshes live notifications from backend and showcases latest notification banner
+  Future<void> _refreshFromBackend() async {
+    HapticFeedback.lightImpact();
+    await _fetchData();
+    if (_allNotifications.isNotEmpty) {
+      setState(() {
+        _incomingNotification = _allNotifications.first;
+      });
 
-    setState(() {
-      _service.addNotification(newNotification);
-      _allNotifications.insert(0, newNotification);
-      _incomingNotification = newNotification;
-    });
+      _bannerController.forward();
 
-    _bannerController.forward();
-
-    // Auto-dismiss after 4.5 seconds
-    Future.delayed(const Duration(milliseconds: 4500), () {
-      if (mounted && _bannerController.status == AnimationStatus.completed) {
-        _bannerController.reverse();
-      }
-    });
+      // Auto-dismiss after 4.5 seconds
+      Future.delayed(const Duration(milliseconds: 4500), () {
+        if (mounted && _bannerController.status == AnimationStatus.completed) {
+          _bannerController.reverse();
+        }
+      });
+    }
   }
 
   int _countFor(NotificationCategory category) {
@@ -246,7 +233,7 @@ class _NotificationScreenState extends State<NotificationScreen>
                                         ),
                                       ],
                                     ),
-                                    onPressed: _triggerIncomingNotificationDemo,
+                                    onPressed: _refreshFromBackend,
                                   ),
                                   IconButton(
                                     icon: Icon(

@@ -7,8 +7,14 @@ import 'package:share_plus/share_plus.dart';
 class ReferralLinkCard extends StatelessWidget {
   final String code;
   final String link;
+  final String? qrData;
 
-  const ReferralLinkCard({super.key, required this.code, required this.link});
+  const ReferralLinkCard({
+    super.key,
+    required this.code,
+    required this.link,
+    this.qrData,
+  });
 
   Future<void> _copy(BuildContext context, String value, String message) async {
     await Clipboard.setData(ClipboardData(text: value));
@@ -168,7 +174,7 @@ class ReferralLinkCard extends StatelessWidget {
                       border: Border.all(color: borderColor),
                     ),
                     child: QrImageView(
-                      data: link,
+                      data: (qrData?.isNotEmpty == true) ? qrData! : link,
                       version: QrVersions.auto,
                       backgroundColor: Colors.white,
                       embeddedImage: AssetImage(logoPath),

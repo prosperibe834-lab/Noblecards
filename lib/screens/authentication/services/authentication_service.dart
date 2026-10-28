@@ -192,6 +192,13 @@ class AuthenticationService {
     return _request('POST', path, body: body, authenticated: true);
   }
 
+  Future<Map<String, dynamic>> authenticatedPatch(
+    String path, {
+    Map<String, dynamic>? body,
+  }) {
+    return _request('PATCH', path, body: body, authenticated: true);
+  }
+
   Future<bool> hasTransactionPin() async {
     final data = await authenticatedGet('/users/me');
     final user = data['user'] as Map<String, dynamic>?;

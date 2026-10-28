@@ -165,6 +165,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                             ReferralLinkCard(
                               code: summary.code,
                               link: summary.link,
+                              qrData: summary.qrData,
                             ),
                             const SizedBox(height: 16),
                             const ReferralHowItWorks(),
