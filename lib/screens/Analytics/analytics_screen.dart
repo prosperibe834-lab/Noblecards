@@ -74,6 +74,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
   void _openCalendarFilter() {
     AnalyticsFilterSheet.show(context, (range) {
       setState(() {
+        _selectedPeriod = '';
         _customRange = range;
       });
       _loadAnalytics();

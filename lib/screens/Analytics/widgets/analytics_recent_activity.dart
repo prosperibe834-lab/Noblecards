@@ -67,7 +67,7 @@ class AnalyticsRecentActivity extends StatelessWidget {
             ),
           )
         else
-          ...activities.map((item) => _ActivityRow(item: item)).toList(),
+          ...activities.take(5).map((item) => _ActivityRow(item: item)).toList(),
       ],
     );
   }
