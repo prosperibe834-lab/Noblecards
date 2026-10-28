@@ -37,7 +37,7 @@ class AnalyticsOverviewGrid extends StatelessWidget {
               child: _OverviewCard(
                 title: 'Total Deposits',
                 amount: '\$${totalDeposits.toStringAsFixed(2)}',
-                changePercent: '+${depositsChange.toStringAsFixed(1)}%',
+                changePercent: '${depositsChange >= 0 ? '+' : ''}${depositsChange.toStringAsFixed(1)}%',
                 icon: Boxicons.bx_download,
                 iconColor: AppColors.primary,
                 chartColor: AppColors.primary,
@@ -48,7 +48,7 @@ class AnalyticsOverviewGrid extends StatelessWidget {
               child: _OverviewCard(
                 title: 'Total Withdrawals',
                 amount: '\$${totalWithdrawals.toStringAsFixed(2)}',
-                changePercent: '+${withdrawalsChange.toStringAsFixed(1)}%',
+                changePercent: '${withdrawalsChange >= 0 ? '+' : ''}${withdrawalsChange.toStringAsFixed(1)}%',
                 icon: Boxicons.bx_upload,
                 iconColor: AppColors.accentViolet,
                 chartColor: AppColors.accentViolet,
@@ -63,7 +63,7 @@ class AnalyticsOverviewGrid extends StatelessWidget {
               child: _OverviewCard(
                 title: 'Gift Cards Bought',
                 amount: '\$${giftCardsBought.toStringAsFixed(2)}',
-                changePercent: '+${boughtChange.toStringAsFixed(1)}%',
+                changePercent: '${boughtChange >= 0 ? '+' : ''}${boughtChange.toStringAsFixed(1)}%',
                 icon: Boxicons.bx_gift,
                 iconColor: AppColors.secondary,
                 chartColor: AppColors.secondary,
@@ -73,8 +73,8 @@ class AnalyticsOverviewGrid extends StatelessWidget {
             Expanded(
               child: _OverviewCard(
                 title: 'Gift Cards Sold',
-                amount: '\$${soldChange.toStringAsFixed(2)}',
-                changePercent: '+${soldChange.toStringAsFixed(1)}%',
+                amount: '\$${giftCardsSold.toStringAsFixed(2)}',
+                changePercent: '${soldChange >= 0 ? '+' : ''}${soldChange.toStringAsFixed(1)}%',
                 icon: Boxicons.bx_tag_alt,
                 iconColor: AppColors.accent,
                 chartColor: AppColors.accent,
@@ -156,8 +156,8 @@ class _OverviewCard extends StatelessWidget {
             children: [
               Text(
                 changePercent,
-                style: const TextStyle(
-                  color: AppColors.success,
+                style: TextStyle(
+                  color: changePercent.startsWith('-') ? AppColors.error : AppColors.success,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),

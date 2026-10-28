@@ -43,9 +43,31 @@ class _AnalyticsSpendingChartState extends State<AnalyticsSpendingChart> {
     final subTextColor = isDark ? AppColors.darkSubText : AppColors.lightSubText;
     final gridLineColor = isDark ? AppColors.darkBorder.withOpacity(0.5) : AppColors.lightBorder;
 
-    final activePoint = (_selectedIndex != null && _selectedIndex! < widget.points.length)
-        ? widget.points[_selectedIndex!]
-        : widget.points.last;
+    double peak = 0;
+    for (final p in widget.points) {
+      if (p.deposits > peak) peak = p.deposits;
+      if (p.withdrawals > peak) peak = p.withdrawals;
+      if (p.buyCards > peak) peak = p.buyCards;
+      if (p.sellCards > peak) peak = p.sellCards;
+    }
+    double maxVal = 6000.0;
+    if (peak <= 500) {
+      maxVal = 600.0;
+    } else if (peak <= 1200) {
+      maxVal = 1200.0;
+    } else if (peak <= 3000) {
+      maxVal = 3000.0;
+    } else if (peak <= 6000) {
+      maxVal = 6000.0;
+    } else {
+      maxVal = ((peak * 1.15) / 1000).ceil() * 1000.0;
+    }
+
+    final activePoint = widget.points.isNotEmpty
+        ? ((_selectedIndex != null && _selectedIndex! < widget.points.length)
+            ? widget.points[_selectedIndex!]
+            : widget.points.last)
+        : ChartDataPoint(label: 'Today', deposits: 0, withdrawals: 0, buyCards: 0, sellCards: 0);
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -107,9 +129,9 @@ class _AnalyticsSpendingChartState extends State<AnalyticsSpendingChart> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('\$6k', style: TextStyle(color: subTextColor, fontSize: 10)),
-                      Text('\$4k', style: TextStyle(color: subTextColor, fontSize: 10)),
-                      Text('\$2k', style: TextStyle(color: subTextColor, fontSize: 10)),
+                      Text(_formatK(maxVal), style: TextStyle(color: subTextColor, fontSize: 10)),
+                      Text(_formatK(maxVal * 2 / 3), style: TextStyle(color: subTextColor, fontSize: 10)),
+                      Text(_formatK(maxVal / 3), style: TextStyle(color: subTextColor, fontSize: 10)),
                       Text('\$0', style: TextStyle(color: subTextColor, fontSize: 10)),
                     ],
                   ),
@@ -126,6 +148,7 @@ class _AnalyticsSpendingChartState extends State<AnalyticsSpendingChart> {
                         points: widget.points,
                         selectedIndex: _selectedIndex,
                         gridColor: gridLineColor,
+                        maxVal: maxVal,
                       ),
                     ),
                   ),
@@ -168,6 +191,14 @@ class _AnalyticsSpendingChartState extends State<AnalyticsSpendingChart> {
       setState(() => _selectedIndex = index);
     }
   }
+
+  String _formatK(double val) {
+    if (val >= 1000) {
+      final k = val / 1000;
+      return '\$${k == k.roundToDouble() ? k.toInt() : k.toStringAsFixed(1)}k';
+    }
+    return '\$${val.toInt()}';
+  }
 }
 
 class _LegendRow extends StatelessWidget {
@@ -205,11 +236,13 @@ class _MultiLineChartPainter extends CustomPainter {
   final List<ChartDataPoint> points;
   final int? selectedIndex;
   final Color gridColor;
+  final double maxVal;
 
   _MultiLineChartPainter({
     required this.points,
     required this.selectedIndex,
     required this.gridColor,
+    required this.maxVal,
   });
 
   @override
@@ -226,7 +259,7 @@ class _MultiLineChartPainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
     }
 
-    const maxVal = 6000.0;
+    if (points.length < 2) return;
     final stepX = size.width / (points.length - 1);
 
     // Render Data Series Lines
@@ -282,5 +315,7 @@ class _MultiLineChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MultiLineChartPainter oldDelegate) =>
-      oldDelegate.selectedIndex != selectedIndex || oldDelegate.points != points;
+      oldDelegate.selectedIndex != selectedIndex ||
+      oldDelegate.points != points ||
+      oldDelegate.maxVal != maxVal;
 }

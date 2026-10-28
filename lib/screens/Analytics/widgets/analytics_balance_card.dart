@@ -124,10 +124,14 @@ class AnalyticsBalanceCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Boxicons.bx_up_arrow_alt, color: AppColors.white, size: 14),
+                        Icon(
+                          changePercent >= 0 ? Boxicons.bx_up_arrow_alt : Boxicons.bx_down_arrow_alt,
+                          color: AppColors.white,
+                          size: 14,
+                        ),
                         const SizedBox(width: 2),
                         Text(
-                          '+${changePercent.toStringAsFixed(1)}%',
+                          '${changePercent >= 0 ? '+' : ''}${changePercent.toStringAsFixed(1)}%',
                           style: const TextStyle(
                             color: AppColors.white,
                             fontSize: 12,

@@ -64,6 +64,7 @@ class _AnalyticsFilterSheetState extends State<AnalyticsFilterSheet> {
               'Last 30 Days',
               'This Month',
               'Last Month',
+              'Custom Calendar',
             ].map((opt) {
               final isSel = _selectedQuick == opt;
               return ChoiceChip(
@@ -71,12 +72,28 @@ class _AnalyticsFilterSheetState extends State<AnalyticsFilterSheet> {
                 selected: isSel,
                 selectedColor: AppColors.primary,
                 backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
-                onSelected: (val) {
+                onSelected: (val) async {
+                  if (opt == 'Custom Calendar') {
+                    final picked = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime.now(),
+                      initialDateRange: DateTimeRange(start: _startDate, end: _endDate),
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        _selectedQuick = 'Custom Calendar';
+                        _startDate = picked.start;
+                        _endDate = picked.end;
+                      });
+                    }
+                    return;
+                  }
                   setState(() {
                     _selectedQuick = opt;
                     final now = DateTime.now();
                     if (opt == 'Today') {
-                      _startDate = now;
+                      _startDate = DateTime(now.year, now.month, now.day);
                       _endDate = now;
                     } else if (opt == 'Last 7 Days') {
                       _startDate = now.subtract(const Duration(days: 7));
@@ -84,6 +101,12 @@ class _AnalyticsFilterSheetState extends State<AnalyticsFilterSheet> {
                     } else if (opt == 'Last 30 Days') {
                       _startDate = now.subtract(const Duration(days: 30));
                       _endDate = now;
+                    } else if (opt == 'This Month') {
+                      _startDate = DateTime(now.year, now.month, 1);
+                      _endDate = now;
+                    } else if (opt == 'Last Month') {
+                      _startDate = DateTime(now.year, now.month - 1, 1);
+                      _endDate = DateTime(now.year, now.month, 0, 23, 59, 59);
                     }
                   });
                 },

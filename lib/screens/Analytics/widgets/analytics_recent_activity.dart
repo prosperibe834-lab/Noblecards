@@ -54,7 +54,20 @@ class AnalyticsRecentActivity extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        ...activities.map((item) => _ActivityRow(item: item)).toList(),
+        if (activities.isEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+            alignment: Alignment.center,
+            child: Text(
+              'No recent activity in this period',
+              style: TextStyle(
+                color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
+                fontSize: 13,
+              ),
+            ),
+          )
+        else
+          ...activities.map((item) => _ActivityRow(item: item)).toList(),
       ],
     );
   }

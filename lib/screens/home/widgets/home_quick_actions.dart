@@ -30,7 +30,7 @@ class HomeQuickActions extends StatelessWidget {
     this.onNavigateToCards,
   });
 
-  // All 8 quick actions matching Image 1
+  // All 8 quick actions matching user's specification
   static const List<QuickActionItem> actions = [
     QuickActionItem(
       key: 'buy_cards',
@@ -130,7 +130,7 @@ class HomeQuickActions extends StatelessWidget {
   void _showAllActionsBottomSheet(BuildContext context) {
     HapticFeedback.mediumImpact();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF0F1A20) : Colors.white;
+    final bg = isDark ? const Color(0xFF09141B) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
 
     showModalBottomSheet(
@@ -175,7 +175,7 @@ class HomeQuickActions extends StatelessWidget {
                     crossAxisCount: 4,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    childAspectRatio: 0.84,
+                    childAspectRatio: 0.82,
                   ),
                   itemBuilder: (_, index) {
                     final item = actions[index];
@@ -201,11 +201,12 @@ class HomeQuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final viewAllColor = isDark ? const Color(0xFF00E599) : const Color(0xFF00C06D);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header: "Quick Actions" + "View All >" matching Image 2
+        // Header: "Quick Actions" + "View All >"
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -224,17 +225,17 @@ class HomeQuickActions extends StatelessWidget {
                 children: [
                   Text(
                     context.tr('view_all', fallback: "View All"),
-                    style: const TextStyle(
-                      color: Color(0xFF00D084),
+                    style: TextStyle(
+                      color: viewAllColor,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 2),
-                  const Icon(
+                  Icon(
                     Boxicons.bx_chevron_right,
                     size: 16,
-                    color: Color(0xFF00D084),
+                    color: viewAllColor,
                   ),
                 ],
               ),
@@ -243,7 +244,7 @@ class HomeQuickActions extends StatelessWidget {
         ),
         const SizedBox(height: 14),
 
-        // 4x2 Grid of all 8 items styled exactly like Image 2
+        // 4x2 Grid of all 8 items matching the screenshot 100%
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -252,7 +253,7 @@ class HomeQuickActions extends StatelessWidget {
             crossAxisCount: 4,
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
-            childAspectRatio: 0.84,
+            childAspectRatio: 0.82,
           ),
           itemBuilder: (context, index) {
             final item = actions[index];
@@ -281,49 +282,41 @@ class _QuickActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Exact styling from Image 2:
-    // Outer rounded card container with dark slate / soft mint background
-    final cardBg = isDark ? const Color(0xFF0D1D17) : const Color(0xFFEAF8F1);
-    final borderColor = isDark ? const Color(0xFF163327) : const Color(0xFFD4F2E4);
-    final iconGlowBg = isDark
-        ? const Color(0xFF00E599).withOpacity(0.12)
-        : const Color(0xFF00D084).withOpacity(0.12);
-    final iconColor = isDark ? const Color(0xFF00E599) : const Color(0xFF00D084);
-    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    // 100% Exact colors and structure from the user's screenshots:
+    // Dark mode: Dark slate teal container (#0C1820) with neon green (#00E599) glow and white text.
+    // Light mode: Pale mint container (#EDF8F2) with emerald (#009661) glow and dark slate text.
+    final cardBg = isDark ? const Color(0xFF0C1820) : const Color(0xFFEDF8F2);
+    final borderColor = isDark ? const Color(0xFF13242F) : const Color(0xFFDCF1E6);
+    final iconColor = isDark ? const Color(0xFF00E599) : const Color(0xFF009661);
+    final textColor = isDark ? Colors.white : const Color(0xFF1E293B);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: borderColor, width: 1.1),
-          boxShadow: [
-            if (!isDark)
-              BoxShadow(
-                color: const Color(0x0C00D084),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-          ],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: borderColor, width: 1.0),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Inner Glowing Icon Badge (from Image 2)
+            // Glowing Icon Area
             Container(
-              width: 40,
-              height: 40,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: iconGlowBg,
+                color: isDark
+                    ? const Color(0xFF00E599).withOpacity(0.12)
+                    : const Color(0xFF00D084).withOpacity(0.10),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   if (isDark)
                     BoxShadow(
-                      color: const Color(0xFF00E599).withOpacity(0.10),
-                      blurRadius: 8,
+                      color: const Color(0xFF00E599).withOpacity(0.12),
+                      blurRadius: 10,
                       spreadRadius: 1,
                     ),
                 ],
@@ -332,13 +325,13 @@ class _QuickActionButton extends StatelessWidget {
                 child: Icon(
                   item.icon,
                   color: iconColor,
-                  size: 21,
+                  size: 22,
                 ),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 7),
 
-            // Label text below icon
+            // Label text inside the card
             Text(
               context.tr(item.key, fallback: item.label),
               textAlign: TextAlign.center,

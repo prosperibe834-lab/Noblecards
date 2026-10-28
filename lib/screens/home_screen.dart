@@ -23,6 +23,7 @@ import 'cards/buy_gift_cards_catalog_screen.dart';
 import 'cards/sell_gift_cards_catalog_screen.dart';
 import 'rate/market_rates_screen.dart';
 import 'deposit_screen.dart';
+import 'Analytics/analytics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToCards;
@@ -270,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => const MarketRatesScreen(),
+                                          builder: (_) => const AnalyticsScreen(),
                                         ),
                                       );
                                     },
