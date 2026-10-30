@@ -23,6 +23,7 @@ import 'widgets/order_summary_card.dart';
 import 'widgets/continue_payment_button.dart';
 import 'widgets/region_bottom_sheet.dart';
 import 'widgets/region_selector_card.dart';
+import '../profile/contact_support_screen.dart';
 
 class BuyCardScreen extends StatelessWidget {
   final GiftCardModel card;
@@ -217,7 +218,12 @@ class BuyCardScreen extends StatelessWidget {
           actions: [
             IconButton(
               icon: Icon(Boxicons.bx_headphone, color: textColor),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ContactSupportScreen()),
+                );
+              },
             ),
           ],
         ),

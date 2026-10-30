@@ -8,8 +8,13 @@ import '../../../../localization/app_localizations.dart';
 
 class OrderSummaryCard extends StatelessWidget {
   final List<OrderModel> orders;
+  final Function(String)? onFilterSelected;
 
-  const OrderSummaryCard({super.key, required this.orders});
+  const OrderSummaryCard({
+    super.key,
+    required this.orders,
+    this.onFilterSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,7 @@ class OrderSummaryCard extends StatelessWidget {
           icon: Boxicons.bx_shopping_bag,
           iconColor: AppColors.success,
           iconBgColor: AppColors.success.withOpacity(0.12),
+          onTap: () => onFilterSelected?.call('All'),
         ),
         const SizedBox(width: 6),
         AnimatedCounterCard(
@@ -30,6 +36,7 @@ class OrderSummaryCard extends StatelessWidget {
           icon: Boxicons.bx_time_five,
           iconColor: Colors.orange,
           iconBgColor: Colors.orange.withOpacity(0.12),
+          onTap: () => onFilterSelected?.call('Pending'),
         ),
         const SizedBox(width: 6),
         AnimatedCounterCard(
@@ -38,6 +45,7 @@ class OrderSummaryCard extends StatelessWidget {
           icon: Boxicons.bx_check_circle,
           iconColor: AppColors.success,
           iconBgColor: AppColors.success.withOpacity(0.12),
+          onTap: () => onFilterSelected?.call('Completed'),
         ),
         const SizedBox(width: 6),
         AnimatedCounterCard(
@@ -46,8 +54,10 @@ class OrderSummaryCard extends StatelessWidget {
           icon: Boxicons.bx_x_circle,
           iconColor: Colors.redAccent,
           iconBgColor: Colors.redAccent.withOpacity(0.12),
+          onTap: () => onFilterSelected?.call('Cancelled'),
         ),
       ],
     );
   }
 }
+

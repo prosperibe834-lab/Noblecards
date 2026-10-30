@@ -10,7 +10,7 @@ class MarketFilterSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<MarketRatesProvider>();
+    final provider = context.watch<MarketRatesProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -34,13 +34,13 @@ class MarketFilterSheet extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.sm,
-              children: ['All Cards', 'Best Sellers', 'Trending'].map((cat) {
+              children: provider.categories.map((cat) {
                 final isSelected = provider.selectedTab == cat;
                 return ChoiceChip(
                   label: Text(cat),
                   selected: isSelected,
                   onSelected: (val) {
-                    if(val) provider.setTab(cat);
+                    if (val) provider.setTab(cat);
                   },
                   selectedColor: AppColors.primary.withOpacity(0.2),
                   labelStyle: TextStyle(color: isSelected ? AppColors.primary : Theme.of(context).textTheme.bodyLarge!.color),
@@ -50,14 +50,36 @@ class MarketFilterSheet extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.lg),
             
-            Text('Country (Coming Soon)', style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+            Text('Country', style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.sm,
               children: [
-                Chip(label: const Text('🇺🇸 USA'), backgroundColor: isDark ? AppColors.darkCard : Colors.white),
-                Chip(label: const Text('🇬🇧 UK'), backgroundColor: isDark ? AppColors.darkCard : Colors.white),
-                Chip(label: const Text('🇨🇦 Canada'), backgroundColor: isDark ? AppColors.darkCard : Colors.white),
+                ChoiceChip(
+                  label: const Text('All Countries'),
+                  selected: provider.selectedCountry == 'All',
+                  onSelected: (val) {
+                    if (val) provider.setCountry('All');
+                  },
+                  selectedColor: AppColors.primary.withOpacity(0.2),
+                  labelStyle: TextStyle(color: provider.selectedCountry == 'All' ? AppColors.primary : Theme.of(context).textTheme.bodyLarge!.color),
+                  backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+                ),
+                ...provider.availableCountries.map((c) {
+                  final countryName = c['country'] ?? '';
+                  final flag = c['flag'] ?? '';
+                  final isSelected = provider.selectedCountry == countryName;
+                  return ChoiceChip(
+                    label: Text('$flag $countryName'),
+                    selected: isSelected,
+                    onSelected: (val) {
+                      provider.setCountry(val ? countryName : 'All');
+                    },
+                    selectedColor: AppColors.primary.withOpacity(0.2),
+                    labelStyle: TextStyle(color: isSelected ? AppColors.primary : Theme.of(context).textTheme.bodyLarge!.color),
+                    backgroundColor: isDark ? AppColors.darkCard : Colors.white,
+                  );
+                }),
               ],
             ),
             const SizedBox(height: AppSpacing.xl),

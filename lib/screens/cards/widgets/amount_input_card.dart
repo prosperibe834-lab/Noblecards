@@ -73,7 +73,10 @@ class AmountInputCard extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                   ),
                   onChanged: (val) {
-                    if (val.isNotEmpty) provider.setAmount(double.parse(val));
+                    final parsed = double.tryParse(val);
+                    if (parsed != null && parsed >= 0) {
+                      provider.setAmount(parsed);
+                    }
                   },
                 ),
               ),

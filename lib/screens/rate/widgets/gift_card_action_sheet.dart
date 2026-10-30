@@ -3,6 +3,8 @@ import 'package:boxicons/boxicons.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_radius.dart';
 import '../../../theme/app_spacing.dart';
+import '../../cards/buy_gift_cards_catalog_screen.dart';
+import '../../cards/sell_gift_cards_catalog_screen.dart';
 import '../models/market_rate_model.dart';
 
 class GiftCardActionSheet extends StatelessWidget {
@@ -65,7 +67,12 @@ class GiftCardActionSheet extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      // TODO: Navigate to Buy screen passing rate.id
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BuyGiftCardsCatalogScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDark ? AppColors.darkCard : Colors.white,
@@ -82,7 +89,12 @@ class GiftCardActionSheet extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      // TODO: Navigate to Sell screen passing rate.id
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SellGiftCardsCatalogScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

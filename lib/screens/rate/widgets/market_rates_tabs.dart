@@ -12,7 +12,7 @@ class MarketRatesTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<MarketRatesProvider>();
-    final tabs = ['All Cards', 'Best Sellers', 'Trending'];
+    final tabs = provider.categories;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Row(

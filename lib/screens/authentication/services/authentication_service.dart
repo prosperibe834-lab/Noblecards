@@ -39,6 +39,11 @@ class AuthUser {
   final bool isEmailVerified;
   final bool isProfileComplete;
   final bool isVerified;
+  final bool biometricLoginEnabled;
+  final bool biometricTransactionEnabled;
+  final String? biometricType;
+  final bool rememberDevice;
+  final String? autoLockTime;
 
   const AuthUser({
     required this.id,
@@ -59,6 +64,11 @@ class AuthUser {
     this.isEmailVerified = false,
     this.isProfileComplete = false,
     this.isVerified = false,
+    this.biometricLoginEnabled = false,
+    this.biometricTransactionEnabled = false,
+    this.biometricType,
+    this.rememberDevice = false,
+    this.autoLockTime,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) => AuthUser(
@@ -80,6 +90,11 @@ class AuthUser {
     isEmailVerified: json['isEmailVerified'] == true,
     isProfileComplete: json['isProfileComplete'] == true,
     isVerified: json['isVerified'] == true,
+    biometricLoginEnabled: json['biometricLoginEnabled'] == true,
+    biometricTransactionEnabled: json['biometricTransactionEnabled'] == true,
+    biometricType: json['biometricType']?.toString(),
+    rememberDevice: json['rememberDevice'] == true,
+    autoLockTime: json['autoLockTime']?.toString(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +116,11 @@ class AuthUser {
     'isEmailVerified': isEmailVerified,
     'isProfileComplete': isProfileComplete,
     'isVerified': isVerified,
+    'biometricLoginEnabled': biometricLoginEnabled,
+    'biometricTransactionEnabled': biometricTransactionEnabled,
+    'biometricType': biometricType,
+    'rememberDevice': rememberDevice,
+    'autoLockTime': autoLockTime,
   };
 }
 
@@ -198,6 +218,16 @@ class AuthenticationService {
   }) {
     return _request('PATCH', path, body: body, authenticated: true);
   }
+
+  Future<Map<String, dynamic>> authenticatedDelete(String path) {
+    return _request('DELETE', path, authenticated: true);
+  }
+
+  Future<void> deleteAccount() async {
+    await authenticatedDelete('/users/me');
+    await signOut();
+  }
+
 
   Future<bool> hasTransactionPin() async {
     final data = await authenticatedGet('/users/me');
@@ -460,20 +490,45 @@ class AuthenticationService {
     await _storage?.delete(key: biometricRefreshKey);
   }
 
-  Future<bool> restoreBiometricSession() async {
+  Future<bool> restoreBiometricSession({String? biometricType}) async {
     final refreshToken = await _storage?.read(key: biometricRefreshKey);
     if (refreshToken == null || refreshToken.isEmpty) return false;
     try {
       final data = await _request(
         'POST',
-        '/auth/refresh',
-        body: {'refreshToken': refreshToken},
+        '/auth/biometric/login',
+        body: {
+          'refreshToken': refreshToken,
+          if (biometricType != null) 'biometricType': biometricType,
+        },
       );
       await _storeSession(data);
       await saveBiometricSession();
       return true;
     } catch (_) {
-      await clearBiometricSession();
+      try {
+        final data = await _request(
+          'POST',
+          '/auth/refresh',
+          body: {'refreshToken': refreshToken},
+        );
+        await _storeSession(data);
+        await saveBiometricSession();
+        return true;
+      } catch (_) {
+        await clearBiometricSession();
+        return false;
+      }
+    }
+  }
+
+  Future<bool> authorizeBiometricTransaction() async {
+    try {
+      final data = await authenticatedPost(
+        '/users/me/biometrics/authorize-transaction',
+      );
+      return data['authorized'] == true;
+    } catch (_) {
       return false;
     }
   }
@@ -641,7 +696,10 @@ class AuthenticationService {
     Map<String, dynamic>? body,
     bool authenticated = false,
   }) async {
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
+    };
     if (authenticated)
       headers['Authorization'] =
           'Bearer ${await _storage?.read(key: _accessKey)}';

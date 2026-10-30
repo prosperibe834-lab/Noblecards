@@ -12,7 +12,8 @@ class MarketRatesSummaryCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isLoading = context.watch<MarketRatesProvider>().isLoading;
+    final provider = context.watch<MarketRatesProvider>();
+    final isLoading = provider.isLoading;
 
     if (isLoading) {
       return SizedBox(
@@ -37,8 +38,8 @@ class MarketRatesSummaryCards extends StatelessWidget {
     final cards = [
       {
         'title': 'Top Gainer',
-        'value': 'Amazon',
-        'sub': '↑ 8.24%',
+        'value': provider.topGainerName,
+        'sub': provider.topGainerChange,
         'subColor': AppColors.primary,
         'icon': Boxicons.bx_line_chart,
         'iconBg': AppColors.primary.withOpacity(0.1),
@@ -46,8 +47,8 @@ class MarketRatesSummaryCards extends StatelessWidget {
       },
       {
         'title': 'Most Traded',
-        'value': 'Apple',
-        'sub': '\$1.24M',
+        'value': provider.mostTradedName,
+        'sub': provider.mostTradedVolume,
         'subColor': AppColors.primary,
         'icon': Boxicons.bx_transfer,
         'iconBg': AppColors.secondary.withOpacity(0.1),
@@ -55,7 +56,7 @@ class MarketRatesSummaryCards extends StatelessWidget {
       },
       {
         'title': 'Avg. Discount',
-        'value': '12.6%',
+        'value': provider.avgDiscount,
         'sub': 'Below Face Value',
         'subColor': Theme.of(context).textTheme.bodyMedium!.color,
         'icon': Boxicons.bx_purchase_tag_alt,

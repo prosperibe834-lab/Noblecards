@@ -52,7 +52,7 @@ class CurrentLevelCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      context.tr('current_level_desc'),
+                      context.tr('current_level_desc').replaceAll(r"\'", "'"),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -99,11 +99,38 @@ class CurrentLevelCard extends StatelessWidget {
   }
 
   Widget _buildTierBadge() {
+    Color badgeColor;
+    IconData badgeIcon;
+
+    switch (data.currentTier.toLowerCase()) {
+      case 'diamond':
+        badgeColor = const Color(0xFF00BFFF);
+        badgeIcon = Boxicons.bxs_diamond;
+        break;
+      case 'platinum':
+        badgeColor = const Color(0xFFA78BFA);
+        badgeIcon = Boxicons.bx_crown;
+        break;
+      case 'silver':
+        badgeColor = const Color(0xFFC0C0C0);
+        badgeIcon = Boxicons.bxs_medal;
+        break;
+      case 'bronze':
+        badgeColor = const Color(0xFFCD7F32);
+        badgeIcon = Boxicons.bxs_medal;
+        break;
+      case 'gold':
+      default:
+        badgeColor = const Color(0xFFFBBF24);
+        badgeIcon = Boxicons.bx_crown;
+        break;
+    }
+
     return Container(
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: const Color(0xFFFBBF24), // Gold accent
+        color: badgeColor,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
@@ -113,8 +140,8 @@ class CurrentLevelCard extends StatelessWidget {
           ),
         ],
       ),
-      child: const Center(
-        child: Icon(Boxicons.bx_crown, color: Colors.white, size: 36),
+      child: Center(
+        child: Icon(badgeIcon, color: Colors.white, size: 36),
       ),
     );
   }

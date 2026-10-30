@@ -15,8 +15,9 @@ import '../../localization/app_localizations.dart';
 
 class OrdersScreen extends StatefulWidget {
   final OrdersService? ordersService;
+  final String? initialFilter;
 
-  const OrdersScreen({super.key, this.ordersService});
+  const OrdersScreen({super.key, this.ordersService, this.initialFilter});
 
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
@@ -48,8 +49,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialFilter != null && _chips.contains(widget.initialFilter)) {
+      _activeChip = widget.initialFilter!;
+    }
     _loadOrders();
   }
+
 
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
@@ -142,30 +147,47 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
-                              Text(
-                                context.tr('orders', fallback: 'Orders'),
-                                style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w800,
-                                  color: isDark ? Colors.white : Colors.black,
-                                  letterSpacing: -0.5,
+                              if (Navigator.of(context).canPop()) ...[
+                                IconButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  icon: Icon(
+                                    Boxicons.bx_arrow_back,
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
                                 ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                context.tr('orders_subtitle', fallback: 'Track all your gift card transactions'),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: isDark
-                                      ? AppColors.darkSubText
-                                      : AppColors.lightSubText,
-                                ),
+                                const SizedBox(width: 14),
+                              ],
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    context.tr('orders', fallback: 'Orders'),
+                                    style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark ? Colors.white : Colors.black,
+                                      letterSpacing: -0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    context.tr('orders_subtitle', fallback: 'Track all your gift card transactions'),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: isDark
+                                          ? AppColors.darkSubText
+                                          : AppColors.lightSubText,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
+
                           // Filter Button
                           InkWell(
                             onTap: _openFilterBottomSheet,
@@ -224,9 +246,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
                       if (!_hasLoadError) ...[
                         const SizedBox(height: 20),
-                        OrderSummaryCard(orders: _allOrders),
+                        OrderSummaryCard(
+                          orders: _allOrders,
+                          onFilterSelected: (filter) {
+                            setState(() => _activeChip = filter);
+                          },
+                        ),
                         const SizedBox(height: 20),
                       ] else
+
                         const SizedBox(height: 20),
 
                       // Filter Chips Row

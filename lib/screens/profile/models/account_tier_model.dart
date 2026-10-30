@@ -21,6 +21,25 @@ class AccountTierModel {
     required this.allTiers,
   });
 
+  factory AccountTierModel.fromJson(Map<String, dynamic> json) {
+    return AccountTierModel(
+      currentTier: json['currentTier']?.toString() ?? 'Bronze',
+      nextTier: json['nextTier']?.toString() ?? 'Silver',
+      currentPoints: (json['currentPoints'] as num?)?.toInt() ?? 0,
+      requiredPoints: (json['requiredPoints'] as num?)?.toInt() ?? 500,
+      progressPercentage: (json['progressPercentage'] as num?)?.toDouble() ?? 0.0,
+      dailyLimit: (json['dailyLimit'] as num?)?.toDouble() ?? 2000.0,
+      remainingDailyLimit: (json['remainingDailyLimit'] as num?)?.toDouble() ?? 2000.0,
+      stats: AccountStats.fromJson(
+        json['stats'] is Map ? Map<String, dynamic>.from(json['stats']) : {},
+      ),
+      allTiers: (json['allTiers'] as List?)
+              ?.map((t) => TierConfig.fromJson(Map<String, dynamic>.from(t)))
+              .toList() ??
+          [],
+    );
+  }
+
   // Mock data to simulate backend response
   static AccountTierModel get mockData => AccountTierModel(
     currentTier: "Gold",
@@ -33,6 +52,7 @@ class AccountTierModel {
     stats: AccountStats(
       totalPoints: 2200,
       memberSince: "May 12, 2024",
+      memberDuration: "1 year, 2 months",
       successfulTransactions: 142,
       totalVolume: 18450,
     ),
@@ -74,15 +94,27 @@ class AccountTierModel {
 class AccountStats {
   final int totalPoints;
   final String memberSince;
+  final String memberDuration;
   final int successfulTransactions;
   final double totalVolume;
 
   AccountStats({
     required this.totalPoints,
     required this.memberSince,
+    this.memberDuration = '',
     required this.successfulTransactions,
     required this.totalVolume,
   });
+
+  factory AccountStats.fromJson(Map<String, dynamic> json) {
+    return AccountStats(
+      totalPoints: (json['totalPoints'] as num?)?.toInt() ?? 0,
+      memberSince: json['memberSince']?.toString() ?? '',
+      memberDuration: json['memberDuration']?.toString() ?? '',
+      successfulTransactions: (json['successfulTransactions'] as num?)?.toInt() ?? 0,
+      totalVolume: (json['totalVolume'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
 }
 
 class TierConfig {
@@ -97,4 +129,13 @@ class TierConfig {
     required this.maxPoints,
     required this.dailyLimit,
   });
+
+  factory TierConfig.fromJson(Map<String, dynamic> json) {
+    return TierConfig(
+      name: json['name']?.toString() ?? '',
+      minPoints: (json['minPoints'] as num?)?.toInt() ?? 0,
+      maxPoints: (json['maxPoints'] as num?)?.toInt() ?? 0,
+      dailyLimit: (json['dailyLimit'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
 }

@@ -34,7 +34,9 @@ class StatsGrid extends StatelessWidget {
           AppColors.info,
           context.tr('member_since'),
           stats.memberSince,
-          "1 year, 2 months",
+          stats.memberDuration.isNotEmpty
+              ? stats.memberDuration
+              : "1 year, 2 months",
         ),
         _buildStatCard(
           context,

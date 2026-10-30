@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,44 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
                 children: [
                   // Top Gradient Secure Header Card
                   const BiometricHeaderCard(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 18),
+
+                  if (provider.errorMessage != null) ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.error.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Boxicons.bx_error_circle,
+                            color: AppColors.error,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              provider.errorMessage!,
+                              style: const TextStyle(
+                                color: AppColors.error,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
 
                   // Section: Biometric Methods
                   Text(
@@ -106,11 +144,15 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
                     onToggle: provider.toggleFaceId,
                   ),
 
-                  // Card 2: Fingerprint
+                  // Card 2: Fingerprint / Touch ID
                   BiometricMethodCard(
                     icon: Boxicons.bx_fingerprint,
-                    title: 'Fingerprint',
-                    subtitle: 'Use your fingerprint to login to your account.',
+                    title: defaultTargetPlatform == TargetPlatform.iOS
+                        ? 'Touch ID'
+                        : 'Fingerprint',
+                    subtitle: defaultTargetPlatform == TargetPlatform.iOS
+                        ? 'Use Touch ID to login to your account.'
+                        : 'Use your fingerprint to login to your account.',
                     isSupported: settings.isFingerprintAvailable,
                     isEnabled: settings.isFingerprintEnabled,
                     onToggle: provider.toggleFingerprint,
@@ -150,11 +192,11 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
                       border: Border.all(
                         color: isDark
                             ? Colors.white10
-                            : Colors.black.withOpacity(0.04),
+                            : Colors.black.withValues(alpha: 0.04),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
+                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),

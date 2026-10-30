@@ -4,6 +4,8 @@ import '../../theme/app_animation.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_radius.dart';
 import '../../theme/app_shadow.dart';
+import '../authentication/services/authentication_service.dart';
+import '../profile/services/biometric_service.dart';
 import 'models/transaction_pin_context.dart';
 import 'widgets/pin_biometric_row.dart';
 import 'widgets/pin_input_boxes.dart';
@@ -71,6 +73,14 @@ class _PinInputWidgetState extends State<PinInputWidget>
       vsync: this,
       duration: AppAnimation.normal,
     );
+    BiometricService().loadSettings().then((settings) {
+      if (mounted) {
+        setState(() {
+          _isBiometricEnabled = settings.isRequireForTransactionsEnabled &&
+              (settings.isFaceIdEnabled || settings.isFingerprintEnabled);
+        });
+      }
+    }).catchError((_) {});
   }
 
   @override
@@ -148,12 +158,17 @@ class _PinInputWidgetState extends State<PinInputWidget>
     });
 
     try {
-      if (widget.onAuthenticateBiometric == null) {
-        _triggerErrorState('Biometric authentication is not configured.');
-        return;
+      bool success = false;
+      if (widget.onAuthenticateBiometric != null) {
+        success = await widget.onAuthenticateBiometric!();
+      } else {
+        final authenticated =
+            await BiometricService().authenticateForSensitiveAction();
+        if (authenticated) {
+          success =
+              await AuthenticationService().authorizeBiometricTransaction();
+        }
       }
-
-      final bool success = await widget.onAuthenticateBiometric!();
 
       if (!mounted) return;
 
@@ -163,7 +178,7 @@ class _PinInputWidgetState extends State<PinInputWidget>
           Navigator.of(context).pop(true);
         }
       } else {
-        _triggerErrorState('Biometric authentication failed.');
+        _triggerErrorState('Biometric authorization failed.');
       }
     } catch (e) {
       final errorMessage = e.toString().replaceFirst('Exception: ', '').trim();

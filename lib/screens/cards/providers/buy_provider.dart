@@ -38,7 +38,9 @@ class BuyProvider extends ChangeNotifier {
               ) ??
               0;
     if (loadQuote && _productId != null && region != null) {
-      unawaited(refreshQuote());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        refreshQuote();
+      });
     }
   }
 

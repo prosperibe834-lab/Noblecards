@@ -12,7 +12,11 @@ class RegionProvider extends ChangeNotifier {
   }) : _service = service ?? RegionService(),
        _regions = initialRegions ?? const [],
        _selectedRegion = initialRegion {
-    if (loadInitialRegions) loadRegions();
+    if (loadInitialRegions) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        loadRegions();
+      });
+    }
   }
 
   final RegionService _service;

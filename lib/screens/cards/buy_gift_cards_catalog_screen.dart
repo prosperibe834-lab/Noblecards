@@ -242,15 +242,6 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                     );
                   },
                   childCount: _filteredCards.length,
-                  findChildIndexCallback: (key) {
-                    if (key is ValueKey<String>) {
-                      final index = _filteredCards.indexWhere(
-                        (card) => card.catalogKey == key.value,
-                      );
-                      return index == -1 ? null : index;
-                    }
-                    return null;
-                  },
                 ),
               ),
             ),

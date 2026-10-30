@@ -2,6 +2,7 @@ import 'package:boxicons/boxicons.dart';
 import 'package:flutter/material.dart';
 import '../../../localization/app_localizations.dart';
 import '../../../theme/app_colors.dart';
+import '../contact_support_screen.dart';
 
 class SupportSection extends StatelessWidget {
   const SupportSection({Key? key}) : super(key: key);
@@ -27,7 +28,12 @@ class SupportSection extends StatelessWidget {
           width: double.infinity,
           height: 48,
           child: ElevatedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ContactSupportScreen()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: isDark
                   ? AppColors.primary.withOpacity(0.15)

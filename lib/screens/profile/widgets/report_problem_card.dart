@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:boxicons/boxicons.dart';
 import '../../../../theme/app_colors.dart';
+import '../livechat/live_chat_screen.dart';
 
 class ReportProblemCard extends StatelessWidget {
   const ReportProblemCard({super.key});
@@ -50,7 +51,14 @@ class ReportProblemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     InkWell(
-                      onTap: () {}, // Navigation placeholder
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LiveChatScreen(),
+                          ),
+                        );
+                      },
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
                         padding: const EdgeInsets.symmetric(

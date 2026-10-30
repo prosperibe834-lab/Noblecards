@@ -3,9 +3,42 @@ import 'package:boxicons/boxicons.dart';
 import '../../../../localization/app_localizations.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_radius.dart';
+import '../../authentication/services/authentication_service.dart';
 
-class QuickStatsSection extends StatelessWidget {
+class QuickStatsSection extends StatefulWidget {
   const QuickStatsSection({super.key});
+
+  @override
+  State<QuickStatsSection> createState() => _QuickStatsSectionState();
+}
+
+class _QuickStatsSectionState extends State<QuickStatsSection> {
+  int _totalTransactions = 128;
+  int _cardsBought = 67;
+  int _cardsSold = 61;
+  double _walletBalance = 2450.80;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStats();
+  }
+
+  Future<void> _fetchStats() async {
+    try {
+      final data = await AuthenticationService().authenticatedGet('/users/me/profile-stats');
+      if (mounted) {
+        setState(() {
+          _totalTransactions = (data['totalTransactions'] as num?)?.toInt() ?? _totalTransactions;
+          _cardsBought = (data['giftCardsBought'] as num?)?.toInt() ?? _cardsBought;
+          _cardsSold = (data['giftCardsSold'] as num?)?.toInt() ?? _cardsSold;
+          _walletBalance = (data['walletBalance'] as num?)?.toDouble() ?? _walletBalance;
+        });
+      }
+    } catch (_) {
+      // Keep initial/fallback stats if offline or unauthenticated
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,28 +47,28 @@ class QuickStatsSection extends StatelessWidget {
       children: [
         _StatCard(
           label: context.tr('total_transactions'),
-          targetCount: 128,
+          targetCount: _totalTransactions,
           icon: Boxicons.bx_transfer_alt,
           baseColor: AppColors.success,
         ),
         const SizedBox(width: 8),
         _StatCard(
           label: context.tr('cards_bought'),
-          targetCount: 67,
+          targetCount: _cardsBought,
           icon: Boxicons.bx_shopping_bag,
           baseColor: Colors.orange,
         ),
         const SizedBox(width: 8),
         _StatCard(
           label: context.tr('cards_sold'),
-          targetCount: 61,
+          targetCount: _cardsSold,
           icon: Boxicons.bx_money,
           baseColor: Colors.teal,
         ),
         const SizedBox(width: 8),
         _StatCard(
           label: context.tr('wallet_balance'),
-          targetDouble: 2450.80,
+          targetDouble: _walletBalance,
           isCurrency: true,
           icon: Boxicons.bx_wallet,
           baseColor: Colors.deepPurpleAccent,
@@ -74,8 +107,8 @@ class _StatCardState extends State<_StatCard> {
   void initState() {
     super.initState();
     _targetValue = widget.isCurrency
-        ? widget.targetDouble!
-        : widget.targetCount!.toDouble();
+        ? (widget.targetDouble ?? 0.0)
+        : (widget.targetCount ?? 0).toDouble();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         setState(() {
@@ -83,6 +116,20 @@ class _StatCardState extends State<_StatCard> {
         });
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newTarget = widget.isCurrency
+        ? (widget.targetDouble ?? 0.0)
+        : (widget.targetCount ?? 0).toDouble();
+    if (newTarget != _targetValue) {
+      setState(() {
+        _targetValue = newTarget;
+        _startValue = newTarget;
+      });
+    }
   }
 
   @override

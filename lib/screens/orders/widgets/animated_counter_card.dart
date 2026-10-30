@@ -7,6 +7,7 @@ class AnimatedCounterCard extends StatefulWidget {
   final IconData icon;
   final Color iconColor;
   final Color iconBgColor;
+  final VoidCallback? onTap;
 
   const AnimatedCounterCard({
     super.key,
@@ -15,6 +16,7 @@ class AnimatedCounterCard extends StatefulWidget {
     required this.icon,
     required this.iconColor,
     required this.iconBgColor,
+    this.onTap,
   });
 
   @override
@@ -66,15 +68,21 @@ class _AnimatedCounterCardState extends State<AnimatedCounterCard>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkCard : AppColors.white,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: widget.onTap,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
-          ),
-        ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkCard : AppColors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? Colors.white10 : Colors.black.withOpacity(0.04),
+              ),
+            ),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -116,6 +124,9 @@ class _AnimatedCounterCardState extends State<AnimatedCounterCard>
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
+

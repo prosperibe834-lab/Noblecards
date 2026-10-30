@@ -13,17 +13,26 @@ class OrderFilterService {
     return orders.where((order) {
       // 1. Chip Filter
       if (chipFilter != null && chipFilter != 'All') {
-        if (chipFilter == 'Buy' && order.transactionType != TransactionType.buy)
+        if (chipFilter == 'Buy' && order.transactionType != TransactionType.buy) {
           return false;
+        }
         if (chipFilter == 'Sell' &&
-            order.transactionType != TransactionType.sell)
+            order.transactionType != TransactionType.sell) {
           return false;
-        if (chipFilter == 'Pending' && order.status != OrderStatus.pending)
+        }
+        if (chipFilter == 'Pending' &&
+            order.status != OrderStatus.pending &&
+            order.status != OrderStatus.processing) {
           return false;
-        if (chipFilter == 'Completed' && order.status != OrderStatus.completed)
+        }
+        if (chipFilter == 'Completed' && order.status != OrderStatus.completed) {
           return false;
-        if (chipFilter == 'Cancelled' && order.status != OrderStatus.cancelled)
+        }
+        if (chipFilter == 'Cancelled' &&
+            order.status != OrderStatus.cancelled &&
+            order.status != OrderStatus.failed) {
           return false;
+        }
       }
 
       // 2. Search Query
@@ -33,12 +42,28 @@ class OrderFilterService {
         final matchesOrderId = order.orderId.toLowerCase().contains(query);
         final matchesRefId = order.referenceId.toLowerCase().contains(query);
         final matchesRegion = order.region.toLowerCase().contains(query);
-        if (!matchesName && !matchesOrderId && !matchesRefId && !matchesRegion)
+        if (!matchesName && !matchesOrderId && !matchesRefId && !matchesRegion) {
           return false;
+        }
       }
 
       // 3. Status Filter
-      if (status != null && order.status != status) return false;
+      if (status != null) {
+        if (status == OrderStatus.cancelled) {
+          if (order.status != OrderStatus.cancelled &&
+              order.status != OrderStatus.failed) {
+            return false;
+          }
+        } else if (status == OrderStatus.pending) {
+          if (order.status != OrderStatus.pending &&
+              order.status != OrderStatus.processing) {
+            return false;
+          }
+        } else if (order.status != status) {
+          return false;
+        }
+      }
+
 
       // 4. Transaction Type Filter
       if (type != null && order.transactionType != type) return false;

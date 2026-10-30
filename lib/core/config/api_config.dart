@@ -2,8 +2,7 @@ import 'package:flutter/foundation.dart';
 
 class ApiConfig {
   static const String _defaultWebBaseUrl = 'http://localhost:3000';
-  static const String _defaultAndroidBaseUrl = 'http://10.0.2.2:3000';
-  static const String _defaultSimulatorBaseUrl = 'http://localhost:3000';
+  static const String _defaultLiveBaseUrl = 'https://gloater-departure-stitch.ngrok-free.dev';
 
   static String get baseUrl {
     const envBaseUrl = String.fromEnvironment('API_BASE_URL');
@@ -17,9 +16,9 @@ class ApiConfig {
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return _defaultAndroidBaseUrl;
+        return _defaultLiveBaseUrl;
       case TargetPlatform.iOS:
-        return _defaultSimulatorBaseUrl;
+        return _defaultLiveBaseUrl;
       default:
         return _defaultWebBaseUrl;
     }

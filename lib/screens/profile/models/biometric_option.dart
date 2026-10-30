@@ -6,6 +6,7 @@ class BiometricSettingsModel {
   final bool isRememberDeviceEnabled;
   final bool isRequireForTransactionsEnabled;
   final String autoLockTime;
+  final bool hasTransactionPin;
 
   const BiometricSettingsModel({
     required this.isFaceIdAvailable,
@@ -15,6 +16,7 @@ class BiometricSettingsModel {
     required this.isRememberDeviceEnabled,
     required this.isRequireForTransactionsEnabled,
     required this.autoLockTime,
+    this.hasTransactionPin = false,
   });
 
   factory BiometricSettingsModel.initial() {
@@ -26,6 +28,7 @@ class BiometricSettingsModel {
       isRememberDeviceEnabled: false,
       isRequireForTransactionsEnabled: false,
       autoLockTime: '5 Minutes',
+      hasTransactionPin: false,
     );
   }
 
@@ -37,6 +40,7 @@ class BiometricSettingsModel {
     bool? isRememberDeviceEnabled,
     bool? isRequireForTransactionsEnabled,
     String? autoLockTime,
+    bool? hasTransactionPin,
   }) {
     return BiometricSettingsModel(
       isFaceIdAvailable: isFaceIdAvailable ?? this.isFaceIdAvailable,
@@ -50,6 +54,7 @@ class BiometricSettingsModel {
           isRequireForTransactionsEnabled ??
           this.isRequireForTransactionsEnabled,
       autoLockTime: autoLockTime ?? this.autoLockTime,
+      hasTransactionPin: hasTransactionPin ?? this.hasTransactionPin,
     );
   }
 }

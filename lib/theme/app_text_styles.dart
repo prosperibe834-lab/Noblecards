@@ -18,9 +18,16 @@ class AppTextStyles {
     color: AppColors.lightText,
   );
 
+  static const TextStyle bodyText1 = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 16,
+    color: AppColors.lightText,
+  );
+
   static const TextStyle bodyText2 = TextStyle(
     fontFamily: 'Inter',
     fontSize: 14,
     color: AppColors.lightSubText,
   );
 }
+

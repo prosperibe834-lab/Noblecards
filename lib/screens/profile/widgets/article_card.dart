@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../theme/app_colors.dart';
 import '../models/article_model.dart';
 
+import 'article_details_sheet.dart';
+
 class ArticleCard extends StatelessWidget {
   final ArticleModel article;
 
@@ -31,8 +33,9 @@ class ArticleCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {}, // Navigation placeholder
+          onTap: () => ArticleDetailsSheet.show(context, article),
           borderRadius: BorderRadius.circular(16),
+
           splashColor: AppColors.success.withOpacity(0.1),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
