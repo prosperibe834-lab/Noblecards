@@ -59,6 +59,10 @@ class BuyProvider extends ChangeNotifier {
   int _quoteGeneration = 0;
   double? _customerPrice;
   String? _quoteError;
+  double _fxRate = 1.0;
+  double _fee = 0.0;
+  double _usdFaceValue = 0.0;
+  double _providerAmount = 0.0;
 
   double get amount => _amount;
   int get quantity => _quantity;
@@ -70,6 +74,10 @@ class BuyProvider extends ChangeNotifier {
   String get currencyCode => _currencyCode;
   String get currencySymbol => _currencySymbol;
   List<String> get availableDenominations => _availableDenominations;
+  double get fxRate => _fxRate;
+  double get fee => _fee;
+  double get usdFaceValue => _usdFaceValue;
+  double get providerAmount => _providerAmount;
 
   double? get totalToPay => _customerPrice;
 
@@ -113,7 +121,7 @@ class BuyProvider extends ChangeNotifier {
   Future<void> refreshQuote() async {
     _quoteTimer?.cancel();
     final region = _selectedRegion;
-    final productId = _productId;
+    final productId = region?.productId ?? _productId;
     if (region == null || productId == null || _amount <= 0) {
       _customerPrice = null;
       _quoteError = 'A valid product, country, and amount are required.';
@@ -142,6 +150,18 @@ class BuyProvider extends ChangeNotifier {
       final customerPrice = double.tryParse(
         quote['customerPrice']?.toString() ?? '',
       );
+      final fxRate = double.tryParse(
+        quote['fxRate']?.toString() ?? '',
+      ) ?? 1.0;
+      final fee = double.tryParse(
+        quote['fee']?.toString() ?? '',
+      ) ?? 0.0;
+      final usdFaceValue = double.tryParse(
+        quote['usdFaceValue']?.toString() ?? '',
+      ) ?? (_amount / (fxRate > 0 ? fxRate : 1.0));
+      final providerAmount = double.tryParse(
+        quote['providerAmount']?.toString() ?? '',
+      ) ?? (usdFaceValue * _quantity);
       if (rate == null || customerPrice == null) {
         throw StateError(
           'The Buy pricing service returned an incomplete quote.',
@@ -149,6 +169,10 @@ class BuyProvider extends ChangeNotifier {
       }
       _currentRate = rate;
       _customerPrice = customerPrice;
+      _fxRate = fxRate;
+      _fee = fee;
+      _usdFaceValue = usdFaceValue;
+      _providerAmount = providerAmount;
     } catch (error) {
       if (generation != _quoteGeneration) return;
       _quoteError = error.toString().replaceFirst('Exception: ', '');

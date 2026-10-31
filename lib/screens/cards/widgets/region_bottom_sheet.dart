@@ -5,6 +5,7 @@ import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_radius.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
 import '../providers/region_provider.dart';
+import '../utils/country_helper.dart';
 
 class RegionBottomSheet extends StatefulWidget {
   final String rateLabel;
@@ -140,7 +141,9 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                               child: Row(
                                 children: [
                                   Text(
-                                    region.flag,
+                                    (region.flag.isNotEmpty && region.flag != '🌍')
+                                        ? region.flag
+                                        : CountryHelper.flagEmoji(region.countryCode),
                                     style: const TextStyle(fontSize: 22),
                                   ),
                                   const SizedBox(width: AppSpacing.md),
@@ -150,7 +153,9 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          region.countryName,
+                                          (region.countryName.length > 3)
+                                              ? region.countryName
+                                              : CountryHelper.countryName(region.countryCode),
                                           style: TextStyle(
                                             color: textColor,
                                             fontWeight: FontWeight.w600,
@@ -172,7 +177,7 @@ class _RegionBottomSheetState extends State<RegionBottomSheet> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '${widget.rateLabel} ${(widget.rateLabel == 'Buy' ? region.buyRate : region.sellRate).toStringAsFixed(2)}%',
+                                        widget.rateLabel == 'Buy' ? '${region.currencyCode} (${region.currencySymbol})' : '${widget.rateLabel} ${region.sellRate.toStringAsFixed(2)}%',
                                         style: const TextStyle(
                                           color: AppColors.primary,
                                           fontSize: 12,

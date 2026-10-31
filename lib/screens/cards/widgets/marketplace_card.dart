@@ -86,14 +86,14 @@ class MarketplaceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Buy Rate',
+                      'Buy',
                       style: TextStyle(
                         fontSize: 9,
                         color: AppColors.lightSubText,
                       ),
                     ),
                     Text(
-                      '${card.buyRate}%',
+                      card.minDenomination.isNotEmpty ? '${card.currency} ${card.minDenomination}' : (card.currency.isNotEmpty ? card.currency : 'USD'),
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

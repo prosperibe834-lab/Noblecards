@@ -3,15 +3,45 @@ import 'package:boxicons/boxicons.dart';
 import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_radius.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
+import 'package:noble_cards/services/wallet_service.dart';
 
-class PaymentMethodCard extends StatelessWidget {
+class PaymentMethodCard extends StatefulWidget {
   const PaymentMethodCard({Key? key}) : super(key: key);
+
+  @override
+  State<PaymentMethodCard> createState() => _PaymentMethodCardState();
+}
+
+class _PaymentMethodCardState extends State<PaymentMethodCard> {
+  double _balance = WalletService.cachedBalances?.availableBalance ?? 0.0;
+  bool _isLoading = WalletService.cachedBalances == null;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBalance();
+  }
+
+  Future<void> _loadBalance() async {
+    try {
+      final balances = await WalletService().getUsdWalletBalances();
+      if (mounted) {
+        setState(() {
+          _balance = balances.availableBalance;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.darkCard : AppColors.lightCard;
-    final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
     final textColor = isDark ? AppColors.darkText : AppColors.lightText;
     final subTextColor = isDark
         ? AppColors.darkSubText
@@ -60,7 +90,9 @@ class PaymentMethodCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Available Balance: \$1,250.00',
+                      _isLoading
+                          ? 'Available Balance: Loading...'
+                          : 'Available Balance: \$${_balance.toStringAsFixed(2)}',
                       style: TextStyle(color: subTextColor, fontSize: 12),
                     ),
                   ],

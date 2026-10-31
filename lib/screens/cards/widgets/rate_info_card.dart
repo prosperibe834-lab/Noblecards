@@ -49,7 +49,7 @@ class RateInfoCard extends StatelessWidget {
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     Text(
-                      'Current Buy Rate',
+                      'Exchange Rate',
                       style: TextStyle(color: subTextColor, fontSize: 12),
                     ),
                   ],
@@ -60,10 +60,12 @@ class RateInfoCard extends StatelessWidget {
                       ? '...'
                       : provider.quoteError != null
                       ? 'Unavailable'
-                      : '${provider.currentRate.toStringAsFixed(2)}%',
+                      : provider.currencyCode == 'USD'
+                          ? '\$1.00 = \$1.00'
+                          : '\$1 = ${provider.currencySymbol}${provider.fxRate.toStringAsFixed(2)}',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Poppins',
                   ),

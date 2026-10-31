@@ -3,6 +3,7 @@ import 'package:boxicons/boxicons.dart';
 import 'models/gift_card_model.dart';
 import 'services/cards_service.dart';
 import 'buy_card_screen.dart';
+import '../referral/referral_screen.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import 'widgets/gift_card_hero_banner.dart';
@@ -12,6 +13,7 @@ import 'widgets/gift_card_product_card.dart';
 import 'widgets/gift_card_catalog_empty_state.dart';
 import 'widgets/gift_card_catalog_shimmer.dart';
 import 'widgets/network_error_widget.dart';
+import 'widgets/gift_card_filter_bottom_sheet.dart';
 import '../../localization/app_localizations.dart';
 
 class BuyGiftCardsCatalogScreen extends StatefulWidget {
@@ -25,10 +27,12 @@ class BuyGiftCardsCatalogScreen extends StatefulWidget {
 class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'All';
+  GiftCardFilterOptions _filterOptions = const GiftCardFilterOptions();
   List<GiftCardModel> _cards = [];
   List<GiftCardModel> _filteredCards = [];
   bool _isLoading = true;
   bool _hasError = false;
+
   final List<String> _categories = [
     'All',
     'Gaming',
@@ -40,18 +44,32 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCards();
+    // Instant Load from in-memory cache if available
+    if (CardsService.hasCachedCatalog) {
+      _cards = CardsService.getCachedCatalog();
+      _filteredCards = _filterCardsFrom(_cards);
+      _isLoading = false;
+      _loadCards(silent: true);
+    } else {
+      _loadCards(silent: false);
+    }
   }
 
-  Future<void> _loadCards() async {
-    if (mounted && (!_isLoading || _hasError)) {
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadCards({bool silent = false}) async {
+    if (!silent && mounted) {
       setState(() {
         _isLoading = true;
         _hasError = false;
       });
     }
     try {
-      final cards = await CardsService().fetchCards();
+      final cards = await CardsService().fetchCards(forceRefresh: true);
       if (!mounted) return;
       final filteredCards = _filterCardsFrom(cards);
       setState(() {
@@ -61,7 +79,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
         _hasError = false;
       });
     } catch (_) {
-      if (mounted) {
+      if (mounted && !silent && _cards.isEmpty) {
         setState(() {
           _isLoading = false;
           _hasError = true;
@@ -77,14 +95,126 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
     });
   }
 
+  bool _matchesCategory(
+    String cardCategory,
+    String cardName,
+    String selectedCategory,
+  ) {
+    if (selectedCategory == 'All') return true;
+    final c = cardCategory.toLowerCase();
+    final n = cardName.toLowerCase();
+    switch (selectedCategory) {
+      case 'Gaming':
+        return c.contains('game') ||
+            c.contains('gaming') ||
+            c.contains('play') ||
+            n.contains('xbox') ||
+            n.contains('playstation') ||
+            n.contains('steam') ||
+            n.contains('nintendo') ||
+            n.contains('roblox') ||
+            n.contains('razer') ||
+            n.contains('blizzard') ||
+            n.contains('riot');
+      case 'Shopping':
+        return c.contains('shop') ||
+            c.contains('retail') ||
+            c.contains('ecommerce') ||
+            c.contains('store') ||
+            n.contains('amazon') ||
+            n.contains('ebay') ||
+            n.contains('walmart') ||
+            n.contains('target') ||
+            n.contains('apple') ||
+            n.contains('ikea') ||
+            n.contains('nike') ||
+            n.contains('adidas') ||
+            n.contains('zara') ||
+            n.contains('shein') ||
+            n.contains('flixtrain') ||
+            n.contains('flixbus');
+      case 'Entertainment':
+        return c.contains('entertain') ||
+            c.contains('stream') ||
+            c.contains('music') ||
+            c.contains('movie') ||
+            n.contains('netflix') ||
+            n.contains('spotify') ||
+            n.contains('hulu') ||
+            n.contains('disney') ||
+            n.contains('youtube') ||
+            n.contains('cinema') ||
+            n.contains('itunes') ||
+            n.contains('google play');
+      case 'Dining':
+        return c.contains('din') ||
+            c.contains('food') ||
+            c.contains('restaurant') ||
+            c.contains('cafe') ||
+            n.contains('uber eats') ||
+            n.contains('doordash') ||
+            n.contains('starbucks') ||
+            n.contains('domino') ||
+            n.contains('mcdonald') ||
+            n.contains('subway') ||
+            n.contains('burger');
+      default:
+        return c.contains(selectedCategory.toLowerCase());
+    }
+  }
+
   List<GiftCardModel> _filterCardsFrom(List<GiftCardModel> cards) {
-    final search = _searchController.text.toLowerCase();
-    return cards.where((card) {
-      final matchesSearch = card.name.toLowerCase().contains(search);
+    final search = _searchController.text.trim().toLowerCase();
+    var result = cards.where((card) {
+      final matchesSearch = search.isEmpty ||
+          card.name.toLowerCase().contains(search) ||
+          card.country.toLowerCase().contains(search) ||
+          card.category.toLowerCase().contains(search) ||
+          card.supportedRegions.any((r) =>
+              r.countryName.toLowerCase().contains(search) ||
+              r.countryCode.toLowerCase().contains(search));
+
       final matchesCategory =
-          _selectedCategory == 'All' || card.category == _selectedCategory;
-      return matchesSearch && matchesCategory;
+          _matchesCategory(card.category, card.name, _selectedCategory);
+
+      final matchesCountry = _filterOptions.country == 'All' ||
+          card.countryCode == _filterOptions.country ||
+          card.supportedRegions.any(
+              (r) => r.countryCode.toUpperCase() == _filterOptions.country);
+
+      return matchesSearch && matchesCategory && matchesCountry;
     }).toList();
+
+    // Sorting
+    switch (_filterOptions.sortBy) {
+      case 'Lowest Rate':
+        result.sort((a, b) => a.buyRate.compareTo(b.buyRate));
+        break;
+      case 'Highest Rate':
+        result.sort((a, b) => b.buyRate.compareTo(a.buyRate));
+        break;
+      case 'Name (A - Z)':
+        result.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      default:
+        break;
+    }
+
+    return result;
+  }
+
+  void _openFilterBottomSheet() {
+    GiftCardFilterBottomSheet.show(
+      context,
+      currentFilters: _filterOptions,
+      onApply: (newFilters) {
+        setState(() {
+          _filterOptions = newFilters;
+          _selectedCategory = newFilters.category;
+          _filterCards();
+        });
+      },
+    );
   }
 
   @override
@@ -122,16 +252,24 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          // Referral Program Icon Button
           IconButton(
             icon: const Icon(Boxicons.bx_gift),
             color: AppColors.primary,
-            onPressed: () {},
+            tooltip: 'Referral Rewards',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ReferralScreen()),
+              );
+            },
           ),
         ],
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
           SliverToBoxAdapter(
             child: Padding(
@@ -149,7 +287,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                   GiftCardSearchBar(
                     controller: _searchController,
                     onChanged: (val) => _filterCards(),
-                    onFilterTap: () {},
+                    onFilterTap: _openFilterBottomSheet,
                     isDark: isDark,
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -158,6 +296,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                     selectedCategory: _selectedCategory,
                     onCategorySelected: (cat) {
                       _selectedCategory = cat;
+                      _filterOptions = _filterOptions.copyWith(category: cat);
                       _filterCards();
                     },
                     isDark: isDark,
@@ -177,7 +316,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                         ),
                       ),
                       Text(
-                        context.tr('view_all_arrow'),
+                        '${_filteredCards.length} Cards',
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.primary,
@@ -199,7 +338,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
           else if (_hasError)
             SliverFillRemaining(
               hasScrollBody: false,
-              child: NetworkErrorWidget(onRetry: _loadCards),
+              child: NetworkErrorWidget(onRetry: () => _loadCards(silent: false)),
             )
           else if (_filteredCards.isEmpty)
             SliverFillRemaining(
@@ -209,6 +348,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                 onReset: () {
                   _searchController.clear();
                   _selectedCategory = 'All';
+                  _filterOptions = const GiftCardFilterOptions();
                   _filterCards();
                 },
               ),
@@ -219,7 +359,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.85,
+                  childAspectRatio: 0.82,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
@@ -227,7 +367,7 @@ class _BuyGiftCardsCatalogScreenState extends State<BuyGiftCardsCatalogScreen> {
                   (context, index) {
                     final card = _filteredCards[index];
                     return GiftCardProductCard(
-                      key: ValueKey(card.catalogKey),
+                      key: ValueKey(card.id),
                       card: card,
                       isSellMode: false,
                       isDark: isDark,

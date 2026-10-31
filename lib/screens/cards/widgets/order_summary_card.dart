@@ -59,7 +59,9 @@ class OrderSummaryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           _buildRow(
             'Amount',
-            '${provider.currencySymbol}${provider.amount.toStringAsFixed(2)}',
+            provider.currencyCode != 'USD' && provider.usdFaceValue > 0
+                ? '${provider.currencySymbol}${provider.amount.toStringAsFixed(2)} (~\$${(provider.usdFaceValue * provider.quantity).toStringAsFixed(2)})'
+                : '${provider.currencySymbol}${provider.amount.toStringAsFixed(2)}',
             subTextColor,
             textColor,
           ),
@@ -73,6 +75,19 @@ class OrderSummaryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           _buildRow(
             'Rate',
+            provider.isLoadingRate
+                ? '...'
+                : provider.quoteError != null
+                ? 'Unavailable'
+                : provider.currencyCode == 'USD'
+                    ? '\$1.00 = \$1.00'
+                    : '\$1.00 = ${provider.currencySymbol}${provider.fxRate.toStringAsFixed(2)}',
+            subTextColor,
+            textColor,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _buildRow(
+            'Platform Fee',
             provider.isLoadingRate
                 ? '...'
                 : provider.quoteError != null

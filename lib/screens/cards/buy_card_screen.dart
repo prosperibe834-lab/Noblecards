@@ -111,7 +111,7 @@ class BuyCardScreen extends StatelessWidget {
                 AuthenticationService().authenticatedPost(
                   '/gift-cards/buy',
                   body: {
-                    'productId': card.id,
+                    'productId': region.productId ?? card.id,
                     'countryCode': region.countryCode,
                     'currencyCode': region.currencyCode,
                     'amount': amount,
@@ -183,6 +183,9 @@ class BuyCardScreen extends StatelessWidget {
         break;
       }
     }
+    initialRegion ??= card.supportedRegions.isNotEmpty
+        ? card.supportedRegions.first
+        : null;
 
     return MultiProvider(
       providers: [

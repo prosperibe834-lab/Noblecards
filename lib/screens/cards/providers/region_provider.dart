@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/gift_card_region_model.dart';
 import '../services/region_service.dart';
+import '../utils/country_helper.dart';
 
 class RegionProvider extends ChangeNotifier {
   RegionProvider({
@@ -41,9 +42,11 @@ class RegionProvider extends ChangeNotifier {
       final name = region.countryName.toLowerCase();
       final code = region.countryCode.toLowerCase();
       final currency = region.currencyCode.toLowerCase();
+      final resolvedName = CountryHelper.countryName(region.countryCode).toLowerCase();
       return name.contains(query) ||
           code.contains(query) ||
-          currency.contains(query);
+          currency.contains(query) ||
+          resolvedName.contains(query);
     }).toList();
   }
 

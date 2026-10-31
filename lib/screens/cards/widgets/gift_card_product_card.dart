@@ -25,8 +25,7 @@ class GiftCardProductCard extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+      child: Container(
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkCard : AppColors.lightCard,
           borderRadius: BorderRadius.circular(AppRadius.md),
@@ -43,19 +42,30 @@ class GiftCardProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.darkBackground
-                        : AppColors.lightBackground,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(AppRadius.sm),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child: Center(
-                    child: Icon(
-                      Boxicons.bx_gift,
-                      color: AppColors.primary,
-                      size: 24,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: card.logoUrl.isNotEmpty
+                          ? Image.network(
+                              card.logoUrl,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => _buildFallbackLogo(),
+                            )
+                          : _buildFallbackLogo(),
                     ),
                   ),
                 ),
@@ -76,17 +86,16 @@ class GiftCardProductCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (!isSellMode) ...[
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            const Icon(
-                              Boxicons.bx_map,
-                              size: 12,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
+                      const SizedBox(height: 3),
+                      Row(
+                        children: [
+                          Text(
+                            card.countryFlag.isNotEmpty ? card.countryFlag : '🌐',
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
                               card.country,
                               style: TextStyle(
                                 fontSize: 10,
@@ -94,88 +103,48 @@ class GiftCardProductCard extends StatelessWidget {
                                     ? AppColors.darkSubText
                                     : AppColors.lightSubText,
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (isSellMode && card.isTrending) ...[
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.accent.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Trending',
-                            style: TextStyle(
-                              fontSize: 9,
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.bold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ],
                   ),
                 ),
-                if (!isSellMode && card.isTrending)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(AppRadius.full),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Boxicons.bxs_flame,
-                          size: 10,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 2),
-                        const Text(
-                          'Trending',
-                          style: TextStyle(
-                            fontSize: 9,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
               ],
             ),
             const Spacer(),
             Text(
-              'Rate ${isSellMode ? card.sellRate : card.buyRate}%',
-              style: TextStyle(
+              _buildPriceOrRate(card, isSellMode),
+              style: const TextStyle(
                 fontSize: 11,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: AppColors.primary,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 2),
             Text(
-              '${card.currency.isEmpty ? '\$' : card.currency + ' '}${card.minDenomination} - ${card.currency.isEmpty ? '\$' : card.currency + ' '}${card.maxDenomination}',
+              card.supportedRegions.length > 1
+                  ? 'Multi-Currency Available'
+                  : (isSellMode
+                      ? 'Instant Payout'
+                      : 'Instant Digital Delivery'),
               style: TextStyle(
                 fontSize: 10,
                 color: isDark ? AppColors.darkSubText : AppColors.lightSubText,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: AppSpacing.sm),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [AppColors.primary, AppColors.successLight],
                 ),
                 borderRadius: BorderRadius.circular(AppRadius.full),
@@ -205,6 +174,43 @@ class GiftCardProductCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  String _buildPriceOrRate(GiftCardModel card, bool isSellMode) {
+    if (isSellMode) {
+      return 'Rate ${card.sellRate.toStringAsFixed(2)}%';
+    }
+    if (card.minDenomination.isNotEmpty && card.maxDenomination.isNotEmpty) {
+      if (card.minDenomination == card.maxDenomination) {
+        return '${card.currency} ${card.minDenomination}';
+      }
+      return '${card.currency} ${card.minDenomination} - ${card.currency} ${card.maxDenomination}';
+    }
+    if (card.denominations.isNotEmpty) {
+      if (card.denominations.length == 1) {
+        return '${card.currency} ${card.denominations.first}';
+      }
+      return '${card.currency} ${card.denominations.first} - ${card.currency} ${card.denominations.last}';
+    }
+    if (card.currency.isNotEmpty) {
+      return '${card.currency} Custom Amount';
+    }
+    return 'Instant Delivery';
+  }
+
+  Widget _buildFallbackLogo() {
+    return Container(
+      color: AppColors.primary.withOpacity(0.12),
+      alignment: Alignment.center,
+      child: Text(
+        card.name.isNotEmpty ? card.name.characters.first.toUpperCase() : 'G',
+        style: const TextStyle(
+          color: AppColors.primary,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

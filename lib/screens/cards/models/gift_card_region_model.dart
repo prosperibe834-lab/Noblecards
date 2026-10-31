@@ -11,6 +11,7 @@ class GiftCardRegionModel {
   final bool isAvailable;
   final String minimumAmount;
   final String maximumAmount;
+  final String? productId;
 
   const GiftCardRegionModel({
     required this.id,
@@ -25,6 +26,7 @@ class GiftCardRegionModel {
     required this.isAvailable,
     this.minimumAmount = '',
     this.maximumAmount = '',
+    this.productId,
   });
 
   GiftCardRegionModel copyWith({
@@ -40,6 +42,7 @@ class GiftCardRegionModel {
     bool? isAvailable,
     String? minimumAmount,
     String? maximumAmount,
+    String? productId,
   }) {
     return GiftCardRegionModel(
       id: id ?? this.id,
@@ -55,6 +58,7 @@ class GiftCardRegionModel {
       isAvailable: isAvailable ?? this.isAvailable,
       minimumAmount: minimumAmount ?? this.minimumAmount,
       maximumAmount: maximumAmount ?? this.maximumAmount,
+      productId: productId ?? this.productId,
     );
   }
 }

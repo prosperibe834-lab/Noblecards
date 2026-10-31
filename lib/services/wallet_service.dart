@@ -8,15 +8,15 @@ class WalletBalances {
   final double totalBalance;
 
   const WalletBalances({
-    this.availableBalance = 78012.60,
-    this.pendingBalance = 5900.00,
-    this.totalBalance = 83912.60,
+    this.availableBalance = 0.0,
+    this.pendingBalance = 0.0,
+    this.totalBalance = 0.0,
   });
 
   factory WalletBalances.fromJson(Map<String, dynamic> json) => WalletBalances(
-    availableBalance: (json['availableBalance'] as num?)?.toDouble() ?? 78012.60,
-    pendingBalance: (json['pendingBalance'] as num?)?.toDouble() ?? 5900.00,
-    totalBalance: (json['totalBalance'] as num?)?.toDouble() ?? 83912.60,
+    availableBalance: (json['availableBalance'] as num?)?.toDouble() ?? 0.0,
+    pendingBalance: (json['pendingBalance'] as num?)?.toDouble() ?? 0.0,
+    totalBalance: (json['totalBalance'] as num?)?.toDouble() ?? 0.0,
   );
 
   Map<String, dynamic> toJson() => {
@@ -112,9 +112,9 @@ class WalletService {
 
     // Default to active backend database balance
     const fallback = WalletBalances(
-      availableBalance: 78012.60,
-      pendingBalance: 5900.00,
-      totalBalance: 83912.60,
+      availableBalance: 0.0,
+      pendingBalance: 0.0,
+      totalBalance: 0.0,
     );
     setCachedBalances(fallback);
     return fallback;

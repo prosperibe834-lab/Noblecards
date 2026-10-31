@@ -5,6 +5,7 @@ import 'package:noble_cards/theme/app_colors.dart';
 import 'package:noble_cards/theme/app_radius.dart';
 import 'package:noble_cards/theme/app_spacing.dart';
 import '../providers/region_provider.dart';
+import '../utils/country_helper.dart';
 
 class RegionSelectorCard extends StatelessWidget {
   final VoidCallback onTap;
@@ -58,7 +59,9 @@ class RegionSelectorCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
                       child: Text(
-                        region?.flag ?? '🌍',
+                        (region?.flag != null && region!.flag != '🌍' && region.flag.isNotEmpty)
+                            ? region.flag
+                            : CountryHelper.flagEmoji(region?.countryCode),
                         style: const TextStyle(fontSize: 22),
                       ),
                     ),
@@ -73,7 +76,9 @@ class RegionSelectorCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    region.countryName,
+                                    (region.countryName.length > 3)
+                                        ? region.countryName
+                                        : CountryHelper.countryName(region.countryCode),
                                     style: TextStyle(
                                       color: textColor,
                                       fontSize: 14,

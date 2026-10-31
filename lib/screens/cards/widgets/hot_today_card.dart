@@ -70,7 +70,7 @@ class HotTodayCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${card.buyRate}%',
+                      card.minDenomination.isNotEmpty ? '${card.currency} ${card.minDenomination}' : (card.currency.isNotEmpty ? card.currency : 'USD'),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
